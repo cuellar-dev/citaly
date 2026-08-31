@@ -1,0 +1,51 @@
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  padding: max(12px, env(safe-area-inset-top)) 20px 14px;
+  background-color: var(--background-color-secondary);
+  border-bottom: 1px solid color-mix(in srgb, var(--fonts-color-primary-weak) 18%, transparent);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.app-header-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  max-width: 720px;
+  margin: 0;
+}
+
+.app-header-brand {
+  font-family: var(--font-familyDrink);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fonts-color-primary-alternative);
+  line-height: 1.2;
+}
+
+.app-header-title {
+  margin: 0;
+  font-family: var(--font-familyPrincipal);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--fonts-color-primary);
+  line-height: 1.25;
+}
+.app-header-icons{
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: end;
+  color: var(--fonts-color-primary-alternative);
+}
+.app-header-icon{
+  cursor: pointer;
+}

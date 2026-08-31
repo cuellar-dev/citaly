@@ -1,0 +1,12 @@
+.imagen-local-div{
+  border: none;
+  background-color: transparent;
+  padding: 0;
+  height: 100%;
+  cursor: pointer;
+}
+.imagen-local{
+ height: 130%;
+ aspect-ratio: 3/2;
+
+}

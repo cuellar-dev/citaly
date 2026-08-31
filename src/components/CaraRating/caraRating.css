@@ -1,0 +1,39 @@
+.cara-rating {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: color 0.4s ease, opacity 0.35s ease;
+}
+
+.cara-rating--activo {
+  opacity: 1;
+}
+
+.cara-rating__svg {
+  overflow: visible;
+}
+
+.cara-rating__trazo,
+.cara-rating__boca {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cara-rating__capa {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.cara-rating__capa--activa {
+  opacity: 1;
+}
+
+.cara-rating__boca--risa {
+  fill: none;
+  stroke: currentColor;
+}

@@ -1,0 +1,238 @@
+[
+  {
+    "id": "al-medio-1",
+    "localName": "Al Medio",
+    "categoria": "Restaurante",
+    "metros": "100",
+    "url": "https://plus.unsplash.com/premium_photo-1661883237884-263e8de8869b?q=80&w=889&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "urls": [
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1592861956120-e524fc739696?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    ],
+    "horario": "10AM - 9PM",
+    "horarioApertura": "10:00",
+    "horarioCierre": "21:00",
+    "intervaloMinutos": 60,
+    "dias": ["m","x","j","v","s","d"],
+    "points": "2.5",
+    "direccion": "Kilo 12, Sancti Spiritus",
+    "telefono": "+53 41 123456",
+    "whatsapp": "+53 5 8123456",
+    "descripcion": "Restaurante familiar con comida criolla, pastas y opciones para llevar. Ambiente tranquilo cerca del kilo 12.",
+    "iconos" :[
+      {"id" : "wifi"},
+      {"id" : "parking"},
+      {"id" : "snow"}
+    ],
+    "close": true,
+    "opiniones": 120,
+    "lugar" : true,
+    "servicios": [
+      { "id": "mesa-2", "nombre": "Mesa para 2", "precio": 0, "duracion": "2h", "nota": "Consumo mínimo 800 CUP" },
+      { "id": "mesa-4", "nombre": "Mesa para 4", "precio": 0, "duracion": "2h", "nota": "Consumo mínimo 1500 CUP" },
+      { "id": "reserva-evento", "nombre": "Reserva para evento", "precio": 2500, "duracion": "4h", "nota": "Incluye decoración básica" }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Juan Perez",
+        "fecha": "2026-01-01",
+        "calificacion": 5,
+        "comentario": "Excelente servicio, la comida es deliciosa y el ambiente es muy acogedor.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      },
+      {
+        "id": "2",
+        "nombre": "Maria Gomez",
+        "fecha": "2026-01-01",
+        "calificacion": 3,
+        "comentario": "No sirve pa na la taza del baño, al menos me pusieron una cuchara pa comel.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      },
+      {
+        "id": "3",
+        "nombre": "Pedro Rodriguez",
+        "fecha": "2026-01-01",
+        "calificacion": 4,
+        "comentario": "La comida es buena, pero el servicio es un poco lento.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      },
+      {
+        "id": "4",
+        "nombre": "Ana Garcia",
+        "fecha": "2026-01-01",
+        "calificacion": 2,
+        "comentario": "No me gusto el servicio, me pusieron una cuchara pa comel.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      }
+    ]
+  },
+  {
+    "id": "sara",
+    "localName": "Sara",
+    "categoria": "Peluquería",
+    "metros": "400",
+    "url": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "urls": [
+      "https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=1169&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://plus.unsplash.com/premium_photo-1661963320607-aebac6fcb40d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://plus.unsplash.com/premium_photo-1661963320607-aebac6fcb40d?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    ],
+    "horario": "9AM - 6PM",
+    "horarioApertura": "09:00",
+    "horarioCierre": "18:00",
+    "intervaloMinutos": 90,
+    "dias": ["x","j","v","s","d"],
+    "points": "3.8",
+    "direccion": "Parque central, Cabaiguan",
+    "telefono": "+53 41 654321",
+    "whatsapp": "+53 5 8765432",
+    "descripcion": "Peluquería unisex. Cortes, tintes, manicura y tratamientos capilares. Cita con o sin espera según disponibilidad.",
+    "iconos" :[
+      {"id" : "wifi"},
+      {"id" : "snow"},
+      {"id" : "cigarrete"},
+      {"id" : "transfer"}
+    ],
+    "opiniones": 100,
+    "lugar" : false,
+    "servicios": [
+      { "id": "corte-caballero", "nombre": "Corte caballero", "precio": 300, "duracion": "30 min" },
+      { "id": "corte-dama", "nombre": "Corte dama", "precio": 450, "duracion": "45 min" },
+      { "id": "tinte", "nombre": "Tinte completo", "precio": 1200, "duracion": "2h" },
+      { "id": "manicura", "nombre": "Manicura", "precio": 250, "duracion": "40 min" }
+    ],
+    "profesionales": [
+      {
+        "id": "pro-sara-1",
+        "name": "Laura Méndez",
+        "url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop",
+        "points": 4.8,
+        "servicios": ["corte-dama", "tinte"]
+      },
+      {
+        "id": "pro-sara-2",
+        "name": "Carlos Ruiz",
+        "url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop",
+        "points": 4.5,
+        "servicios": ["corte-caballero", "corte-dama"]
+      },
+      {
+        "id": "pro-sara-3",
+        "name": "Sofía Herrera",
+        "url": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop",
+        "points": 4.2,
+        "servicios": ["manicura", "corte-dama"]
+      },
+      {
+        "id": "pro-sara-4",
+        "name": "Miguel Torres",
+        "url": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop",
+        "points": 3.9,
+        "servicios": ["corte-caballero", "tinte", "manicura"]
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Juan Perez",
+        "fecha": "2026-01-01",
+        "calificacion": 5,
+        "comentario": "Excelente servicio, la comida es deliciosa y el ambiente es muy acogedor. Ojala y no se cierre nunca, de madre compadre",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      },
+      {
+        "id": "2",
+        "nombre": "Maria Gomez",
+        "fecha": "2026-01-01",
+        "calificacion": 3,
+        "comentario": "No sirve pa na la taza del baño, al menos me pusieron una cuchara pa comel.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      },
+      {
+        "id": "3",
+        "nombre": "Pedro Rodriguez",
+        "fecha": "2026-01-01",
+        "calificacion": 4,
+        "comentario": "La comida es buena, pero el servicio es un poco lento.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      },
+      {
+        "id": "4",
+        "nombre": "Ana Garcia",
+        "fecha": "2026-01-01",
+        "calificacion": 2,
+        "comentario": "No me gusto el servicio, me pusieron una cuchara pa comel.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      }
+    ]
+  },
+  {
+    "id": "itaka",
+    "localName": "Itaka",
+    "categoria": "Bar",
+    "metros": "100",
+    "url": "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "urls": [
+      "https://images.unsplash.com/photo-1597290282695-edc43d0e7129?q=80&w=1175&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1575444758702-4a6b9222336e?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1525268323446-0505b6fe7778?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      "https://images.unsplash.com/photo-1556745763-1a6f0ddb0250?q=80&w=1085&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+    ],
+    "horario": "6PM - 1AM",
+    "horarioApertura": "18:00",
+    "horarioCierre": "23:00",
+    "intervaloMinutos": 60,
+    "dias": ["l","m","x","j","v","s","d"],
+    "points": "4",
+    "direccion": "Colon, Sancti Spiritus",
+    "telefono": "+53 41 789012",
+    "whatsapp": "+53 5 8978901",
+    "descripcion": "Bar con música en vivo los fines de semana. Cócteles, cervezas importadas y picadera. Reserva mesa en horario pico.",
+    "iconos" :[
+      {"id" : "wifi"},
+      {"id" : "parking"},
+      {"id" : "snow"}
+    ],
+    "opiniones": 80,
+    "lugar" : true,
+    
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Juan Perez",
+        "fecha": "2026-01-01",
+        "calificacion": 5,
+        "comentario": "Excelente servicio, la comida es deliciosa y el ambiente es muy acogedor.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      },
+      {
+        "id": "2",
+        "nombre": "Maria Gomez",
+        "fecha": "2026-01-01",
+        "calificacion": 3,
+        "comentario": "No sirve pa na la taza del baño, al menos me pusieron una cuchara pa comel.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      },
+      {
+        "id": "3",
+        "nombre": "Pedro Rodriguez",
+        "fecha": "2026-01-01",
+        "calificacion": 4,
+        "comentario": "La comida es buena, pero el servicio es un poco lento.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      },
+      {
+        "id": "4",
+        "nombre": "Ana Garcia",
+        "fecha": "2026-01-01",
+        "calificacion": 2,
+        "comentario": "No me gusto el servicio, me pusieron una cuchara pa comel.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+      }
+    ]
+  }
+]

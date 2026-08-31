@@ -1,0 +1,159 @@
+
+He leído [Citaly.docx](d:\diseñoWeb\proyectos mios\Citaly\Citaly.docx) y revisado el código. Esto es lo que hay y el orden en que conviene avanzar.
+
+## Qué es Citaly (según tu documento)
+
+App de **reservas** para veterinarios, barberos, restaurantes, etc. Objetivos reales:
+
+- Aprender React de verdad (sin depender de IA para todo)
+- Portfolio + posible integración futura con [elyerromenu.com](https://elyerromenu.com)
+- **Offline-first** (conexión mala en Cuba)
+- Diseño cubano-profesional: verde `#00A896`, acentos `#FFD166` / `#EF476F`, Quicksand, navbar inferior, modo claro/oscuro
+
+**4 secciones previstas:**
+
+1. **Descubre** — landing principal, lugares cercanos, buen rating
+2. **Dashboard dueño** — citas del día con datos del cliente
+3. **Mis citas** — citas del usuario (hora, precio, distancia…)
+4. **Perfil** — datos del usuario (flexible, quizá fusionado con Mis citas)
+
+---
+
+## Lo que ya tienes hecho
+
+| Hecho | Archivo |
+|-------|---------|
+| Proyecto Vite + React 19 | `package.json` |
+| NavBar inferior con 4 iconos | `NavBar.jsx` — sin rutas ni estado activo |
+| TarjetaLocal a medias | props definidas pero no usadas en `App` |
+| Componente Brujula | `Brujula.jsx` — NavBar usa SVG inline en su lugar |
+| Variables CSS básicas | `App.css` — color `#04bd6d`, no el `#00A896` del doc |
+| Fuente Quicksand referenciada | `index.css` apunta a un `.woff` que **no existe** |
+
+**Falta todo lo importante:** rutas, páginas, datos mock, tema oscuro, offline/PWA, backend.
+
+---
+
+## Plan paso a paso (en orden)
+
+### Fase 0 — Arreglar la base (hazlo primero)
+
+1. Instalar el archivo de fuente Quicksand en `src/fonts/` y corregir el `@font-face` en `index.css`
+2. Centralizar variables CSS: `--color-primary: #00A896`, acentos, fondos claro/oscuro
+3. Quitar reglas globales que rompen el layout (el `div { width: 100px }` en `index.css`)
+4. Unificar colores entre NavBar y las variables del doc
+
+---
+
+### Fase 1 — Layout y navegación (núcleo de la app)
+
+5. Instalar `react-router-dom`
+6. Crear carpetas: `src/pages/`, `src/layout/`
+7. Crear 4 páginas vacías: `Descubre`, `MisCitas`, `Dashboard`, `Perfil`
+8. Crear `Layout.jsx`: header arriba (logo "Citaly" + hamburguesa) + contenido + NavBar abajo
+9. Convertir iconos del NavBar en `<NavLink>` con rutas:
+   - Brújula → `/` (Descubre)
+   - Calendario → `/citas`
+   - Casa → `/dashboard`
+   - Usuario → `/perfil`
+10. Usar `Brujula.jsx` y `lucide-react` en lugar de SVG inline
+11. Configurar rutas en `App.jsx`
+
+**Hecho cuando:** puedes navegar entre 4 pantallas vacías con NavBar funcional.
+
+---
+
+### Fase 2 — Tema claro/oscuro
+
+12. Crear `ThemeContext` o hook `useTheme`
+13. Variables CSS por tema (`data-theme="dark"` en `<html>`)
+14. Toggle en header o Perfil
+15. Guardar preferencia en `localStorage`
+
+---
+
+### Fase 3 — Sección Descubre (primera pantalla real)
+
+16. Crear `src/data/locales.json` con 6–10 locales mock
+17. Completar `TarjetaLocal`: imagen, categoría, distancia, rating
+18. Escribir estilos en `tarjetalocal.css`
+19. En `Descubre.jsx`: lista con `.map()`, barra de búsqueda con filtro local
+
+**Hecho cuando:** al abrir la app ves tarjetas de locales.
+
+---
+
+### Fase 4 — Capa offline básica
+
+20. Crear `src/services/storage.js` (`getCitas`, `saveCitas`, `getLocales`)
+21. Al primer arranque, cargar JSON mock a `localStorage`
+22. Hook `useCitas()` para leer/escribir citas
+23. Indicador "Sin conexión" con `navigator.onLine` (opcional)
+
+---
+
+### Fase 5 — Mis citas (usuario)
+
+24. Definir forma de cita: `{ id, localId, localName, servicio, fecha, hora, precio, distancia }`
+25. Página `MisCitas.jsx` ordenada por fecha con `date-fns`
+26. Componente `TarjetaCita`
+27. Exportar PDF (con hora de exportación, como pide el doc)
+
+---
+
+### Fase 6 — Dashboard del dueño
+
+28. Filtrar solo citas de **hoy** (`date-fns` → `isToday`)
+29. Componente `CitaDueño`: cliente, teléfono, hora, servicio
+30. Mismo export PDF con encabezado del local
+
+---
+
+### Fase 7 — Perfil
+
+31. Formulario: nombre, teléfono, foto
+32. Guardar en `localStorage`
+33. Decidir si queda como 4ª pestaña o enlace dentro de Mis citas
+
+---
+
+### Fase 8 — PWA offline real
+
+34. `vite-plugin-pwa` + service worker
+35. Cachear shell y assets
+36. `manifest.json` con iconos de `public/`
+37. Probar instalación en móvil sin red
+
+---
+
+### Fase 9 — Backend Node (después del frontend)
+
+38. API REST: `GET /locales`, `GET /citas`, `POST /citas`
+39. SQLite o JSON en servidor
+40. `fetch` con fallback a `localStorage` si no hay red
+
+---
+
+### Fase 10 — Extras (cuando lo anterior esté estable)
+
+- Animaciones con `anime`
+- Features sociales ("A Pepe le gustó X")
+- Integración YerroMenu
+- Flujo completo de reserva
+
+---
+
+## Qué NO hacer todavía
+
+- Backend en la primera semana
+- Red social ni popups antes de tener reservas básicas
+- Redux u otro estado global complejo (Context + localStorage basta)
+- Escribir todo con IA — usa el plan como guía y escribe tú el código
+
+---
+
+## Tu próximo paso concreto
+
+**Fase 0 + Fase 1 juntas:** arreglar Quicksand y variables CSS, instalar `react-router-dom`, crear las 4 páginas vacías y conectar el NavBar. Con eso la app deja de ser "Hola Mundo" y ya se siente como Citaly.
+
+¿Quieres que empecemos por la Fase 0 y 1 ahora?

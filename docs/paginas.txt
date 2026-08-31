@@ -1,0 +1,267 @@
+================================================================================
+CITALY — DOCUMENTACIÓN DE PAGES
+================================================================================
+Archivo vivo: aquí se anota lo que YA tiene cada página, su lógica/datos,
+y los puntos que iremos agregando. Marca con [x] cuando quede hecho.
+
+Última actualización: 31 ago 2026
+Rutas: src/App.jsx  |  Layout: src/layout/Layout.jsx (header + outlet + NavBar)
+
+--------------------------------------------------------------------------------
+LEYENDA
+--------------------------------------------------------------------------------
+[x] = hecho
+[ ] = pendiente / por hacer
+(~) = a medias / mock / solo UI
+
+Servicios compartidos útiles:
+  - src/services/locales.js     → getAllLocales, getLocalById (JSON mock)
+  - src/services/storage.js     → getCitas / saveCitas (localStorage)
+  - src/hooks/useCitas.js       → citas en estado + agregarCita
+  - src/utils/fechasLocal.js    → fechasDisponiblesLocal, fechaEnUso
+  - src/data/locales.json       → locales mock
+  - src/data/mesasMapa.js       → mesas del plano SVG
+
+
+================================================================================
+1) DESCUBRE
+================================================================================
+Archivo:  src/pages/Descubre.jsx
+Ruta:     /  (index)
+NavBar:   Brújula / Descubre
+
+--- Qué tiene ahora ---
+[x] Lista de locales con TarjetaLocal
+[x] Datos desde getAllLocales() (locales.json vía locales.js)
+[x] Click en tarjeta → /local/:id (DetalleLocal)
+
+--- Datos ---
+  local: { id, name, category, distance, points, img, close, lugar, ... }
+
+--- Lógica actual ---
+  Al montar, lee todos los locales del JSON y hace .map() a TarjetaLocal.
+  No hay estado ni filtro todavía.
+
+--- Por agregar ---
+[ ] Barra de búsqueda (filtrar por nombre / categoría)
+[ ] Filtros (categoría, distancia, rating, abiertos ahora)
+[ ] Ordenar (más cerca, mejor rating)
+[ ] Indicador “Sin conexión” / cache offline de locales
+[ ] Favoritos / “te puede gustar”
+[ ] Pull-to-refresh o recarga cuando haya API
+
+
+================================================================================
+2) DETALLE LOCAL
+================================================================================
+Archivo:  src/pages/DetalleLocal.jsx
+Ruta:     /local/:id
+
+--- Qué tiene ahora ---
+[x] Carga local por id (getLocalById); 404 si no existe
+[x] Galería / VisorImagen
+[x] Info: nombre, categoría, dirección, teléfono, WhatsApp, rating estrellas
+[x] Estado abierto/cerrado
+[x] Opiniones (lista + expandir comentario)
+[x] Formulario de comentario: textarea controlado, CaraRating (1–5), animaciones
+[x] Botón Reservar:
+      - si local.lugar === true  → /local/:id/reservar
+      - si no                   → /local/:id/reservar-cita
+
+--- Datos ---
+  useParams().id
+  local del JSON (incluye comentarios mock, servicios, profesionales, etc.)
+  Estado local UI:
+    imagenActiva, textoComentario, emojiSeleccionado, animarSubmit, animarLimpiar,
+    comentarioAbierto
+
+--- Lógica actual ---
+  handleTextoComentario: trim + validar estrellas → console.log (NO persiste aún)
+    → anima limpia textarea y reset rating.
+  handleReservar: decide flujo con/sin lugar según flag `lugar` del local.
+
+--- Por agregar ---
+[ ] Guardar comentarios en estado local / localStorage / API
+[ ] Que el comentario nuevo aparezca en la lista al instante (sin refresh)
+[ ] Compartir local (Web Share API o copiar enlace)
+[ ] Mapa / ubicación real
+[ ] Horarios detallados por día
+[ ] Lista de servicios preview (antes de entrar a reservar)
+
+
+================================================================================
+3) RESERVAR CON LUGAR (mesas / restaurante)
+================================================================================
+Archivo:  src/pages/ReservarConLugar.jsx (+ ReservarConLugar.css)
+Ruta:     /local/:id/reservar
+Cuándo:   locales con local.lugar === true
+
+--- Qué tiene ahora ---
+[x] SelectorFecha (galería horizontal, date-fns)
+[x] SelectorHorario (slots según día / duración)
+[x] MapaMesas (SVG) + panel flotante al tocar mesa
+[x] Leyenda disponible / ocupado / seleccionado
+[x] Stepper sticky al hacer scroll (pasos del flujo)
+[x] Confirmar → agregarCita (useCitas → localStorage) → navega a Mis Citas
+[x] Actualiza “hoy” al volver a la pestaña (visibilitychange)
+[x] Estilos del mapa en MapaMesas/mapaMesas.css (compartidos)
+
+--- Datos de la cita que se guarda (aprox.) ---
+  tipo: 'con-lugar'
+  localId, localNombre, fecha, horario, mesa (id/código/capacidad/…),
+  precio / consumo, etc. (revisar el objeto exacto en confirmar)
+
+--- Lógica actual ---
+  Estado: hoy, fechaSeleccionada, horarioSeleccionado, mesaActiva,
+          mesaSeleccionada, panelMesaVisible, stepperVisible
+  Panel mesa: auto-cierra a los ~4s o al click fuera
+  Fechas: fechasDisponiblesLocal / fechaEnUso (utils)
+  Confirmar: arma objeto cita → agregarCita → navigate('/citas')
+
+--- Por agregar ---
+[ ] Validación fuerte: no confirmar sin mesa + fecha + hora
+[ ] Bloquear mesas ya reservadas ese día/hora (cruzar con citas en storage)
+[ ] Duración de la reserva de mesa (turno)
+[ ] Notas del cliente / cantidad de personas explícita
+[ ] Solo lectura del mapa en Mis Citas ya existe vía props; aquí sigue interactivo
+[ ] Sync con backend cuando exista API
+
+
+================================================================================
+4) RESERVAR SIN LUGAR (servicios / barbero, etc.)
+================================================================================
+Archivo:  src/pages/ReservarSinLugar.jsx
+Ruta:     /local/:id/reservar-cita
+Cuándo:   locales sin mesas (lugar falsy)
+
+--- Qué tiene ahora ---
+[x] Lista de servicios (ServicioItem) — selección múltiple por id
+[x] SelectPro (profesional)
+[x] SelectorFecha + SelectorHorario
+[x] Precio total = suma de servicios elegidos
+[x] Duración total → afecta slots libres (parse de "45 min", "1h", etc.)
+[x] Stepper al scroll
+[x] Confirmar → agregarCita (tipo sin-lugar) → Mis Citas
+
+--- Datos ---
+  local.servicios[], local.profesionales[]
+  Estado: serviciosSeleccionados[], profesionalSeleccionado, fecha, horario
+
+--- Lógica actual ---
+  Filtra servicios elegidos → precioTotal + duración en minutos
+  Horarios disponibles según duración y día
+  agregarCita con servicios, profesional, coste, etc.
+
+--- Por agregar ---
+[ ] Reglas: profesional obligatorio / opcional según local
+[ ] Conflictos de agenda del profesional (mock o storage)
+[ ] Descuentos / combos
+[ ] Resumen claro antes de confirmar (modal o paso final del stepper)
+
+
+================================================================================
+5) MIS CITAS
+================================================================================
+Archivo:  src/pages/MisCitas.jsx (+ misCitas.css)
+Ruta:     /citas
+NavBar:   Calendario / Mis citas
+
+--- Qué tiene ahora ---
+[x] Switch Próximas / Pasadas (useState `vista`)
+[x] Tema por clases: .citas--proximas | .citas--pasadas + variables --citas-*
+[x] Pastilla animada (left 0 / 50%) con CSS transition
+[x] CitaCard compartido (citaCard.css): shell común
+[x] CitaServicio (3 mocks Sara)
+[x] CitaLugar (3 mocks Al Medio / Itaka) + MapaMesas resaltando mesa
+(~) Datos HARDCODEADOS — aún NO lee useCitas()
+(~) Switch NO filtra la lista (solo cambia UI/tema)
+
+--- Lógica del switch (acordada) ---
+  vista = 'proximas' | 'pasadas'
+  section.class = citas + citas--proximas|pasadas
+  pastilla.class = switch-color-proximas | switch-color-pasadas
+  Colores vía CSS vars en el padre (heredan las tarjetas con --citas-accent)
+
+--- Arquitectura de tarjetas (acordada) ---
+  CitaCard (estilos comunes)
+    ├─ CitaServicio  → grid servicio / profesional / fecha / countdown
+    └─ CitaLugar     → mapa + mesa / ubicación / asientos / consumo
+  MisCitas: según cita.tipo renderiza uno u otro
+
+--- Por agregar ---
+[ ] Leer citas reales con useCitas()
+[ ] Mapear objeto guardado → props de CitaServicio / CitaLugar
+[ ] Filtrar próximas vs pasadas según fecha+hora (date-fns)
+[ ] Empty state (“No tienes citas”)
+[ ] Cancelar cita (actualizar storage + UI)
+[ ] “Voy pa allá” → abrir Maps / WhatsApp con datos reales
+[ ] Countdown real (“Quedan X min”)
+[ ] Exportar PDF de cita(s)
+[ ] MapaMesas modo soloLectura (prop) para no permitir clicks en tarjeta
+[ ] Unificar lista: mezclar servicio + lugar ordenadas por fecha
+
+
+================================================================================
+6) MI NEGOCIO (dashboard dueño)
+================================================================================
+Archivo:  src/pages/MiNegocio.jsx
+Ruta:     /negocio
+NavBar:   Casa / negocio
+
+--- Qué tiene ahora ---
+(~) Placeholder: texto “citas del día y reservas pendientes”
+
+--- Por agregar ---
+[ ] Vista dueño: citas de HOY del local del usuario
+[ ] Componente CitaDueño (cliente, teléfono, hora, servicio/mesa)
+[ ] Filtros: pendientes / confirmadas / canceladas
+[ ] Confirmar o rechazar reserva
+[ ] Export PDF del día con encabezado del local
+[ ] Switch “modo cliente / modo negocio” (ProfileSwitch ya existe en components)
+[ ] Más adelante: stats simples (ocupación, no-shows)
+
+
+================================================================================
+7) PERFIL
+================================================================================
+Archivo:  src/pages/Perfil.jsx
+Ruta:     /perfil
+NavBar:   Usuario / perfil
+
+--- Qué tiene ahora ---
+(~) Placeholder: “datos de usuario y preferencias”
+
+--- Por agregar ---
+[ ] Formulario: nombre, teléfono, foto
+[ ] Guardar en localStorage (y luego API)
+[ ] Toggle tema claro/oscuro (Fase 2 del plan original)
+[ ] Preferencias de notificaciones
+[ ] Enlace a “mis locales” / modo negocio
+[ ] Cerrar sesión (cuando haya auth)
+
+
+================================================================================
+ORDEN SUGERIDO AL RETOMAR (editable)
+================================================================================
+1. Mis Citas: enganchar useCitas + filtro Próximas/Pasadas
+2. Cancelar / empty state / countdown real
+3. Perfil básico (nombre + tel + tema)
+4. Mi Negocio: citas de hoy
+5. Persistencia de comentarios en DetalleLocal
+6. Búsqueda/filtros en Descubre
+7. PWA / offline real
+8. Backend Node
+
+
+================================================================================
+NOTAS / DECISIONES
+================================================================================
+- Offline-first: Context + localStorage basta por ahora (sin Redux).
+- Dos flujos de reserva según local.lugar (con mesa vs servicios).
+- Colores marca (doc original): primario ~ #00A896 / #00C2AD, acentos amarillo/rosa.
+- Tipografía: Quicksand (+ Outfit en fonts).
+- Este archivo se va actualizando cada vez que cerremos un bloque de una page.
+
+================================================================================
+FIN
+================================================================================

@@ -1,0 +1,166 @@
+/*--Stepper--*/
+.steper-general-container {
+  position: sticky;
+  top: 0;
+  
+  /*background: linear-gradient(180deg, rgba(0, 0, 0, 1) 59%, rgba(0, 0, 0, 0.8) 100%);
+  */
+  min-height: 100px;
+  box-shadow: 0 5px 10px transparent;
+  z-index: 1000;
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: 15px;
+  padding: 30px 0;
+
+  transform: translateY(-12px);
+  transition: opacity .4s ease, transform .4s ease, background-color .3s, box-shadow .3s;
+  background-color: transparent;
+  margin-bottom: 20px;
+}
+.steper-general-container--visible{
+  opacity: 1;
+
+  pointer-events: auto;
+  background-color: var(--background-color);
+  box-shadow: 0 5px 10px var(--background-color);
+}
+.steper-text-container {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.steper-text{
+  color: var(--fonts-color-primary-weak);
+  font-size: 14px;
+  font-weight: bold;
+  text-align: left;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px #00000026;
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+.steper-bar-container{
+  width: 100%;
+  height: 6px;
+  background-color: var(--background-color-another);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.steper-bar{
+  height: 100%;
+  width: 20%;
+  background-color: var(--fonts-color-primary-alternative);
+  box-shadow: 3px 0 3px 5px var(--fonts-color-primary-alternative);
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+/* Contenedor = "circulo" real: su fondo (color/gradiente) asoma como anillo
+   entre el borde y el SVG negro gracias al padding */
+.steper-paso-icono-container{
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 50%;
+  transition: background .35s ease;
+}
+.steper-paso-icono-container.check{
+  background: var(--fonts-color-primary-alternative);
+}
+.steper-paso-icono-container.x{
+  background: var(--close-color);
+}
+.steper-paso-icono-container.alert{
+background: linear-gradient(90deg, rgba(0, 194, 173, 1) 37%, rgba(0, 168, 151, 1) 44%, rgba(0, 94, 83, 1) 54%, rgba(37, 41, 38, 1) 60%);
+}
+
+.steper-paso-icono{
+  display: block;
+  background-color: #000000;
+  border-radius: 50%;
+  transition: color .35s ease;
+}
+/* color del icono interior segun estado */
+.steper-paso-icono.check{
+  color: var(--fonts-color-primary-alternative);
+}
+.steper-paso-icono.x{
+  color: var(--close-color);
+}
+.steper-paso-icono.alert{
+  color: var(--yellow-color);
+}
+/* borde del svg invisible: el anillo lo pone el div contenedor */
+.steper-paso-borde{
+  fill: none;
+  stroke: transparent;
+}
+.steper-paso-trazo{
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* cada capa (check / ? / x) hace un morph: aparece escalando y girando */
+.steper-paso-capa{
+  opacity: 0;
+  transform: scale(.3) rotate(-90deg);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity .35s ease, transform .35s ease;
+}
+.steper-paso-capa--activa{
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+.steper-paso-texto{
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--fonts-color-primary-weak);
+  transition: color .3s ease;
+}
+.steper-container{
+  position: relative;
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+.steper-steps-container{
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  position: absolute;
+  transform: translateY(6px);
+}
+.steper-paso{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.steper-adentro{
+  cursor: pointer;
+}
+.steper-general-container-texto{
+  text-align: center;
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyDrink);
+  padding: 0 10px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+
+}

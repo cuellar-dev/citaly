@@ -1,0 +1,15 @@
+.page-placeholder {
+  padding: 20px;
+}
+
+.page-placeholder h1 {
+  color: var(--primary-color);
+  font-family: var(--font-familyPrincipal);
+  font-weight: bold;
+  margin-top: 0;
+}
+
+.page-placeholder p {
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyPrincipal);
+}

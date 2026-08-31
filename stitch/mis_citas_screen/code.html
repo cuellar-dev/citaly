@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mis Citas - CitaCuba</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary": "#785a00",
+                    "primary": "#006b5f",
+                    "on-secondary-fixed": "#251a00",
+                    "on-primary-container": "#00352e",
+                    "error-container": "#ffdad6",
+                    "secondary-fixed-dim": "#edc157",
+                    "surface-container-low": "#121413", // Custom match for dark mode base
+                    "on-primary": "#ffffff",
+                    "on-background": "#f8faf9",
+                    "on-tertiary-container": "#630021",
+                    "inverse-primary": "#59dbc7",
+                    "tertiary": "#b71849",
+                    "primary-container": "#00a896",
+                    "surface-container-lowest": "#0a0c0b",
+                    "tertiary-fixed-dim": "#ffb2bc",
+                    "surface-container-highest": "#1E2221", // Surface for cards
+                    "on-secondary-container": "#765900",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#0a0c0b",
+                    "surface-container-high": "#232827",
+                    "on-primary-fixed": "#00201c",
+                    "on-tertiary": "#ffffff",
+                    "surface-bright": "#2e3131",
+                    "on-secondary-fixed-variant": "#5b4300",
+                    "on-tertiary-fixed-variant": "#910034",
+                    "surface": "#121413", // Background
+                    "secondary-fixed": "#ffdf9b",
+                    "surface-variant": "#3c4946",
+                    "surface-container": "#1E2221",
+                    "on-tertiary-fixed": "#400013",
+                    "on-error": "#ffffff",
+                    "secondary-container": "#ffd167",
+                    "inverse-surface": "#eff1f0",
+                    "outline-variant": "#6c7a76",
+                    "inverse-on-surface": "#191c1c",
+                    "on-surface": "#f8faf9",
+                    "primary-fixed-dim": "#59dbc7",
+                    "tertiary-fixed": "#ffd9dd",
+                    "tertiary-container": "#ff5b7f",
+                    "on-secondary": "#ffffff",
+                    "on-primary-fixed-variant": "#005047",
+                    "background": "#121413",
+                    "surface-tint": "#006b5f",
+                    "outline": "#bbcac5",
+                    "error": "#ba1a1a",
+                    "primary-fixed": "#79f7e3",
+                    "on-surface-variant": "#bbcac5",
+                    "accent-green": "#00C2AD" // Vibrant Caribbean Green
+            },
+            "borderRadius": {
+                    "DEFAULT": "8px",
+                    "lg": "12px",
+                    "xl": "16px",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-md": "16px",
+                    "gutter": "16px",
+                    "container-margin": "20px",
+                    "base": "8px",
+                    "touch-target-min": "48px",
+                    "stack-sm": "8px",
+                    "stack-lg": "24px"
+            },
+            "fontFamily": {
+                    "body-lg": ["Quicksand"],
+                    "headline-lg": ["Quicksand"],
+                    "display-lg": ["Quicksand"],
+                    "headline-md": ["Quicksand"],
+                    "label-md": ["Quicksand"],
+                    "label-sm": ["Quicksand"],
+                    "body-md": ["Quicksand"]
+            },
+            "fontSize": {
+                    "body-lg": ["18px", {"lineHeight": "26px", "fontWeight": "500"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}],
+                    "display-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #121413;
+            color: #f8faf9;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-header {
+            background: rgba(18, 20, 19, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 0px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 glass-header shadow-sm">
+<div class="flex justify-between items-center px-container-margin py-base w-full max-w-7xl mx-auto h-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full border-2 border-primary/20 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a smiling young Cuban man with a friendly expression, set against a blurred warm sunset Havana street background. The image has a soft-focus bokeh effect with high-quality cinematic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSfPCj33zbgGRIkhajqegrFVgdwezrDiTgveC4zHdZSnZyyeX2SgCH38fD_oQXA3scq2BQ1GCwrO2BKEiDOSiD18VEDqaf2u5tPuDXAZWqlkMJymMVCqx_JQE2xV7GwrC9n2mnhtB8ddXyp74YZJQsPD14fghzEJYTI6Z0chDvi7kjxxZxahW_o1xj2jTbPbs8NbYqfSVn0lNoCC5EBdyCHGfrXYnI9dJzjnkU5WTnImx-dnjn7Ja3LWJPmUENC_oXYQLIAw3-YZw"/>
+</div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">Mis Citas</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 pt-20 pb-24 px-container-margin">
+<!-- Tabs -->
+<div class="flex w-full bg-surface-container rounded-lg p-1 mb-stack-lg">
+<button class="flex-1 py-2 text-label-md font-label-md rounded-md bg-primary text-on-primary shadow-sm transition-all">
+                Próximas
+            </button>
+<button class="flex-1 py-2 text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-all">
+                Historial
+            </button>
+</div>
+<div class="space-y-stack-md max-w-2xl mx-auto">
+<!-- Booking Card 1: Barbershop -->
+<section class="bg-surface-container-highest rounded-xl p-stack-md border border-white/5 shadow-lg group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex flex-col">
+<h2 class="text-headline-md font-headline-md text-on-surface">La Habana Barbershop</h2>
+<div class="flex items-center gap-1 mt-1">
+<span class="w-2 h-2 rounded-full bg-accent-green animate-pulse"></span>
+<span class="text-label-sm font-label-sm text-accent-green uppercase tracking-wider">Confirmado</span>
+</div>
+</div>
+<div class="bg-primary/10 p-3 rounded-lg">
+<span class="material-symbols-outlined text-primary">content_cut</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="space-y-1">
+<p class="text-label-sm text-on-surface-variant">Servicio</p>
+<p class="text-body-md font-body-md text-on-surface">Corte Clásico</p>
+</div>
+<div class="space-y-1">
+<p class="text-label-sm text-on-surface-variant">Profesional</p>
+<p class="text-body-md font-body-md text-on-surface">Mateo R.</p>
+</div>
+<div class="space-y-1">
+<p class="text-label-sm text-on-surface-variant">Fecha y Hora</p>
+<p class="text-body-md font-body-md text-on-surface">Hoy, 10:30 AM</p>
+</div>
+<div class="space-y-1">
+<p class="text-label-sm text-on-surface-variant">Estado</p>
+<p class="text-body-md font-body-md text-accent-green font-semibold">Quedan 45 min</p>
+</div>
+</div>
+<div class="flex items-center justify-between py-3 border-t border-white/5 mb-4">
+<span class="text-headline-md font-headline-md text-on-surface">$15.00</span>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">call</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">location_on</span>
+</button>
+</div>
+</div>
+<button class="w-full py-3 rounded-lg border border-error/50 text-error font-label-md hover:bg-error/10 active:scale-[0.98] transition-all">
+                    Cancelar Cita
+                </button>
+</section>
+<!-- Booking Card 2: Restaurant with Map/FloorPlan -->
+<section class="bg-surface-container-highest rounded-xl p-stack-md border border-white/5 shadow-lg">
+<div class="flex justify-between items-start mb-4">
+<div class="flex flex-col">
+<h2 class="text-headline-md font-headline-md text-on-surface">Azul Waterfront Grill</h2>
+<div class="flex items-center gap-1 mt-1">
+<span class="w-2 h-2 rounded-full bg-accent-green"></span>
+<span class="text-label-sm font-label-sm text-accent-green uppercase tracking-wider">Confirmado</span>
+</div>
+</div>
+<div class="bg-primary/10 p-3 rounded-lg">
+<span class="material-symbols-outlined text-primary">restaurant</span>
+</div>
+</div>
+<div class="flex flex-col md:flex-row gap-6 mb-6">
+<div class="flex-1 space-y-4">
+<div class="grid grid-cols-1 gap-4">
+<div class="space-y-1">
+<p class="text-label-sm text-on-surface-variant">Ubicación</p>
+<p class="text-body-md font-body-md text-on-surface">Mesa T2 (Terraza)</p>
+</div>
+<div class="space-y-1">
+<p class="text-label-sm text-on-surface-variant">Capacidad</p>
+<p class="text-body-md font-body-md text-on-surface">4 personas</p>
+</div>
+<div class="space-y-1">
+<p class="text-label-sm text-on-surface-variant">Fecha y Hora</p>
+<p class="text-body-md font-body-md text-on-surface">Mañana, 7:30 PM</p>
+</div>
+</div>
+</div>
+<!-- Floor Plan Visual -->
+<div class="w-full md:w-48 aspect-square bg-surface-container-low rounded-lg p-3 flex flex-col items-center justify-center relative border border-white/5">
+<p class="absolute top-2 left-2 text-[10px] uppercase text-on-surface-variant font-bold tracking-widest">Mapa Terraza</p>
+<!-- Asymmetric Floor Plan Representation -->
+<div class="w-full h-full grid grid-cols-3 grid-rows-3 gap-2 opacity-80">
+<div class="rounded bg-white/5 border border-white/10"></div>
+<div class="rounded bg-white/5 border border-white/10"></div>
+<div class="rounded bg-white/5 border border-white/10"></div>
+<div class="rounded bg-white/5 border border-white/10"></div>
+<div class="rounded-lg bg-accent-green shadow-[0_0_15px_rgba(0,194,173,0.4)] flex items-center justify-center text-on-primary font-bold text-xs">T2</div>
+<div class="rounded bg-white/5 border border-white/10"></div>
+<div class="rounded bg-white/5 border border-white/10"></div>
+<div class="rounded bg-white/5 border border-white/10"></div>
+<div class="rounded bg-white/5 border border-white/10"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between py-3 border-t border-white/5 mb-4">
+<div class="flex flex-col">
+<span class="text-headline-md font-headline-md text-on-surface">$45.00</span>
+<span class="text-[10px] text-on-surface-variant uppercase">Depósito Requerido</span>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">call</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full border border-outline-variant hover:bg-primary/5 transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">location_on</span>
+</button>
+</div>
+</div>
+<button class="w-full py-3 rounded-lg border border-error/50 text-error font-label-md hover:bg-error/10 active:scale-[0.98] transition-all">
+                    Cancelar Cita
+                </button>
+</section>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-surface/90 backdrop-blur-lg border-t border-white/5">
+<div class="flex justify-around items-center px-4 py-3 pb-safe max-w-7xl mx-auto">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined mb-1">explore</span>
+<span class="text-label-sm font-label-sm">Explorar</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary relative after:content-[''] after:absolute after:-bottom-1 after:w-1 after:h-1 after:bg-secondary after:rounded-full transition-all scale-105" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+<span class="text-label-sm font-label-sm">Mis Citas</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined mb-1">storefront</span>
+<span class="text-label-sm font-label-sm">Mi Negocio</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span class="text-label-sm font-label-sm">Perfil</span>
+</a>
+</div>
+</nav>
+<!-- Micro-interaction Script -->
+<script>
+        document.querySelectorAll('button, a').forEach(el => {
+            el.addEventListener('mousedown', () => {
+                el.classList.add('scale-95');
+            });
+            el.addEventListener('mouseup', () => {
+                el.classList.remove('scale-95');
+            });
+            el.addEventListener('mouseleave', () => {
+                el.classList.remove('scale-95');
+            });
+        });
+
+        // Simple scroll appearance for header
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 20) {
+                header.classList.add('shadow-xl', 'bg-surface/95');
+            } else {
+                header.classList.remove('shadow-xl', 'bg-surface/95');
+            }
+        });
+    </script>
+</body></html>

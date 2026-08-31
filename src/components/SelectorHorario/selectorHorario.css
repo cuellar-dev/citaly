@@ -1,0 +1,45 @@
+.selector-horario-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 20px 4px;
+}
+.selector-horario-item{
+  background-color: var(--background-color-another);
+  border: none;
+  padding: 13px;
+  border-radius: 10px;
+  color: var(--fonts-color-primary-weak);
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid transparent;
+  box-sizing: border-box;
+  box-shadow: 0 0 10 px transparent;
+  
+  transition: transform .3s ease, background-color .3s ease, color .3s ease, box-shadow .3s ease;
+}
+.selector-horario-item::selection{
+  background-color: transparent;
+}
+.selector-horario-item--activo{
+  transform: scale(1.08);
+  background-color: color-mix(in srgb, var(--yellow-color) 85%, transparent );
+  color: var(--fonts-color-secondary);
+  box-shadow: 0 0 10px var(--yellow-color);
+  z-index: 50;
+}
+.selector-horario-aviso{
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--fonts-color-primary-weak);
+  text-align: start;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: var(--background-color-another);
+  border: 1px solid var(--background-color-secondary);
+  box-shadow: 0 0 10px var(--background-color-secondary);
+  margin: 0;
+  margin-top: 10px;
+}

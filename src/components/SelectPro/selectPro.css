@@ -1,0 +1,125 @@
+.tarjeta-pro-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  scroll-snap-align: center;
+  width: 128px;
+  padding: 16px 10px 14px;
+  border-radius: 14px;
+  background-color: var(--background-color-secondary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+.tarjeta-pro-container:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.tarjeta-pro-seleccionado {
+  background-color: color-mix(in srgb, var(--primary-color) 16%, var(--background-color-secondary));
+  box-shadow:
+    0 0 0 2px var(--primary-color),
+    0 8px 18px color-mix(in srgb, var(--primary-color) 35%, transparent);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.tarjeta-pro-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.tarjeta-pro-img-container {
+  width: 64px;
+  height: 64px;
+  padding: 2px;
+  margin-bottom: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color-weak), transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.tarjeta-pro-seleccionado .tarjeta-pro-img-container {
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-color-strong));
+}
+
+.tarjeta-pro-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  border: 2px solid var(--background-color-secondary);
+}
+
+.tarjeta-pro-info-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.tarjeta-pro-name {
+  margin: 0;
+  max-width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-familyPrincipal);
+  color: var(--fonts-color-primary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.3s ease;
+}
+
+.tarjeta-pro-seleccionado .tarjeta-pro-name {
+  color: var(--fonts-color-primary-alternative);
+}
+
+.tarjeta-pro-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background-color: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  transition: background-color 0.3s ease;
+}
+
+.tarjeta-pro-seleccionado .tarjeta-pro-badge {
+  background-color: color-mix(in srgb, var(--primary-color) 26%, transparent);
+}
+
+.tarjeta-pro-badge-icono {
+  flex-shrink: 0;
+  color: var(--fonts-color-primary-alternative);
+}
+
+.tarjeta-pro-text {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  color: var(--fonts-color-primary-alternative);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

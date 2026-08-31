@@ -1,0 +1,102 @@
+.reservar-sin-lugar-servicios {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.reservar-sin-lugar-servicio {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background-color: var(--background-color-another);
+  box-shadow: 0 4px 10px #00000026;
+}
+
+.reservar-sin-lugar-servicio-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.reservar-sin-lugar-servicio-nombre {
+  margin: 0;
+  font-size: 15px;
+  font-weight: bold;
+  color: var(--fonts-color-primary);
+}
+
+.reservar-sin-lugar-servicio-meta {
+  margin: 0;
+  font-size: 12px;
+  color: var(--fonts-color-primary-weak);
+}
+
+.reservar-sin-lugar-servicio-precio {
+  margin: 0;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--fonts-color-primary-alternative);
+}
+.fecha{
+  color: var(--yellow-color);
+}
+.reservar-local-texto-profesionales{
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fonts-color-primary-weak);
+  margin: 0;
+  margin-bottom: 20px;
+}
+.reservar-local-profesionales-container{
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  padding: 16px;
+  background-color: var(--background-color-another);
+  border-radius: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.reservar-local-profesionales-container::-webkit-scrollbar {
+  display: none;
+}
+.datos-reserva-container{
+
+  top: 20px;
+  width: 100%;
+  display: flex ;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.datos-reserva{
+  width: 70%;
+  min-width: 0;
+  background: #FFD166;
+    background: linear-gradient(90deg, rgba(255, 209, 102, 1) 45%, rgba(189, 134, 6, 1) 100%);
+  padding: 10px;
+  border-radius: 10px;
+}
+.datos-reserva-texto{
+  color: var(--background-color);
+  font-size: 14px;
+  font-weight: bold;
+  text-align: left;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px #00000026;
+  width: 100%;
+  min-width: 0;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}

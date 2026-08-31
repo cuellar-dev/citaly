@@ -1,0 +1,124 @@
+/* Tema Mis Citas: cambia con .citas--proximas | .citas--pasadas en <section className="citas"> */
+
+.citas {
+  /* Próximas (teal) — valores por defecto */
+  --citas-accent: #00c2ad;
+  --citas-accent-soft: #077a6f;
+  --citas-pill-bg: #00463f;
+  --citas-pill-shadow: #00463f;
+  --citas-tab-active: #00c2ad;
+  --citas-tab-inactive: rgba(189, 186, 186, 0.55);
+  --citas-track: linear-gradient(
+    100deg,
+    #182522 0%,
+    #1e2f2c 38%,
+    #243532 72%,
+    #1a3330 100%
+  );
+  --citas-track-border: #2a3834;
+
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.citas--pasadas {
+  --citas-accent: #ffd166;
+  --citas-accent-soft: #90856b;
+  --citas-pill-bg: #563b00;
+  --citas-pill-shadow: #563b00;
+  --citas-tab-active: #ffd166;
+  --citas-tab-inactive: rgba(189, 186, 186, 0.55);
+  --citas-track: linear-gradient(
+    100deg,
+    #1f1c18 0%,
+    #2a2f26 38%,
+    #352f22 72%,
+    #3a3220 100%
+  );
+  --citas-track-border: #3d3828;
+}
+
+.citas--proximas {
+  /* Explícito por si quieres overrides solo en próximas */
+}
+
+.switch-color-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-radius: 40px;
+  width: 70%;
+  max-width: 300px;
+  position: sticky;
+  top: 80px;
+  padding: 5px;
+  background: var(--citas-track);
+  border: 1px solid var(--citas-track-border);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  z-index: 40;
+}
+
+.switch-color-color {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  border-radius: 40px;
+  background-color: var(--citas-pill-bg);
+  transition: left 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1;
+  box-shadow: 2px 0 10px var(--citas-pill-shadow);
+  pointer-events: none;
+}
+
+.switch-color-pasadas {
+  left: 50%;
+}
+
+.switch-color-proximas {
+  left: 0;
+}
+
+.switch-color-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 36px;
+  background-color: transparent;
+  border: none;
+  border-radius: 40px;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.switch-color-button-text-proximas,
+.switch-color-button-text-pasadas {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-family: var(--font-familyDrink);
+  text-align: center;
+  width: 100%;
+  transition: color 0.3s ease;
+}
+
+.citas--proximas .switch-color-button-text-proximas {
+  color: var(--citas-tab-active);
+}
+
+.citas--proximas .switch-color-button-text-pasadas {
+  color: var(--citas-tab-inactive);
+}
+
+.citas--pasadas .switch-color-button-text-pasadas {
+  color: var(--citas-tab-active);
+}
+
+.citas--pasadas .switch-color-button-text-proximas {
+  color: var(--citas-tab-inactive);
+}

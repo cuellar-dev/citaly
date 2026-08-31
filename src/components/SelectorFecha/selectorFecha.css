@@ -1,0 +1,67 @@
+.selector-fecha-scroll {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 12px 4px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.selector-fecha-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.selector-fecha-item {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  width: 58px;
+  padding: 10px 8px;
+  border: none;
+  border-radius: 12px;
+  background-color: var(--background-color-another);
+  color: var(--fonts-color-primary-weak);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transform: scale(0.9);
+  transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+}
+
+.selector-fecha-item--activa {
+  background-color:
+      color-mix(in srgb, var(--yellow-color) 85%, transparent);
+  color: var(--fonts-color-secondary);
+  transform: scale(1.08);
+}
+
+.selector-fecha-mes,
+.selector-fecha-semana {
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.selector-fecha-dia {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.selector-fecha-item--activa .selector-fecha-dia {
+  font-size: 24px;
+}
+.selector-fecha-item--activa .selector-fecha-semana,
+.selector-fecha-item--activa .selector-fecha-mes {
+  font-weight: bold;
+}
+.selector-fecha-container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 12px;
+  padding: 20px 4px;
+  padding-top: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
