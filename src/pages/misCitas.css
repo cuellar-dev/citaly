@@ -23,6 +23,19 @@
   gap: 20px;
   justify-content: space-evenly;
   align-items: center;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Estado vacío: el switch arriba y Taly centrado en el resto de la pantalla */
+.citas:has(.taly-momento) {
+  min-height: calc(100dvh - 150px);
+  justify-content: flex-start;
+}
+
+.citas .taly-momento {
+  width: 100%;
 }
 
 .citas--pasadas {

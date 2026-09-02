@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Taly · refinado, ronda 3</title>
+<!-- =====================================================================
+     Taly · mascota de Citaly — ronda 3
+     Se fija lo que ya funcionó en la ronda 2:
+       · ojo = ▀ oscuro (pequeño y tierno, y opaco para transparencia)
+       · ala = ░ encima del cuerpo sólido (textura de hilo)
+     Y se corrige lo que falló:
+       · barriga: era una tira recta de borde a borde; ahora va redondeada
+         y solo en la zona baja delantera
+       · patas: eran cuadraditos flotando; ahora ▀ pegados al cuerpo
+       · copete: parecía un gorro; se prueban formas escalonadas
+       · silueta: cuerpo más ancho que la cabeza, forma de huevo
+     Medio: solo Unicode Block Elements (U+2580–U+259F)
+====================================================================== -->
+<style>
+  :root {
+    --menta:        #4FD8C4;
+    --menta-osc:    #2AA795;
+    --menta-clara:  #BDF4E8;
+    --mostaza:      #FFD166;
+    --ojo:          #0E2E2A;
+    --bg-core:      #1E2221;
+    --bg-edge:      #121413;
+  }
+  html, body { margin: 0; background: var(--bg-edge); }
+  .sheet {
+    width: 1240px;
+    height: 800px;
+    background: radial-gradient(circle at 50% 34%, var(--bg-core) 0%, var(--bg-edge) 74%);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 310px 310px 180px;
+    font-family: system-ui, sans-serif;
+  }
+  .cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+  .fig { position: relative; display: inline-block; }
+  .capa {
+    white-space: pre;
+    font-family: Consolas, "Cascadia Mono", "Courier New", monospace;
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: 0;
+    user-select: none;
+    margin: 0;
+  }
+  .fig .capa + .capa { position: absolute; top: 0; left: 0; }
+  .base { text-shadow: 0 0 24px rgba(79, 216, 196, 0.26); }
+  .cap { color: #bdbaba; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; text-align: center; }
+  .cap b { color: var(--menta); font-weight: 600; }
+  .strip {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; justify-content: space-around;
+    border-top: 1px solid #252926;
+  }
+  .strip .capa { font-size: 13px; }
+  .strip .base { text-shadow: none; }
+  .strip .cap { font-size: 10px; }
+  .strip .cell { gap: 12px; }
+</style>
+</head>
+<body>
+<div class="sheet" id="sheet"></div>
+
+<script>
+const COL = {
+  b: "var(--menta)",
+  d: "var(--menta-osc)",
+  l: "var(--menta-clara)",
+  m: "var(--mostaza)",
+  o: "var(--ojo)",
+};
+
+// ---- silueta base: huevo con cabeza estrecha y cuerpo ancho --------------
+// 11 columnas x 7 filas. Cuerpo cerrado y opaco.
+const ROWS = [
+  "  ▗▄       ",   // 0 copete
+  "  ▟████▙   ",   // 1 alto de la cabeza
+  "  ▐█████▙▖ ",   // 2 cabeza: ojo + pico
+  " ▐███████▌ ",   // 3 pecho + ala
+  " ▐███████▌ ",   // 4 barriga
+  "  ▜█████▛  ",   // 5 base redondeada
+  "    ▀ ▀    ",   // 6 patas
+];
+
+const COPETE  = [[0,2],[0,3]];
+const PICO    = [[2,8],[2,9]];
+const PATAS   = [[6,4],[6,6]];
+
+const OJO      = { p:[2,6], ch:"▀", c:"o" };
+const ALA_POS  = [[3,2],[3,3],[3,4],[4,2],[4,3]];
+const BARRIGA  = { celdas: [[4,5],[4,6],[4,7],[4,8],[5,5],[5,6],[5,7]], borde: [[3,6],[3,7],[3,8]] };
+
+function ala(ch) { return ALA_POS.map(p => ({ p, ch, c: "d" })); }
+function bordeBarriga(borde) { return borde.map(p => ({ p, ch: "▄", c: "l" })); }
+
+function base(extra) {
+  return Object.assign({ m: COPETE.concat(PICO, PATAS), l: BARRIGA.celdas }, extra || {});
+}
+
+const variantes = [
+  {
+    id: "W1", nombre: "Nueva base",
+    nota: "barriga redondeada, patas pegadas",
+    rows: ROWS, color: base(),
+    detalle: [OJO].concat(bordeBarriga(BARRIGA.borde), ala("░")),
+  },
+  {
+    id: "W2", nombre: "Con colita",
+    nota: "una celda asomando por detrás",
+    rows: ROWS, color: base(),
+    detalle: [OJO, { p:[4,0], ch:"▄", c:"b" }].concat(bordeBarriga(BARRIGA.borde), ala("░")),
+  },
+  {
+    id: "W3", nombre: "Copete menta",
+    nota: "plumas del mismo color del cuerpo",
+    rows: ROWS,
+    color: { m: PICO.concat(PATAS), l: BARRIGA.celdas },
+    detalle: [OJO].concat(bordeBarriga(BARRIGA.borde), ala("░")),
+  },
+  {
+    id: "W4", nombre: "Copete alto",
+    nota: "plumón más largo, más carácter",
+    rows: ["  ▗█▖      "].concat(ROWS.slice(1)),
+    color: base({ m: [[0,2],[0,3],[0,4]].concat(PICO, PATAS) }),
+    detalle: [OJO].concat(bordeBarriga(BARRIGA.borde), ala("░")),
+  },
+  {
+    id: "W5", nombre: "Barriga pequeña",
+    nota: "solo la punta del pecho",
+    rows: ROWS,
+    color: base({ l: [[4,6],[4,7],[5,6]] }),
+    detalle: [OJO].concat(bordeBarriga([[3,7]]), ala("░")),
+  },
+  {
+    id: "W6", nombre: "Barriga grande",
+    nota: "casi todo el frente en claro",
+    rows: ROWS,
+    color: base({ l: [[4,4],[4,5],[4,6],[4,7],[4,8],[5,4],[5,5],[5,6],[5,7]] }),
+    detalle: [OJO].concat(bordeBarriga([[3,5],[3,6],[3,7],[3,8]]), ala("░")),
+  },
+  {
+    id: "W7", nombre: "Ala en ▒",
+    nota: "trama más marcada, más punto de cruz",
+    rows: ROWS, color: base(),
+    detalle: [OJO].concat(bordeBarriga(BARRIGA.borde), ala("▒")),
+  },
+  {
+    id: "W8", nombre: "Sin ala",
+    nota: "control: cuerpo liso para comparar",
+    rows: ROWS, color: base(),
+    detalle: [OJO].concat(bordeBarriga(BARRIGA.borde)),
+  },
+];
+
+// ---- pintor ---------------------------------------------------------------
+function pintarBase(rows, colorMap) {
+  const mapa = {};
+  for (const clave in colorMap) for (const [f, c] of colorMap[clave]) mapa[f + "," + c] = clave;
+  return rows.map((fila, f) => {
+    let out = "";
+    for (let c = 0; c < fila.length; c++) {
+      const ch = fila[c];
+      if (ch === " ") { out += " "; continue; }
+      out += '<span style="color:' + COL[mapa[f + "," + c] || "b"] + '">' + ch + "</span>";
+    }
+    return out;
+  }).join("\n");
+}
+
+// Un glifo por celda y capa; si dos detalles caen en la misma celda se
+// reparten en capas distintas para poder superponerlos.
+function capasDetalle(rows, detalle) {
+  const alto = rows.length, ancho = rows[0].length;
+  const grupos = [];
+  for (const d of detalle) {
+    let grupo = grupos.find(g => !g.some(x => x.p[0] === d.p[0] && x.p[1] === d.p[1]));
+    if (!grupo) { grupo = []; grupos.push(grupo); }
+    grupo.push(d);
+  }
+  return grupos.map(grupo => {
+    const rejilla = Array.from({ length: alto }, () => Array(ancho).fill(null));
+    for (const d of grupo) rejilla[d.p[0]][d.p[1]] = d;
+    return rejilla.map(fila => fila.map(d =>
+      d ? '<span style="color:' + COL[d.c] + '">' + d.ch + "</span>" : " "
+    ).join("")).join("\n");
+  });
+}
+
+function figura(v) {
+  const fig = document.createElement("div");
+  fig.className = "fig";
+  const b = document.createElement("pre");
+  b.className = "capa base";
+  b.innerHTML = pintarBase(v.rows, v.color);
+  fig.appendChild(b);
+  for (const html of capasDetalle(v.rows, v.detalle)) {
+    const capa = document.createElement("pre");
+    capa.className = "capa";
+    capa.innerHTML = html;
+    fig.appendChild(capa);
+  }
+  return fig;
+}
+
+function celda(v, conNota) {
+  const div = document.createElement("div");
+  div.className = "cell";
+  div.appendChild(figura(v));
+  const cap = document.createElement("div");
+  cap.className = "cap";
+  cap.innerHTML = "<b>" + v.id + "</b> · " + v.nombre + (conNota ? "<br>" + v.nota : "");
+  div.appendChild(cap);
+  return div;
+}
+
+const sheet = document.getElementById("sheet");
+variantes.forEach(v => sheet.appendChild(celda(v, true)));
+
+const strip = document.createElement("div");
+strip.className = "strip";
+variantes.forEach(v => strip.appendChild(celda(v, false)));
+sheet.appendChild(strip);
+</script>
+</body>
+</html>

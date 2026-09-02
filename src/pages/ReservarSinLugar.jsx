@@ -13,6 +13,7 @@ import SelectorHorario from '../components/SelectorHorario/SelectorHorario.jsx'
 import ServicioItem from '../components/ServicioItem/ServicioItem.jsx'
 import SelectPro from '../components/SelectPro/SelectPro.jsx'
 import Stepper from '../components/Stepper/Stepper.jsx'
+import TalyMomento from '../components/Taly/TalyMomento.jsx'
 
 // Cuanto hay que bajar (en px) para que aparezca el stepper.
 // Ajusta este numero si el header cambia de alto.
@@ -30,6 +31,7 @@ function ReservarSinLugar() {
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState([])
   const [profesionalSeleccionado, setProfesionalSeleccionado] = useState(null)
   const [stepperVisible, setStepperVisible] = useState(false)
+  const [reservaConfirmada, setReservaConfirmada] = useState(false)
   const refServicios = useRef(null)
   const refProfesional = useRef(null)
   const refHorario = useRef(null)
@@ -60,10 +62,30 @@ function ReservarSinLugar() {
           <ArrowLeft size={20} />
           Volver a Descubre
         </Link>
-        <h1 className="reservar-local-titulo">Error 404</h1>
-        <p className="reservar-local-texto">
-          No existe un local con el id: <strong>{id}</strong>.
-        </p>
+        <TalyMomento
+          escena='loader'
+          pose='busca'
+          titulo='No encontramos ese local'
+          texto={`No existe un local con el id “${id}”. Revisa el enlace e inténtalo de nuevo.`}
+          accion='Volver a Descubre'
+          onAccion={() => navigate('/')}
+        />
+      </section>
+    )
+  }
+
+  if (reservaConfirmada) {
+    return (
+      <section className='reservar-local reservar-local--exito'>
+        <TalyMomento
+          escena='confirmacion'
+          titulo='¡Cita confirmada!'
+          texto={`Tu cita en ${local.localName} ya está guardada. Taly la tendrá lista en Mis citas.`}
+          accion='Ver mis citas'
+          onAccion={() => navigate('/citas')}
+          accionSecundaria='Seguir explorando'
+          onAccionSecundaria={() => navigate(`/local/${id}`)}
+        />
       </section>
     )
   }
@@ -184,7 +206,7 @@ function ReservarSinLugar() {
     setProfesionalSeleccionado(null)
     setHorarioSeleccionado(null)
     setFechaSeleccionada(fechasDisponibles[0] ?? hoy)
-    navigate(`/local/${id}`)
+    setReservaConfirmada(true)
   }
   function toggleServicio(idServicio){
     setServiciosSeleccionados((prev) => {

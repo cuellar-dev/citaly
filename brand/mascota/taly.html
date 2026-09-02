@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Taly · mascota de Citaly</title>
+<link rel="stylesheet" href="taly.css">
+<!-- =====================================================================
+     Taly en solitario. Es el archivo que se exporta y el que se puede
+     abrir directamente en el navegador.
+
+     Parámetros por URL:
+       ?escena=hero|loader|vacio|confirmacion|recordatorio|mensajero
+       ?pose=reposo|contento|canto|dormido|...  una pose fija, sin animar
+       ?objetos=tarjeta,notas,chispas,sueno     objetos junto a la pose
+       ?tamano=40            tamaño de celda en px
+       ?fondo=transparente|oscuro|claro
+       ?fotograma=3          congela un fotograma de la escena, para el PNG
+       ?brillo=si            añade el halo menta (solo para fondo oscuro)
+
+     Ejemplos:
+       taly.html?escena=confirmacion
+       taly.html?escena=vacio&fondo=claro
+       taly.html?pose=contento&objetos=chispas&tamano=64
+====================================================================== */ -->
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { display: flex; align-items: center; justify-content: center; }
+  .escenario {
+    width: 600px;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fondo-transparente { background: transparent; }
+  .fondo-oscuro { background: radial-gradient(circle at 50% 42%, #1E2221 0%, #121413 74%); }
+  .fondo-claro  { background: #F2EBDD; }
+</style>
+</head>
+<body>
+<div class="escenario" id="escenario"></div>
+
+<script src="taly-arte.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const escena = params.get("escena") || "hero";
+const tamano = parseInt(params.get("tamano") || "40", 10);
+const fondo = params.get("fondo") || "transparente";
+const brillo = params.get("brillo") === "si";
+const fotograma = params.get("fotograma");
+
+const escenario = document.getElementById("escenario");
+escenario.classList.add("fondo-" + fondo);
+document.body.style.background = fondo === "claro" ? "#F2EBDD"
+  : fondo === "oscuro" ? "#121413" : "transparent";
+
+const taly = TALY.crear(escenario, { tamano, brillo });
+
+const pose = params.get("pose");
+if (pose) {
+  const objetos = (params.get("objetos") || "").split(",").filter(Boolean);
+  taly.dibujar(pose, 0, objetos);
+  document.title = "Taly · " + pose;
+} else if (fotograma !== null) {
+  taly.fotograma(escena, parseInt(fotograma, 10));
+  document.title = "Taly · " + escena + " · fotograma " + fotograma;
+} else {
+  taly.reproducir(escena);
+  // El renderizador lee esto para saber cuánto dura el bucle.
+  window.TALY_DURACION = TALY.duracion(escena);
+  document.title = "Taly · " + escena + " · " + window.TALY_DURACION + "ms";
+}
+</script>
+</body>
+</html>

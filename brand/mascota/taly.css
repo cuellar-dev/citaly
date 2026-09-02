@@ -1,0 +1,9 @@
+/* Estilos de Taly.
+   El dibujo es un SVG autocontenido, así que aquí sobra casi todo. Se deja
+   display:block para que no arrastre el espacio de línea del inline, y
+   crispEdges se pone en el propio SVG desde el JS. */
+
+.taly-svg {
+  display: block;
+  overflow: visible;   /* el brillo opcional se sale del viewBox */
+}

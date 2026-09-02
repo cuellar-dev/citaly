@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Taly · escenas en movimiento</title>
+<link rel="stylesheet" href="taly.css">
+<!-- Las seis escenas animándose a la vez. Este archivo es para abrirlo en
+     el navegador y verlo en movimiento; el PNG no le hace justicia. -->
+<style>
+  html, body { margin: 0; background: #121413; font-family: system-ui, sans-serif; }
+  .cabecera {
+    padding: 34px 40px 8px;
+    color: #f0f0f0;
+  }
+  .cabecera h1 {
+    margin: 0 0 6px;
+    font-size: 22px; font-weight: 600; letter-spacing: 0.02em;
+  }
+  .cabecera h1 b { color: #4FD8C4; }
+  .cabecera p { margin: 0; color: #8a9391; font-size: 13px; max-width: 720px; line-height: 1.6; }
+  .rejilla {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 24px 40px 40px;
+  }
+  .escena {
+    background: #171a19;
+    border: 1px solid #212524;
+    border-radius: 10px;
+    padding: 26px 20px 20px;
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    min-height: 300px;
+    justify-content: center;
+  }
+  .lienzo { display: flex; align-items: center; justify-content: center; height: 210px; }
+  .pie { text-align: center; }
+  .pie .nombre { color: #4FD8C4; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600; }
+  .pie .donde { color: #bdbaba; font-size: 13px; margin-top: 6px; }
+  .pie .duracion { color: #5f6664; font-size: 11px; margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="cabecera">
+  <h1><b>Taly</b> · las seis escenas</h1>
+  <p>Cada escena es un bucle cerrado: el último fotograma enlaza con el primero, así que
+     se puede repetir sin salto. La silueta no cambia nunca; lo que se mueve es el ojo,
+     el pico y el ala por dentro del cuerpo.</p>
+</div>
+<div class="rejilla" id="rejilla"></div>
+
+<script src="taly-arte.js"></script>
+<script>
+const escenas = [
+  { id: "hero",         donde: "Onboarding y bienvenida" },
+  { id: "loader",       donde: "Cargando, buscando locales" },
+  { id: "vacio",        donde: "Todavía no tienes citas" },
+  { id: "confirmacion", donde: "Cita confirmada" },
+  { id: "recordatorio", donde: "Tienes una cita cerca" },
+  { id: "mensajero",    donde: "Te trae la cita en el pico" },
+];
+
+const rejilla = document.getElementById("rejilla");
+escenas.forEach(e => {
+  const caja = document.createElement("div");
+  caja.className = "escena";
+  const lienzo = document.createElement("div");
+  lienzo.className = "lienzo";
+  caja.appendChild(lienzo);
+
+  const pie = document.createElement("div");
+  pie.className = "pie";
+  pie.innerHTML =
+    '<div class="nombre">' + e.id + "</div>" +
+    '<div class="donde">' + e.donde + "</div>" +
+    '<div class="duracion">bucle de ' + TALY.duracion(e.id) + " ms</div>";
+  caja.appendChild(pie);
+  rejilla.appendChild(caja);
+
+  TALY.crear(lienzo, { tamano: 26, brillo: true }).reproducir(e.id);
+});
+</script>
+</body>
+</html>

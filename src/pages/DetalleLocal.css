@@ -336,6 +336,18 @@
 }
 .detalle-local--error {
   padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: calc(100dvh - 150px);
+  box-sizing: border-box;
+}
+
+.detalle-local--error .taly-momento {
+  width: 100%;
+  min-height: 0;
 }
 
 .detalle-local--error h1,

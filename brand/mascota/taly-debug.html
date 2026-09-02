@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Taly · rejilla de depuración</title>
+<link rel="stylesheet" href="taly.css">
+<!-- Dibuja la rejilla de celdas y sus índices encima de Taly, para poder
+     señalar exactamente qué celda hay que tocar. Los índices que se ven son
+     los del PÁJARO (los que se usan en taly-arte.js), no los del escenario.
+     ?pose=reposo&tamano=64 -->
+<style>
+  html, body { margin: 0; background: #F2EBDD; font-family: system-ui, sans-serif; }
+  .marco { position: relative; display: inline-block; margin: 40px; }
+  .rejilla { position: absolute; top: 0; left: 0; pointer-events: none; }
+  .rejilla div {
+    position: absolute;
+    border-right: 1px solid rgba(190,40,90,0.30);
+    border-bottom: 1px solid rgba(190,40,90,0.30);
+    font-size: 9px;
+    color: rgba(150,20,70,0.85);
+    line-height: 1;
+    padding: 1px 0 0 2px;
+    box-sizing: border-box;
+  }
+  .rejilla div.fuera { border-color: rgba(90,110,140,0.22); color: rgba(70,90,120,0.45); }
+</style>
+</head>
+<body>
+<div class="marco" id="marco"></div>
+
+<script src="taly-arte.js"></script>
+<script>
+const params = new URLSearchParams(location.search);
+const pose = params.get("pose") || "reposo";
+const tamano = parseInt(params.get("tamano") || "64", 10);
+const objetos = (params.get("objetos") || "").split(",").filter(Boolean);
+
+const marco = document.getElementById("marco");
+const taly = TALY.crear(marco, { tamano });
+taly.dibujar(pose, 0, objetos);
+
+const svg = taly.elemento;
+const caja = svg.getBoundingClientRect();
+const anchoCelda = caja.width / TALY.ESCENARIO.columnas;
+const altoCelda = caja.height / TALY.ESCENARIO.filas;
+
+const rejilla = document.createElement("div");
+rejilla.className = "rejilla";
+rejilla.style.width = caja.width + "px";
+rejilla.style.height = caja.height + "px";
+
+for (let f = 0; f < TALY.ESCENARIO.filas; f++) {
+  for (let c = 0; c < TALY.ESCENARIO.columnas; c++) {
+    const fAve = f - TALY.OFFSET.fila;
+    const cAve = c - TALY.OFFSET.columna;
+    const dentroAve = fAve >= 0 && fAve < TALY.ROWS.length &&
+                      cAve >= 0 && cAve < TALY.ROWS[0].length;
+    const celda = document.createElement("div");
+    if (!dentroAve) celda.className = "fuera";
+    celda.style.left = (c * anchoCelda) + "px";
+    celda.style.top = (f * altoCelda) + "px";
+    celda.style.width = anchoCelda + "px";
+    celda.style.height = altoCelda + "px";
+    celda.textContent = dentroAve ? fAve + "," + cAve : "";
+    rejilla.appendChild(celda);
+  }
+}
+marco.appendChild(rejilla);
+
+// Lista en consola qué carácter tiene cada celda de la silueta, por si hace
+// falta comprobar una coordenada concreta.
+console.log(TALY.ROWS.map((f, i) => i + ": " + f.split("").map((ch, c) =>
+  c + (ch === " " ? "·" : ch)).join(" ")).join("\n"));
+</script>
+</body>
+</html>

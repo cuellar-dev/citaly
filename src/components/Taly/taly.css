@@ -1,0 +1,13 @@
+/* Taly, la mascota de Citaly.
+   El dibujo entero es un SVG, asi que aqui solo va la colocacion y el halo
+   opcional. El movimiento lo lleva el componente, no una animacion CSS,
+   porque cada fotograma dura distinto. */
+
+.taly {
+  display: block;
+  overflow: visible;          /* el halo se sale del viewBox */
+}
+
+.taly--brillo {
+  filter: drop-shadow(0 0 var(--taly-halo, 14px) rgba(79, 216, 196, 0.45));
+}

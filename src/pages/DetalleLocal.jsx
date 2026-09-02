@@ -9,6 +9,7 @@ import VisorImagen from '../components/VisorImagen/VisorImagen.jsx'
 import './DetalleLocal.css'
 import Opiniones from '../components/Opiniones/Opiniones.jsx'
 import IconoWhatsApp from '../components/IconoWhatsApp/IconoWhatsApp.jsx'
+import TalyMomento from '../components/Taly/TalyMomento.jsx'
 
 function DetalleLocal() {
   const { id } = useParams()
@@ -56,8 +57,14 @@ function DetalleLocal() {
           <ArrowLeft size={20} />
           Volver a Descubre
         </Link>
-        <h1>Error 404</h1>
-        <p>No existe un local con el id: <strong>{id}</strong>. Revise bien el enlace e intentelo de nuevo</p>
+        <TalyMomento
+          escena='loader'
+          pose='busca'
+          titulo='Local no encontrado'
+          texto={`No existe un local con el id “${id}”. Revisa el enlace e inténtalo de nuevo.`}
+          accion='Volver a Descubre'
+          onAccion={() => navigate('/')}
+        />
       </section>
     )
   }

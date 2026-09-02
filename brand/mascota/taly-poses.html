@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Taly · hoja de poses</title>
+<link rel="stylesheet" href="taly.css">
+<style>
+  html, body { margin: 0; background: #121413; }
+  .hoja {
+    width: 1300px;
+    height: 940px;
+    background: radial-gradient(circle at 50% 30%, #1E2221 0%, #121413 76%);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    font-family: system-ui, sans-serif;
+  }
+  .casilla {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 14px;
+    border-right: 1px solid #1c201f;
+    border-bottom: 1px solid #1c201f;
+  }
+  .etiqueta { color: #bdbaba; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; text-align: center; }
+  .etiqueta b { color: #4FD8C4; font-weight: 600; }
+  .etiqueta span { color: #6b7370; }
+</style>
+</head>
+<body>
+<div class="hoja" id="hoja"></div>
+
+<script src="taly-arte.js"></script>
+<script>
+const casillas = [
+  { pose: "reposo",      nota: "reposo · la pose por defecto" },
+  { pose: "parpadeo",    nota: "parpadeo · ojo cerrado" },
+  { pose: "mira-atras",  nota: "mira atrás · curiosidad" },
+  { pose: "mira-abajo",  nota: "mira abajo · pensando" },
+  { pose: "canto",       nota: "canto · pico abierto" },
+  { pose: "contento",    nota: "contento · ojo entornado y ala arriba" },
+  { pose: "ala-arriba",  nota: "ala arriba · fotograma de aleteo" },
+  { pose: "ala-abajo",   nota: "ala abajo · fotograma de aleteo" },
+  { pose: "dormido",     nota: "dormido · sin citas" },
+  { pose: "busca",       nota: "busca · mientras carga" },
+  { pose: "reposo", objetos: ["tarjeta"], nota: "objeto · tarjeta de cita" },
+  { pose: "canto",  objetos: ["notas"],   nota: "objeto · notas del canto" },
+  { pose: "contento", objetos: ["chispas"], nota: "objeto · chispas de celebración" },
+  { pose: "dormido", objetos: ["sueno"],  nota: "objeto · burbujas de sueño" },
+  { pose: "contento", objetos: ["tarjeta", "chispas"], nota: "combinado · cita confirmada" },
+];
+
+const hoja = document.getElementById("hoja");
+casillas.forEach(c => {
+  const casilla = document.createElement("div");
+  casilla.className = "casilla";
+  const lienzo = document.createElement("div");
+  casilla.appendChild(lienzo);
+  const et = document.createElement("div");
+  et.className = "etiqueta";
+  et.innerHTML = c.nota.replace(/^([^·]+)·/, "<b>$1</b>·<span>") + "</span>";
+  casilla.appendChild(et);
+  hoja.appendChild(casilla);
+
+  const taly = TALY.crear(lienzo, { tamano: 24, brillo: true });
+  taly.dibujar(c.pose, 0, c.objetos);
+});
+</script>
+</body>
+</html>

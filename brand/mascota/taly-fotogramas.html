@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Taly · fotogramas de cada escena</title>
+<link rel="stylesheet" href="taly.css">
+<!-- Despliega cada escena fotograma a fotograma, para poder revisar la
+     animación sin verla en movimiento. Si el primer y el último fotograma
+     no encajan, el bucle daría un salto visible. -->
+<style>
+  html, body { margin: 0; background: #121413; font-family: system-ui, sans-serif; }
+  .tira { width: 1340px; }
+  .escena { border-bottom: 1px solid #1c201f; padding: 14px 0 18px; }
+  .titulo {
+    color: #4FD8C4; font-size: 12px; font-weight: 600;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    padding: 0 0 10px 20px;
+  }
+  .titulo span { color: #5f6664; font-weight: 400; letter-spacing: 0.06em; text-transform: none; }
+  .fotogramas { display: flex; align-items: flex-end; padding: 0 12px; }
+  .fotograma { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 132px; }
+  .ms { color: #6b7370; font-size: 10px; letter-spacing: 0.08em; }
+  .lienzo { height: 132px; display: flex; align-items: center; justify-content: center; }
+</style>
+</head>
+<body>
+<div class="tira" id="tira"></div>
+
+<script src="taly-arte.js"></script>
+<script>
+const orden = ["hero", "loader", "vacio", "confirmacion", "recordatorio", "mensajero"];
+const tira = document.getElementById("tira");
+
+orden.forEach(nombre => {
+  const escena = TALY.ESCENAS[nombre];
+  const caja = document.createElement("div");
+  caja.className = "escena";
+
+  const titulo = document.createElement("div");
+  titulo.className = "titulo";
+  titulo.innerHTML = nombre + " <span>· " + escena.length + " fotogramas · bucle de " +
+    TALY.duracion(nombre) + " ms</span>";
+  caja.appendChild(titulo);
+
+  const fila = document.createElement("div");
+  fila.className = "fotogramas";
+  escena.forEach((paso, i) => {
+    const f = document.createElement("div");
+    f.className = "fotograma";
+    const lienzo = document.createElement("div");
+    lienzo.className = "lienzo";
+    f.appendChild(lienzo);
+    const ms = document.createElement("div");
+    ms.className = "ms";
+    ms.textContent = paso.ms + " ms";
+    f.appendChild(ms);
+    fila.appendChild(f);
+
+    const taly = TALY.crear(lienzo, { tamano: 13, brillo: true });
+    taly.fotograma(nombre, i);
+  });
+  caja.appendChild(fila);
+  tira.appendChild(caja);
+});
+</script>
+</body>
+</html>

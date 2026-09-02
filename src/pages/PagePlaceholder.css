@@ -1,5 +1,17 @@
 .page-placeholder {
-  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  min-height: calc(100dvh - 150px);
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.page-placeholder .taly-momento {
+  width: 100%;
 }
 
 .page-placeholder h1 {

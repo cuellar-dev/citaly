@@ -108,10 +108,32 @@
 
 .reservar-local--error {
   padding: 20px 16px;
+  min-height: calc(100dvh - 150px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.reservar-local--exito {
+  padding: 20px 16px;
+  min-height: calc(100dvh - 150px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }
 
 .reservar-local--error .reservar-local-titulo {
   margin-top: 20px;
+}
+
+.reservar-local--error .taly-momento,
+.reservar-local--exito .taly-momento {
+  width: 100%;
+  min-height: 0;
 }
 .reservar-local-mapa-div-container{
   display: flex;

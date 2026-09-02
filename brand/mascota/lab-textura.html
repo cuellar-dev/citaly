@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Taly · ronda 5, ala y tejido</title>
+<!-- =====================================================================
+     Taly · mascota de Citaly — ronda 5
+     Lo aprendido en la ronda 4:
+       · La trama (░ ▒) NO puede ir sobre celdas de borde (▐ ▙ ▜ ▛ ▄ ▀):
+         rellena la celda entera y se desborda de la silueta, dejando un
+         halo de puntos sucio. Solo sobre celdas de bloque lleno █.
+       · Mezclar ▄/▀ dentro del ala la parte en dos trozos distintos.
+         El ala tiene que ser un único carácter uniforme, y su forma se
+         define eligiendo qué celdas ocupa.
+     Aquí se decide: tamaño del ala × tejido interior sí o no.
+====================================================================== -->
+<style>
+  :root {
+    --menta:         #4FD8C4;
+    --menta-osc:     #2AA795;
+    --menta-clara:   #BDF4E8;
+    --tejido-cuerpo: #2FBDA8;
+    --tejido-barriga:#8FE0D0;
+    --mostaza:       #FFD166;
+    --ojo:           #0E2E2A;
+  }
+  html, body { margin: 0; background: #121413; }
+  .sheet {
+    width: 1240px;
+    height: 660px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: 330px 330px;
+    font-family: system-ui, sans-serif;
+  }
+  .cell { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .oscuro { background: radial-gradient(circle at 50% 40%, #1E2221 0%, #121413 74%); }
+  .claro  { background: #F2EBDD; }
+  .fig { position: relative; display: inline-block; }
+  .capa {
+    white-space: pre;
+    font-family: Consolas, "Cascadia Mono", "Courier New", monospace;
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: 0;
+    user-select: none;
+    margin: 0;
+  }
+  .fig .capa + .capa { position: absolute; top: 0; left: 0; }
+  .cap { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; text-align: center; }
+  .oscuro .cap { color: #bdbaba; }
+  .oscuro .cap b { color: var(--menta); font-weight: 600; }
+  .claro .cap { color: #6b6257; }
+  .claro .cap b { color: #16847a; font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="sheet" id="sheet"></div>
+
+<script>
+const COL = {
+  b: "var(--menta)",
+  d: "var(--menta-osc)",
+  l: "var(--menta-clara)",
+  tc: "var(--tejido-cuerpo)",
+  tb: "var(--tejido-barriga)",
+  m: "var(--mostaza)",
+  o: "var(--ojo)",
+};
+
+const ROWS = [
+  "  ▗▄       ",
+  "  ▟████▙   ",
+  "  ▐█████▙▖ ",
+  " ▐███████▌ ",
+  " ▐███████▌ ",
+  "  ▜█████▛  ",
+  "    ▀ ▀    ",
+];
+
+const COLOR = {
+  m: [[0,2],[0,3], [2,8],[2,9], [6,4],[6,6]],
+  l: [[4,5],[4,6],[4,7],[4,8], [5,5],[5,6],[5,7]],
+};
+
+// Celdas que en la base son bloque lleno █. Solo estas admiten trama.
+const LLENAS = {
+  1: [3,4,5,6],
+  2: [3,4,5,6,7],
+  3: [2,3,4,5,6,7,8],
+  4: [2,3,4,5,6,7,8],
+  5: [3,4,5,6,7],
+};
+
+const OJO = { p:[2,6], ch:"▀", c:"o" };
+const BORDE_BARRIGA = [[3,6],[3,7],[3,8]];
+const BARRIGA = [[4,5],[4,6],[4,7],[4,8],[5,5],[5,6],[5,7]];
+
+const ALA_CHICA  = [[3,2],[3,3],[4,2]];
+const ALA_GRANDE = [[3,2],[3,3],[3,4],[4,2],[4,3]];
+
+const esIgual = (a, b) => a[0] === b[0] && a[1] === b[1];
+const contiene = (lista, p) => lista.some(x => esIgual(x, p));
+
+function tejido(ala) {
+  const out = [];
+  for (const f in LLENAS) {
+    for (const c of LLENAS[f]) {
+      const p = [Number(f), c];
+      if (esIgual(p, OJO.p)) continue;              // el ojo manda
+      if (contiene(ala, p)) continue;               // el ala ya tiene su trama
+      if (contiene(BORDE_BARRIGA, p)) continue;     // ahí va el borde redondeado
+      out.push({ p, ch: "░", c: contiene(BARRIGA, p) ? "tb" : "tc" });
+    }
+  }
+  return out;
+}
+
+function detalle(ala, conTejido) {
+  const d = [OJO];
+  if (conTejido) d.push(...tejido(ala));
+  d.push(...BORDE_BARRIGA.map(p => ({ p, ch: "▄", c: "l" })));
+  d.push(...ala.map(p => ({ p, ch: "▒", c: "d" })));
+  return d;
+}
+
+const variantes = [
+  { id: "Y1", nombre: "Ala chica",  nota: "sin tejido, lo más limpio",      detalle: detalle(ALA_CHICA, false) },
+  { id: "Y2", nombre: "Ala grande", nota: "sin tejido",                     detalle: detalle(ALA_GRANDE, false) },
+  { id: "Y3", nombre: "Ala chica + tejido",  nota: "trama en el interior",  detalle: detalle(ALA_CHICA, true) },
+  { id: "Y4", nombre: "Ala grande + tejido", nota: "trama en el interior",  detalle: detalle(ALA_GRANDE, true) },
+];
+
+// ---- pintor ---------------------------------------------------------------
+function pintarBase(rows, colorMap) {
+  const mapa = {};
+  for (const clave in colorMap) for (const [f, c] of colorMap[clave]) mapa[f + "," + c] = clave;
+  return rows.map((fila, f) => {
+    let out = "";
+    for (let c = 0; c < fila.length; c++) {
+      const ch = fila[c];
+      if (ch === " ") { out += " "; continue; }
+      out += '<span style="color:' + COL[mapa[f + "," + c] || "b"] + '">' + ch + "</span>";
+    }
+    return out;
+  }).join("\n");
+}
+
+function capasDetalle(rows, det) {
+  const alto = rows.length, ancho = rows[0].length;
+  const grupos = [];
+  for (const d of det) {
+    let grupo = grupos.find(g => !g.some(x => esIgual(x.p, d.p)));
+    if (!grupo) { grupo = []; grupos.push(grupo); }
+    grupo.push(d);
+  }
+  return grupos.map(grupo => {
+    const rejilla = Array.from({ length: alto }, () => Array(ancho).fill(null));
+    for (const d of grupo) rejilla[d.p[0]][d.p[1]] = d;
+    return rejilla.map(fila => fila.map(d =>
+      d ? '<span style="color:' + COL[d.c] + '">' + d.ch + "</span>" : " "
+    ).join("")).join("\n");
+  });
+}
+
+function figura(v, glow) {
+  const fig = document.createElement("div");
+  fig.className = "fig";
+  const b = document.createElement("pre");
+  b.className = "capa";
+  if (glow) b.style.textShadow = "0 0 24px rgba(79,216,196,0.26)";
+  b.innerHTML = pintarBase(ROWS, COLOR);
+  fig.appendChild(b);
+  for (const html of capasDetalle(ROWS, v.detalle)) {
+    const capa = document.createElement("pre");
+    capa.className = "capa";
+    capa.innerHTML = html;
+    fig.appendChild(capa);
+  }
+  return fig;
+}
+
+const sheet = document.getElementById("sheet");
+[["oscuro", true], ["claro", false]].forEach(([clase, glow]) => {
+  variantes.forEach(v => {
+    const div = document.createElement("div");
+    div.className = "cell " + clase;
+    div.appendChild(figura(v, glow));
+    const cap = document.createElement("div");
+    cap.className = "cap";
+    cap.innerHTML = "<b>" + v.id + "</b> · " + v.nombre + "<br>" + v.nota;
+    div.appendChild(cap);
+    sheet.appendChild(div);
+  });
+});
+</script>
+</body>
+</html>

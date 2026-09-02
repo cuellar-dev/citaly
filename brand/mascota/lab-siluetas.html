@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Taly · laboratorio de siluetas</title>
+<!-- =====================================================================
+     Taly · mascota de Citaly — exploración de siluetas
+     Medio: solo Unicode Block Elements (U+2580–U+259F)
+     Objetivo: comparar 6 cuerpos de pajarito y elegir uno.
+====================================================================== -->
+<style>
+  :root {
+    --menta:        #4FD8C4;   /* cuerpo                    */
+    --menta-clara:  #A9EFE2;   /* barriga                   */
+    --mostaza:      #FFD166;   /* pico, copete, patas       */
+    --bg-core:      #1E2221;
+    --bg-edge:      #121413;
+  }
+  html, body { margin: 0; background: var(--bg-edge); }
+  .sheet {
+    width: 1200px;
+    height: 880px;
+    background: radial-gradient(circle at 50% 34%, var(--bg-core) 0%, var(--bg-edge) 72%);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 330px 330px 220px;
+    font-family: system-ui, sans-serif;
+  }
+  .cell {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 20px;
+  }
+  .art {
+    white-space: pre;
+    font-family: Consolas, "Cascadia Mono", "Courier New", monospace;
+    font-size: 44px;
+    line-height: 1;
+    letter-spacing: 0;
+    user-select: none;
+    text-shadow: 0 0 26px rgba(79, 216, 196, 0.30);
+  }
+  .cap { color: #bdbaba; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; }
+  .cap b { color: var(--menta); font-weight: 600; }
+  .strip {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; justify-content: space-around;
+    border-top: 1px solid #252926;
+  }
+  .strip .art { font-size: 15px; text-shadow: none; }
+  .strip .cap { font-size: 10px; }
+  .strip .cell { gap: 10px; }
+  .stripTitle {
+    position: absolute; margin-top: -190px; width: 1200px; text-align: center;
+    color: #5f6664; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="sheet" id="sheet"></div>
+
+<script>
+// ---- paleta por clave de celda -------------------------------------------
+const COL = {
+  b: "var(--menta)",        // cuerpo
+  l: "var(--menta-clara)",  // barriga
+  m: "var(--mostaza)",      // pico / copete / patas
+};
+
+// ---- candidatos -----------------------------------------------------------
+// Cada candidato: filas de igual longitud + celdas especiales [fila, columna].
+// Todo lo no marcado es cuerpo (menta).
+const candidatos = [
+  {
+    id: "A",
+    nombre: "Perfil gordito",
+    nota: "pico lateral, base redonda",
+    rows: [
+      "    ▄    ",
+      "  ▄███▄  ",
+      " ▐█ ██▙▖ ",
+      " ▐█▒▒▒█▌ ",
+      "  ▀▀▀▀▀  ",
+      "   ▘ ▝   ",
+    ],
+    special: {
+      m: [[0,4], [2,6],[2,7], [5,3],[5,5]],
+      l: [[3,3],[3,4],[3,5]],
+    },
+  },
+  {
+    id: "B",
+    nombre: "Frontal, dos ojos",
+    nota: "pico central, simétrico",
+    rows: [
+      "    ▖    ",
+      "  ▄███▄  ",
+      " ▐█ █ █▌ ",
+      " ▐█▒▄▒█▌ ",
+      "  ▀▀▀▀▀  ",
+      "   ▘ ▝   ",
+    ],
+    special: {
+      m: [[0,4], [3,4], [5,3],[5,5]],
+      l: [[3,3],[3,5]],
+    },
+  },
+  {
+    id: "C",
+    nombre: "Ancho y bajo",
+    nota: "el más gordito de todos",
+    rows: [
+      "     ▄     ",
+      "   ▄███▄   ",
+      "  ▐█ ███▙▖ ",
+      "  ▐█▒▒▒▒█▌ ",
+      "   ▀▀▀▀▀▀  ",
+      "    ▘ ▝    ",
+    ],
+    special: {
+      m: [[0,5], [2,8],[2,9], [5,4],[5,6]],
+      l: [[3,4],[3,5],[3,6],[3,7]],
+    },
+  },
+  {
+    id: "D",
+    nombre: "Con cola",
+    nota: "cola texturada a la izquierda",
+    rows: [
+      "      ▄   ",
+      "    ▄███▄ ",
+      " ▚ ▐█ ██▙▖",
+      " ▚▚▐█▒▒▒█▌",
+      "    ▀▀▀▀▀ ",
+      "     ▘ ▝  ",
+    ],
+    special: {
+      m: [[0,6], [2,8],[2,9], [5,5],[5,7]],
+      l: [[3,5],[3,6],[3,7]],
+    },
+  },
+  {
+    id: "E",
+    nombre: "Compacto",
+    nota: "mínimo, pensado para iconos",
+    rows: [
+      "   ▄   ",
+      " ▄███▄ ",
+      "▐█ ██▙▖",
+      "▐█▒▒▒█▌",
+      " ▀▀▀▀▀ ",
+      "  ▘ ▝  ",
+    ],
+    special: {
+      m: [[0,3], [2,5],[2,6], [5,2],[5,4]],
+      l: [[3,2],[3,3],[3,4]],
+    },
+  },
+  {
+    id: "F",
+    nombre: "Esquinas cosidas",
+    nota: "▟▙▜▛ para redondear las 4 esquinas",
+    rows: [
+      "    ▄    ",
+      "  ▟███▙  ",
+      " ▐█ ███▙▖",
+      " ▐█▒▒▒▒█▌",
+      "  ▜███▛  ",
+      "   ▘ ▝   ",
+    ],
+    special: {
+      m: [[0,4], [2,7],[2,8], [5,3],[5,5]],
+      l: [[3,3],[3,4],[3,5],[3,6]],
+    },
+  },
+];
+
+// ---- pintor ---------------------------------------------------------------
+function pintar(rows, special) {
+  const mapa = {};
+  for (const clave in special) {
+    for (const [f, c] of special[clave]) mapa[f + "," + c] = clave;
+  }
+  return rows.map((fila, f) => {
+    let out = "";
+    for (let c = 0; c < fila.length; c++) {
+      const ch = fila[c];
+      if (ch === " ") { out += " "; continue; }
+      const clave = mapa[f + "," + c] || "b";
+      out += '<span style="color:' + COL[clave] + '">' + ch + "</span>";
+    }
+    return out;
+  }).join("\n");
+}
+
+function celda(cand, conNota) {
+  const div = document.createElement("div");
+  div.className = "cell";
+  const art = document.createElement("div");
+  art.className = "art";
+  art.innerHTML = pintar(cand.rows, cand.special);
+  const cap = document.createElement("div");
+  cap.className = "cap";
+  cap.innerHTML = "<b>" + cand.id + "</b> · " + cand.nombre + (conNota ? " · " + cand.nota : "");
+  div.appendChild(art);
+  div.appendChild(cap);
+  return div;
+}
+
+const sheet = document.getElementById("sheet");
+candidatos.forEach(c => sheet.appendChild(celda(c, true)));
+
+// tira de legibilidad: los mismos 6 a tamaño diminuto (prueba de entornar los ojos)
+const strip = document.createElement("div");
+strip.className = "strip";
+const titulo = document.createElement("div");
+titulo.className = "stripTitle";
+titulo.textContent = "prueba de tamaño pequeño · ¿sigue leyéndose como pájaro?";
+strip.appendChild(titulo);
+candidatos.forEach(c => strip.appendChild(celda(c, false)));
+sheet.appendChild(strip);
+</script>
+</body>
+</html>
