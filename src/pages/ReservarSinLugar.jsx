@@ -199,6 +199,7 @@ function ReservarSinLugar() {
         : { id: profesionalSeleccionado, name: null },
       precioTotal,
       demoraMinutos: demoraTotalMinutos,
+      estadoReserva: 0,
       creadaEn: new Date().toISOString(),
     })
 

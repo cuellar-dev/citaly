@@ -52,6 +52,7 @@
   letter-spacing: 1px;
   text-shadow: 0 0 1px var(--primary-color-strong);
   margin: 0;
+  text-transform: uppercase;
 }
 
 .cita-card-icon-container {

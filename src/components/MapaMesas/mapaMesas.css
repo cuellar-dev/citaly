@@ -3,6 +3,7 @@
   position: relative;
   width: 100%;
   height: 200px;
+  box-sizing: border-box;
   background-color: var(--background-color-secondary);
   border-radius: 12px;
   padding: 10px;
@@ -10,7 +11,8 @@
 
 .mapa-mesas-container--card {
   height: 160px;
-  margin: 8px 10px 4px;
+  width: 100%;
+  margin: 8px 0 4px;
 }
 
 .mapa-mesas-viewport {

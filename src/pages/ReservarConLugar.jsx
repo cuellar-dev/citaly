@@ -204,6 +204,7 @@ function handleConfirmarReserva(e) {
     },
     precioReserva: mesaSeleccionada.precio ?? 0,
     consumoMinimo: mesaSeleccionada.consumoMinimo ?? null,
+    estadoReserva: 0,
     creadaEn: new Date().toISOString(),
   })
 

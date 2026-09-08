@@ -45,7 +45,7 @@ export function propsDesdeCita(cita) {
     telefono: local?.telefono || '',
     fechaTexto: formatearFechaCita(cita),
     estadoTexto: textoEstadoCita(cita),
-    estadoReserva: 'CONFIRMADO',
+    estadoReserva: cita.estadoReserva ?? 0,
   }
 
   if (cita.tipo === 'con-lugar') {

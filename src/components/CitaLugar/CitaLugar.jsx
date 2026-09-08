@@ -10,7 +10,7 @@ function CitaLugar({
   wasa,
   telefono,
   coste,
-  estadoReserva = 'CONFIRMADO',
+  estadoReserva = 0, // 0: Pendiente, 1: Confirmado, 2: Cancelado
   mesaId,
   mesaCodigo,
   mesaUbicacion,
@@ -24,15 +24,20 @@ function CitaLugar({
     mesaId != null
       ? MESAS_MAPA.find((m) => m.id === mesaId) ?? null
       : MESAS_MAPA.find((m) => m.codigo === mesaCodigo) ?? null
-
+  const estadoReservaTexto = estadoReserva === 0 ? 'Pendiente' : estadoReserva === 1 ? 'Confirmado' : estadoReserva === 2 ? 'Pendiente su confirmacion' : 'Cancelado'
+  const estadoReservaColor = estadoReserva === 0 || estadoReserva === 2
+    ? 'var(--yellow-color)'
+    : estadoReserva === 1
+      ? 'var(--primary-color)'
+      : 'var(--close-color)'
   return (
     <article className="cita-card cita-lugar">
       <div className="cita-card-header">
         <div className="cita-card-header-princ">
           <h2 className="cita-card-lugar">{lugar}</h2>
           <div className="cita-card-state-container">
-            <div className="cita-card-state-cosi" />
-            <p className="cita-card-state">{estadoReserva}</p>
+            <div className="cita-card-state-cosi" style={{ backgroundColor: estadoReservaColor, boxShadow: `0 0 2px ${estadoReservaColor}` }} />
+            <p className="cita-card-state" style={{ color: estadoReservaColor, textShadow: `0 0 1px ${estadoReservaColor}` }}>{estadoReservaTexto}</p>
           </div>
         </div>
         <div className="cita-card-icon-container">
