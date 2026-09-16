@@ -183,7 +183,7 @@ function ReservarSinLugar() {
 
     agregarCita({
       id: crypto.randomUUID(),
-      tipo: 'sin-lugar',
+      esLugar: false,
       localId: id,
       localNombre: local.localName,
       fecha: format(fechaReserva, 'yyyy-MM-dd'),

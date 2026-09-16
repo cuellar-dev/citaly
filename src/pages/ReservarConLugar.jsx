@@ -191,7 +191,7 @@ function handleConfirmarReserva(e) {
 
   agregarCita({
     id: crypto.randomUUID(),
-    tipo: 'con-lugar',
+    esLugar: true,
     localId: id,
     localNombre: local.localName,
     fecha: format(fechaReserva, 'yyyy-MM-dd'),

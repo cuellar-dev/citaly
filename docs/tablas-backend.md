@@ -271,7 +271,7 @@ Opcional: `mapa_svg_url` en `locales` si cada restaurante tiene otro plano.
 | `id` | uuid PK | `crypto.randomUUID()` |
 | `usuario_id` | FK → usuarios | Dueño de “Mis citas” |
 | `local_id` | FK → locales | |
-| `tipo` | enum: `con-lugar` / `sin-lugar` | Qué tarjeta pintar |
+| `es_lugar` | boolean | Igual que `local.lugar`: mesa vs servicios |
 | `fecha` | date | `yyyy-MM-dd` |
 | `horario` | time | `HH:mm` |
 | `estado_reserva` | smallint | 0–3 como arriba |
@@ -435,7 +435,7 @@ Si un usuario no aparece aquí, no entra a `/negocio` (o ve vacío).
 | `profesionales[]` + `servicios: []` | `profesionales` + `profesional_servicios` |
 | `comentarios[]` | `opiniones` |
 | `MESAS_MAPA` | `mesas` (por `local_id`) |
-| `agregarCita({ tipo: con-lugar })` | `citas` + `mesa_id` |
-| `agregarCita({ tipo: sin-lugar, servicios[] })` | `citas` + `cita_servicios` |
+| `agregarCita({ esLugar: true })` | `citas` + `mesa_id` |
+| `agregarCita({ esLugar: false, servicios[] })` | `citas` + `cita_servicios` |
 | `localStorage citaly_citas` | deja de ser fuente de verdad; cache offline |
 | `citasVista.js` | no es tabla; sigue siendo traductor UI |

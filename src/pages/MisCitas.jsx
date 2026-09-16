@@ -62,7 +62,7 @@ function MisCitas() {
       ) : (
         citasVista.map((cita) => {
           const props = propsDesdeCita(cita)
-          if (props.tipo === 'con-lugar') {
+          if (props.esLugar) {
             return <CitaLugar key={cita.id} {...props} />
           }
           return <CitaServicio key={cita.id} {...props} />

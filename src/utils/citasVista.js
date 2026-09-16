@@ -37,10 +37,18 @@ function digitosWhatsApp(valor) {
   return String(valor || '').replace(/\D/g, '')
 }
 
+/** Mesa vs servicio. Acepta citas nuevas (esLugar) y las viejas (tipo texto). */
+export function esCitaDeLugar(cita) {
+  if (typeof cita.esLugar === 'boolean') return cita.esLugar
+  return cita.tipo === 'con-lugar'
+}
+
 export function propsDesdeCita(cita) {
   const local = getLocalById(cita.localId)
+  const esLugar = esCitaDeLugar(cita)
   const base = {
     lugar: cita.localNombre || local?.localName || 'Local',
+    esLugar,
     wasa: digitosWhatsApp(local?.whatsapp),
     telefono: local?.telefono || '',
     fechaTexto: formatearFechaCita(cita),
@@ -48,11 +56,10 @@ export function propsDesdeCita(cita) {
     estadoReserva: cita.estadoReserva ?? 0,
   }
 
-  if (cita.tipo === 'con-lugar') {
+  if (esLugar) {
     const precio = cita.precioReserva ?? 0
     return {
       ...base,
-      tipo: 'con-lugar',
       mesaId: cita.mesa?.id,
       mesaCodigo: cita.mesa?.codigo,
       mesaUbicacion: cita.mesa?.ubicacion,
@@ -69,7 +76,6 @@ export function propsDesdeCita(cita) {
 
   return {
     ...base,
-    tipo: 'sin-lugar',
     fecha: cita.fecha,
     hora: cita.horario,
     profesional: cita.profesional?.name || 'Por asignar',

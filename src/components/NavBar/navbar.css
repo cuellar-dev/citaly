@@ -2,10 +2,24 @@
   box-sizing: border-box;
 }
 .navbar{
+    /* Un color por seccion. Cambia solo estos cuatro para repintar toda la barra. */
+    --nav-color-descubre: var(--primary-color);
+    --nav-color-citas: var(--yellow-color);
+    --nav-color-negocio: #ef476f;
+    --nav-color-perfil: var(--fonts-color-primary);
+
+    --nav-circulo: 42px;
+
     width: 100%;
-    background-color: var(--background-color-secondary);
+    background:
+      linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--background-color-secondary) 92%, white 8%),
+        var(--background-color-secondary)
+      );
     height: fit-content;
     border-radius: 30px 30px 0 0 ;
+    border-top: 1px solid rgb(255 255 255 / 0.06);
     position: sticky;
     z-index: 99999;
     bottom: 0;
@@ -17,12 +31,103 @@
 }
 .navbar-logos-container{
     width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
+    display: grid;
+    grid-template-columns: repeat(var(--nav-total, 4), 1fr);
+    position: relative;
     height: 100%;
     align-items: center;
 }
+
+/* Circulo que se desliza hasta la seccion activa */
+.navbar-indicador{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / var(--nav-total, 4));
+  height: var(--nav-circulo);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: 0;
+  transform: translateX(calc(var(--nav-activo, 0) * 100%));
+  will-change: transform;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.25s ease;
+}
+.navbar-indicador::before{
+  content: '';
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  width: 180px;
+  height: 88px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--nav-color-activo) 13%, transparent) 0%,
+    color-mix(in srgb, var(--nav-color-activo) 6%, transparent) 42%,
+    transparent 76%
+  );
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+.navbar-indicador--oculto{
+  opacity: 0;
+}
+.navbar-indicador-circulo{
+  position: relative;
+  overflow: hidden;
+  width: var(--nav-circulo);
+  height: var(--nav-circulo);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 31% 20%,
+      color-mix(in srgb, var(--nav-color-activo) 70%, white 30%) 0%,
+      color-mix(in srgb, var(--nav-color-activo) 35%, transparent) 32%,
+      color-mix(in srgb, var(--nav-color-activo) 16%, transparent) 72%,
+      color-mix(in srgb, var(--nav-color-activo) 9%, transparent) 100%
+    );
+  border: 1px solid color-mix(in srgb, var(--nav-color-activo) 62%, white 38%);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 0.34),
+    inset 0 -5px 9px color-mix(in srgb, var(--nav-color-activo) 42%, black 58%),
+    0 3px 5px rgb(0 0 0 / 0.35),
+    0 0 16px color-mix(in srgb, var(--nav-color-activo) 28%, transparent);
+  transform: translateZ(0);
+  transition:
+    background 0.4s ease,
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+.navbar-indicador-circulo::before{
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  width: 19px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    rgb(255 255 255 / 0.58) 0%,
+    rgb(255 255 255 / 0) 72%
+  );
+  filter: blur(1px);
+  transform: rotate(-24deg);
+}
+.navbar-indicador-circulo::after{
+  content: '';
+  position: absolute;
+  right: 7px;
+  bottom: 4px;
+  left: 7px;
+  height: 5px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--nav-color-activo) 36%, transparent);
+  filter: blur(3px);
+}
+
 .navbar-logos-container-logo{
   display: flex;
   flex-direction: column;
@@ -32,12 +137,44 @@
   color: var(--fonts-color-primary-weak);
   text-decoration: none;
   cursor: pointer;
-  transition: color 0.4s ease;
+  position: relative;
+  z-index: 1;
+  transition: color 0.35s ease, transform 0.2s ease;
 }
 .navbar-logos-container-logo.active{
-  color: var(--primary-color);
+  color: var(--nav-color);
 }
-.navbar-logos-container-logo svg{
+.navbar-logos-container-logo:focus-visible{
+  outline: 2px solid var(--nav-color);
+  outline-offset: -3px;
+  border-radius: 14px;
+}
+
+/* Circulo propio de cada icono: siempre visible, muy tenue */
+.navbar-icono{
+  width: var(--nav-circulo);
+  height: var(--nav-circulo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--nav-color) 7%, transparent);
+  transition:
+    background-color 0.35s ease,
+    transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.35s ease;
+}
+.navbar-logos-container-logo.active .navbar-icono{
+  background-color: transparent;
+  filter: drop-shadow(0 1px 1px color-mix(in srgb, var(--nav-color) 38%, black 62%));
+}
+.navbar-logos-container-logo:active .navbar-icono{
+  transform: translateY(1px) scale(0.88);
+  filter: brightness(0.92);
+}
+.navbar-icono svg{
+  width: 22px;
+  height: 22px;
   transition: color 0.4s ease;
 }
 .navbar-logos-container-logo-text{
@@ -48,6 +185,11 @@
   transition: color 0.4s ease;
   color: inherit;
 }
+.navbar-logos-container-logo.active .navbar-logos-container-logo-text{
+  text-shadow: 0 1px 8px color-mix(in srgb, var(--nav-color) 38%, transparent);
+}
+
+/* Animaciones al pulsar (se repiten remontando el span desde el JSX) */
 .logos-brujula path{
   transform-origin: 50% 50%;
   animation: animacion-brujula 3s ease-out forwards;
@@ -66,6 +208,49 @@
     transform: rotate(1080deg);
   }
 }
-.navbar-icon-wrap{
-  height: 22px;
+
+.navbar-icono--citas svg{
+  animation: animacion-citas 0.6s cubic-bezier(0.34, 1.5, 0.64, 1);
+}
+@keyframes animacion-citas {
+  0%{ transform: translateY(0) scale(1); }
+  30%{ transform: translateY(-6px) scale(1.12); }
+  55%{ transform: translateY(0) scale(0.94); }
+  78%{ transform: translateY(-2px) scale(1.04); }
+  100%{ transform: translateY(0) scale(1); }
+}
+
+.navbar-icono--negocio svg{
+  transform-origin: 50% 88%;
+  animation: animacion-negocio 0.75s ease-out;
+}
+@keyframes animacion-negocio {
+  0%, 100%{ transform: rotate(0deg); }
+  20%{ transform: rotate(-13deg); }
+  45%{ transform: rotate(9deg); }
+  70%{ transform: rotate(-5deg); }
+  88%{ transform: rotate(2deg); }
+}
+
+.navbar-icono--perfil svg{
+  animation: animacion-perfil 0.55s cubic-bezier(0.34, 1.6, 0.64, 1);
+}
+@keyframes animacion-perfil {
+  0%{ transform: scale(1); }
+  35%{ transform: scale(1.25); }
+  62%{ transform: scale(0.92); }
+  100%{ transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar-indicador,
+  .navbar-icono{
+    transition-duration: 0.01ms;
+  }
+  .logos-brujula path,
+  .navbar-icono--citas svg,
+  .navbar-icono--negocio svg,
+  .navbar-icono--perfil svg{
+    animation: none;
+  }
 }
