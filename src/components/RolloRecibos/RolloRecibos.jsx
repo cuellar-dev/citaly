@@ -12,6 +12,13 @@ const INCLINACION = 7
 const ALTO_ESTIMADO = 560
 /* Desplazamiento mínimo del dedo para contar como swipe. */
 const UMBRAL_SWIPE = 42
+/* Paralaje del fondo: la capa lejana se mueve poco, la cercana más. Los patrones son
+   periódicos (26px y 96px), así que el desplazamiento se envuelve y nunca se agota. */
+const CAPAS_FONDO = [
+  { clave: 'lejos', factor: 0.14, tile: 26 },
+  { clave: 'cerca', factor: 0.3, tile: 96 },
+]
+const MOVIMIENTO = { duration: 0.85, ease: 'back.out(1.35)' }
 
 /**
  * Rollo continuo de recibos: todas las citas en UNA tira de papel que sale de la
@@ -35,8 +42,10 @@ export default function RolloRecibos({ citas, renderCita }) {
   const visorRef = useRef(null)
   const camaraRef = useRef(null)
   const tiraRef = useRef(null)
+  const fondoRef = useRef([])
   const segmentosRef = useRef([])
   const primeraVezRef = useRef(true)
+  const destinoPrevRef = useRef(null)
   const toqueRef = useRef(null)
   const ultimaRuedaRef = useRef(0)
 
@@ -102,17 +111,44 @@ export default function RolloRecibos({ citas, renderCita }) {
       const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
       // Encuadre base de la cámara. Se fija siempre: el revert de useGSAP (StrictMode) lo borra.
-      gsap.set(camara, { xPercent: -50, rotationX: INCLINACION, transformOrigin: '50% 100%' })
+      gsap.set(camara, { rotationX: INCLINACION, transformOrigin: '50% 100%' })
+
+      // Las capas del fondo acompañan al papel a menor velocidad (paralaje = cámara real).
+      // wrap + unitize en modifiers: el valor se envuelve cada frame dentro de un tile del patrón.
+      const capas = CAPAS_FONDO.map((capa, k) => {
+        const envolver = gsap.utils.wrap(-capa.tile, 0)
+        return {
+          el: fondoRef.current[k],
+          y: (d) => d * capa.factor,
+          envolver,
+          envolverPx: gsap.utils.unitize(envolver, 'px'),
+        }
+      }).filter((c) => c.el)
+
+      const colocarSinAnimar = () => {
+        const d = destino()
+        gsap.set(tira, { y: d })
+        capas.forEach((c) => gsap.set(c.el, { y: c.envolver(c.y(d)) }))
+        destinoPrevRef.current = d
+      }
 
       if (primeraVezRef.current || sinMovimiento) {
         primeraVezRef.current = false
-        gsap.set(tira, { y: destino() })
+        colocarSinAnimar()
       } else {
         // Un solo translateY con rebote sutil al asentarse (el rollo tiene peso),
-        // más un cabeceo mínimo del papel al arrancar, como si tirara de él la impresora.
+        // el fondo lo sigue con paralaje, y un cabeceo mínimo del papel al arrancar.
+        const d = destino()
+        const delta = d - (destinoPrevRef.current ?? d)
+        destinoPrevRef.current = d
         const tl = gsap.timeline({ defaults: { overwrite: 'auto' } })
-        tl.to(tira, { y: destino(), duration: 0.85, ease: 'back.out(1.35)' }, 0)
-          .to(camara, { rotationX: INCLINACION - 1.8, duration: 0.16, ease: 'power2.out' }, 0)
+        tl.to(tira, { y: d, ...MOVIMIENTO }, 0)
+        // Cada capa parte de su valor envuelto actual y recorre solo su parte del trayecto.
+        capas.forEach((c) => {
+          const desde = Number(gsap.getProperty(c.el, 'y')) || 0
+          tl.to(c.el, { y: desde + c.y(delta), ...MOVIMIENTO, modifiers: { y: c.envolverPx } }, 0)
+        })
+        tl.to(camara, { rotationX: INCLINACION - 1.8, duration: 0.16, ease: 'power2.out' }, 0)
           .to(camara, { rotationX: INCLINACION, duration: 0.75, ease: 'elastic.out(1, 0.55)' }, 0.16)
       }
 
@@ -123,8 +159,8 @@ export default function RolloRecibos({ citas, renderCita }) {
           primeraMedida = false
           return
         }
-        gsap.killTweensOf(tira)
-        gsap.set(tira, { y: destino() })
+        gsap.killTweensOf([tira, ...capas.map((c) => c.el)])
+        colocarSinAnimar()
         setActivoAlto(esAlto(indice))
       })
       observador.observe(visorRef.current)
@@ -184,74 +220,91 @@ export default function RolloRecibos({ citas, renderCita }) {
   }
 
   return (
-    <div
-      ref={escenaRef}
-      className="pos-escena"
-      data-indice={indice}
-      data-paso={paso}
-      tabIndex={0}
-      role="region"
-      aria-roledescription="rollo de recibos"
-      aria-label={`Recibos de citas, ${indice + 1} de ${total}. Flechas arriba y abajo para moverte.`}
-      onKeyDown={alTeclado}
-      onPointerDown={alPulsar}
-      onPointerUp={alSoltar}
-      onPointerCancel={() => (toqueRef.current = null)}
-      onWheel={alRueda}
-    >
-      <div className="pos-controles">
-        <button
-          type="button"
-          className="pos-flecha"
-          onClick={() => ir(-1)}
-          disabled={indice === 0}
-          aria-label="Cita anterior"
-        >
-          <ChevronUp size={22} strokeWidth={2.25} />
-        </button>
-        <p className="pos-contador" aria-live="polite" aria-atomic="true">
-          <span className="pos-contador-actual">{indice + 1}</span>
-          <span className="pos-contador-oculto"> de </span>
-          <span className="pos-contador-sep" aria-hidden="true" />
-          <span className="pos-contador-total">{total}</span>
-        </p>
-        <button
-          type="button"
-          className="pos-flecha"
-          onClick={() => ir(1)}
-          disabled={indice === total - 1 && (paso === 1 || !activoAlto)}
-          aria-label={paso === 0 && activoAlto ? 'Ver el resto del recibo' : 'Cita siguiente'}
-        >
-          <ChevronDown size={22} strokeWidth={2.25} />
-        </button>
+    <>
+      {/* Fondo de la sección que acompaña a la cámara con paralaje (hermano de la escena). */}
+      <div className="pos-fondo" aria-hidden="true">
+        {CAPAS_FONDO.map((capa, k) => (
+          <div
+            key={capa.clave}
+            ref={(el) => {
+              fondoRef.current[k] = el
+            }}
+            className={`pos-fondo-capa pos-fondo-capa--${capa.clave}`}
+          />
+        ))}
       </div>
-
-      <div ref={visorRef} className="pos-visor">
-        <div ref={camaraRef} className="rollo-camara">
-          <ol ref={tiraRef} className="rollo-tira">
-            {citas.map((cita, i) => {
-              const real = Math.abs(i - indice) <= 1
-              const activo = i === indice
-              return (
-                <li
-                  key={cita.id}
-                  ref={(el) => {
-                    segmentosRef.current[i] = el
-                  }}
-                  data-real={real ? '1' : '0'}
-                  className={`rollo-segmento${activo ? ' rollo-segmento--activo' : ''}`}
-                  style={real ? undefined : { height: alturas[cita.id] ?? ALTO_ESTIMADO }}
-                  aria-hidden={!activo}
-                  inert={!activo}
-                >
-                  {real ? renderCita(cita, i) : null}
-                </li>
-              )
-            })}
-          </ol>
+      <div
+        ref={escenaRef}
+        className="pos-escena"
+        data-indice={indice}
+        data-paso={paso}
+        tabIndex={0}
+        role="region"
+        aria-roledescription="rollo de recibos"
+        aria-label={`Recibos de citas, ${indice + 1} de ${total}. Flechas arriba y abajo para moverte.`}
+        onKeyDown={alTeclado}
+        onPointerDown={alPulsar}
+        onPointerUp={alSoltar}
+        onPointerCancel={() => (toqueRef.current = null)}
+        onWheel={alRueda}
+      >
+        <div className="pos-controles">
+          <button
+            type="button"
+            className="pos-flecha"
+            onClick={() => ir(-1)}
+            disabled={indice === 0}
+            aria-label="Cita anterior"
+          >
+            <ChevronUp size={22} strokeWidth={2.25} />
+          </button>
+          <p className="pos-contador" aria-live="polite" aria-atomic="true">
+            <span className="pos-contador-actual">{indice + 1}</span>
+            <span className="pos-contador-oculto"> de </span>
+            <span className="pos-contador-sep" aria-hidden="true" />
+            <span className="pos-contador-total">{total}</span>
+          </p>
+          <button
+            type="button"
+            className="pos-flecha"
+            onClick={() => ir(1)}
+            disabled={indice === total - 1 && (paso === 1 || !activoAlto)}
+            aria-label={paso === 0 && activoAlto ? 'Ver el resto del recibo' : 'Cita siguiente'}
+          >
+            <ChevronDown size={22} strokeWidth={2.25} />
+          </button>
         </div>
-        <div className="pos-ranura" aria-hidden="true" />
+
+        <div ref={visorRef} className="pos-visor">
+          <div ref={camaraRef} className="rollo-camara">
+            <ol ref={tiraRef} className="rollo-tira">
+              {citas.map((cita, i) => {
+                const real = Math.abs(i - indice) <= 1
+                const activo = i === indice
+                return (
+                  <li
+                    key={cita.id}
+                    ref={(el) => {
+                      segmentosRef.current[i] = el
+                    }}
+                    data-real={real ? '1' : '0'}
+                    className={`rollo-segmento${activo ? ' rollo-segmento--activo' : ''}`}
+                    style={real ? undefined : { height: alturas[cita.id] ?? ALTO_ESTIMADO }}
+                    aria-hidden={!activo}
+                    inert={!activo}
+                  >
+                    {real ? renderCita(cita, i) : null}
+                  </li>
+                )
+              })}
+            </ol>
+          </div>
+          <div className="pos-ranura" aria-hidden="true" />
+        </div>
+
+        {/* Gutter espejo: mantiene el papel centrado en la pantalla. */}
+        <div aria-hidden="true" />
       </div>
-    </div>
+    </>
   )
 }

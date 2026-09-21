@@ -1,11 +1,11 @@
-/* Escena POS: ranura oscura, papel térmico crema, cámara que recorre el rollo.
-   Rendimiento: solo se anima transform (tira y cámara). Las luces, la curvatura, el grano
-   y la vignette son capas ESTÁTICAS que el compositor cachea; nada se repinta al navegar. */
+/* Escena del rollo: papel térmico suelto sobre el fondo de la sección, que se "come" por abajo
+   en una ranura sutil. Rendimiento: solo se anima transform (tira, cámara y las dos capas de
+   paralaje del fondo). Luces, curvatura, grano y vignette son capas ESTÁTICAS. */
 
 .pos-escena {
   /* Papel y tinta (próximas). Nunca #fff ni #000. */
   --papel: #efe6d2;
-  --papel-borde: #d8cbb0;
+  --papel-borde: rgba(40, 28, 16, 0.35);
   --tinta: #3a2e23;
   --tinta-suave: #6e5e4c;
   --tinta-linea: #a89a84;
@@ -14,16 +14,20 @@
   --tinta-mal: #8f2c2c;
   --recibo-fuente: var(--font-familyMerchant, ui-monospace), 'Courier New', monospace;
   --pos-sierra: 9px;
-  --pos-ranura-alto: 30px;
+  --pos-ranura-alto: 44px; /* franja inferior donde el papel se oscurece y desaparece */
+  --pos-gutter: 44px; /* columna de controles a la izquierda y su espejo a la derecha */
+  --papel-ancho: min(100%, 340px);
 
   position: relative;
+  z-index: 1;
   flex: 1 1 auto;
   min-height: 0;
   width: 100%;
-  max-width: 440px;
+  max-width: 460px;
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr);
-  gap: 10px;
+  /* Gutters simétricos: el papel queda centrado en la pantalla, no desplazado por las flechas. */
+  grid-template-columns: var(--pos-gutter) minmax(0, 1fr) var(--pos-gutter);
+  gap: 8px;
   touch-action: pan-x pinch-zoom; /* el swipe vertical es nuestro; el horizontal sigue siendo del sistema */
   user-select: none;
   -webkit-user-select: none;
@@ -38,10 +42,40 @@
 /* Papel térmico envejecido: las citas pasadas amarillean y la tinta se apaga un poco. */
 .citas--pasadas .pos-escena {
   --papel: #e8dabb;
-  --papel-borde: #cdbc98;
   --tinta: #4b3d2f;
   --tinta-suave: #7c6b56;
   --tinta-linea: #ad9d82;
+}
+
+/* ---------- Fondo con paralaje (la "cámara" también mueve el escenario) ---------- */
+
+.pos-fondo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Dos capas de puntos cálidos a distinta distancia: la lejana se mueve poco, la cercana más.
+   Los patrones son periódicos, así que GSAP puede envolver (wrap) el desplazamiento sin saltos. */
+.pos-fondo-capa {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -160px;
+  height: calc(100% + 320px);
+}
+
+.pos-fondo-capa--lejos {
+  background-image: radial-gradient(circle, rgba(255, 228, 190, 0.11) 0 1px, transparent 1.6px);
+  background-size: 26px 26px;
+}
+
+.pos-fondo-capa--cerca {
+  background-image: radial-gradient(circle, rgba(255, 228, 190, 0.16) 0 1.4px, transparent 2.4px);
+  background-size: 96px 96px;
+  background-position: 31px 17px;
 }
 
 /* ---------- Controles (izquierda): flechas + contador ---------- */
@@ -55,8 +89,8 @@
 }
 
 .pos-flecha {
-  width: 44px;
-  height: 44px;
+  width: var(--pos-gutter);
+  height: var(--pos-gutter);
   border-radius: 50%;
   border: 1px solid color-mix(in srgb, var(--citas-accent) 45%, transparent);
   background: color-mix(in srgb, var(--citas-accent) 12%, transparent);
@@ -119,63 +153,69 @@
   white-space: nowrap;
 }
 
-/* ---------- Visor: el hueco oscuro con vignette cálido donde vive el papel ---------- */
+/* ---------- Visor: solo recorta el papel; sin caja, sin fondo ---------- */
 
 .pos-visor {
   position: relative;
   min-height: 0;
   overflow: hidden;
-  border-radius: 14px 14px 12px 12px;
-  background: radial-gradient(130% 95% at 50% 72%, #2f2822 0%, #1b1917 42%, #0e0e0f 100%);
-  box-shadow: inset 0 0 0 1px rgba(255, 240, 210, 0.05);
   /* La perspectiva va aquí: afecta a la cámara (hijo directo). Origen bajo = vemos el papel desde abajo. */
   perspective: 1100px;
   perspective-origin: 50% 82%;
+  /* El papel que asoma por arriba al avanzar se funde con el fondo real (puntos incluidos),
+     sin caja ni corte duro. Es una máscara estática: no se anima. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, 0.9) 46px, #000 96px);
+  mask-image: linear-gradient(to bottom, transparent 0, rgba(0, 0, 0, 0.9) 46px, #000 96px);
 }
 
 /* ---------- Cámara: encuadre inclinado; la tira se mueve dentro ---------- */
 
 .rollo-camara {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: min(100%, 340px);
-  /* GSAP fija xPercent -50 y rotationX. Sin JS el papel queda plano y legible. */
-  transform: translateX(-50%);
+  inset: 0;
+  width: var(--papel-ancho);
+  /* Centrado por layout (left/right 0 + margin auto), NO por transform: GSAP solo lee un
+     translateX(-50%) del CSS como xPercent si redondea exacto, y con anchos fraccionarios
+     lo sumaba dos veces. Sin JS el papel queda plano, centrado y legible. */
+  margin: 0 auto;
   transform-origin: 50% 100%;
   transform-style: flat;
 }
 
-/* Curvatura cilíndrica + luz cálida frontal + sombra de la ranura. Capa estática sobre el papel. */
+/* Curvatura cilíndrica + luz cálida frontal + sombra de la ranura.
+   Se extiende MUY por encima y unos px a los lados: el papel que asoma sobre la cámara al
+   avanzar el rollo, y sus bordes, también quedan bajo la luz. */
 .rollo-camara::after {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: -60% -4px 0;
   z-index: 2;
   pointer-events: none;
   background:
+    /* La capa mide 160% del alto de la cámara: el borde superior de la cámara cae en el 37.5%. */
     linear-gradient(
       180deg,
-      rgba(26, 18, 10, 0.66) 0%,
-      rgba(26, 18, 10, 0.34) 12%,
-      rgba(26, 18, 10, 0.08) 26%,
-      rgba(255, 244, 222, 0) 42%,
-      rgba(255, 244, 222, 0.09) 56%,
-      rgba(255, 244, 222, 0) 68%,
-      rgba(26, 18, 10, 0.08) 84%,
-      rgba(26, 18, 10, 0.5) 100%
+      rgba(14, 14, 15, 0) 0%,
+      rgba(14, 14, 15, 0) 33%,
+      rgba(18, 14, 10, 0.62) 37.5%,
+      rgba(20, 15, 10, 0.32) 42%,
+      rgba(20, 15, 10, 0.08) 46.5%,
+      rgba(255, 244, 222, 0) 50%,
+      rgba(255, 244, 222, 0.09) 66%,
+      rgba(255, 244, 222, 0) 76%,
+      rgba(20, 15, 10, 0.1) 91%,
+      rgba(20, 15, 10, 0.55) 100%
     ),
     linear-gradient(
       90deg,
-      rgba(26, 18, 10, 0.22) 0%,
-      rgba(26, 18, 10, 0) 10%,
-      rgba(26, 18, 10, 0) 90%,
-      rgba(26, 18, 10, 0.22) 100%
+      rgba(20, 15, 10, 0.24) 0%,
+      rgba(20, 15, 10, 0) 9%,
+      rgba(20, 15, 10, 0) 91%,
+      rgba(20, 15, 10, 0.24) 100%
     );
 }
 
-/* ---------- La tira de papel (lo ÚNICO que se traslada) ---------- */
+/* ---------- La tira de papel (lo ÚNICO que se traslada dentro del visor) ---------- */
 
 .rollo-tira {
   position: absolute;
@@ -196,7 +236,7 @@
   );
   box-shadow:
     0 0 0 1px var(--papel-borde),
-    0 22px 42px -14px rgba(0, 0, 0, 0.75);
+    0 24px 48px -16px rgba(0, 0, 0, 0.8);
 }
 
 /* Borde serrado del corte (dientes en color papel sobre el fondo oscuro). */
@@ -232,77 +272,60 @@
   overflow: hidden;
 }
 
-/* ---------- Ranura del POS: carcasa + rendija negra de donde emerge el papel ---------- */
+/* ---------- Ranura sutil: el papel se oscurece y desaparece por abajo ---------- */
 
 .pos-ranura {
   position: absolute;
-  left: -4px;
-  right: -4px;
+  left: -8px;
+  right: -8px;
   bottom: 0;
-  height: var(--pos-ranura-alto);
+  width: calc(var(--papel-ancho) + 16px);
+  max-width: none;
+  margin: 0 auto;
+  height: calc(var(--pos-ranura-alto) + 24px);
   z-index: 3;
-  border-radius: 6px 6px 12px 12px;
-  background: linear-gradient(180deg, #2c2f34 0%, #1d1f23 45%, #131416 100%);
-  box-shadow:
-    0 -14px 28px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(255, 255, 255, 0.09),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+  background: linear-gradient(
+    to top,
+    rgba(12, 12, 13, 1) 0,
+    rgba(12, 12, 13, 0.96) 8px,
+    rgba(12, 12, 13, 0.6) 40%,
+    rgba(12, 12, 13, 0) 100%
+  );
 }
 
-/* La rendija: negro con sombra interior. Es lo que vende el efecto. */
+/* La rendija: una línea negra fina con un filo de luz debajo. */
 .pos-ranura::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 12px;
-  right: 12px;
-  height: 9px;
-  border-radius: 0 0 5px 5px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  height: 3px;
+  border-radius: 2px;
   background: #050506;
   box-shadow:
-    inset 0 3px 5px rgba(0, 0, 0, 0.95),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
-}
-
-/* Piloto de la impresora */
-.pos-ranura::after {
-  content: '';
-  position: absolute;
-  right: 18px;
-  bottom: 7px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--citas-accent);
-  box-shadow: 0 0 6px var(--citas-accent);
-  opacity: 0.85;
+    0 1px 0 rgba(255, 236, 205, 0.07),
+    inset 0 1px 1px rgba(0, 0, 0, 0.9);
 }
 
 /* ---------- Móvil estrecho: menos gutter para que el papel respire ---------- */
 
 @media (max-width: 360px) {
   .pos-escena {
-    grid-template-columns: 40px minmax(0, 1fr);
+    --pos-gutter: 36px;
     gap: 6px;
-  }
-
-  .pos-flecha {
-    width: 40px;
-    height: 40px;
   }
 }
 
-/* ---------- Escritorio: papel un poco más ancho, escena centrada ---------- */
+/* ---------- Escritorio: papel un poco más ancho ---------- */
 
 @media (min-width: 720px) {
   .pos-escena {
-    max-width: 480px;
-    grid-template-columns: 52px minmax(0, 1fr);
-    gap: 16px;
-  }
-
-  .rollo-camara {
-    width: min(100%, 360px);
+    --pos-gutter: 52px;
+    --papel-ancho: min(100%, 360px);
+    max-width: 520px;
+    gap: 14px;
   }
 }
 

@@ -32,16 +32,24 @@
    y la escena POS (RolloRecibos) se estira para llenar el resto. */
 .citas--recibo {
   --citas-cromo: 150px; /* header + navbar, misma cifra que el estado vacío */
+  position: relative;
+  isolation: isolate; /* sin overflow:hidden aquí: rompería el sticky del switch */
   height: calc(100dvh - var(--citas-cromo));
   min-height: 400px;
   justify-content: flex-start;
   gap: 14px;
-  padding: 14px 16px 10px;
+  padding: 14px 12px 10px;
+  /* Vignette cálido de toda la sección: es la luz de la cámara, por eso no se mueve con el rollo. */
+  background: radial-gradient(120% 85% at 50% 60%, #2b241e 0%, #17171a 46%, #0d0d0e 100%);
+}
+
+.citas--recibo .switch-color-container {
+  z-index: 40; /* por encima del fondo con paralaje */
 }
 
 @media (max-width: 360px) {
   .citas--recibo {
-    padding: 12px 10px 8px;
+    padding: 12px 8px 8px;
   }
 }
 

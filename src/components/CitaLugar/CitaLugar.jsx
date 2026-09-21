@@ -39,15 +39,16 @@ function CitaLugar({
 
       <dl className="recibo-filas">
         <ReciboFila etiqueta="Fecha">{fechaTexto}</ReciboFila>
-        <ReciboFila etiqueta="Mesa">{mesaCodigo ?? '—'}</ReciboFila>
+        <ReciboFila etiqueta="Mesa">
+          {`${mesaCodigo ?? '—'}${capacidad != null ? ` (${capacidad} pers.)` : ''}`}
+        </ReciboFila>
         <ReciboFila etiqueta="Zona">{mesaUbicacion ?? '—'}</ReciboFila>
-        <ReciboFila etiqueta="Asientos">{capacidad ?? '—'}</ReciboFila>
       </dl>
 
+      {/* Plano térmico: la mesa reservada es la única rellena, no hace falta leyenda. */}
       <div className="recibo-mapa" role="img" aria-label={`Plano del local, mesa ${mesaCodigo ?? ''} marcada`}>
         <MapaMesas mesaSeleccionada={mesaReservada} onMesaClick={() => {}} soloLectura />
       </div>
-      <p className="recibo-nota">Tu mesa aparece rellena en el plano</p>
 
       <ReciboSeparador />
 
