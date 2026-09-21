@@ -1,3 +1,4 @@
-/* Estilos solo de la variante servicio (si hace falta más adelante) */
-.cita-servicio {
+/* Ajustes solo de la variante servicio del recibo (lo común vive en CitaCard/citaCard.css) */
+.cita-servicio .recibo-lista {
+  padding: 0 2px;
 }

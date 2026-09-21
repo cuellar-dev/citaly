@@ -10,7 +10,8 @@ export function saveCitas(citas) {
 }
 
 export function seedCitasIfEmpty(citasIniciales) {
-  if (!localStorage.getItem(STORAGE_KEY)) {
+  const actuales = getCitas()
+  if (!localStorage.getItem(STORAGE_KEY) || actuales.length === 0) {
     saveCitas(citasIniciales)
   }
 }

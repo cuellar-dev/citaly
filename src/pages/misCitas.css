@@ -28,6 +28,23 @@
   box-sizing: border-box;
 }
 
+/* Con citas: la sección ocupa exactamente la pantalla menos header y navbar,
+   y la escena POS (RolloRecibos) se estira para llenar el resto. */
+.citas--recibo {
+  --citas-cromo: 150px; /* header + navbar, misma cifra que el estado vacío */
+  height: calc(100dvh - var(--citas-cromo));
+  min-height: 400px;
+  justify-content: flex-start;
+  gap: 14px;
+  padding: 14px 16px 10px;
+}
+
+@media (max-width: 360px) {
+  .citas--recibo {
+    padding: 12px 10px 8px;
+  }
+}
+
 /* Estado vacío: el switch arriba y Taly centrado en el resto de la pantalla */
 .citas:has(.taly-momento) {
   min-height: calc(100dvh - 150px);

@@ -13,13 +13,13 @@ function clasesMesa(mesa, mesaSeleccionada) {
     .join(' ')
 }
 
-function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, children }) {
+function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, soloLectura, children }) {
   const esOcupada = mesa.estado === 'ocupado'
 
   return (
     <g
       className={clasesMesa(mesa, mesaSeleccionada)}
-      {...(!esOcupada && {
+      {...(!esOcupada && !soloLectura && {
         onClick: () => onMesaClick(mesa),
         role: 'button',
         tabIndex: 0,
@@ -31,7 +31,7 @@ function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, children }) {
           }
         },
       })}
-      {...(esOcupada && {
+      {...((esOcupada || soloLectura) && {
         'aria-hidden': true,
       })}
     >
@@ -40,8 +40,14 @@ function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, children }) {
   )
 }
 
-export default function MapaMesas({ mesaSeleccionada, onMesaClick }) {
+/**
+ * soloLectura: sin roles/tabIndex en las mesas (p. ej. dentro de un recibo).
+ * Las clases mapa-fondo / mapa-detalle / mapa-detalle-borde permiten
+ * re-entintar el plano desde CSS (variante tÃ©rmica en citaCard.css).
+ */
+export default function MapaMesas({ mesaSeleccionada, onMesaClick, soloLectura = false }) {
   const mesas = MESAS_MAPA
+  const propsGrupo = { mesaSeleccionada, onMesaClick, soloLectura }
 
   return (
     <svg
@@ -50,22 +56,24 @@ export default function MapaMesas({ mesaSeleccionada, onMesaClick }) {
       viewBox="0 0 300 180"
       className="mapa-mesas-svg"
       preserveAspectRatio="xMidYMid meet"
+      aria-hidden={soloLectura || undefined}
     >
       <g clipPath="url(#clip0_7_2)">
-        <path fill="#1e2221" d="M0 0h300v180H0z" />
-        <path fill="#1e2221" d="M0 0h300v180H0z" />
-        <rect width="56" height="114" x="253.5" y="32.5" fill="#1e2221" stroke="#077a6f" rx="9.5" />
+        <path className="mapa-fondo" fill="#1e2221" d="M0 0h300v180H0z" />
+        <rect className="mapa-detalle-borde" width="56" height="114" x="253.5" y="32.5" fill="#1e2221" stroke="#077a6f" rx="9.5" />
         <path
+          className="mapa-detalle"
           fill="#077a6f"
           d="M272.6 105.332q0-.96.552-1.536t1.488-.576q.492 0 .96.204.456.192.756.576t.348.948l-.144.084q0-.468.144-.876a1.9 1.9 0 0 1 .408-.708q.276-.3.684-.468.396-.18.936-.18.576 0 1.008.192.42.192.708.528.276.336.42.78.132.444.132.948v3.312a.23.23 0 0 1-.072.168.23.23 0 0 1-.168.072h-7.92a.23.23 0 0 1-.168-.072.23.23 0 0 1-.072-.168zm.48.06v3.036l-.228-.132h3.804l-.204.12v-3.024q-.012-.708-.468-1.188t-1.356-.48q-.696 0-1.116.432-.432.432-.432 1.236m3.864-.084v3.036l-.072-.048h3.744l-.096.06v-3.048q0-.852-.42-1.428-.432-.576-1.368-.576-.624 0-1.02.264a1.5 1.5 0 0 0-.576.72 2.6 2.6 0 0 0-.192 1.02m-3.732-7.037 7.632 3.036a.25.25 0 0 1 .12.084q.036.06.036.132 0 .12-.06.18a.25.25 0 0 1-.144.072.2.2 0 0 1-.12-.012l-7.944-3.228q-.096-.036-.12-.084a.3.3 0 0 1-.036-.144q0-.096.048-.156a.2.2 0 0 1 .108-.084l7.944-3.228a.3.3 0 0 1 .096-.012q.108 0 .168.072t.06.18a.34.34 0 0 1-.036.156.25.25 0 0 1-.12.084l-7.728 3.132zm5.184 2.22-.48-.168v-3.888l.48-.12zm2.604-7.54a.26.26 0 0 1-.072.191.25.25 0 0 1-.168.06h-7.92a.23.23 0 0 1-.168-.072.23.23 0 0 1-.072-.168v-3.168q0-.708.288-1.236.276-.54.768-.84t1.116-.3q.552 0 .996.204.444.192.744.552.288.348.42.804l-.096.552q0-.48.252-.912.24-.432.72-.708.468-.276 1.152-.276.588 0 .9-.048.3-.06.444-.144a.9.9 0 0 0 .228-.216.3.3 0 0 1 .12-.108.24.24 0 0 1 .168-.012.25.25 0 0 1 .12.084q.036.048.048.108t-.024.132q-.096.168-.288.336-.192.156-.588.264t-1.128.108q-.564 0-.9.18-.336.168-.516.444-.18.264-.24.576-.06.3-.06.552v2.916l-.144-.108h3.66a.23.23 0 0 1 .168.072.24.24 0 0 1 .072.18m-4.236-.133v-3.084a2.15 2.15 0 0 0-.288-.888 1.84 1.84 0 0 0-.672-.66 1.9 1.9 0 0 0-1.02-.264q-.732 0-1.212.528-.492.516-.492 1.404v2.904l-.084-.06h3.9zM281 84.982a.26.26 0 0 1-.072.192.25.25 0 0 1-.168.06h-7.92a.23.23 0 0 1-.168-.072.23.23 0 0 1-.072-.168v-3.168q0-.708.288-1.236.276-.54.768-.84t1.116-.3q.552 0 .996.204.444.192.744.552.288.348.42.804l-.096.552q0-.48.252-.912.24-.432.72-.708.468-.276 1.152-.276.588 0 .9-.048.3-.06.444-.144a.9.9 0 0 0 .228-.216.3.3 0 0 1 .12-.108.24.24 0 0 1 .168-.012.25.25 0 0 1 .12.084q.036.048.048.108t-.024.132q-.096.168-.288.336-.192.156-.588.264t-1.128.108q-.564 0-.9.18-.336.168-.516.444-.18.264-.24.576-.06.3-.06.552v2.916l-.144-.108h3.66a.23.23 0 0 1 .168.072.24.24 0 0 1 .072.18m-4.236-.132v-3.084a2.15 2.15 0 0 0-.288-.888 1.84 1.84 0 0 0-.672-.66 1.9 1.9 0 0 0-1.02-.264q-.732 0-1.212.528-.492.516-.492 1.404v2.904l-.084-.06h3.9zm-3.552-10.31 7.632 3.037a.25.25 0 0 1 .12.084q.036.06.036.132 0 .12-.06.18a.25.25 0 0 1-.144.072.2.2 0 0 1-.12-.012l-7.944-3.228q-.096-.036-.12-.084a.3.3 0 0 1-.036-.144q0-.096.048-.156a.2.2 0 0 1 .108-.084l7.944-3.228a.3.3 0 0 1 .096-.012q.108 0 .168.072t.06.18a.34.34 0 0 1-.036.156.25.25 0 0 1-.12.084l-7.728 3.132zm5.184 2.22-.48-.167v-3.888l.48-.12z"
         />
-        <path fill="#1e2221" stroke="#077a6f" d="M0 123.5c30.087 0 54.5 25.059 54.5 56s-24.413 56-54.5 56-54.5-25.059-54.5-56 24.413-56 54.5-56Z" />
+        <path className="mapa-detalle-borde" fill="#1e2221" stroke="#077a6f" d="M0 123.5c30.087 0 54.5 25.059 54.5 56s-24.413 56-54.5 56-54.5-25.059-54.5-56 24.413-56 54.5-56Z" />
         <path
+          className="mapa-detalle"
           fill="#077a6f"
           d="m6.633 145.673 2.399 2.399q.05.05.05.127a.17.17 0 0 1-.05.128.18.18 0 0 1-.134.057.2.2 0 0 1-.12-.057l-2.324-2.323.172-.045-1.973 1.973.013-.165 2.05 2.049q.05.05.05.127a.17.17 0 0 1-.05.127.18.18 0 0 1-.134.058.2.2 0 0 1-.121-.058l-2.037-2.036.134-.006-2.017 2.017.006-.057 2.285 2.284q.05.051.05.128 0 .076-.05.127a.18.18 0 0 1-.134.057.2.2 0 0 1-.12-.057l-2.4-2.399a.17.17 0 0 1-.051-.128q0-.076.05-.127l4.201-4.2a.17.17 0 0 1 .127-.051q.077 0 .128.051m6.703 6.704q.058.057.051.127 0 .063-.05.114l-4.194 4.194a.19.19 0 0 1-.153.064.2.2 0 0 1-.121-.057.2.2 0 0 1-.045-.07.2.2 0 0 1-.006-.083l1.082-6.988.133.045-4.022 4.022a.14.14 0 0 1-.114.038.16.16 0 0 1-.115-.051.17.17 0 0 1-.057-.121q0-.063.045-.108l4.219-4.219q.07-.07.133-.058a.17.17 0 0 1 .109.045q.026.025.038.064.02.031.013.076l-1.07 6.949-.178.077 4.06-4.06a.15.15 0 0 1 .121-.045q.077 0 .121.045m-1.803 7.106a.2.2 0 0 1-.057-.134.2.2 0 0 1 .057-.121l4.175-4.175.254.255-4.175 4.175a.17.17 0 0 1-.127.051.17.17 0 0 1-.127-.051m2.666-5.76a.2.2 0 0 1-.057-.121q0-.076.051-.127a.15.15 0 0 1 .12-.045q.078 0 .128.051l3.093 3.093q.051.051.051.128a.14.14 0 0 1-.045.12.15.15 0 0 1-.127.051.2.2 0 0 1-.12-.057zm-.002 8.424a.2.2 0 0 1-.063-.14.2.2 0 0 1 .057-.121l4.2-4.2a.17.17 0 0 1 .128-.051q.075 0 .127.051l1.68 1.68q.375.376.503.808.14.433.038.853t-.433.751a1.8 1.8 0 0 1-.636.42 1.5 1.5 0 0 1-.687.102 1.65 1.65 0 0 1-.65-.204l-.241-.343q.255.254.35.617.1.357-.007.757-.102.395-.464.758a5 5 0 0 0-.452.502 1.2 1.2 0 0 0-.16.312.6.6 0 0 0-.006.236.23.23 0 0 1-.006.121.176.176 0 0 1-.191.114.2.2 0 0 1-.083-.032.15.15 0 0 1-.057-.082 1 1 0 0 1-.025-.331q.019-.185.171-.452.154-.267.541-.656.3-.299.382-.572a.97.97 0 0 0 .038-.51 1.1 1.1 0 0 0-.178-.432 2 2 0 0 0-.26-.325l-1.547-1.546.133-.019-1.94 1.941a.17.17 0 0 1-.128.05.18.18 0 0 1-.133-.057m2.317-2.176 1.636 1.635q.28.23.623.318.345.09.707-.006.37-.089.68-.401.39-.388.363-.923-.013-.534-.483-1.005l-1.54-1.54.076-.013-2.068 2.068zm7.35 3.583-5.657 2.437a.2.2 0 0 1-.108.02.2.2 0 0 1-.09-.051q-.062-.064-.063-.128 0-.063.038-.114a.16.16 0 0 1 .07-.057l5.925-2.502q.07-.031.108-.019a.2.2 0 0 1 .096.058q.051.051.057.108a.14.14 0 0 1-.012.102l-2.502 5.925a.3.3 0 0 1-.044.057.16.16 0 0 1-.127.051.2.2 0 0 1-.128-.064.3.3 0 0 1-.063-.102.2.2 0 0 1 .019-.108l2.437-5.759zm-3.926 1.572.344-.166 2.062 2.062-.191.319zm8.721 2.574q.478.477.643 1.011.172.529.077 1.07-.083.54-.376 1.05a4.5 4.5 0 0 1-.725.942 4.4 4.4 0 0 1-1.318.922 2.5 2.5 0 0 1-1.406.21q-.706-.108-1.35-.751L22.55 170.5a.17.17 0 0 1-.05-.128q0-.075.05-.127l4.2-4.2a.17.17 0 0 1 .128-.051q.076 0 .127.051zm-4.263 4.136q.585.587 1.202.681.63.096 1.241-.184a4 4 0 0 0 1.171-.828q.389-.388.65-.84.267-.445.343-.916a1.95 1.95 0 0 0-.07-.948q-.153-.471-.592-.91l-1.489-1.49.09-.012-4.055 4.053.02-.095zm8.15.4-5.657 2.438a.2.2 0 0 1-.108.019.2.2 0 0 1-.089-.051q-.064-.064-.064-.128 0-.063.038-.114a.2.2 0 0 1 .07-.057l5.925-2.501q.07-.032.108-.02a.2.2 0 0 1 .096.058q.051.051.057.108a.14.14 0 0 1-.012.102l-2.501 5.925a.2.2 0 0 1-.045.057.16.16 0 0 1-.127.051.2.2 0 0 1-.128-.064.3.3 0 0 1-.063-.102.2.2 0 0 1 .019-.108l2.437-5.759zm-3.926 1.572.344-.165 2.062 2.061-.191.319z"
         />
 
-        <MesaGrupo mesa={mesas[0]} mesaSeleccionada={mesaSeleccionada} onMesaClick={onMesaClick}>
+        <MesaGrupo mesa={mesas[0]} {...propsGrupo}>
           <circle className="mesa-forma" cx="86" cy="46" r="15" />
           <path
             className="mesa-etiqueta"
@@ -73,7 +81,7 @@ export default function MapaMesas({ mesaSeleccionada, onMesaClick }) {
           />
         </MesaGrupo>
 
-        <MesaGrupo mesa={mesas[1]} mesaSeleccionada={mesaSeleccionada} onMesaClick={onMesaClick}>
+        <MesaGrupo mesa={mesas[1]} {...propsGrupo}>
           <circle className="mesa-forma" cx="145" cy="46" r="15" />
           <path
             className="mesa-etiqueta"
@@ -81,7 +89,7 @@ export default function MapaMesas({ mesaSeleccionada, onMesaClick }) {
           />
         </MesaGrupo>
 
-        <MesaGrupo mesa={mesas[2]} mesaSeleccionada={mesaSeleccionada} onMesaClick={onMesaClick}>
+        <MesaGrupo mesa={mesas[2]} {...propsGrupo}>
           <circle className="mesa-forma" cx="201" cy="46" r="15" />
           <path
             className="mesa-etiqueta"
@@ -89,7 +97,7 @@ export default function MapaMesas({ mesaSeleccionada, onMesaClick }) {
           />
         </MesaGrupo>
 
-        <MesaGrupo mesa={mesas[3]} mesaSeleccionada={mesaSeleccionada} onMesaClick={onMesaClick}>
+        <MesaGrupo mesa={mesas[3]} {...propsGrupo}>
           <rect className="mesa-forma" width="60" height="30" x="140" y="85" rx="5" />
           <path
             className="mesa-etiqueta"
@@ -97,7 +105,7 @@ export default function MapaMesas({ mesaSeleccionada, onMesaClick }) {
           />
         </MesaGrupo>
 
-        <MesaGrupo mesa={mesas[4]} mesaSeleccionada={mesaSeleccionada} onMesaClick={onMesaClick}>
+        <MesaGrupo mesa={mesas[4]} {...propsGrupo}>
           <rect className="mesa-forma" width="60" height="30" x="89" y="139" rx="5" />
           <path
             className="mesa-etiqueta"
@@ -105,7 +113,7 @@ export default function MapaMesas({ mesaSeleccionada, onMesaClick }) {
           />
         </MesaGrupo>
 
-        <MesaGrupo mesa={mesas[5]} mesaSeleccionada={mesaSeleccionada} onMesaClick={onMesaClick}>
+        <MesaGrupo mesa={mesas[5]} {...propsGrupo}>
           <rect className="mesa-forma" width="60" height="30" x="171" y="139" rx="5" />
           <path
             className="mesa-etiqueta"
@@ -113,7 +121,7 @@ export default function MapaMesas({ mesaSeleccionada, onMesaClick }) {
           />
         </MesaGrupo>
 
-        <MesaGrupo mesa={mesas[6]} mesaSeleccionada={mesaSeleccionada} onMesaClick={onMesaClick}>
+        <MesaGrupo mesa={mesas[6]} {...propsGrupo}>
           <rect className="mesa-forma" width="60" height="30" x="37" y="30" rx="5" transform="rotate(90 37 30)" />
           <path
             className="mesa-etiqueta"

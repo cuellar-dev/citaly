@@ -54,6 +54,9 @@ export function propsDesdeCita(cita) {
     fechaTexto: formatearFechaCita(cita),
     estadoTexto: textoEstadoCita(cita),
     estadoReserva: cita.estadoReserva ?? 0,
+    mapsHref: local?.direccion
+      ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(local.direccion)}`
+      : undefined,
   }
 
   if (esLugar) {
@@ -68,9 +71,6 @@ export function propsDesdeCita(cita) {
         ? `${cita.consumoMinimo} CUP mínimo`
         : undefined,
       coste: precio === 0 ? 'GRATIS (consumo)' : `${precio} CUP`,
-      mapsHref: local?.direccion
-        ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(local.direccion)}`
-        : undefined,
     }
   }
 
@@ -80,6 +80,8 @@ export function propsDesdeCita(cita) {
     hora: cita.horario,
     profesional: cita.profesional?.name || 'Por asignar',
     servicios: (cita.servicios || []).map((s) => s.nombre).join(', ') || 'Servicio',
+    /* Líneas del recibo: nombre, duración y precio por servicio. */
+    lineas: cita.servicios || [],
     coste: cita.precioTotal === 0 ? 'GRATIS' : `${cita.precioTotal ?? 0} CUP`,
   }
 }

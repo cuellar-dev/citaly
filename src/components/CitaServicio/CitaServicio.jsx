@@ -1,102 +1,71 @@
 import '../CitaCard/citaCard.css'
 import './citaServicio.css'
-import { Scissors, Phone, MapPin } from 'lucide-react'
-import IconoWhatsApp from '../IconoWhatsApp/IconoWhatsApp.jsx'
+import {
+  ReciboEncabezado,
+  ReciboEstado,
+  ReciboFila,
+  ReciboSeparador,
+  ReciboTalon,
+} from '../CitaCard/ReciboPartes.jsx'
+import { tinta } from '../CitaCard/tinta.js'
 
+/* Segmento de recibo para una cita de servicio (peluquería, barbería, etc.). */
 function CitaServicio({
   lugar,
-  fecha,
-  hora,
   wasa,
-  coste,
   telefono,
+  coste,
   profesional,
   servicios,
+  lineas = [],
   estadoReserva = 0,
   fechaTexto,
   estadoTexto,
+  mapsHref,
+  numero = 1,
 }) {
-  const estadoReservaTexto = estadoReserva === 0 ? 'Pendiente' : estadoReserva === 1 ? 'Confirmado' : estadoReserva === 2 ? 'Pendiente su confirmacion' : 'Cancelado'
-  const estadoReservaColor = estadoReserva === 0 || estadoReserva === 2
-    ? 'var(--yellow-color)'
-    : estadoReserva === 1
-      ? 'var(--primary-color)'
-      : 'var(--close-color)'
-
   return (
-    <article className="cita-card cita-servicio">
-      <div className="cita-card-header">
-        <div className="cita-card-header-princ">
-          <h2 className="cita-card-lugar">{lugar}</h2>
-          <div className="cita-card-state-container">
-            <div
-              className="cita-card-state-cosi"
-              style={{ backgroundColor: estadoReservaColor, boxShadow: `0 0 2px ${estadoReservaColor}` }}
-            />
-            <p
-              className="cita-card-state"
-              style={{ color: estadoReservaColor, textShadow: `0 0 1px ${estadoReservaColor}` }}
-            >
-              {estadoReservaTexto}
-            </p>
-          </div>
-        </div>
-        <div className="cita-card-icon-container">
-          <Scissors size={25} color="currentColor" className="cita-card-icon" />
-        </div>
-      </div>
+    <article className="recibo cita-servicio" aria-label={`Cita en ${lugar}`}>
+      <ReciboEncabezado lugar={lugar} numero={numero} tipo="Servicio" />
+      <ReciboSeparador doble />
 
-      <div className="cita-card-info-grid">
-        <div className="cita-card-info-elemento">
-          <span className="cita-card-info-span">Servicio</span>
-          <p className="cita-card-info-contenido">{servicios}</p>
-        </div>
-        <div className="cita-card-info-elemento">
-          <span className="cita-card-info-span">Profesional</span>
-          <p className="cita-card-info-contenido">{profesional}</p>
-        </div>
-        <div className="cita-card-info-elemento">
-          <span className="cita-card-info-span">Fecha</span>
-          <p className="cita-card-info-contenido">
-            {fechaTexto ?? 'Mañana, 9:30 AM'}
-          </p>
-        </div>
-        <div className="cita-card-info-elemento">
-          <span className="cita-card-info-span">Estado</span>
-          <p className="cita-card-info-contenido">
-            {estadoTexto ?? 'Quedan 45 min'}
-          </p>
-        </div>
-      </div>
+      <dl className="recibo-filas">
+        <ReciboFila etiqueta="Fecha">{fechaTexto}</ReciboFila>
+        <ReciboFila etiqueta="Profesional">{profesional}</ReciboFila>
+      </dl>
 
-      <div className="cita-card-footer">
-        <div className="cita-card-otros-datos">
-          <span className="cita-card-otros-datos-span">{coste}</span>
-          <div className="cita-card-links">
-            <a href={`https://wa.me/${wasa}`} className="cita-card-link">
-              <IconoWhatsApp size={20} className="cita-card-link-icon" />
-            </a>
-            <a href={`tel:${telefono ?? wasa}`} className="cita-card-link">
-              <Phone size={20} className="cita-card-link-icon" strokeWidth={2} />
-            </a>
-            <a href={`https://wa.me/${wasa}`} className="cita-card-link">
-              <MapPin
-                size={20}
-                className="cita-card-link-icon cita-card-map-pin"
-                strokeWidth={2}
-              />
-            </a>
-          </div>
-        </div>
-        <div className="cita-card-boton-container">
-          <button type="button" className="cita-card-boton cita-card-boton-confirmar">
-            Voy pa alla
-          </button>
-          <button type="button" className="cita-card-boton cita-card-boton-cancelar">
-            Cancelar Cita
-          </button>
-        </div>
-      </div>
+      <ReciboSeparador />
+
+      {lineas.length > 0 ? (
+        <ul className="recibo-lista" aria-label="Servicios">
+          {lineas.map((linea) => (
+            <li key={linea.id ?? linea.nombre}>
+              <span>{tinta(`${linea.nombre}${linea.duracion ? ` (${linea.duracion})` : ''}`)}</span>
+              <span className="recibo-lista-precio">
+                {linea.precio === 0 ? 'GRATIS' : `${linea.precio} CUP`}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="recibo-nota">{tinta(servicios)}</p>
+      )}
+
+      <ReciboSeparador />
+
+      <dl className="recibo-filas">
+        <ReciboFila etiqueta="Total" grande>
+          {coste}
+        </ReciboFila>
+        <ReciboFila etiqueta="Estado">
+          <ReciboEstado estadoReserva={estadoReserva} />
+        </ReciboFila>
+        <ReciboFila etiqueta="Falta">{estadoTexto}</ReciboFila>
+      </dl>
+
+      <ReciboSeparador doble />
+
+      <ReciboTalon lugar={lugar} wasa={wasa} telefono={telefono} mapsHref={mapsHref} textoCancelar="Cancelar cita" />
     </article>
   )
 }

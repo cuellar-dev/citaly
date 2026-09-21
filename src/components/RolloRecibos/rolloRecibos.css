@@ -1,0 +1,316 @@
+/* Escena POS: ranura oscura, papel térmico crema, cámara que recorre el rollo.
+   Rendimiento: solo se anima transform (tira y cámara). Las luces, la curvatura, el grano
+   y la vignette son capas ESTÁTICAS que el compositor cachea; nada se repinta al navegar. */
+
+.pos-escena {
+  /* Papel y tinta (próximas). Nunca #fff ni #000. */
+  --papel: #efe6d2;
+  --papel-borde: #d8cbb0;
+  --tinta: #3a2e23;
+  --tinta-suave: #6e5e4c;
+  --tinta-linea: #a89a84;
+  --tinta-ok: #1a6a5c;
+  --tinta-aviso: #8a6512;
+  --tinta-mal: #8f2c2c;
+  --recibo-fuente: var(--font-familyMerchant, ui-monospace), 'Courier New', monospace;
+  --pos-sierra: 9px;
+  --pos-ranura-alto: 30px;
+
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  max-width: 440px;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 10px;
+  touch-action: pan-x pinch-zoom; /* el swipe vertical es nuestro; el horizontal sigue siendo del sistema */
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+  border-radius: 14px;
+}
+
+.pos-escena:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--citas-accent) 70%, transparent);
+}
+
+/* Papel térmico envejecido: las citas pasadas amarillean y la tinta se apaga un poco. */
+.citas--pasadas .pos-escena {
+  --papel: #e8dabb;
+  --papel-borde: #cdbc98;
+  --tinta: #4b3d2f;
+  --tinta-suave: #7c6b56;
+  --tinta-linea: #ad9d82;
+}
+
+/* ---------- Controles (izquierda): flechas + contador ---------- */
+
+.pos-controles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pos-flecha {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid color-mix(in srgb, var(--citas-accent) 45%, transparent);
+  background: color-mix(in srgb, var(--citas-accent) 12%, transparent);
+  color: var(--citas-accent);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.pos-flecha:hover {
+  background: color-mix(in srgb, var(--citas-accent) 22%, transparent);
+}
+
+.pos-flecha:active {
+  transform: scale(0.9);
+}
+
+.pos-flecha:disabled {
+  opacity: 0.28;
+  cursor: default;
+  transform: none;
+}
+
+.pos-flecha:focus-visible {
+  outline: 2px solid var(--citas-accent);
+  outline-offset: 2px;
+}
+
+.pos-contador {
+  margin: 4px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-familyDrink);
+  font-size: 15px;
+  line-height: 1;
+  color: var(--fonts-color-primary);
+}
+
+.pos-contador-sep {
+  width: 16px;
+  height: 1px;
+  background: var(--citas-accent);
+  transform: rotate(-35deg);
+}
+
+.pos-contador-total {
+  font-size: 12px;
+  color: var(--fonts-color-primary-weak);
+}
+
+.pos-contador-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Visor: el hueco oscuro con vignette cálido donde vive el papel ---------- */
+
+.pos-visor {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 14px 14px 12px 12px;
+  background: radial-gradient(130% 95% at 50% 72%, #2f2822 0%, #1b1917 42%, #0e0e0f 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 240, 210, 0.05);
+  /* La perspectiva va aquí: afecta a la cámara (hijo directo). Origen bajo = vemos el papel desde abajo. */
+  perspective: 1100px;
+  perspective-origin: 50% 82%;
+}
+
+/* ---------- Cámara: encuadre inclinado; la tira se mueve dentro ---------- */
+
+.rollo-camara {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: min(100%, 340px);
+  /* GSAP fija xPercent -50 y rotationX. Sin JS el papel queda plano y legible. */
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  transform-style: flat;
+}
+
+/* Curvatura cilíndrica + luz cálida frontal + sombra de la ranura. Capa estática sobre el papel. */
+.rollo-camara::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(26, 18, 10, 0.66) 0%,
+      rgba(26, 18, 10, 0.34) 12%,
+      rgba(26, 18, 10, 0.08) 26%,
+      rgba(255, 244, 222, 0) 42%,
+      rgba(255, 244, 222, 0.09) 56%,
+      rgba(255, 244, 222, 0) 68%,
+      rgba(26, 18, 10, 0.08) 84%,
+      rgba(26, 18, 10, 0.5) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(26, 18, 10, 0.22) 0%,
+      rgba(26, 18, 10, 0) 10%,
+      rgba(26, 18, 10, 0) 90%,
+      rgba(26, 18, 10, 0.22) 100%
+    );
+}
+
+/* ---------- La tira de papel (lo ÚNICO que se traslada) ---------- */
+
+.rollo-tira {
+  position: absolute;
+  top: calc(var(--pos-sierra) + 10px);
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0 0 calc(var(--pos-ranura-alto) + 40px);
+  list-style: none;
+  will-change: transform;
+  color: var(--tinta);
+  background-color: var(--papel);
+  /* Líneas finísimas del cabezal térmico */
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(70, 52, 34, 0.045) 0 1px,
+    transparent 1px 3px
+  );
+  box-shadow:
+    0 0 0 1px var(--papel-borde),
+    0 22px 42px -14px rgba(0, 0, 0, 0.75);
+}
+
+/* Borde serrado del corte (dientes en color papel sobre el fondo oscuro). */
+.rollo-tira::before {
+  content: '';
+  position: absolute;
+  top: calc(-1 * var(--pos-sierra));
+  left: 0;
+  right: 0;
+  height: var(--pos-sierra);
+  background: conic-gradient(from 135deg at 50% 0, transparent, var(--papel) 1deg 89deg, transparent 90deg)
+    top / calc(2 * var(--pos-sierra)) var(--pos-sierra) repeat-x;
+}
+
+/* Grano de papel: feTurbulence en data-URI, sin red. Congelado, opacidad baja. */
+.rollo-tira::after {
+  content: '';
+  position: absolute;
+  inset: calc(-1 * var(--pos-sierra)) 0 0;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: multiply;
+  background-size: 140px 140px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+.rollo-segmento {
+  position: relative;
+}
+
+/* Sustituto en blanco de un segmento fuera de la ventana activa ±1 (mismo alto, sin contenido). */
+.rollo-segmento[data-real='0'] {
+  overflow: hidden;
+}
+
+/* ---------- Ranura del POS: carcasa + rendija negra de donde emerge el papel ---------- */
+
+.pos-ranura {
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  bottom: 0;
+  height: var(--pos-ranura-alto);
+  z-index: 3;
+  border-radius: 6px 6px 12px 12px;
+  background: linear-gradient(180deg, #2c2f34 0%, #1d1f23 45%, #131416 100%);
+  box-shadow:
+    0 -14px 28px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* La rendija: negro con sombra interior. Es lo que vende el efecto. */
+.pos-ranura::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 12px;
+  right: 12px;
+  height: 9px;
+  border-radius: 0 0 5px 5px;
+  background: #050506;
+  box-shadow:
+    inset 0 3px 5px rgba(0, 0, 0, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Piloto de la impresora */
+.pos-ranura::after {
+  content: '';
+  position: absolute;
+  right: 18px;
+  bottom: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--citas-accent);
+  box-shadow: 0 0 6px var(--citas-accent);
+  opacity: 0.85;
+}
+
+/* ---------- Móvil estrecho: menos gutter para que el papel respire ---------- */
+
+@media (max-width: 360px) {
+  .pos-escena {
+    grid-template-columns: 40px minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .pos-flecha {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* ---------- Escritorio: papel un poco más ancho, escena centrada ---------- */
+
+@media (min-width: 720px) {
+  .pos-escena {
+    max-width: 480px;
+    grid-template-columns: 52px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .rollo-camara {
+    width: min(100%, 360px);
+  }
+}
+
+/* ---------- Sin movimiento: el JS ya salta directo; esto congela los micro-cambios ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .pos-flecha,
+  .recibo-boton {
+    transition: none;
+  }
+}

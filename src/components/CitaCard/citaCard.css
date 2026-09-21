@@ -1,191 +1,350 @@
-.cita-card {
-  background: linear-gradient(
-    165deg,
-    var(--background-color-another) 0%,
-    color-mix(in srgb, var(--background-color-another) 55%, var(--background-color-secondary)) 45%,
-    color-mix(in srgb, var(--background-color-another) 25%, var(--background-color)) 100%
-  );
-  width: 100%;
-  max-width: 450px;
-  border-radius: 20px;
-  padding: 15px;
+/* Segmento de recibo térmico (una cita) — vive dentro de .rollo-tira (RolloRecibos).
+   Solo estilo de "tinta sobre papel": los colores llegan por variables desde .pos-escena:
+   --papel, --tinta, --tinta-suave, --tinta-linea, --tinta-ok, --tinta-aviso, --tinta-mal.
+   Sin transforms 3D aquí: el contenido debe leerse igual si se quitan. */
+
+.recibo {
+  padding: 18px 18px 4px;
+  color: var(--tinta, #3a2e23);
+  font-size: 17px;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
 }
 
-.cita-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 3px 10px;
+/* Opiniones/opiniones.css declara `* { font-family }` global: hay que fijar la fuente
+   en cada descendiente, no basta con heredarla. */
+.recibo,
+.recibo * {
+  font-family: var(--recibo-fuente, ui-monospace, monospace);
 }
 
-.cita-card-header-princ {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: 5px;
+/* ---------- Encabezado ---------- */
+
+.recibo-encabezado {
+  text-align: center;
 }
 
-.cita-card-lugar {
-  font-weight: bold;
+.recibo-marca {
   margin: 0;
-}
-
-.cita-card-state-container {
-  display: flex;
-  gap: 5px;
-  justify-content: center;
-  align-items: center;
-}
-
-.cita-card-state-cosi {
-  width: 10px;
-  height: 10px;
-  background-color: var(--citas-accent, var(--fonts-color-primary-alternative));
-  border-radius: 100px;
-  box-shadow: 0 0 2px var(--citas-accent, var(--fonts-color-primary-alternative));
-}
-
-.cita-card-state {
-  color: var(--citas-accent, var(--fonts-color-primary-alternative));
-  font-weight: bolder;
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-shadow: 0 0 1px var(--primary-color-strong);
-  margin: 0;
-  text-transform: uppercase;
-}
-
-.cita-card-icon-container {
-  padding: 13px;
-  background-color: var(--primary-color-weak-full);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  box-shadow: 0 0 10px var(--primary-color-weak-full);
-}
-
-.cita-card-icon {
-  color: var(--fonts-color-primary-alternative);
-}
-
-.cita-card-info-grid {
-  padding: 10px;
-  padding-bottom: 20px;
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 20px 5px;
-  border-bottom: 2px solid color-mix(in srgb, var(--fonts-color-primary-weak) 10%, transparent);
-}
-
-.cita-card-info-elemento {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  gap: 8px;
-}
-
-.cita-card-info-span {
-  color: var(--fonts-color-primary-weak);
-  font-size: 13px;
-  letter-spacing: 1px;
-  font-weight: bold;
-}
-
-.cita-card-info-contenido {
-  color: var(--fonts-color-primary);
   font-size: 15px;
-  letter-spacing: 1px;
-  font-weight: bold;
-  margin: 0;
+  letter-spacing: 0.3em;
+  color: var(--tinta-suave, #6e5e4c);
 }
 
-.cita-card-footer {
+.recibo-lugar {
+  margin: 6px 0 2px;
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.05;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.recibo-tipo {
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tinta-suave, #6e5e4c);
+}
+
+/* ---------- Separadores ---------- */
+
+.recibo-sep {
+  border: 0;
+  border-top: 1px dashed var(--tinta-linea, #a89a84);
+  margin: 10px 0;
+}
+
+.recibo-sep--doble {
+  border-top: 3px double var(--tinta-linea, #a89a84);
+}
+
+/* ---------- Filas etiqueta / valor ---------- */
+
+.recibo-filas {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recibo-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.recibo-fila dt {
+  flex: 0 0 auto;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--tinta-suave, #6e5e4c);
+}
+
+.recibo-fila dd {
+  margin: 0;
+  min-width: 0;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.recibo-fila--grande dd {
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.recibo-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recibo-lista li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.recibo-lista-precio {
+  flex: 0 0 auto;
+}
+
+.recibo-nota {
+  margin: 6px 0 0;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: var(--tinta-suave, #6e5e4c);
+}
+
+/* ---------- Estado de la reserva (los 4 estados, pasados a tinta) ---------- */
+
+.recibo-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.recibo-estado::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: 0 0 auto;
+}
+
+.recibo-estado--ok {
+  color: var(--tinta-ok, #1a6a5c);
+}
+
+.recibo-estado--aviso {
+  color: var(--tinta-aviso, #8a6512);
+}
+
+.recibo-estado--mal {
+  color: var(--tinta-mal, #8f2c2c);
+}
+
+.recibo-estado--mal::before {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px currentColor;
+}
+
+/* ---------- Mapa de mesas como impresión térmica ---------- */
+
+.recibo-mapa {
+  margin: 12px -6px 4px;
+}
+
+.recibo-mapa .mapa-mesas-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.recibo-mapa .mapa-fondo {
+  fill: transparent;
+}
+
+.recibo-mapa .mapa-detalle {
+  fill: var(--tinta-suave, #6e5e4c);
+}
+
+.recibo-mapa .mapa-detalle-borde {
+  fill: transparent;
+  stroke: var(--tinta-suave, #6e5e4c);
+  stroke-width: 1;
+}
+
+.recibo-mapa .mesa .mesa-forma {
+  fill: transparent;
+  stroke: var(--tinta-suave, #6e5e4c);
+  stroke-width: 1.1;
+  transition: none;
+}
+
+.recibo-mapa .mesa--ocupado .mesa-forma {
+  stroke-dasharray: 2.5 2;
+  opacity: 0.7;
+}
+
+.recibo-mapa .mesa .mesa-etiqueta {
+  fill: var(--tinta, #3a2e23);
+}
+
+.recibo-mapa .mesa--seleccionada .mesa-forma {
+  fill: var(--tinta, #3a2e23);
+  stroke: var(--tinta, #3a2e23);
+  stroke-width: 1.5;
+  stroke-dasharray: none;
+  opacity: 1;
+}
+
+.recibo-mapa .mesa--seleccionada .mesa-etiqueta {
+  fill: var(--papel, #efe6d2);
+}
+
+/* ---------- Línea de corte + talón recortable ---------- */
+
+.recibo-corte {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px -18px 10px;
+  padding: 0 10px;
+  color: var(--tinta-linea, #a89a84);
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.recibo-corte::before,
+.recibo-corte::after {
+  content: '';
+  flex: 1;
+  border-top: 1px dashed currentColor;
+}
+
+.recibo-corte-tijera {
+  flex: 0 0 auto;
+}
+
+.recibo-talon {
   display: flex;
   flex-direction: column;
 }
 
-.cita-card-otros-datos {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-}
-
-.cita-card-otros-datos-span {
-  color: var(--fonts-color-primary-weak);
-  font-size: 16px;
-  letter-spacing: 1px;
-  font-weight: bolder;
-}
-
-.cita-card-links {
-  display: flex;
+.recibo-botones {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
 }
 
-.cita-card-link {
-  padding: 10px;
-  display: flex;
-  margin: auto;
-  border-radius: 100px;
-  border: 2px solid color-mix(in srgb, var(--fonts-color-primary-weak) 40%, transparent);
-  color: var(--fonts-color-primary);
-}
-
-.cita-card-link-icon {
-  color: var(--fonts-color-primary);
-}
-
-.cita-card-map-pin circle {
-  fill: currentColor;
-  stroke: none;
-}
-
-.cita-card-map-pin path {
-  fill: none;
-}
-
-.cita-card-boton-container {
-  display: flex;
-  flex-direction: column;
-  padding: 15px 0;
-  gap: 20px;
-  align-items: center;
-}
-
-.cita-card-boton {
-  padding: 14px 5px;
+.recibo-boton {
+  font: inherit;
   font-size: 16px;
-  font-weight: bold;
-  border-radius: 10px;
-  border: none;
-  width: 100%;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  min-height: 46px;
+  padding: 12px 6px;
+  border-radius: 3px;
+  border: 1.5px solid var(--tinta, #3a2e23);
+  background: transparent;
+  color: var(--tinta, #3a2e23);
   cursor: pointer;
-  letter-spacing: 1px;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
-.cita-card-boton-confirmar {
-  border: 1px solid var(--primary-color-weak);
-  background-color: color-mix(in srgb, var(--primary-color-weak-full) 20%, transparent);
-  color: var(--fonts-color-primary-alternative);
-  box-shadow: 0 0 3px var(--primary-color);
-  transition: background-color 0.3s ease;
+.recibo-boton:active {
+  transform: scale(0.97);
 }
 
-.cita-card-boton-confirmar:hover {
-  background-color: color-mix(in srgb, var(--primary-color-weak-full) 40%, transparent);
+.recibo-boton--primario {
+  background: var(--tinta, #3a2e23);
+  color: var(--papel, #efe6d2);
 }
 
-.cita-card-boton-cancelar {
-  border: 1px solid #c00f0f;
-  background-color: color-mix(in srgb, #c00f0f 10%, transparent);
-  color: #f34b4b;
-  box-shadow: 0 0 3px #c00f0f;
-  transition: background-color 0.3s ease;
+.recibo-boton--cancelar {
+  color: var(--tinta-mal, #8f2c2c);
+  border-color: var(--tinta-mal, #8f2c2c);
 }
 
-.cita-card-boton-cancelar:hover {
-  background-color: color-mix(in srgb, #c00f0f 20%, transparent);
+.recibo-enlaces {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.recibo-enlace {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 6px;
+  border: 1px dashed var(--tinta-linea, #a89a84);
+  border-radius: 3px;
+  color: var(--tinta, #3a2e23);
+  text-decoration: none;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.recibo-enlace:focus-visible,
+.recibo-boton:focus-visible {
+  outline: 2px solid var(--tinta, #3a2e23);
+  outline-offset: 2px;
+}
+
+/* Papel estrecho (320–360px): botones apilados, enlaces solo icono. Nada se recorta ni parte en dos líneas. */
+@media (max-width: 360px) {
+  .recibo {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .recibo-corte {
+    margin-left: -14px;
+    margin-right: -14px;
+  }
+
+  .recibo-botones {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .recibo-enlace span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .recibo-enlace {
+    position: relative;
+    gap: 0;
+  }
 }

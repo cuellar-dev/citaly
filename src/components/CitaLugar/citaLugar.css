@@ -1,22 +1,4 @@
-.cita-lugar-extra {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 12px 10px;
-  border-bottom: 2px solid color-mix(in srgb, var(--fonts-color-primary-weak) 10%, transparent);
-}
-
-.cita-lugar-extra-linea {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0;
-  gap: 12px;
-}
-
-.cita-lugar-extra-valor {
-  color: var(--fonts-color-primary);
-  font-size: 14px;
-  font-weight: bold;
-  letter-spacing: 0.5px;
+/* Ajustes solo de la variante mesa del recibo (lo común vive en CitaCard/citaCard.css) */
+.cita-lugar .recibo-mapa + .recibo-nota {
+  margin-top: 0;
 }

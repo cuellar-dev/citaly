@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CitaServicio from '../components/CitaServicio/CitaServicio.jsx'
 import CitaLugar from '../components/CitaLugar/CitaLugar.jsx'
+import RolloRecibos from '../components/RolloRecibos/RolloRecibos.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import { useCitas } from '../hooks/useCitas.js'
 import { esCitaPasada, propsDesdeCita } from '../utils/citasVista.js'
@@ -22,8 +23,22 @@ function MisCitas() {
       return esProximas ? ta.localeCompare(tb) : tb.localeCompare(ta)
     })
 
+  const hayCitas = citasVista.length > 0
+
+  /* Cada cita es un segmento del rollo; `numero` es su posición impresa en el recibo. */
+  const renderCita = (cita, i) => {
+    const props = propsDesdeCita(cita)
+    return props.esLugar ? (
+      <CitaLugar {...props} numero={i + 1} />
+    ) : (
+      <CitaServicio {...props} numero={i + 1} />
+    )
+  }
+
   return (
-    <section className={`citas ${esProximas ? 'citas--proximas' : 'citas--pasadas'}`}>
+    <section
+      className={`citas ${esProximas ? 'citas--proximas' : 'citas--pasadas'}${hayCitas ? ' citas--recibo' : ''}`}
+    >
       <div className='switch-color-container'>
         <div
           className={`switch-color-color ${esProximas ? 'switch-color-proximas' : 'switch-color-pasadas'}`}
@@ -46,7 +61,7 @@ function MisCitas() {
         </button>
       </div>
 
-      {citasVista.length === 0 ? (
+      {!hayCitas ? (
         <TalyMomento
           escena={esProximas ? 'vacio' : 'hero'}
           pose={esProximas ? undefined : 'mira-abajo'}
@@ -60,13 +75,8 @@ function MisCitas() {
           onAccion={esProximas ? () => navigate('/') : undefined}
         />
       ) : (
-        citasVista.map((cita) => {
-          const props = propsDesdeCita(cita)
-          if (props.esLugar) {
-            return <CitaLugar key={cita.id} {...props} />
-          }
-          return <CitaServicio key={cita.id} {...props} />
-        })
+        /* key={vista}: al cambiar de pestaña el rollo arranca en la primera cita, sin animar el salto. */
+        <RolloRecibos key={vista} citas={citasVista} renderCita={renderCita} />
       )}
     </section>
   )

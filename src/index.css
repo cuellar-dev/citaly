@@ -6,6 +6,12 @@
   font-family: 'drink';
   src: url(fonts/Outfit/Outfit-VariableFont_wght.woff2) format('woff2');
 }
+@font-face {
+  font-family: 'Merchant';
+  src: url('fonts/merchant_copy/Merchant Copy.ttf') format('truetype');
+  font-display: swap;
+}
+
 :root {
   --primary-color: #00C2AD;
   --primary-color-strong: #06dfc9;
@@ -24,6 +30,7 @@
   --close-color:rgb(197, 63, 63);
   --font-familyPrincipal: 'Quicksand', sans-serif;
   --font-familyDrink: 'drink', sans-serif;
+  --font-familyMerchant: 'Merchant', sans-serif;
   box-sizing: border-box;
 }
 body{
