@@ -199,6 +199,7 @@ export default function RolloRecibos({ citas, renderCita }) {
   /* Swipe vertical: el dedo hacia arriba alimenta papel (siguiente). */
   const alPulsar = (e) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return
+    if (e.target.closest('button, a')) return
     toqueRef.current = { y: e.clientY, x: e.clientX }
   }
   const alSoltar = (e) => {

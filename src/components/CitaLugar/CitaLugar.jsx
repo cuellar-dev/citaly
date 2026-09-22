@@ -26,6 +26,8 @@ function CitaLugar({
   consumoTexto,
   mapsHref,
   numero = 1,
+  onVoyPaAlla,
+  onCancelar,
 }) {
   const mesaReservada =
     mesaId != null
@@ -65,7 +67,15 @@ function CitaLugar({
 
       <ReciboSeparador doble />
 
-      <ReciboTalon lugar={lugar} wasa={wasa} telefono={telefono} mapsHref={mapsHref} textoCancelar="Cancelar mesa" />
+      <ReciboTalon
+        lugar={lugar}
+        wasa={wasa}
+        telefono={telefono}
+        mapsHref={mapsHref}
+        textoCancelar="Cancelar mesa"
+        onVoyPaAlla={onVoyPaAlla}
+        onCancelar={onCancelar}
+      />
     </article>
   )
 }

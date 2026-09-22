@@ -17,5 +17,13 @@ export function useCitas() {
     })
   }
 
-  return { citas, updateCitas, agregarCita }
+  const actualizarCita = (id, cambios) => {
+    setCitas((prev) => {
+      const next = prev.map((cita) => (cita.id === id ? { ...cita, ...cambios } : cita))
+      saveCitas(next)
+      return next
+    })
+  }
+
+  return { citas, updateCitas, agregarCita, actualizarCita }
 }

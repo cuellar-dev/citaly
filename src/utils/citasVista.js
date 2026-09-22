@@ -7,6 +7,8 @@ function fechaHoraCita(cita) {
 }
 
 export function esCitaPasada(cita, ahora = new Date()) {
+  /* Cancelada sale de Próximas aunque la fecha aún no haya llegado. */
+  if (cita.estadoReserva === 3) return true
   return isBefore(fechaHoraCita(cita), ahora)
 }
 
@@ -18,6 +20,7 @@ export function formatearFechaCita(cita) {
 }
 
 export function textoEstadoCita(cita, ahora = new Date()) {
+  if (cita.estadoReserva === 3) return 'Cancelada'
   const fecha = fechaHoraCita(cita)
   const minutos = differenceInMinutes(fecha, ahora)
   if (minutos < 0) return 'Ya pasó'

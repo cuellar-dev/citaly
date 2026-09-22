@@ -55,15 +55,23 @@ export function ReciboCorte({ texto }) {
 }
 
 /* Talón recortable con las acciones. Vive dentro del papel. */
-export function ReciboTalon({ lugar, wasa, telefono, mapsHref, textoCancelar = 'Cancelar' }) {
+export function ReciboTalon({
+  lugar,
+  wasa,
+  telefono,
+  mapsHref,
+  textoCancelar = 'Cancelar',
+  onVoyPaAlla,
+  onCancelar,
+}) {
   return (
     <footer className="recibo-talon">
       <ReciboCorte texto="acciones" />
       <div className="recibo-botones">
-        <button type="button" className="recibo-boton recibo-boton--primario">
+        <button type="button" className="recibo-boton recibo-boton--primario" onClick={onVoyPaAlla}>
           Voy pa alla
         </button>
-        <button type="button" className="recibo-boton recibo-boton--cancelar">
+        <button type="button" className="recibo-boton recibo-boton--cancelar" onClick={onCancelar}>
           {textoCancelar}
         </button>
       </div>

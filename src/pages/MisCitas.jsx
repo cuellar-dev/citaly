@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CitaServicio from '../components/CitaServicio/CitaServicio.jsx'
 import CitaLugar from '../components/CitaLugar/CitaLugar.jsx'
+import ModalAccionCita from '../components/ModalAccionCita/ModalAccionCita.jsx'
+import { elegirTexto, TEXTOS_CANCELAR, TEXTOS_VOY } from '../components/ModalAccionCita/textosAccionCita.js'
 import RolloRecibos from '../components/RolloRecibos/RolloRecibos.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import { useCitas } from '../hooks/useCitas.js'
@@ -10,10 +12,36 @@ import './misCitas.css'
 
 function MisCitas() {
   const [vista, setVista] = useState('proximas')
-  const { citas } = useCitas()
+  const [accion, setAccion] = useState(null)
+  const { citas, actualizarCita } = useCitas()
   const navigate = useNavigate()
   const esProximas = vista === 'proximas'
   const ahora = new Date()
+
+  const abrirAccion = (tipo, cita) => {
+    const pack = tipo === 'cancelar' ? TEXTOS_CANCELAR : TEXTOS_VOY
+    setAccion({
+      tipo,
+      citaId: cita.id,
+      textoSi: elegirTexto(pack.si),
+      textoNo: elegirTexto(pack.no),
+    })
+  }
+
+  const cerrarAccion = () => setAccion(null)
+
+  const confirmarAccion = () => {
+    if (!accion) return
+    const ahoraIso = new Date().toISOString()
+    if (accion.tipo === 'cancelar') {
+      actualizarCita(accion.citaId, { estadoReserva: 3, canceladaEn: ahoraIso })
+      setVista('pasadas')
+    } else {
+      /* Confirmado: el estado verde ya reservado para cuando el cliente afirma que va. */
+      actualizarCita(accion.citaId, { estadoReserva: 1, voyPaAlla: true, voyPaAllaEn: ahoraIso })
+    }
+    cerrarAccion()
+  }
 
   const citasVista = citas
     .filter((cita) => (esProximas ? !esCitaPasada(cita, ahora) : esCitaPasada(cita, ahora)))
@@ -28,10 +56,15 @@ function MisCitas() {
   /* Cada cita es un segmento del rollo; `numero` es su posición impresa en el recibo. */
   const renderCita = (cita, i) => {
     const props = propsDesdeCita(cita)
+    const handlers = {
+      numero: i + 1,
+      onVoyPaAlla: () => abrirAccion('voy', cita),
+      onCancelar: () => abrirAccion('cancelar', cita),
+    }
     return props.esLugar ? (
-      <CitaLugar {...props} numero={i + 1} />
+      <CitaLugar {...props} {...handlers} />
     ) : (
-      <CitaServicio {...props} numero={i + 1} />
+      <CitaServicio {...props} {...handlers} />
     )
   }
 
@@ -78,6 +111,7 @@ function MisCitas() {
         /* key={vista}: al cambiar de pestaña el rollo arranca en la primera cita, sin animar el salto. */
         <RolloRecibos key={vista} citas={citasVista} renderCita={renderCita} />
       )}
+      <ModalAccionCita accion={accion} onConfirmar={confirmarAccion} onCerrar={cerrarAccion} />
     </section>
   )
 }

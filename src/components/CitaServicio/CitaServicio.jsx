@@ -23,6 +23,8 @@ function CitaServicio({
   estadoTexto,
   mapsHref,
   numero = 1,
+  onVoyPaAlla,
+  onCancelar,
 }) {
   return (
     <article className="recibo cita-servicio" aria-label={`Cita en ${lugar}`}>
@@ -65,7 +67,15 @@ function CitaServicio({
 
       <ReciboSeparador doble />
 
-      <ReciboTalon lugar={lugar} wasa={wasa} telefono={telefono} mapsHref={mapsHref} textoCancelar="Cancelar cita" />
+      <ReciboTalon
+        lugar={lugar}
+        wasa={wasa}
+        telefono={telefono}
+        mapsHref={mapsHref}
+        textoCancelar="Cancelar cita"
+        onVoyPaAlla={onVoyPaAlla}
+        onCancelar={onCancelar}
+      />
     </article>
   )
 }
