@@ -28,6 +28,7 @@ function CitaLugar({
   numero = 1,
   onVoyPaAlla,
   onCancelar,
+  pasada = false,
 }) {
   const mesaReservada =
     mesaId != null
@@ -75,6 +76,9 @@ function CitaLugar({
         textoCancelar="Cancelar mesa"
         onVoyPaAlla={onVoyPaAlla}
         onCancelar={onCancelar}
+        archivada={pasada}
+        cancelada={estadoReserva === 3}
+        estadoReserva={estadoReserva}
       />
     </article>
   )

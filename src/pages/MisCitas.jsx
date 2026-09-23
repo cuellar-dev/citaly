@@ -58,6 +58,7 @@ function MisCitas() {
     const props = propsDesdeCita(cita)
     const handlers = {
       numero: i + 1,
+      pasada: esCitaPasada(cita, ahora),
       onVoyPaAlla: () => abrirAccion('voy', cita),
       onCancelar: () => abrirAccion('cancelar', cita),
     }

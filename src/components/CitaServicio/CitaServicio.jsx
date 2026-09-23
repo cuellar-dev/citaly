@@ -25,6 +25,7 @@ function CitaServicio({
   numero = 1,
   onVoyPaAlla,
   onCancelar,
+  pasada = false,
 }) {
   return (
     <article className="recibo cita-servicio" aria-label={`Cita en ${lugar}`}>
@@ -75,6 +76,9 @@ function CitaServicio({
         textoCancelar="Cancelar cita"
         onVoyPaAlla={onVoyPaAlla}
         onCancelar={onCancelar}
+        archivada={pasada}
+        cancelada={estadoReserva === 3}
+        estadoReserva={estadoReserva}
       />
     </article>
   )

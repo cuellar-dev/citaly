@@ -249,10 +249,45 @@
   flex-direction: column;
 }
 
+/* Talón de una cita pasada o cancelada: sin acciones; el hueco se deja en blanco. */
+.recibo-archivo {
+  padding-bottom: 72px;
+}
+
+.recibo-archivo-hueco {
+  min-height: 60px;
+}
+
+.recibo-archivo-nota {
+  margin: 0 0 4px;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tinta-suave, #6e5e4c);
+}
+
 .recibo-botones {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px;
+}
+
+.recibo-botones--cartel {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.recibo-boton--cartel {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  pointer-events: none;
+}
+
+.recibo-boton--cartel:active {
+  transform: none;
 }
 
 .recibo-boton {

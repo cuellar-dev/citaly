@@ -54,6 +54,38 @@ export function ReciboCorte({ texto }) {
   )
 }
 
+function sujetoReserva(textoCancelar) {
+  return String(textoCancelar).toLowerCase().includes('mesa') ? 'esta mesa' : 'esta cita'
+}
+
+/* Cartel del mismo corte que los botones, ocupando su sitio. No es accionable. */
+function ReciboCartel({ children, tono = 'primario' }) {
+  return (
+    <div className="recibo-botones recibo-botones--cartel">
+      <p className={`recibo-boton recibo-boton--${tono} recibo-boton--cartel`} role="status">
+        {tinta(children)}
+      </p>
+    </div>
+  )
+}
+
+/* Cita ya vivida o cancelada: sin acciones. El hueco queda vacío a propósito. */
+function ReciboArchivo({ cancelada, textoCancelar }) {
+  return (
+    <footer className="recibo-talon recibo-archivo">
+      <ReciboCorte texto="archivo" />
+      {cancelada ? (
+        <ReciboCartel tono="cancelar">{`Cancelaste ${sujetoReserva(textoCancelar)}`}</ReciboCartel>
+      ) : (
+        <div className="recibo-archivo-hueco" aria-hidden="true" />
+      )}
+      {!cancelada && <p className="recibo-archivo-nota">Esta cita ya paso</p>}
+      {cancelada && <div className="recibo-archivo-hueco" aria-hidden="true" />}
+      <ReciboCorte texto="fin" />
+    </footer>
+  )
+}
+
 /* Talón recortable con las acciones. Vive dentro del papel. */
 export function ReciboTalon({
   lugar,
@@ -63,18 +95,31 @@ export function ReciboTalon({
   textoCancelar = 'Cancelar',
   onVoyPaAlla,
   onCancelar,
+  archivada = false,
+  cancelada = false,
+  estadoReserva = 0,
 }) {
+  if (archivada) {
+    return <ReciboArchivo cancelada={cancelada} textoCancelar={textoCancelar} />
+  }
+
+  const confirmada = estadoReserva === 1
+
   return (
     <footer className="recibo-talon">
       <ReciboCorte texto="acciones" />
-      <div className="recibo-botones">
-        <button type="button" className="recibo-boton recibo-boton--primario" onClick={onVoyPaAlla}>
-          Voy pa alla
-        </button>
-        <button type="button" className="recibo-boton recibo-boton--cancelar" onClick={onCancelar}>
-          {textoCancelar}
-        </button>
-      </div>
+      {confirmada ? (
+        <ReciboCartel tono="primario">{`Confirmaste ${sujetoReserva(textoCancelar)}`}</ReciboCartel>
+      ) : (
+        <div className="recibo-botones">
+          <button type="button" className="recibo-boton recibo-boton--primario" onClick={onVoyPaAlla}>
+            Voy pa alla
+          </button>
+          <button type="button" className="recibo-boton recibo-boton--cancelar" onClick={onCancelar}>
+            {textoCancelar}
+          </button>
+        </div>
+      )}
       <nav className="recibo-enlaces" aria-label={`Contacto con ${lugar}`}>
         <a
           className="recibo-enlace"
