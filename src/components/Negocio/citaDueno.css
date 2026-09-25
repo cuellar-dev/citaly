@@ -1,0 +1,105 @@
+.cita-dueno {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background-color: #171616;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+.cita-dueno-hora {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.cita-dueno-hora time {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.cita-dueno-hora span {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.cita-dueno-estado {
+  margin-left: auto;
+}
+
+.cita-dueno--pendiente .cita-dueno-estado {
+  color: var(--yellow-color, #ffd166);
+}
+
+.cita-dueno--confirmada .cita-dueno-estado {
+  color: var(--primary-color, #00c2ad);
+}
+
+.cita-dueno--cancelada .cita-dueno-estado {
+  color: var(--close-color, #c53f3f);
+}
+
+.cita-dueno-cliente,
+.cita-dueno-telefono,
+.cita-dueno-linea,
+.cita-dueno-detalle {
+  margin: 0;
+}
+
+.cita-dueno-cliente {
+  margin-top: 6px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cita-dueno-telefono,
+.cita-dueno-detalle {
+  font-size: 13px;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.cita-dueno-linea {
+  margin-top: 2px;
+  font-size: 14px;
+}
+
+.cita-dueno-acciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.cita-dueno-rechazar,
+.cita-dueno-confirmar {
+  min-height: 40px;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cita-dueno-rechazar {
+  border: 1px solid var(--close-color, #c53f3f);
+  background: #c53f3f36;
+  color: var(--close-color, #c53f3f);
+  
+}
+
+.cita-dueno-confirmar {
+  border: 0;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.cita-dueno--cancelada {
+  opacity: 0.72;
+}

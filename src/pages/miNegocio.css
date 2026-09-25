@@ -1,0 +1,20 @@
+/* Lienzo de Mi Negocio. El header y la navbar los pone Layout. */
+
+.negocio {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: calc(100dvh - 150px);
+  padding-bottom: 16px;
+  background: var(--background-color);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+}
+
+.negocio-citas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #000;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 1) 15%, rgba(18, 20, 19, 1) 42%);
+  padding: 14px 14px;
+}
