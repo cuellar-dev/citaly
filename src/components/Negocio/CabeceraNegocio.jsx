@@ -13,7 +13,7 @@ function CabeceraNegocio({
   ahora = new Date(),
 }) {
   const turno = calcularTurno({ apertura, cierre, ahora })
-
+  const cerro = turno.estado === 'Turno cerrado' ? 'cerrado-tag' : 'abierto-tag'
   return (
     <header className="cabecera-negocio" >
       <div className='cabecera-negocio-containers'>
@@ -34,10 +34,10 @@ function CabeceraNegocio({
       </div>
       <div className='cabecera-negocio-containers-reloj'>
         <div className="cabecera-negocio-reloj">
-        <p>
+        <p className='cabecera-negocio-dia'>
           {turno.dia} · {turno.hora}
         </p>
-        <p>{turno.restante}</p>
+        <p className={`${cerro} tag`}>{turno.restante}</p>
         </div>
         <div
         className="cabecera-negocio-timeline"
@@ -45,15 +45,31 @@ function CabeceraNegocio({
         aria-label={`${turno.estado}. ${turno.restante}. Abre ${turno.aperturaTexto}, cierra ${turno.cierreTexto}.`}
       >
         <div className="cabecera-negocio-pista">
-          <div className="cabecera-negocio-llenado" style={{ width: `${turno.porcentaje}%` }} />
-          <span className="cabecera-negocio-marca" style={{ left: `${turno.porcentaje}%` }} />
+          <div
+            className="cabecera-negocio-llenado"
+            style={{
+              width: `${turno.porcentaje}%`,
+              '--progreso': turno.porcentaje,
+            }}
+          />
+          <span
+            className="cabecera-negocio-marca"
+            style={{ left: `${turno.porcentaje}%`, '--progreso': turno.porcentaje }}
+          />
         </div>
         <div className="cabecera-negocio-marcas">
-          <span>{turno.aperturaTexto}</span>
-          <span className="cabecera-negocio-ahora" style={{ left: `${turno.porcentaje}%` , top:`${turno.porcentaje >= 80 || turno.porcentaje <= 20 ? 13 : 0 }px` }}>
+          <span className='cabecera-negocio-marcas-hora apertura-hora'>{turno.aperturaTexto}</span>
+          <span
+            className="cabecera-negocio-ahora"
+            style={{
+              left: `${turno.porcentaje >= 93 ? 93 : turno.porcentaje}%`,
+              '--progreso': turno.porcentaje,
+              display: turno.enCurso ? 'absolute' : 'none',
+            }}
+          >
             Ahora
           </span>
-          <span>{turno.cierreTexto}</span>
+          <span className='cabecera-negocio-marcas-hora cierre-hora'>{turno.cierreTexto}</span>
         </div>
       </div>
       </div>

@@ -1,0 +1,196 @@
+.resumen-negocio {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 15%);
+}
+
+.resumen-negocio-metricas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.resumen-negocio-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 100px;
+  padding: 10px 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--background-color-another, #252926);
+  background: color-mix(in srgb, var(--background-color-secondary, #1e2221) 88%, #000);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+.resumen-negocio-tarjeta--siguiente {
+  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 55%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color, #00c2ad) 25%, transparent),
+    0 8px 24px color-mix(in srgb, var(--primary-color, #00c2ad) 12%, transparent);
+}
+
+.resumen-negocio-tarjeta-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.resumen-negocio-tarjeta--siguiente .resumen-negocio-tarjeta-cabecera {
+  color: var(--primary-color, #00c2ad);
+}
+
+.resumen-negocio-etiqueta {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.resumen-negocio-etiqueta--activa {
+  color: var(--primary-color, #00c2ad);
+}
+
+.resumen-negocio-valor {
+  margin: 2px 0 0;
+  font-size: clamp(1.15rem, 4.2vw, 1.45rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.resumen-negocio-detalle {
+  margin: 0;
+  font-size: 10px;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.resumen-negocio-hora-cita {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 4px 0 0;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--yellow-color, #ffd166);
+}
+
+.resumen-negocio-punto {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--yellow-color, #ffd166);
+  flex-shrink: 0;
+}
+
+.resumen-negocio-anillo {
+  --p: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--yellow-color, #ffd166) calc(var(--p) * 1%),
+    var(--background-color-another, #252926) 0
+  );
+}
+
+.resumen-negocio-barra {
+  margin-top: auto;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--background-color-another, #252926);
+  overflow: hidden;
+}
+
+.resumen-negocio-barra-llenado {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--yellow-color-black, #90856b), var(--yellow-color, #ffd166));
+}
+
+.resumen-negocio-nota {
+  margin: 2px 0 0;
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--primary-color, #00c2ad);
+}
+
+.resumen-negocio-acciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.resumen-negocio-accion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--background-color-another, #252926);
+  background: color-mix(in srgb, var(--background-color-secondary, #1e2221) 90%, #000);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  text-align: left;
+  cursor: pointer;
+}
+
+.resumen-negocio-accion--pausa {
+  border-color: color-mix(in srgb, var(--yellow-color, #ffd166) 35%, transparent);
+}
+
+.resumen-negocio-accion--express {
+  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 40%, transparent);
+}
+
+.resumen-negocio-accion-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--background-color-another, #252926);
+}
+
+.resumen-negocio-accion--pausa .resumen-negocio-accion-icono {
+  color: var(--yellow-color, #ffd166);
+}
+
+.resumen-negocio-accion--express .resumen-negocio-accion-icono {
+  color: var(--primary-color, #00c2ad);
+}
+
+.resumen-negocio-accion-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.resumen-negocio-accion-titulo {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.resumen-negocio-accion-detalle {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
+  text-transform: lowercase;
+}
+
+.resumen-negocio-accion:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}

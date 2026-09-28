@@ -1,36 +1,107 @@
 .cita-dueno {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 12px 14px;
+  gap: 12px;
+  padding: 14px;
   border-radius: 14px;
-  background-color: #171616;
+  border: 1px solid var(--background-color-another, #252926);
+  background: color-mix(in srgb, var(--background-color-secondary, #1e2221) 88%, #000);
   color: var(--fonts-color-primary, #f0f0f0);
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
 }
 
-.cita-dueno-hora {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
+.cita-dueno--destacada {
+  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 50%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color, #00c2ad) 20%, transparent),
+    0 10px 28px color-mix(in srgb, var(--primary-color, #00c2ad) 10%, transparent);
 }
 
-.cita-dueno-hora time {
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1;
-  letter-spacing: 0.02em;
+.cita-dueno--pasada {
+  opacity: 0.88;
 }
 
-.cita-dueno-hora span {
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+.cita-dueno--pasada .cita-dueno-tiempo time {
   color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
+.cita-dueno-layout {
+  display: grid;
+  grid-template-columns: minmax(72px, 22%) minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.cita-dueno-tiempo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 10px;
+  border-right: 1px solid color-mix(in srgb, var(--background-color-another, #252926) 80%, transparent);
+}
+
+.cita-dueno-tiempo time {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.cita-dueno-relativo {
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--yellow-color, #ffd166);
+}
+
+.cita-dueno--pasada .cita-dueno-relativo {
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.cita-dueno-etiqueta {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-color, #00c2ad);
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent);
+}
+
+.cita-dueno-cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.cita-dueno-fila-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cita-dueno-cliente {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+}
+
 .cita-dueno-estado {
-  margin-left: auto;
+  flex-shrink: 0;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, currentColor 12%, transparent);
 }
 
 .cita-dueno--pendiente .cita-dueno-estado {
@@ -45,53 +116,76 @@
   color: var(--close-color, #c53f3f);
 }
 
-.cita-dueno-cliente,
-.cita-dueno-telefono,
-.cita-dueno-linea,
-.cita-dueno-detalle {
-  margin: 0;
+.cita-dueno-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 14px;
 }
 
-.cita-dueno-cliente {
-  margin-top: 6px;
-  font-size: 16px;
-  font-weight: 600;
+.cita-dueno-celda--ancho {
+  grid-column: 1 / -1;
+  padding-top: 8px;
+  border-top: 1px solid color-mix(in srgb, var(--background-color-another, #252926) 70%, transparent);
 }
 
-.cita-dueno-telefono,
-.cita-dueno-detalle {
-  font-size: 13px;
+.cita-dueno-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
-.cita-dueno-linea {
-  margin-top: 2px;
-  font-size: 14px;
+.cita-dueno-valor {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.cita-dueno-valor--tel {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.cita-dueno-valor--muted {
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-size: 12px;
 }
 
 .cita-dueno-acciones {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 8px;
-  margin-top: 10px;
+  padding-top: 4px;
+  border-top: 1px solid color-mix(in srgb, var(--background-color-another, #252926) 70%, transparent);
 }
 
 .cita-dueno-rechazar,
 .cita-dueno-confirmar {
-  min-height: 40px;
-  border-radius: 10px;
+  min-height: 42px;
+  border-radius: 12px;
   font: inherit;
-  font-size: 14px;
-  letter-spacing: 0.04em;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   cursor: pointer;
-  font-weight: bold;
+  transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.cita-dueno-rechazar:active,
+.cita-dueno-confirmar:active {
+  transform: scale(0.98);
 }
 
 .cita-dueno-rechazar {
-  border: 1px solid var(--close-color, #c53f3f);
-  background: #c53f3f36;
+  border: 1px solid color-mix(in srgb, var(--close-color, #c53f3f) 55%, transparent);
+  background: color-mix(in srgb, var(--close-color, #c53f3f) 18%, transparent);
   color: var(--close-color, #c53f3f);
-  
 }
 
 .cita-dueno-confirmar {
@@ -101,5 +195,22 @@
 }
 
 .cita-dueno--cancelada {
-  opacity: 0.72;
+  opacity: 0.65;
+}
+
+@media (max-width: 360px) {
+  .cita-dueno-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cita-dueno-tiempo {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px;
+    padding-right: 0;
+    padding-bottom: 10px;
+    border-right: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--background-color-another, #252926) 80%, transparent);
+  }
 }

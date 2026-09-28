@@ -19,10 +19,38 @@ export function formatearFechaCita(cita) {
   return `${etiqueta.charAt(0).toUpperCase()}${etiqueta.slice(1)}, ${hora}`
 }
 
+export function fechaHoraDesdeCita(cita, diaReferencia = new Date()) {
+  if (cita.fecha && cita.horario) {
+    return fechaHoraCita(cita)
+  }
+  const hora = cita.horario || cita.hora
+  const fecha = format(diaReferencia, 'yyyy-MM-dd')
+  return parse(`${fecha} ${hora}`, 'yyyy-MM-dd HH:mm', new Date())
+}
+
+export function minutosHastaCita(cita, ahora = new Date()) {
+  return differenceInMinutes(fechaHoraDesdeCita(cita, ahora), ahora)
+}
+
+/** Texto corto para el panel del dueño: "en 15 min", "en 1 hora", "ya pasó". */
+export function textoEnCita(cita, ahora = new Date()) {
+  if (cita.estadoReserva === 3) return 'cancelada'
+  const minutos = minutosHastaCita(cita, ahora)
+  if (minutos < 0) return 'ya pasó'
+  if (minutos === 0) return 'ahora'
+  if (minutos < 60) return `en ${minutos} min`
+  const horas = Math.floor(minutos / 60)
+  const resto = minutos % 60
+  if (resto === 0) {
+    return horas === 1 ? 'en 1 hora' : `en ${horas} horas`
+  }
+  if (horas === 1) return `en 1 h ${resto} min`
+  return `en ${horas} h ${resto} min`
+}
+
 export function textoEstadoCita(cita, ahora = new Date()) {
   if (cita.estadoReserva === 3) return 'Cancelada'
-  const fecha = fechaHoraCita(cita)
-  const minutos = differenceInMinutes(fecha, ahora)
+  const minutos = minutosHastaCita(cita, ahora)
   if (minutos < 0) return 'Ya pasó'
   if (minutos < 60) return `Quedan ${minutos} min`
   if (minutos < 60 * 24) {
