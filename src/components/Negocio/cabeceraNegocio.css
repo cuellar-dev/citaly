@@ -1,53 +1,19 @@
 .cabecera-negocio {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 14px;
   width: 100%;
-
-
   color: var(--fonts-color-primary, #f0f0f0);
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
 }
-.cabecera-negocio-containers {
 
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-
-}
-/* Velo sobre la foto: negro de carbón arriba, más abierto abajo, nunca transparente. */
-.cabecera-negocio-identidad::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    rgba(18, 20, 19, 0.741) 0%,
-    rgba(0, 0, 0, 0.845) 30%,
-    rgb(0, 0, 0) 100%
-  );
-}
-
-.cabecera-negocio-identidad > * {
-  position: relative;
-  z-index: 1;
-}
-.cabecera-negocio-recibiendo-container{
-  width: 100%;
-  display: flex;
-  justify-content: start;
-  align-items: center;
-  
-}
 .cabecera-negocio-identidad {
+  position: relative;
   width: 100%;
   min-height: 240px;
-  padding: 14px;
+  padding: 26px 16px 16px;
+  box-sizing: border-box;
   overflow: hidden;
   background-size: cover;
   background-position: center;
@@ -56,203 +22,196 @@
   justify-content: space-between;
   align-items: center;
 }
-.cabecera-negocio-foto {
-  width: 64px;
-  height: 64px;
-  flex: 0 0 auto;
-  object-fit: cover;
-  border-radius: 12px;
+
+/* Velo sobre la foto: se funde con el fondo de la página, sin negro puro. */
+.cabecera-negocio-identidad::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 70% at 50% 30%, rgba(18, 20, 19, 0.35) 0%, rgba(18, 20, 19, 0.78) 70%),
+    linear-gradient(180deg, rgba(18, 20, 19, 0.2) 0%, rgba(18, 20, 19, 0.7) 55%, #121413 100%);
+}
+
+.cabecera-negocio-identidad > * {
+  position: relative;
+  z-index: 1;
 }
 
 .cabecera-negocio-textos {
-  min-width: 0;
-  flex: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  justify-content: center;
   align-items: center;
+  gap: 8px;
   width: 100%;
-}
-
-.cabecera-negocio-estado {
-  margin: 0;
-  font-size: 12px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  font-weight: bold;
-  color: var(--primary-color, #00c2ad);
+  animation: cabecera-negocio-entra 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .cabecera-negocio-nombre {
-  
-  font-size: 42px;
-  font-weight: bold;
-  line-height: 1.1;
-  letter-spacing: 0.04em;
-
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 46px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
   text-transform: none;
-  font-family: 'drink';
+  text-shadow: 0 6px 28px rgba(6, 10, 9, 0.65);
+  overflow-wrap: anywhere;
+  text-align: center;
 }
+
+.cabecera-negocio-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cabecera-negocio-estado--abierto {
+  color: var(--primary-color, #00c2ad);
+}
+
+.cabecera-negocio-estado--cerrado {
+  color: #ef476f;
+}
+
+.cabecera-negocio-pulso {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.cabecera-negocio-pulso::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: cabecera-negocio-pulso 2s ease-out infinite;
+}
+
 .cabecera-negocio-recibiendo {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  margin: 0;
-  flex: 0 0 auto;
+  gap: 8px;
   align-self: flex-start;
-  padding: 6px 8px;
+  margin: 0;
+  padding: 7px 12px 7px 10px;
   border-radius: 999px;
-  background: color-mix(in srgb, var(--primary-color, #019586) 10%, transparent);
-  color: var(--primary-color, #013731);
-  font-size: 14px;
-  font-weight: bold;
-  letter-spacing: 0.04em;
+  border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 35%, transparent);
+  background: color-mix(in srgb, #121413 70%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--primary-color, #00c2ad);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  align-self: flex-end;
+  animation: cabecera-negocio-entra 0.7s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cabecera-negocio-recibiendo-luz {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-color, #00c2ad);
+  box-shadow: 0 0 8px var(--primary-color, #00c2ad);
+}
+
+.cabecera-negocio-turno {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 6px 16px 18px;
 }
 
 .cabecera-negocio-reloj {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  padding: 8px 0px;
-  border-radius: 10px;
   align-items: center;
-  font-size: 13px;
-  color: var(--fonts-color-primary-weak, #bdbaba);
+  gap: 12px;
 }
 
-.cabecera-negocio-reloj p {
-  margin: 0;
-}
-
-
-.cabecera-negocio-timeline {
-  position: relative;
-  margin-top: 10px;
-}
-
-.cabecera-negocio-pista {
-  position: relative;
-  height: 6px;
-  border-radius: 999px;
-  background: var(--background-color-another, #252926);
-}
-
-.cabecera-negocio-llenado {
-  height: 100%;
-  border-radius: inherit;
-  /* Gradiente en toda la pista; el ancho del fill solo recorta hasta “ahora” */
-  background: linear-gradient(
-    90deg,
-    var(--primary-color, #00c2ad) 0%,
-    #ee3232 100%
-  );
-  background-repeat: no-repeat;
-  background-position: left center;
-  background-size: calc(100% * 100 / max(var(--progreso, 1), 1)) 100%;
-  transition: width 0.4s ease, background-size 0.4s ease;
-}
-
-.cabecera-negocio-marca,
-.cabecera-negocio-ahora {
-  --color-en-barra: color-mix(
-    in srgb,
-    #ee3232 calc(var(--progreso, 0) * 1%),
-    var(--primary-color, #00c2ad)
-  );
-}
-
-.cabecera-negocio-marca {
-  position: absolute;
-  top: 50%;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--fonts-color-primary, #f0f0f0);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-en-barra) 45%, transparent);
-  transform: translate(-50%, -50%);
-  transition: box-shadow 0.4s ease;
-}
-
-.cabecera-negocio-marcas {
-  position: relative;
-  height: 28px;
-  margin-top: 8px;
-  font-size: 11px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--fonts-color-primary-weak, #bdbaba);
-}
-
-.cabecera-negocio-marcas > span:first-child,
-.cabecera-negocio-marcas > span:last-child {
-  position: absolute;
-  top: 0;
-}
-
-.cabecera-negocio-marcas > span:last-child {
-  right: 0;
-}
-
-.cabecera-negocio-ahora {
-  position: absolute;
-  bottom: 180%;
-  transform: translateX(-50%);
-  color: var(--color-en-barra);
-  transition: color 0.4s ease;
-  font-weight: bold;
-}
-.cabecera-negocio-containers-reloj{
-  padding: 20px;
-  position: relative;
-  z-index: 10;
+.cabecera-negocio-dia {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
-.tag{
-  font-weight: bold;
-  font-size: 14px;
-  letter-spacing: 0.04em;
+  gap: 2px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  text-align: center;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.cabecera-negocio-dia span {
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-variant-numeric: tabular-nums;
+}
+
+.cabecera-negocio-tag {
+  margin: 0;
+  padding: 7px 12px;
   border-radius: 999px;
-  padding: 6px 12px;
-  margin: 0;
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-}
-.cerrado-tag{
-  background: #ee323236;
-  color: #ee3232;
-}
-.abierto-tag{
-  background: #00c2ad36;
-  color: #00c2ad;
-}
-.cabecera-negocio-dia{
-  font-size: 12px;
-  font-weight: bold;
-  letter-spacing: 0.04em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--fonts-color-primary-weak, #bdbaba);
-  margin: 0;
+  white-space: nowrap;
 }
-.cabecera-negocio-marcas-hora{
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--fonts-color-primary-weak, #bdbaba);
-  margin: 0;
-  margin-top: 10px;
-  font-weight: bold;
+
+.cabecera-negocio-tag--abierto {
+  color: var(--primary-color, #00c2ad);
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 28%, transparent);
 }
-.apertura-hora{
-  color: #00c2ad;
+
+.cabecera-negocio-tag--cerrado {
+  color: #ef476f;
+  background: color-mix(in srgb, #ef476f 14%, transparent);
+  border: 1px solid color-mix(in srgb, #ef476f 28%, transparent);
 }
-.cierre-hora{
-  color: #ee3232;
+
+@keyframes cabecera-negocio-entra {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes cabecera-negocio-pulso {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cabecera-negocio-textos,
+  .cabecera-negocio-recibiendo,
+  .cabecera-negocio-pulso::after {
+    animation: none;
+  }
 }

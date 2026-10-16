@@ -1,0 +1,153 @@
+.timeline-turno {
+  position: relative;
+  margin: 0 -6px;
+}
+
+.timeline-turno-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  border-radius: 18px;
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+.timeline-turno-estrella {
+  fill: #e9f3f1;
+}
+
+.timeline-turno-nube ellipse {
+  fill: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 9%, transparent);
+}
+
+.timeline-turno-ave path {
+  fill: none;
+  stroke: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 62%, transparent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.timeline-turno-sierra {
+  fill: color-mix(in srgb, var(--primary-color-weak-full, #06463d) 42%, #121413);
+  opacity: 0.75;
+}
+
+.timeline-turno-cima {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  fill: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 55%, transparent);
+}
+
+.timeline-turno-pista {
+  fill: none;
+  stroke: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 18%, transparent);
+  stroke-width: 1.5;
+  stroke-dasharray: 1.2 1.4;
+  stroke-linecap: round;
+}
+
+.timeline-turno-estela {
+  fill: none;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  filter: drop-shadow(0 0 4px rgba(255, 209, 102, 0.35));
+}
+
+.timeline-turno-marca {
+  fill: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 30%, transparent);
+  transition: fill 0.3s ease;
+}
+
+.timeline-turno-marca--pasada {
+  fill: var(--fonts-color-primary, #f0f0f0);
+}
+
+.timeline-turno-base {
+  stroke: #121413;
+  stroke-width: 2;
+}
+
+.timeline-turno-base--abre {
+  fill: var(--primary-color, #00c2ad);
+}
+
+.timeline-turno-base--cierra {
+  fill: #ef476f;
+}
+
+.timeline-turno-loma {
+  fill: var(--background-color, #121413);
+}
+
+.timeline-turno-palma path {
+  fill: none;
+  stroke: #0b0f0e;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.timeline-turno-palma .timeline-turno-palma-tronco {
+  stroke-width: 2.6;
+}
+
+.timeline-turno-rayos line {
+  stroke: #ffd166;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.timeline-turno-crateres circle {
+  fill: #9aa29f;
+}
+
+.timeline-turno-ahora rect {
+  fill: color-mix(in srgb, #121413 82%, transparent);
+  stroke-width: 1;
+}
+
+.timeline-turno-ahora text {
+  fill: currentColor;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.timeline-turno-horas {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 10px 0;
+}
+
+.timeline-turno-hora {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.timeline-turno-hora strong {
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.timeline-turno-hora--abre strong {
+  color: var(--primary-color, #00c2ad);
+}
+
+.timeline-turno-hora--cierra {
+  align-items: flex-end;
+}
+
+.timeline-turno-hora--cierra strong {
+  color: #ef476f;
+}

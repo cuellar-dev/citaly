@@ -2,195 +2,345 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 14px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 1) 15%, rgba(0, 0, 0, 1) 15%);
+  padding: 8px 16px 22px;
 }
 
-.resumen-negocio-metricas {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
+/* ——— Piezas comunes ——— */
 
-.resumen-negocio-tarjeta {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-height: 100px;
-  padding: 10px 10px 12px;
-  border-radius: 14px;
-  border: 1px solid var(--background-color-another, #252926);
-  background: color-mix(in srgb, var(--background-color-secondary, #1e2221) 88%, #000);
-  color: var(--fonts-color-primary, #f0f0f0);
-  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
-}
-
-.resumen-negocio-tarjeta--siguiente {
-  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 55%, transparent);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color, #00c2ad) 25%, transparent),
-    0 8px 24px color-mix(in srgb, var(--primary-color, #00c2ad) 12%, transparent);
-}
-
-.resumen-negocio-tarjeta-cabecera {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  color: var(--fonts-color-primary-weak, #bdbaba);
-}
-
-.resumen-negocio-tarjeta--siguiente .resumen-negocio-tarjeta-cabecera {
-  color: var(--primary-color, #00c2ad);
-}
-
-.resumen-negocio-etiqueta {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.resumen-negocio-etiqueta--activa {
-  color: var(--primary-color, #00c2ad);
-}
-
-.resumen-negocio-valor {
-  margin: 2px 0 0;
-  font-size: clamp(1.15rem, 4.2vw, 1.45rem);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.resumen-negocio-detalle {
-  margin: 0;
-  font-size: 10px;
-  color: var(--fonts-color-primary-weak, #bdbaba);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.resumen-negocio-hora-cita {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin: 4px 0 0;
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--yellow-color, #ffd166);
-}
-
-.resumen-negocio-punto {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--yellow-color, #ffd166);
-  flex-shrink: 0;
-}
-
-.resumen-negocio-anillo {
-  --p: 0;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: conic-gradient(
-    var(--yellow-color, #ffd166) calc(var(--p) * 1%),
-    var(--background-color-another, #252926) 0
-  );
-}
-
-.resumen-negocio-barra {
-  margin-top: auto;
-  height: 4px;
-  border-radius: 999px;
-  background: var(--background-color-another, #252926);
-  overflow: hidden;
-}
-
-.resumen-negocio-barra-llenado {
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--yellow-color-black, #90856b), var(--yellow-color, #ffd166));
-}
-
-.resumen-negocio-nota {
-  margin: 2px 0 0;
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--primary-color, #00c2ad);
-}
-
-.resumen-negocio-acciones {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-
+.resumen-negocio-siguiente,
+.resumen-negocio-tarjeta,
 .resumen-negocio-accion {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 56px;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid var(--background-color-another, #252926);
-  background: color-mix(in srgb, var(--background-color-secondary, #1e2221) 90%, #000);
+  margin: 0;
   color: var(--fonts-color-primary, #f0f0f0);
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
   text-align: left;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  animation: resumen-negocio-entra 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
-.resumen-negocio-accion--pausa {
-  border-color: color-mix(in srgb, var(--yellow-color, #ffd166) 35%, transparent);
+.resumen-negocio-siguiente:disabled,
+.resumen-negocio-tarjeta:disabled {
+  cursor: default;
 }
 
-.resumen-negocio-accion--express {
-  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 40%, transparent);
+.resumen-negocio-siguiente:not(:disabled):active,
+.resumen-negocio-tarjeta:not(:disabled):active,
+.resumen-negocio-accion:active {
+  transform: scale(0.98);
 }
 
-.resumen-negocio-accion-icono {
-  display: flex;
+.resumen-negocio-siguiente:focus-visible,
+.resumen-negocio-tarjeta:focus-visible,
+.resumen-negocio-accion:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+}
+
+.resumen-negocio-etiqueta {
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background: var(--background-color-another, #252926);
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 85%, transparent);
 }
 
-.resumen-negocio-accion--pausa .resumen-negocio-accion-icono {
-  color: var(--yellow-color, #ffd166);
+.resumen-negocio-etiqueta svg {
+  color: var(--tono, var(--fonts-color-primary-weak, #bdbaba));
 }
 
-.resumen-negocio-accion--express .resumen-negocio-accion-icono {
+.resumen-negocio-barra {
+  display: block;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(240, 240, 240, 0.07);
+  overflow: hidden;
+}
+
+.resumen-negocio-barra-llenado {
+  display: block;
+  width: var(--ancho, 0%);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary-color-weak, #077a6f), var(--primary-color-strong, #06dfc9));
+  transform-origin: left center;
+  animation: resumen-negocio-crece 1s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ——— Siguiente: la pieza principal, a todo lo ancho ——— */
+
+.resumen-negocio-siguiente {
+  --tono: var(--primary-color, #00c2ad);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 18px 18px 18px 20px;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 28%, transparent);
+  background:
+    radial-gradient(90% 120% at 100% 0%, color-mix(in srgb, var(--primary-color, #00c2ad) 18%, transparent) 0%, transparent 62%),
+    linear-gradient(160deg, #172b28 0%, #151a19 100%);
+  box-shadow: 0 14px 30px -20px rgba(0, 194, 173, 0.35);
+}
+
+.resumen-negocio-siguiente .resumen-negocio-etiqueta {
   color: var(--primary-color, #00c2ad);
 }
 
-.resumen-negocio-accion-textos {
+.resumen-negocio-siguiente-cuerpo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.resumen-negocio-siguiente-valor {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.resumen-negocio-siguiente-valor small {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.resumen-negocio-siguiente-quien {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  align-items: flex-end;
+  gap: 4px;
+  flex: 1;
   min-width: 0;
+  text-align: right;
 }
 
-.resumen-negocio-accion-titulo {
-  font-size: 12px;
+.resumen-negocio-siguiente-cliente {
+  max-width: 100%;
+  font-size: 15px;
   font-weight: 700;
   line-height: 1.2;
+  overflow-wrap: anywhere;
 }
 
-.resumen-negocio-accion-detalle {
-  font-size: 9px;
-  letter-spacing: 0.04em;
+.resumen-negocio-siguiente-hora {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--yellow-color, #ffd166);
+  font-variant-numeric: tabular-nums;
+}
+
+.resumen-negocio-siguiente-hora--suave {
+  font-weight: 600;
   color: var(--fonts-color-primary-weak, #bdbaba);
-  font-family: ui-monospace, 'Cascadia Code', 'Consolas', monospace;
-  text-transform: lowercase;
 }
 
-.resumen-negocio-accion:focus-visible {
-  outline: 2px solid var(--primary-color, #00c2ad);
-  outline-offset: 2px;
+.resumen-negocio-siguiente-flecha {
+  flex-shrink: 0;
+  margin-right: -4px;
+  color: color-mix(in srgb, var(--primary-color, #00c2ad) 70%, transparent);
+}
+
+.resumen-negocio-siguiente--vacia {
+  border-color: rgba(240, 240, 240, 0.07);
+  background: linear-gradient(160deg, #1d2221 0%, #171a19 100%);
+  box-shadow: none;
+}
+
+.resumen-negocio-siguiente--vacia .resumen-negocio-siguiente-valor {
+  color: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 80%, transparent);
+}
+
+/* ——— Ocupación y estimado ——— */
+
+.resumen-negocio-metricas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.resumen-negocio-tarjeta {
+  --tono: var(--primary-color, #00c2ad);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 16px 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(240, 240, 240, 0.06);
+  background: linear-gradient(165deg, #1e2322 0%, #181c1b 100%);
+  animation-delay: 0.08s;
+}
+
+.resumen-negocio-tarjeta + .resumen-negocio-tarjeta {
+  animation-delay: 0.14s;
+}
+
+.resumen-negocio-valor {
+  margin-top: 4px;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.resumen-negocio-valor small {
+  margin-left: 3px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.resumen-negocio-pie {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 80%, transparent);
+}
+
+.resumen-negocio-pie b {
+  font-weight: 700;
+  color: var(--primary-color, #00c2ad);
+}
+
+.resumen-negocio-tarjeta .resumen-negocio-barra,
+.resumen-negocio-segmentos {
+  margin-top: 6px;
+}
+
+.resumen-negocio-segmentos {
+  display: flex;
+  gap: 3px;
+  height: 4px;
+}
+
+.resumen-negocio-segmento {
+  flex-basis: 0;
+  border-radius: 999px;
+  transform-origin: left center;
+  animation: resumen-negocio-crece 0.7s calc(0.4s + var(--i) * 0.08s) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ——— Acciones: botones simples, sin subtítulo ——— */
+
+.resumen-negocio-acciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.resumen-negocio-accion {
+  --tono: var(--primary-color, #00c2ad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: 0;
+  min-height: 50px;
+  padding: 8px 14px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--tono) 20%, transparent);
+  background: color-mix(in srgb, var(--tono) 7%, #171a19);
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: center;
+  animation-delay: 0.22s;
+}
+
+.resumen-negocio-accion svg {
+  flex-shrink: 0;
+  color: var(--tono);
+}
+
+.resumen-negocio-accion--pausa {
+  --tono: var(--yellow-color, #ffd166);
+}
+
+.resumen-negocio-accion--express {
+  animation-delay: 0.28s;
+}
+
+@media (hover: hover) {
+  .resumen-negocio-tarjeta:not(:disabled):hover {
+    border-color: rgba(240, 240, 240, 0.12);
+  }
+
+  .resumen-negocio-accion:hover {
+    background-color: color-mix(in srgb, var(--tono) 12%, #171a19);
+  }
+}
+
+@media (max-width: 360px) {
+  .resumen-negocio {
+    padding-inline: 12px;
+  }
+
+  .resumen-negocio-siguiente-valor {
+    font-size: 29px;
+  }
+
+  .resumen-negocio-tarjeta {
+    padding: 14px 13px 16px;
+  }
+
+  .resumen-negocio-valor {
+    font-size: 24px;
+  }
+
+  .resumen-negocio-accion {
+    gap: 7px;
+    padding-inline: 10px;
+    font-size: 12.5px;
+  }
+}
+
+@keyframes resumen-negocio-entra {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes resumen-negocio-crece {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resumen-negocio-siguiente,
+  .resumen-negocio-tarjeta,
+  .resumen-negocio-accion,
+  .resumen-negocio-barra-llenado,
+  .resumen-negocio-segmento {
+    animation: none;
+  }
 }

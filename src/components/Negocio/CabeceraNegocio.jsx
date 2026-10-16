@@ -1,6 +1,6 @@
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { Check } from 'lucide-react'
+import TimelineTurno from './TimelineTurno.jsx'
 import './cabeceraNegocio.css'
 
 /* Bloque de arriba: el local y el timeline del turno de hoy. */
@@ -13,67 +13,44 @@ function CabeceraNegocio({
   ahora = new Date(),
 }) {
   const turno = calcularTurno({ apertura, cierre, ahora })
-  const cerro = turno.estado === 'Turno cerrado' ? 'cerrado-tag' : 'abierto-tag'
+  const tono = turno.enCurso ? 'abierto' : 'cerrado'
+
   return (
-    <header className="cabecera-negocio" >
-      <div className='cabecera-negocio-containers'>
-      <div className="cabecera-negocio-identidad"style={{ backgroundImage: `url(${url})` }} >
+    <header className="cabecera-negocio">
+      <div className="cabecera-negocio-identidad" style={{ backgroundImage: `url(${url})` }}>
         <div className="cabecera-negocio-textos">
           <h2 className="cabecera-negocio-nombre">{nombre}</h2>
-          <p className="cabecera-negocio-estado">{turno.estado}</p>
+          <p className={`cabecera-negocio-estado cabecera-negocio-estado--${tono}`}>
+            <span className="cabecera-negocio-pulso" aria-hidden="true" />
+            {turno.estado}
+          </p>
         </div>
-        <div className='cabecera-negocio-recibiendo-container'>
         {recibiendo && turno.enCurso && (
           <p className="cabecera-negocio-recibiendo">
-            <Check size={14} strokeWidth={2.5} aria-hidden="true" />
-            Recibiendo
+            <span className="cabecera-negocio-recibiendo-luz" aria-hidden="true" />
+            Recibiendo reservas
           </p>
         )}
-        
-        </div>
       </div>
-      <div className='cabecera-negocio-containers-reloj'>
+
+      <div className="cabecera-negocio-turno">
         <div className="cabecera-negocio-reloj">
-        <p className='cabecera-negocio-dia'>
-          {turno.dia} · {turno.hora}
-        </p>
-        <p className={`${cerro} tag`}>{turno.restante}</p>
+          <p className="cabecera-negocio-dia">
+            {turno.dia}
+            <span>{turno.hora}</span>
+          </p>
+          <p className={`cabecera-negocio-tag cabecera-negocio-tag--${tono}`}>{turno.restante}</p>
         </div>
-        <div
-        className="cabecera-negocio-timeline"
-        role="img"
-        aria-label={`${turno.estado}. ${turno.restante}. Abre ${turno.aperturaTexto}, cierra ${turno.cierreTexto}.`}
-      >
-        <div className="cabecera-negocio-pista">
-          <div
-            className="cabecera-negocio-llenado"
-            style={{
-              width: `${turno.porcentaje}%`,
-              '--progreso': turno.porcentaje,
-            }}
-          />
-          <span
-            className="cabecera-negocio-marca"
-            style={{ left: `${turno.porcentaje}%`, '--progreso': turno.porcentaje }}
-          />
-        </div>
-        <div className="cabecera-negocio-marcas">
-          <span className='cabecera-negocio-marcas-hora apertura-hora'>{turno.aperturaTexto}</span>
-          <span
-            className="cabecera-negocio-ahora"
-            style={{
-              left: `${turno.porcentaje >= 93 ? 93 : turno.porcentaje}%`,
-              '--progreso': turno.porcentaje,
-              display: turno.enCurso ? 'absolute' : 'none',
-            }}
-          >
-            Ahora
-          </span>
-          <span className='cabecera-negocio-marcas-hora cierre-hora'>{turno.cierreTexto}</span>
-        </div>
-      </div>
-      </div>
-      
+        <TimelineTurno
+          porcentaje={turno.porcentaje}
+          inicioMin={turno.inicioMin}
+          finMin={turno.finMin}
+          enCurso={turno.enCurso}
+          horaTexto={turno.hora}
+          aperturaTexto={turno.aperturaTexto}
+          cierreTexto={turno.cierreTexto}
+          mitadTexto={turno.mitadTexto}
+        />
       </div>
     </header>
   )
@@ -128,6 +105,9 @@ function calcularTurno({ apertura, cierre, ahora }) {
     hora: etiquetaHora(ahoraMin),
     aperturaTexto: etiquetaHora(ini),
     cierreTexto: etiquetaHora(fin),
+    mitadTexto: etiquetaHora(ini + Math.round(total / 2)),
+    inicioMin: ini,
+    finMin: fin,
     porcentaje,
     estado,
     restante,

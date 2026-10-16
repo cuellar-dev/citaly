@@ -1,14 +1,18 @@
-.modal-backdrop{
+.modal-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  inset: 0;
+  z-index: 100000;
+  background-color: rgba(8, 10, 9, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.modal-panel{
-  background-color: white;
+
+.modal-panel {
+  width: 100%;
+  max-width: 440px;
+  padding: 0 16px;
+  box-sizing: border-box;
+  background: transparent;
+  box-shadow: none;
 }

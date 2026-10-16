@@ -1,23 +1,28 @@
-import { Banknote, UserPlus, Zap, ZapOff } from 'lucide-react'
+import { Banknote, ChevronRight, Timer, UserPlus, Users, ZapOff } from 'lucide-react'
 import './resumenNegocio.css'
 
 /**
  * Panel rápido del día: siguiente cita, ocupación y estimado.
  * Solo presentación; MiNegocio (o un hook) arma los objetos y callbacks.
+ * Cada pieza enseña una cifra y una línea; el desglose vive en su modal.
  */
 function ResumenNegocio({
   siguiente,
   ocupacion,
   estimado,
+  onSiguiente,
+  onOcupacion,
+  onEstimado,
   onPausarAgenda,
   onClienteExpress,
 }) {
   return (
     <section className="resumen-negocio" aria-label="Resumen del día">
+      <TarjetaSiguiente datos={siguiente} onClick={onSiguiente} />
+
       <div className="resumen-negocio-metricas">
-        <TarjetaSiguiente datos={siguiente} />
-        <TarjetaOcupacion datos={ocupacion} />
-        <TarjetaEstimado datos={estimado} />
+        <TarjetaOcupacion datos={ocupacion} onClick={onOcupacion} />
+        <TarjetaEstimado datos={estimado} onClick={onEstimado} />
       </div>
 
       <div className="resumen-negocio-acciones">
@@ -25,87 +30,124 @@ function ResumenNegocio({
           type="button"
           className="resumen-negocio-accion resumen-negocio-accion--pausa"
           onClick={onPausarAgenda}
+          title="Se fue la luz, algún lío"
         >
-          <span className="resumen-negocio-accion-icono" aria-hidden="true">
-            <ZapOff size={20} strokeWidth={2} />
-          </span>
-          <span className="resumen-negocio-accion-textos">
-            <span className="resumen-negocio-accion-titulo">Una pausa</span>
-            <span className="resumen-negocio-accion-detalle">Se fue la luz/ algun lío</span>
-          </span>
+          <ZapOff size={17} strokeWidth={2} aria-hidden="true" />
+          <span>Una pausa</span>
         </button>
         <button
           type="button"
           className="resumen-negocio-accion resumen-negocio-accion--express"
           onClick={onClienteExpress}
+          title="Cliente sin reserva"
         >
-          <span className="resumen-negocio-accion-icono" aria-hidden="true">
-            <UserPlus size={20} strokeWidth={2} />
-          </span>
-          <span className="resumen-negocio-accion-textos">
-            <span className="resumen-negocio-accion-titulo">Abierto a la calle</span>
-            <span className="resumen-negocio-accion-detalle">Puerta / sin reserva</span>
-          </span>
+          <UserPlus size={17} strokeWidth={2} aria-hidden="true" />
+          <span>Abierto a la calle</span>
         </button>
       </div>
     </section>
   )
 }
 
-function TarjetaSiguiente({ datos }) {
+function TarjetaSiguiente({ datos, onClick }) {
   const vacia = !datos
+  /* Cuánto falta dentro de una ventana de dos horas: lleno = ya está aquí. */
+  const cercania = vacia ? 0 : Math.round((1 - Math.min(Math.max(datos.minutos, 0), 120) / 120) * 100)
+  const enMinutos = !vacia && datos.minutos >= 0
   return (
-    <article
-      className={`resumen-negocio-tarjeta resumen-negocio-tarjeta--siguiente${vacia ? ' resumen-negocio-tarjeta--vacia' : ''}`}
+    <button
+      type="button"
+      className={`resumen-negocio-siguiente${vacia ? ' resumen-negocio-siguiente--vacia' : ''}`}
+      onClick={onClick}
+      disabled={!onClick}
     >
-      <header className="resumen-negocio-tarjeta-cabecera">
-        <span className="resumen-negocio-etiqueta resumen-negocio-etiqueta--activa">Siguiente</span>
-        <Zap size={14} strokeWidth={2.5} aria-hidden="true" />
-      </header>
-      {vacia ? (
-        <p className="resumen-negocio-valor">—</p>
-      ) : (
-        <>
-          <p className="resumen-negocio-valor">{datos.valor}</p>
-          <p className="resumen-negocio-detalle">{datos.cliente}</p>
-          <p className="resumen-negocio-hora-cita">
-            <span className="resumen-negocio-punto" aria-hidden="true" />
-            {datos.hora}
-          </p>
-        </>
+      <span className="resumen-negocio-etiqueta">
+        <Timer size={14} strokeWidth={2.25} aria-hidden="true" />
+        Siguiente
+      </span>
+
+      <span className="resumen-negocio-siguiente-cuerpo">
+        <span className="resumen-negocio-siguiente-valor">
+          {vacia ? (
+            'Libre'
+          ) : (
+            <>
+              {enMinutos && <small>en</small>}
+              {datos.valor}
+            </>
+          )}
+        </span>
+        <span className="resumen-negocio-siguiente-quien">
+          {vacia ? (
+            <span className="resumen-negocio-siguiente-hora resumen-negocio-siguiente-hora--suave">Sin más citas hoy</span>
+          ) : (
+            <>
+              <span className="resumen-negocio-siguiente-cliente">{datos.cliente}</span>
+              <span className="resumen-negocio-siguiente-hora">{datos.hora}</span>
+            </>
+          )}
+        </span>
+        {!vacia && <ChevronRight className="resumen-negocio-siguiente-flecha" size={18} strokeWidth={2} aria-hidden="true" />}
+      </span>
+
+      {!vacia && (
+        <span className="resumen-negocio-barra" role="presentation">
+          <span className="resumen-negocio-barra-llenado" style={{ '--ancho': `${cercania}%` }} />
+        </span>
       )}
-    </article>
+    </button>
   )
 }
 
-function TarjetaOcupacion({ datos }) {
+function TarjetaOcupacion({ datos, onClick }) {
   const porcentaje = Math.min(Math.max(datos?.porcentaje ?? 0, 0), 100)
+  const segmentos = (datos?.segmentos ?? []).filter((s) => s.cantidad > 0)
   return (
-    <article className="resumen-negocio-tarjeta">
-      <header className="resumen-negocio-tarjeta-cabecera">
-        <span className="resumen-negocio-etiqueta">Ocupación</span>
-        <span className="resumen-negocio-anillo" style={{ '--p': porcentaje }} aria-hidden="true" />
-      </header>
-      <p className="resumen-negocio-valor">{datos?.valor ?? `${porcentaje}%`}</p>
-      <p className="resumen-negocio-detalle">{datos?.detalle ?? '—'}</p>
-      <div className="resumen-negocio-barra" role="presentation">
-        <div className="resumen-negocio-barra-llenado" style={{ width: `${porcentaje}%` }} />
-      </div>
-    </article>
+    <button type="button" className="resumen-negocio-tarjeta" onClick={onClick} disabled={!onClick}>
+      <span className="resumen-negocio-etiqueta">
+        <Users size={14} strokeWidth={2.25} aria-hidden="true" />
+        Ocupación
+      </span>
+      <span className="resumen-negocio-valor">
+        {porcentaje}
+        <small>%</small>
+      </span>
+      <span className="resumen-negocio-pie">
+        {datos?.ocupados ?? 0} de {datos?.capacidad ?? 0} turnos
+      </span>
+      <span className="resumen-negocio-segmentos" role="presentation">
+        {segmentos.map((s, i) => (
+          <span
+            key={s.id}
+            className="resumen-negocio-segmento"
+            style={{ flexGrow: s.cantidad, background: s.color, '--i': i }}
+          />
+        ))}
+      </span>
+    </button>
   )
 }
 
-function TarjetaEstimado({ datos }) {
+function TarjetaEstimado({ datos, onClick }) {
+  const total = datos?.total ?? 0
+  const cobradoPct = total ? Math.round(((datos?.cobrado ?? 0) / total) * 100) : 0
   return (
-    <article className="resumen-negocio-tarjeta">
-      <header className="resumen-negocio-tarjeta-cabecera">
-        <span className="resumen-negocio-etiqueta">Estimado</span>
-        <Banknote size={14} strokeWidth={2} aria-hidden="true" />
-      </header>
-      <p className="resumen-negocio-valor">{datos?.valor ?? '—'}</p>
-      <p className="resumen-negocio-detalle">{datos?.detalle ?? '—'}</p>
-      {datos?.nota && <p className="resumen-negocio-nota">{datos.nota}</p>}
-    </article>
+    <button type="button" className="resumen-negocio-tarjeta" onClick={onClick} disabled={!onClick}>
+      <span className="resumen-negocio-etiqueta">
+        <Banknote size={14} strokeWidth={2.25} aria-hidden="true" />
+        Estimado
+      </span>
+      <span className="resumen-negocio-valor">
+        {total}
+        <small>CUP</small>
+      </span>
+      <span className="resumen-negocio-pie">
+        <b>{datos?.cobrado ?? 0}</b> ya cobrados
+      </span>
+      <span className="resumen-negocio-barra" role="presentation">
+        <span className="resumen-negocio-barra-llenado" style={{ '--ancho': `${cobradoPct}%` }} />
+      </span>
+    </button>
   )
 }
 

@@ -1,50 +1,170 @@
+import { useCallback, useRef, useState } from 'react'
 import { format, parse } from 'date-fns'
+import { es } from 'date-fns/locale'
+import gsap from 'gsap'
+import { useGSAP } from '@gsap/react'
+import { Banknote, Timer, UserPlus, Users, ZapOff } from 'lucide-react'
 import CabeceraNegocio from '../components/Negocio/CabeceraNegocio.jsx'
 import CitaDueno from '../components/Negocio/CitaDueno.jsx'
+import FiltroCitas from '../components/Negocio/FiltroCitas.jsx'
+import ContenidoModalNegocio from '../components/Negocio/modales/ContenidoModalNegocio.jsx'
+import ModalNegocioShell from '../components/Negocio/ModalNegocioShell.jsx'
 import ResumenNegocio from '../components/Negocio/ResumenNegocio.jsx'
 import { minutosHastaCita, textoEnCita } from '../utils/citasVista.js'
 import './miNegocio.css'
 
+gsap.registerPlugin(useGSAP)
+
 const FECHA_DEMO = '2026-09-24'
+const APERTURA = '09:00'
+const CIERRE = '19:00'
+const CAPACIDAD_TURNOS = 10
+const PROFESIONALES = ['Mateo', 'Julián', 'Yaima']
 
 /* Datos de mentira para estilar. Se sustituyen por las citas de hoy del local. */
 const CITAS_HOY = [
   {
     id: '1',
     fecha: FECHA_DEMO,
-    horario: '10:30',
-    etiqueta: 'Ahora',
-    cliente: 'Yosvany Morales',
-    telefono: '+53 5284 1802',
-    linea: 'Corte clásico + barba',
-    detalle: 'Barbero: Mateo',
-    estado: 'pendiente',
-    destacada: true,
+    horario: '09:15',
+    cliente: 'Lisandra Pérez',
+    telefono: '+53 5412 9083',
+    tipo: 'servicio',
+    linea: 'Manicura + pedicura',
+    detalle: 'Con Yaima',
+    duracion: 60,
+    precio: 18,
+    estado: 'confirmada',
   },
   {
     id: '2',
     fecha: FECHA_DEMO,
-    horario: '12:00',
-    etiqueta: 'Mediodía',
-    cliente: 'Gretel Rodríguez',
-    telefono: '+53 5340 7711',
-    linea: 'Mesa T2 · Terraza',
-    detalle: '4 personas',
-    estado: 'pendiente',
+    horario: '10:30',
+    cliente: 'Yosvany Morales',
+    telefono: '+53 5284 1802',
+    tipo: 'servicio',
+    linea: 'Corte clásico + barba',
+    detalle: 'Con Mateo',
+    duracion: 45,
+    precio: 25,
+    estado: 'confirmada',
   },
   {
     id: '3',
     fecha: FECHA_DEMO,
+    horario: '11:15',
+    cliente: 'Dayana Ruiz',
+    telefono: '+53 5367 2241',
+    tipo: 'servicio',
+    linea: 'Tinte + secado',
+    detalle: 'Con Yaima',
+    duracion: 75,
+    precio: 32,
+    estado: 'pendiente',
+  },
+  {
+    id: '4',
+    fecha: FECHA_DEMO,
+    horario: '12:00',
+    cliente: 'Gretel Rodríguez',
+    telefono: '+53 5340 7711',
+    tipo: 'mesa',
+    linea: 'Mesa T2 · Terraza',
+    detalle: '4 personas',
+    duracion: 90,
+    precio: 40,
+    estado: 'pendiente',
+  },
+  {
+    id: '5',
+    fecha: FECHA_DEMO,
+    horario: '13:30',
+    cliente: 'Ernesto Báez',
+    telefono: '+53 5590 1276',
+    tipo: 'servicio',
+    linea: 'Corte degradado',
+    detalle: 'Con Mateo',
+    duracion: 40,
+    precio: 20,
+    estado: 'cancelada',
+  },
+  {
+    id: '6',
+    fecha: FECHA_DEMO,
     horario: '14:15',
     cliente: 'Dr. Carlos V.',
+    tipo: 'servicio',
     linea: 'Afeitado toalla caliente',
-    detalle: 'Julián',
+    detalle: 'Con Julián',
+    duracion: 30,
+    precio: 15,
     estado: 'confirmada',
+  },
+  {
+    id: '7',
+    fecha: FECHA_DEMO,
+    horario: '16:40',
+    cliente: 'Mairelys Soto',
+    telefono: '+53 5221 6604',
+    tipo: 'mesa',
+    linea: 'Mesa T5 · Salón',
+    detalle: '2 personas',
+    duracion: 60,
+    precio: 0,
+    estado: 'pendiente',
   },
 ]
 
 /* Reloj fijo del mock, para ver el timeline a mitad de turno mientras se estila. */
 const AHORA_DEMO = new Date(2026, 8, 24, 10, 48)
+
+const MODALES = {
+  siguiente: { titulo: 'Siguiente cita', subtitulo: 'Quién viene ahora', tono: 'verde', Icono: Timer },
+  ocupacion: { titulo: 'Ocupación del día', subtitulo: 'Turnos del local', tono: 'verde', Icono: Users },
+  estimado: { titulo: 'Estimado', subtitulo: 'Dinero del día', tono: 'verde', Icono: Banknote },
+  pausa: { titulo: 'Pausar agenda', subtitulo: 'Cerrar reservas un rato', tono: 'amarillo', Icono: ZapOff },
+  express: { titulo: 'Cliente express', subtitulo: 'Llega sin reserva', tono: 'verde', Icono: UserPlus },
+}
+
+const FILTROS = [
+  { id: 'todas', label: 'Todas' },
+  { id: 'pendientes', label: 'Pendientes' },
+  { id: 'confirmadas', label: 'Confirmadas' },
+  { id: 'atendidas', label: 'Atendidas' },
+  { id: 'canceladas', label: 'Canceladas' },
+]
+
+const VACIO_FILTRO = {
+  todas: 'No hay citas en la agenda de hoy.',
+  pendientes: 'Nada por confirmar. Todo al día.',
+  confirmadas: 'No quedan citas confirmadas por llegar.',
+  atendidas: 'Todavía no has atendido a nadie hoy.',
+  canceladas: 'Ninguna cancelación hoy.',
+}
+
+const FRANJAS = [
+  { id: 'manana', label: 'Mañana', hasta: 12 * 60 },
+  { id: 'tarde', label: 'Tarde', hasta: 18 * 60 },
+  { id: 'noche', label: 'Noche', hasta: 24 * 60 },
+]
+
+function aMinutos(hhmm) {
+  const [h, m] = String(hhmm).split(':').map(Number)
+  return h * 60 + (m || 0)
+}
+
+function agruparPorFranja(citas) {
+  return FRANJAS.map((franja, i) => {
+    const desde = i ? FRANJAS[i - 1].hasta : 0
+    return {
+      ...franja,
+      citas: citas.filter((c) => {
+        const min = aMinutos(c.horario)
+        return min >= desde && min < franja.hasta
+      }),
+    }
+  }).filter((f) => f.citas.length)
+}
 
 function nombreCorto(nombreCompleto) {
   const partes = String(nombreCompleto || '').trim().split(/\s+/)
@@ -64,39 +184,185 @@ function valorMinutosHasta(minutos) {
   const horas = Math.floor(minutos / 60)
   const resto = minutos % 60
   if (resto === 0) return horas === 1 ? '1 hora' : `${horas} h`
-  return `${horas} h ${resto} min`
+  return `${horas} h ${resto}m`
 }
 
-/** Placeholder: luego sale de citas del día + capacidad del local. */
-function resumenDesdeMock(citas, ahora) {
-  const proximas = citas
-    .filter((c) => minutosHastaCita(c, ahora) >= 0)
+/* Cada cita cae en un solo grupo del filtro. Empezada y confirmada cuenta como atendida. */
+function grupoCita(cita, ahora) {
+  if (cita.estado === 'cancelada') return 'canceladas'
+  if (cita.estado === 'pendiente') return 'pendientes'
+  return minutosHastaCita(cita, ahora) <= 0 ? 'atendidas' : 'confirmadas'
+}
+
+function enCurso(cita, ahora) {
+  if (cita.estado === 'cancelada') return false
+  const min = minutosHastaCita(cita, ahora)
+  return min <= 0 && min > -(cita.duracion ?? 30)
+}
+
+function relativoCita(cita, ahora) {
+  if (cita.estado === 'cancelada') return 'cancelada'
+  if (enCurso(cita, ahora)) return 'en curso'
+  return textoEnCita(cita, ahora)
+}
+
+function proximoHueco(citas, ahora, cierreMin) {
+  const activas = citas.filter((c) => c.estado !== 'cancelada')
+  const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes()
+  for (let inicio = Math.ceil(ahoraMin / 15) * 15; inicio + 30 <= cierreMin; inicio += 15) {
+    const choca = activas.some((c) => {
+      const ini = aMinutos(c.horario)
+      return inicio < ini + (c.duracion ?? 30) && ini < inicio + 30
+    })
+    if (!choca) return format(new Date(2000, 0, 1, Math.floor(inicio / 60), inicio % 60), 'h:mm a')
+  }
+  return null
+}
+
+function detalleOcupacion(porcentaje) {
+  if (porcentaje >= 85) return 'Casi lleno'
+  if (porcentaje >= 60) return 'Buen ritmo'
+  if (porcentaje >= 30) return 'Hay huecos'
+  return 'Día tranquilo'
+}
+
+function resumenDelDia(citas, ahora) {
+  const activas = citas.filter((c) => c.estado !== 'cancelada')
+  const proximas = activas
+    .filter((c) => minutosHastaCita(c, ahora) > 0)
     .sort((a, b) => minutosHastaCita(a, ahora) - minutosHastaCita(b, ahora))
-  const siguiente = proximas[0]
+  const [siguiente, despues] = proximas
+  const porGrupo = (g) => citas.filter((c) => grupoCita(c, ahora) === g)
+  const suma = (lista) => lista.reduce((t, c) => t + (c.precio ?? 0), 0)
+
+  const atendidas = porGrupo('atendidas')
+  const confirmadas = porGrupo('confirmadas')
+  const pendientes = porGrupo('pendientes')
+
+  const ocupados = activas.length
+  const libres = Math.max(CAPACIDAD_TURNOS - ocupados, 0)
+  const porcentaje = Math.min(Math.round((ocupados / CAPACIDAD_TURNOS) * 100), 100)
+
+  const iniH = Math.floor(aMinutos(APERTURA) / 60)
+  const finH = Math.ceil(aMinutos(CIERRE) / 60)
+  const horaAhora = ahora.getHours()
+  const porHora = []
+  for (let h = iniH; h < finH; h++) {
+    porHora.push({
+      etiqueta: String(h % 12 || 12),
+      cantidad: activas.filter((c) => Math.floor(aMinutos(c.horario) / 60) === h).length,
+      esAhora: h === horaAhora,
+      pasada: h < horaAhora,
+      hora: h,
+    })
+  }
+  const pico = porHora.reduce((max, f) => (f.cantidad > (max?.cantidad ?? 0) ? f : max), null)
+
+  const cobrado = suma(atendidas)
+  const total = suma(activas)
 
   return {
     siguiente: siguiente
       ? {
           valor: valorMinutosHasta(minutosHastaCita(siguiente, ahora)),
+          minutos: minutosHastaCita(siguiente, ahora),
           cliente: nombreCorto(siguiente.cliente),
           hora: horaAmPm(siguiente.fecha, siguiente.horario),
+          citaId: siguiente.id,
         }
       : null,
+    despues: despues ?? null,
     ocupacion: {
-      porcentaje: 85,
-      valor: '85%',
-      detalle: 'Casi lleno',
+      porcentaje,
+      detalle: detalleOcupacion(porcentaje),
+      capacidad: CAPACIDAD_TURNOS,
+      ocupados,
+      libres,
+      ventana: `${horaAmPm(FECHA_DEMO, APERTURA)} – ${horaAmPm(FECHA_DEMO, CIERRE)}`,
+      segmentos: [
+        { id: 'atendidas', label: 'Atendidas', cantidad: atendidas.length, color: 'var(--primary-color-weak)' },
+        { id: 'confirmadas', label: 'Confirmadas', cantidad: confirmadas.length, color: 'var(--primary-color)' },
+        { id: 'pendientes', label: 'Pendientes', cantidad: pendientes.length, color: 'var(--yellow-color)' },
+        { id: 'libres', label: 'Libres', cantidad: libres, color: '#3a403e' },
+      ],
+      porHora,
+      horaPico: pico ? horaAmPm(FECHA_DEMO, `${String(pico.hora).padStart(2, '0')}:00`) : null,
     },
     estimado: {
-      valor: '185 CUP',
-      detalle: '8 citas hoy',
-      nota: '+15 CUP prop.',
+      total,
+      cobrado,
+      citasHoy: activas.length,
+      promedio: activas.length ? Math.round(total / activas.length) : 0,
+      propinas: Math.round(cobrado * 0.1),
+      partes: [
+        { id: 'cobrado', label: 'Cobrado', ayuda: `${atendidas.length} atendidas`, monto: cobrado, color: 'var(--primary-color)' },
+        {
+          id: 'por-cobrar',
+          label: 'Por cobrar',
+          ayuda: `${confirmadas.length} confirmadas por llegar`,
+          monto: suma(confirmadas),
+          color: 'var(--primary-color-weak)',
+        },
+        {
+          id: 'en-duda',
+          label: 'En el aire',
+          ayuda: `${pendientes.length} sin confirmar`,
+          monto: suma(pendientes),
+          color: 'var(--yellow-color)',
+        },
+      ],
     },
+    hueco: proximoHueco(citas, ahora, aMinutos(CIERRE)),
+    profesionales: PROFESIONALES,
   }
 }
 
 function MiNegocio() {
-  const resumen = resumenDesdeMock(CITAS_HOY, AHORA_DEMO)
+  const [citas, setCitas] = useState(CITAS_HOY)
+  const [filtro, setFiltro] = useState('todas')
+  const [modal, setModal] = useState(null)
+  const [modalAbierto, setModalAbierto] = useState(false)
+  const listaRef = useRef(null)
+
+  const resumen = resumenDelDia(citas, AHORA_DEMO)
+  const conHora = citas.map((c) => ({ ...c, horaTexto: horaAmPm(c.fecha, c.horario) }))
+  const citaSiguiente = conHora.find((c) => c.id === resumen.siguiente?.citaId)
+  const despues = resumen.despues ? conHora.find((c) => c.id === resumen.despues.id) : null
+
+  const cantidades = conHora.reduce(
+    (acc, c) => {
+      acc[grupoCita(c, AHORA_DEMO)] += 1
+      return acc
+    },
+    { todas: conHora.length, pendientes: 0, confirmadas: 0, atendidas: 0, canceladas: 0 }
+  )
+  const opcionesFiltro = FILTROS.map((f) => ({ ...f, cantidad: cantidades[f.id] }))
+  const visibles = filtro === 'todas' ? conHora : conHora.filter((c) => grupoCita(c, AHORA_DEMO) === filtro)
+  const franjas = agruparPorFranja([...visibles].sort((a, b) => aMinutos(a.horario) - aMinutos(b.horario)))
+
+  const abrirModal = (tipo) => {
+    setModal({ tipo })
+    setModalAbierto(true)
+  }
+  const cerrarModal = useCallback(() => setModalAbierto(false), [])
+  const cambiarEstado = (id, estado) => setCitas((prev) => prev.map((c) => (c.id === id ? { ...c, estado } : c)))
+
+  const configModal = MODALES[modal?.tipo] ?? {}
+
+  useGSAP(
+    () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      gsap.from('.negocio-citas-item', {
+        y: 16,
+        autoAlpha: 0,
+        duration: 0.45,
+        stagger: 0.05,
+        ease: 'power3.out',
+        clearProps: 'transform,opacity,visibility',
+      })
+    },
+    { scope: listaRef, dependencies: [filtro] }
+  )
 
   return (
     <section className="negocio" aria-label="Mi Negocio">
@@ -104,33 +370,87 @@ function MiNegocio() {
         nombre="Itaka"
         url="https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=735&auto=format&fit=crop"
         recibiendo
-        apertura="09:00"
-        cierre="19:00"
+        apertura={APERTURA}
+        cierre={CIERRE}
         ahora={AHORA_DEMO}
       />
       <ResumenNegocio
         siguiente={resumen.siguiente}
         ocupacion={resumen.ocupacion}
         estimado={resumen.estimado}
-        onPausarAgenda={() => {}}
-        onClienteExpress={() => {}}
+        onSiguiente={() => abrirModal('siguiente')}
+        onOcupacion={() => abrirModal('ocupacion')}
+        onEstimado={() => abrirModal('estimado')}
+        onPausarAgenda={() => abrirModal('pausa')}
+        onClienteExpress={() => abrirModal('express')}
       />
       <div className="negocio-citas">
         <header className="negocio-citas-encabezado">
-          <h2 className="negocio-citas-titulo">Citas de hoy</h2>
-          <p className="negocio-citas-contador">{CITAS_HOY.length} en agenda</p>
+          <div>
+            <h2 className="negocio-citas-titulo">Citas de hoy</h2>
+            <p className="negocio-citas-fecha">{format(AHORA_DEMO, "EEEE d 'de' MMMM", { locale: es })}</p>
+          </div>
+          <p className="negocio-citas-contador">
+            <strong>{citas.length - cantidades.canceladas}</strong> en agenda
+          </p>
         </header>
-        {CITAS_HOY.map((cita) => (
-          <CitaDueno
-            key={cita.id}
-            {...cita}
-            hora={cita.horario}
-            relativo={textoEnCita(cita, AHORA_DEMO)}
-            onConfirmar={cita.estado === 'pendiente' ? () => {} : undefined}
-            onRechazar={cita.estado === 'pendiente' ? () => {} : undefined}
-          />
-        ))}
+
+        <FiltroCitas opciones={opcionesFiltro} activo={filtro} onCambiar={setFiltro} />
+
+        <div className="negocio-citas-lista" ref={listaRef}>
+          {visibles.length === 0 && (
+            <div className="negocio-citas-vacio negocio-citas-item">
+              <span className="negocio-citas-vacio-luna" aria-hidden="true" />
+              <p>{VACIO_FILTRO[filtro]}</p>
+            </div>
+          )}
+          {franjas.map((franja) => (
+            <section key={franja.id} className="negocio-franja" aria-label={`Citas de la ${franja.label.toLowerCase()}`}>
+              <header className="negocio-franja-cabecera negocio-citas-item">
+                <h3 className="negocio-franja-titulo">{franja.label}</h3>
+                <span className="negocio-franja-cuenta">
+                  {franja.citas.length} {franja.citas.length === 1 ? 'cita' : 'citas'}
+                </span>
+              </header>
+              <div className="negocio-franja-lista">
+                {franja.citas.map((cita) => {
+                  const ahoraEnCurso = enCurso(cita, AHORA_DEMO)
+                  return (
+                    <div key={cita.id} className="negocio-citas-item">
+                      <CitaDueno
+                        {...cita}
+                        hora={cita.horario}
+                        relativo={relativoCita(cita, AHORA_DEMO)}
+                        destacada={ahoraEnCurso}
+                        atendida={!ahoraEnCurso && grupoCita(cita, AHORA_DEMO) === 'atendidas'}
+                        onConfirmar={cita.estado === 'pendiente' ? () => cambiarEstado(cita.id, 'confirmada') : undefined}
+                        onRechazar={cita.estado === 'pendiente' ? () => cambiarEstado(cita.id, 'cancelada') : undefined}
+                      />
+                    </div>
+                  )
+                })}
+              </div>
+            </section>
+          ))}
+        </div>
       </div>
+
+      <ModalNegocioShell
+        abierto={modalAbierto}
+        titulo={configModal.titulo}
+        subtitulo={configModal.subtitulo}
+        tono={configModal.tono}
+        Icono={configModal.Icono}
+        onCerrar={cerrarModal}
+      >
+        <ContenidoModalNegocio
+          modal={modal}
+          resumen={{ ...resumen, despues }}
+          citas={conHora}
+          citaSiguiente={citaSiguiente}
+          ahora={AHORA_DEMO}
+        />
+      </ModalNegocioShell>
     </section>
   )
 }

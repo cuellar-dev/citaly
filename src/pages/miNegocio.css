@@ -4,7 +4,7 @@
   box-sizing: border-box;
   width: 100%;
   min-height: calc(100dvh - 150px);
-  padding-bottom: 16px;
+  padding-bottom: 20px;
   background: var(--background-color);
   color: var(--fonts-color-primary);
   font-family: var(--font-familyPrincipal);
@@ -14,30 +14,142 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding: 8px 14px 20px;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(18, 20, 19, 1) 35%);
+  padding: 10px 14px 24px;
 }
 
 .negocio-citas-encabezado {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 12px;
-  padding: 4px 2px 8px;
+  padding: 6px 2px 0;
 }
 
 .negocio-citas-titulo {
   margin: 0;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  text-align: left;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.negocio-citas-fecha {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-weight: 600;
   color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.negocio-citas-fecha::first-letter {
+  text-transform: uppercase;
 }
 
 .negocio-citas-contador {
   margin: 0;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  white-space: nowrap;
+}
+
+.negocio-citas-contador strong {
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 16px;
   color: var(--primary-color, #00c2ad);
+}
+
+.negocio-citas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-top: 6px;
+}
+
+.negocio-franja {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.negocio-franja-cabecera {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.negocio-franja-titulo {
+  margin: 0;
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.negocio-franja-cuenta {
+  font-size: 12px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 65%, transparent);
+}
+
+/* Hilo vertical que une los nodos de la agenda: 10px de margen + 58px de hora + 12px + mitad del nodo. */
+.negocio-franja-lista {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.negocio-franja-lista::before {
+  content: '';
+  position: absolute;
+  top: 18px;
+  bottom: 18px;
+  left: calc(10px + 58px + 12px + 7px);
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(240, 240, 240, 0.12) 12%,
+    rgba(240, 240, 240, 0.12) 88%,
+    transparent 100%
+  );
+}
+
+@media (max-width: 360px) {
+  .negocio-franja-lista::before {
+    left: calc(10px + 48px + 9px + 7px);
+  }
+}
+
+.negocio-citas-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 30px 20px;
+  border-radius: 18px;
+  border: 1px dashed rgba(240, 240, 240, 0.1);
+  text-align: center;
+}
+
+.negocio-citas-vacio p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.negocio-citas-vacio-luna {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: inset -9px -3px 0 0 #ece9df;
+  filter: drop-shadow(0 0 10px rgba(127, 216, 206, 0.3));
 }

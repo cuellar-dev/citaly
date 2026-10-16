@@ -1,0 +1,104 @@
+.filtro-citas {
+  position: relative;
+  display: flex;
+  gap: 4px;
+  margin: 0 -14px;
+  padding: 4px 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+.filtro-citas::-webkit-scrollbar {
+  display: none;
+}
+
+.filtro-citas-pildora {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 0;
+  width: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 9%, transparent);
+  border: 1px solid rgba(240, 240, 240, 0.12);
+  pointer-events: none;
+}
+
+.filtro-citas-opcion {
+  --tono: var(--fonts-color-primary, #f0f0f0);
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.25s ease;
+}
+
+.filtro-citas-opcion[aria-selected='true'] {
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.filtro-citas-opcion:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: -2px;
+}
+
+.filtro-citas-opcion--pendientes {
+  --tono: var(--yellow-color, #ffd166);
+}
+
+.filtro-citas-opcion--confirmadas {
+  --tono: var(--primary-color, #00c2ad);
+}
+
+.filtro-citas-opcion--atendidas {
+  --tono: var(--primary-color-weak, #077a6f);
+}
+
+.filtro-citas-opcion--canceladas {
+  --tono: var(--close-color, #c53f3f);
+}
+
+.filtro-citas-punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--tono);
+}
+
+.filtro-citas-opcion--todas .filtro-citas-punto {
+  display: none;
+}
+
+.filtro-citas-cuenta {
+  min-width: 18px;
+  padding: 2px 6px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: rgba(240, 240, 240, 0.08);
+  font-size: 11px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.filtro-citas-opcion[aria-selected='true'] .filtro-citas-cuenta {
+  background: color-mix(in srgb, var(--tono) 22%, transparent);
+  color: var(--tono);
+}
+
+.filtro-citas-opcion--todas[aria-selected='true'] .filtro-citas-cuenta {
+  color: var(--fonts-color-primary, #f0f0f0);
+}
