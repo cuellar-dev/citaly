@@ -3,6 +3,7 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { Clock, MessageCircle, Phone, Scissors, UtensilsCrossed } from 'lucide-react'
 import { minutosHastaCita, textoEnCita } from '../../../utils/citasVista.js'
+import { Dato, FilaDato, Seccion } from './piezas.jsx'
 
 gsap.registerPlugin(useGSAP)
 
@@ -59,38 +60,6 @@ function Contador({ valor, formato = String, retraso = 0.25, duracion = 1.1, cla
     { dependencies: [valor] }
   )
   return <span ref={ref} className={className} />
-}
-
-function Seccion({ titulo, extra, children }) {
-  return (
-    <section className="modal-negocio-seccion" data-entra>
-      {(titulo || extra) && (
-        <header className="modal-negocio-seccion-cabecera">
-          {titulo && <h3 className="modal-negocio-seccion-titulo">{titulo}</h3>}
-          {extra && <span className="modal-negocio-seccion-extra">{extra}</span>}
-        </header>
-      )}
-      {children}
-    </section>
-  )
-}
-
-function Dato({ etiqueta, valor, tono }) {
-  return (
-    <div className={`modal-negocio-dato${tono ? ` modal-negocio-dato--${tono}` : ''}`}>
-      <span className="modal-negocio-dato-etiqueta">{etiqueta}</span>
-      <span className="modal-negocio-dato-valor">{valor}</span>
-    </div>
-  )
-}
-
-function FilaDato({ etiqueta, valor }) {
-  return (
-    <div className="modal-negocio-fila">
-      <span className="modal-negocio-fila-etiqueta">{etiqueta}</span>
-      <span className="modal-negocio-fila-valor">{valor}</span>
-    </div>
-  )
 }
 
 /* ---------- Siguiente cita ---------- */

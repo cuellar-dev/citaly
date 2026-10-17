@@ -1,0 +1,132 @@
+[
+  {
+    "id": "u-laura-mendez",
+    "usuario": "lauramendez",
+    "nombre": "Laura Méndez",
+    "foto": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Estilista",
+    "ciudad": "Cabaiguán",
+    "telefono": "+53 5 2101 4410",
+    "correo": "laura.mendez@correo.cu"
+  },
+  {
+    "id": "u-carlos-ruiz",
+    "usuario": "carlitos.ruiz",
+    "nombre": "Carlos Ruiz",
+    "foto": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Barbero",
+    "ciudad": "Cabaiguán",
+    "telefono": "+53 5 3302 1187",
+    "correo": "carlos.ruiz@correo.cu"
+  },
+  {
+    "id": "u-sofia-herrera",
+    "usuario": "sofi.herrera",
+    "nombre": "Sofía Herrera",
+    "foto": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Manicurista",
+    "ciudad": "Cabaiguán",
+    "telefono": "+53 5 4410 9032",
+    "correo": "sofia.herrera@correo.cu"
+  },
+  {
+    "id": "u-miguel-torres",
+    "usuario": "migueltorres",
+    "nombre": "Miguel Torres",
+    "foto": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Peluquero",
+    "ciudad": "Sancti Spíritus",
+    "telefono": "+53 5 2876 5521",
+    "correo": "miguel.torres@correo.cu"
+  },
+  {
+    "id": "u-yaima-castillo",
+    "usuario": "yaima.nails",
+    "nombre": "Yaima Castillo",
+    "foto": "",
+    "oficio": "Manicurista",
+    "ciudad": "Cabaiguán",
+    "telefono": "+53 5 6120 3398",
+    "correo": "yaima.castillo@correo.cu"
+  },
+  {
+    "id": "u-dariel-paz",
+    "usuario": "darielbarber",
+    "nombre": "Dariel Paz",
+    "foto": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Barbero",
+    "ciudad": "Sancti Spíritus",
+    "telefono": "+53 5 5034 7781",
+    "correo": "dariel.paz@correo.cu"
+  },
+  {
+    "id": "u-lianet-rojas",
+    "usuario": "lianet.rojas",
+    "nombre": "Lianet Rojas",
+    "foto": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Colorista",
+    "ciudad": "Cabaiguán",
+    "telefono": "+53 5 2290 6614",
+    "correo": "lianet.rojas@correo.cu"
+  },
+  {
+    "id": "u-rocio-fernandez",
+    "usuario": "rociofernandez",
+    "nombre": "Rocío Fernández",
+    "foto": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Maquilladora",
+    "ciudad": "Santa Clara",
+    "telefono": "+53 5 7781 2045",
+    "correo": "rocio.fernandez@correo.cu"
+  },
+  {
+    "id": "u-alejandro-gil",
+    "usuario": "alegil",
+    "nombre": "Alejandro Gil",
+    "foto": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Barbero",
+    "ciudad": "Cabaiguán",
+    "telefono": "+53 5 3398 1120",
+    "correo": "alejandro.gil@correo.cu"
+  },
+  {
+    "id": "u-yanelis-mora",
+    "usuario": "yanelis.mora",
+    "nombre": "Yanelis Mora",
+    "foto": "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Estilista",
+    "ciudad": "Sancti Spíritus",
+    "telefono": "+53 5 6643 0957",
+    "correo": "yanelis.mora@correo.cu"
+  },
+  {
+    "id": "u-ernesto-vidal",
+    "usuario": "ernestovidal",
+    "nombre": "Ernesto Vidal",
+    "foto": "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Peluquero",
+    "ciudad": "Cabaiguán",
+    "telefono": "+53 5 2015 8834",
+    "correo": "ernesto.vidal@correo.cu"
+  },
+  {
+    "id": "u-claudia-perez",
+    "usuario": "claudia.perez",
+    "nombre": "Claudia Pérez",
+    "foto": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=400&auto=format&fit=crop",
+    "oficio": "Esteticista",
+    "ciudad": "Cabaiguán",
+    "telefono": "+53 5 4467 2210",
+    "correo": "claudia.perez@correo.cu"
+  },
+  {
+    "id": "u-osmany-reyes",
+    "usuario": "osmany.reyes",
+    "nombre": "Osmany Reyes",
+    "foto": "",
+    "oficio": "Barbero",
+    "ciudad": "Taguasco",
+    "telefono": "+53 5 5512 7740",
+    "correo": "osmany.reyes@correo.cu"
+  }
+]

@@ -2,9 +2,8 @@ import TarjetaLocal from '../components/TarjetaLocal/TarjetaLocal.jsx'
 import { getAllLocales } from '../services/locales.js'
 import './Descubre.css'
 
-const locales = getAllLocales()
-
 function Descubre() {
+  const locales = getAllLocales()
   return (
     <section className="descubre">
       <div className="tarjeta-container">

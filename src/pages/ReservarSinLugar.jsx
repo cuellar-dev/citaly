@@ -3,6 +3,7 @@ import { parse, addMinutes, format, isSameDay, isAfter, isBefore, startOfToday} 
 import { es } from 'date-fns/locale'
 import { ArrowLeft, CalendarDays, Info, Scissors, Scroll} from 'lucide-react'
 import { getLocalById } from '../services/locales.js'
+import { profesionalesActivos } from '../services/usuarios.js'
 import { useCitas } from '../hooks/useCitas.js'
 import { fechasDisponiblesLocal, fechaEnUso } from '../utils/fechasLocal.js'
 import './ReservarConLugar.css'
@@ -90,12 +91,18 @@ function ReservarSinLugar() {
     )
   }
   
-  const serviciosDisponibles = local.servicios ?? []
+  /* Un profesional sin lista de servicios los hace todos (datos viejos de locales.json). */
+  const todosLosProfesionales = profesionalesActivos(local)
+  const hace = (profesional, ids) =>
+    !Array.isArray(profesional.servicios) || ids.every((id) => profesional.servicios.includes(id))
+  const serviciosDisponibles = (local.servicios ?? []).filter(
+    (s) => !todosLosProfesionales.length || todosLosProfesionales.some((p) => hace(p, [s.id]))
+  )
   const serviciosElegidos = serviciosDisponibles.filter((s) =>
     serviciosSeleccionados.includes(s.id)
   )
   const precioTotal = serviciosElegidos.reduce((sum, s) => sum + (s.precio || 0), 0)
-  const profesionales = local.profesionales ?? []
+  const profesionales = todosLosProfesionales.filter((p) => hace(p, serviciosSeleccionados))
   function duracionAMinutos(duracion) {
     if (!duracion) return 0
     const texto = String(duracion).trim().toLowerCase()
@@ -210,12 +217,12 @@ function ReservarSinLugar() {
     setReservaConfirmada(true)
   }
   function toggleServicio(idServicio){
-    setServiciosSeleccionados((prev) => {
-      if(prev.includes(idServicio)){
-        return prev.filter((id) => id !== idServicio)
-      }
-      return [...prev, idServicio]
-    })
+    const siguiente = serviciosSeleccionados.includes(idServicio)
+      ? serviciosSeleccionados.filter((id) => id !== idServicio)
+      : [...serviciosSeleccionados, idServicio]
+    setServiciosSeleccionados(siguiente)
+    const elegido = todosLosProfesionales.find((p) => p.id === profesionalSeleccionado)
+    if (elegido && !hace(elegido, siguiente)) setProfesionalSeleccionado(null)
   }
 
   function handleSeleccionProfesional(idProfesional){
@@ -346,6 +353,11 @@ function ReservarSinLugar() {
             Elija un Profesional 
           </h2>
           <p className="reservar-local-texto-profesionales">Escoja un profesional entre los disponibles para que le atienda</p>
+          {profesionales.length === 0 && (
+            <p className="reservar-local-texto-profesionales">
+              Nadie hace todos esos servicios en la misma cita. Prueba quitando alguno.
+            </p>
+          )}
           <div className='reservar-local-profesionales-container'>
             {profesionales.map((profesional) => (
               <SelectPro

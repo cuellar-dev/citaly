@@ -1,0 +1,224 @@
+/* "Tu local": la ficha pública agrupada en tarjetas de filas, sin animaciones en reposo. */
+
+.ficha-local {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 14px 28px;
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+.ficha-local-cabecera {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 2px 2px;
+}
+
+.ficha-local-titulo {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  text-align: left;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.ficha-local-sub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.ficha-local-ver {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  min-height: 36px;
+  padding: 0 4px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--primary-color, #00c2ad);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.ficha-local-ver:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.ficha-local-grupo {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-radius: 20px;
+  border: 1px solid rgba(240, 240, 240, 0.06);
+  background: linear-gradient(165deg, #1d2221 0%, #181c1b 100%);
+  overflow: hidden;
+}
+
+.ficha-local-grupo li + li .ficha-local-fila::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 62px;
+  right: 0;
+  height: 1px;
+  background: rgba(240, 240, 240, 0.06);
+}
+
+.ficha-local-fila {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 62px;
+  margin: 0;
+  padding: 11px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.2s ease;
+}
+
+.ficha-local-fila:active {
+  background-color: rgba(240, 240, 240, 0.04);
+}
+
+.ficha-local-fila:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: -2px;
+}
+
+.ficha-local-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 12%, transparent);
+  color: var(--primary-color, #00c2ad);
+}
+
+.ficha-local-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ficha-local-fila-titulo {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ficha-local-valor {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  overflow-wrap: anywhere;
+}
+
+.ficha-local-extra {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ficha-local-flecha {
+  flex-shrink: 0;
+  margin-left: -4px;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 55%, transparent);
+}
+
+/* Semana en siete puntos: lleno = abre. */
+.ficha-local-semana {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.ficha-local-semana i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(240, 240, 240, 0.14);
+}
+
+.ficha-local-semana i.abre {
+  background: var(--primary-color, #00c2ad);
+}
+
+.ficha-local-pastilla {
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 12%, transparent);
+  color: var(--primary-color, #00c2ad);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.ficha-local-iconos {
+  display: inline-flex;
+  gap: 7px;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.ficha-local-pila {
+  display: inline-flex;
+}
+
+.ficha-local-pila > * {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #252926;
+  box-shadow: 0 0 0 2px #1b1f1e;
+  color: var(--primary-color, #00c2ad);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ficha-local-pila > * + * {
+  margin-left: -8px;
+}
+
+.ficha-local-nota {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--yellow-color, #ffd166);
+}
+
+@media (max-width: 360px) {
+  .ficha-local {
+    padding-inline: 12px;
+  }
+
+  .ficha-local-iconos svg:nth-child(n + 3) {
+    display: none;
+  }
+}

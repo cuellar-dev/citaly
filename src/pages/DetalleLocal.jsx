@@ -205,8 +205,8 @@ return (
                 <div className={`dia-div ${local.dias.includes('m') ? 'abierto' : 'cerrado'}`}>{local.dias.includes('m') ? '•' : '-'}</div>
                 </div>
               <div className='dia-div-container'> 
-                <span className='dia-div-span'>W</span>
-                <div className={`dia-div ${local.dias.includes('w') ? 'abierto' : 'cerrado'}`}>{local.dias.includes('w') ? '•' : '-'}</div>
+                <span className='dia-div-span'>X</span>
+                <div className={`dia-div ${local.dias.includes('x') ? 'abierto' : 'cerrado'}`}>{local.dias.includes('x') ? '•' : '-'}</div>
               </div>
               <div className='dia-div-container'>
                 <span className='dia-div-span'>J</span>

@@ -119,6 +119,23 @@
   overscroll-behavior: contain;
 }
 
+.modal-negocio-vista {
+  animation: modal-negocio-vista 0.24s ease-out both;
+}
+
+@keyframes modal-negocio-vista {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-negocio-vista {
+    animation: none;
+  }
+}
+
 .modal-negocio-stack {
   display: flex;
   flex-direction: column;
@@ -326,7 +343,6 @@
   stroke: var(--primary-color, #00c2ad);
   stroke-width: 9;
   stroke-linecap: round;
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--primary-color, #00c2ad) 55%, transparent));
 }
 
 .modal-negocio-anillo-centro,

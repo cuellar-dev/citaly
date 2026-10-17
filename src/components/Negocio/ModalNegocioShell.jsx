@@ -11,43 +11,45 @@ gsap.registerPlugin(useGSAP)
  * Hoja que sube desde abajo para el panel del dueño; el contenido lo arma la página según `modal`.
  * Sigue montada mientras se anima la salida, por eso lleva su propio `montado`.
  */
-function ModalNegocioShell({ abierto, titulo, subtitulo, tono = 'neutro', Icono, onCerrar, children }) {
+function ModalNegocioShell({ abierto, titulo, subtitulo, tono = 'neutro', Icono, vista, onCerrar, children }) {
   const [montado, setMontado] = useState(abierto)
   if (abierto && !montado) setMontado(true)
 
-  const fondoRef = useRef(null)
+  const veloRef = useRef(null)
   const hojaRef = useRef(null)
   const cerrarRef = useRef(null)
+  const cuerpoRef = useRef(null)
+
+  useEffect(() => {
+    if (cuerpoRef.current) cuerpoRef.current.scrollTop = 0
+  }, [vista])
 
   useGSAP(
     () => {
-      const fondo = fondoRef.current
+      const velo = veloRef.current
       const hoja = hojaRef.current
-      if (!montado || !fondo || !hoja) return
+      if (!montado || !velo || !hoja) return
       const d = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1
 
       if (abierto) {
+        /* Solo los primeros bloques entran escalonados: el resto queda debajo del pliegue. */
+        const entradas = gsap.utils.toArray('[data-entra]', hoja).slice(0, 5)
         gsap
           .timeline()
-          .fromTo(
-            fondo,
-            { backgroundColor: 'rgba(8, 10, 9, 0)', backdropFilter: 'blur(0px)' },
-            { backgroundColor: 'rgba(8, 10, 9, 0.72)', backdropFilter: 'blur(4px)', duration: 0.35 * d, ease: 'power1.out' },
-            0
-          )
-          .fromTo(hoja, { yPercent: 100 }, { yPercent: 0, duration: 0.65 * d, ease: 'expo.out' }, 0)
+          .fromTo(velo, { opacity: 0 }, { opacity: 1, duration: 0.35 * d, ease: 'power1.out' }, 0)
+          .fromTo(hoja, { yPercent: 100 }, { yPercent: 0, duration: 0.55 * d, ease: 'expo.out', force3D: true }, 0)
           .from(
-            hoja.querySelectorAll('[data-entra]'),
-            { y: 18, autoAlpha: 0, duration: 0.5 * d, stagger: 0.06 * d, ease: 'power3.out' },
-            0.14 * d
+            entradas,
+            { y: 14, opacity: 0, duration: 0.4 * d, stagger: 0.05 * d, ease: 'power3.out', clearProps: 'transform,opacity' },
+            0.12 * d
           )
         return
       }
 
       gsap
         .timeline({ onComplete: () => setMontado(false) })
-        .to(hoja, { yPercent: 100, duration: 0.34 * d, ease: 'power2.in' }, 0)
-        .to(fondo, { backgroundColor: 'rgba(8, 10, 9, 0)', backdropFilter: 'blur(0px)', duration: 0.3 * d }, 0.04 * d)
+        .to(hoja, { yPercent: 100, duration: 0.3 * d, ease: 'power2.in', force3D: true }, 0)
+        .to(velo, { opacity: 0, duration: 0.28 * d }, 0.02 * d)
     },
     { dependencies: [abierto, montado] }
   )
@@ -68,7 +70,7 @@ function ModalNegocioShell({ abierto, titulo, subtitulo, tono = 'neutro', Icono,
   }, [abierto, onCerrar])
 
   return (
-    <Modal abierto={montado} onCerrar={onCerrar} className="modal-backdrop--hoja" fondoRef={fondoRef}>
+    <Modal abierto={montado} onCerrar={onCerrar} className="modal-backdrop--hoja" veloRef={veloRef}>
       <div
         ref={hojaRef}
         className={`modal-negocio modal-negocio--${tono}`}
@@ -93,7 +95,11 @@ function ModalNegocioShell({ abierto, titulo, subtitulo, tono = 'neutro', Icono,
             <X size={18} strokeWidth={2.25} />
           </button>
         </header>
-        <div className="modal-negocio-cuerpo">{children}</div>
+        <div className="modal-negocio-cuerpo" ref={cuerpoRef}>
+          <div key={vista} className="modal-negocio-vista">
+            {children}
+          </div>
+        </div>
       </div>
     </Modal>
   )

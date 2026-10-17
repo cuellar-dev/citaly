@@ -67,6 +67,19 @@
   border: 2px solid var(--background-color-secondary);
 }
 
+.tarjeta-pro-iniciales {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  background: #252926;
+  color: var(--primary-color);
+  font-family: var(--font-familyDrink);
+  font-size: 20px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
 .tarjeta-pro-info-container {
   display: flex;
   flex-direction: column;

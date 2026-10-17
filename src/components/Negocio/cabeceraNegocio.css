@@ -11,8 +11,8 @@
 .cabecera-negocio-identidad {
   position: relative;
   width: 100%;
-  min-height: 240px;
-  padding: 26px 16px 16px;
+  min-height: 260px;
+  padding: 14px 14px 16px;
   box-sizing: border-box;
   overflow: hidden;
   background-size: cover;
@@ -38,6 +38,94 @@
 .cabecera-negocio-identidad > * {
   position: relative;
   z-index: 1;
+}
+
+/* Barra superior sobre la foto: galería a la izquierda, editar a la derecha. Sin backdrop-filter. */
+.cabecera-negocio-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.cabecera-negocio-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  margin: 0;
+  padding: 5px 14px 5px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(240, 240, 240, 0.14);
+  background: color-mix(in srgb, #121413 74%, transparent);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.cabecera-negocio-boton:active {
+  transform: scale(0.96);
+}
+
+.cabecera-negocio-boton:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+.cabecera-negocio-editar {
+  margin-left: auto;
+  padding-left: 13px;
+  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent);
+  color: var(--primary-color, #00c2ad);
+}
+
+.cabecera-negocio-miniaturas {
+  display: flex;
+}
+
+.cabecera-negocio-miniaturas img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #1a1e1d;
+  object-fit: cover;
+  background: #252926;
+}
+
+.cabecera-negocio-miniaturas img + img {
+  margin-left: -10px;
+}
+
+.cabecera-negocio-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 82%, transparent);
+}
+
+.cabecera-negocio-nota {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--yellow-color, #ffd166);
+  font-weight: 700;
+}
+
+.cabecera-negocio-nota small {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
 .cabecera-negocio-textos {
@@ -107,14 +195,23 @@
   padding: 7px 12px 7px 10px;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 35%, transparent);
-  background: color-mix(in srgb, #121413 70%, transparent);
-  backdrop-filter: blur(6px);
+  background: color-mix(in srgb, #121413 80%, transparent);
   color: var(--primary-color, #00c2ad);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   animation: cabecera-negocio-entra 0.7s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cabecera-negocio-recibiendo--cerrado {
+  border-color: color-mix(in srgb, #ef476f 40%, transparent);
+  color: #ef476f;
+}
+
+.cabecera-negocio-recibiendo--cerrado .cabecera-negocio-recibiendo-luz {
+  background: #ef476f;
+  box-shadow: none;
 }
 
 .cabecera-negocio-recibiendo-luz {

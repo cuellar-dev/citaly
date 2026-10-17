@@ -3,25 +3,30 @@ import { format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { Banknote, Timer, UserPlus, Users, ZapOff } from 'lucide-react'
+import { Banknote, Images, Pencil, Scissors, Store, Timer, UserPlus, UserRound, Users, ZapOff } from 'lucide-react'
 import CabeceraNegocio from '../components/Negocio/CabeceraNegocio.jsx'
 import CitaDueno from '../components/Negocio/CitaDueno.jsx'
+import FichaLocal from '../components/Negocio/FichaLocal.jsx'
 import FiltroCitas from '../components/Negocio/FiltroCitas.jsx'
+import ContenidoCatalogo from '../components/Negocio/modales/ContenidoCatalogo.jsx'
+import ContenidoFichaLocal from '../components/Negocio/modales/ContenidoFichaLocal.jsx'
 import ContenidoModalNegocio from '../components/Negocio/modales/ContenidoModalNegocio.jsx'
 import ModalNegocioShell from '../components/Negocio/ModalNegocioShell.jsx'
 import ResumenNegocio from '../components/Negocio/ResumenNegocio.jsx'
+import { getLocalById } from '../services/locales.js'
+import { saveFicha } from '../services/storage.js'
+import { conPerfiles, profesionalesActivos } from '../services/usuarios.js'
 import { minutosHastaCita, textoEnCita } from '../utils/citasVista.js'
+import { codigoDia, fotosDe, horaAmPm as horaDeMinutos, minutosAbierto, turnosDelDia } from '../utils/fichaLocal.js'
 import './miNegocio.css'
 
 gsap.registerPlugin(useGSAP)
 
+/* Local del dueño mientras no hay sesión. Sara abre jueves 9AM–6PM, y el reloj del mock cae dentro. */
+const ID_LOCAL = 'sara'
 const FECHA_DEMO = '2026-09-24'
-const APERTURA = '09:00'
-const CIERRE = '19:00'
-const CAPACIDAD_TURNOS = 10
-const PROFESIONALES = ['Mateo', 'Julián', 'Yaima']
 
-/* Datos de mentira para estilar. Se sustituyen por las citas de hoy del local. */
+/* Datos de mentira para estilar, con los servicios y profesionales de Sara. */
 const CITAS_HOY = [
   {
     id: '1',
@@ -30,10 +35,10 @@ const CITAS_HOY = [
     cliente: 'Lisandra Pérez',
     telefono: '+53 5412 9083',
     tipo: 'servicio',
-    linea: 'Manicura + pedicura',
-    detalle: 'Con Yaima',
-    duracion: 60,
-    precio: 18,
+    linea: 'Manicura',
+    detalle: 'Con Sofía',
+    duracion: 40,
+    precio: 250,
     estado: 'confirmada',
   },
   {
@@ -43,10 +48,10 @@ const CITAS_HOY = [
     cliente: 'Yosvany Morales',
     telefono: '+53 5284 1802',
     tipo: 'servicio',
-    linea: 'Corte clásico + barba',
-    detalle: 'Con Mateo',
-    duracion: 45,
-    precio: 25,
+    linea: 'Corte caballero',
+    detalle: 'Con Carlos',
+    duracion: 30,
+    precio: 300,
     estado: 'confirmada',
   },
   {
@@ -56,10 +61,10 @@ const CITAS_HOY = [
     cliente: 'Dayana Ruiz',
     telefono: '+53 5367 2241',
     tipo: 'servicio',
-    linea: 'Tinte + secado',
-    detalle: 'Con Yaima',
-    duracion: 75,
-    precio: 32,
+    linea: 'Tinte completo',
+    detalle: 'Con Laura',
+    duracion: 120,
+    precio: 1200,
     estado: 'pendiente',
   },
   {
@@ -68,11 +73,11 @@ const CITAS_HOY = [
     horario: '12:00',
     cliente: 'Gretel Rodríguez',
     telefono: '+53 5340 7711',
-    tipo: 'mesa',
-    linea: 'Mesa T2 · Terraza',
-    detalle: '4 personas',
-    duracion: 90,
-    precio: 40,
+    tipo: 'servicio',
+    linea: 'Corte dama',
+    detalle: 'Con Sofía',
+    duracion: 45,
+    precio: 450,
     estado: 'pendiente',
   },
   {
@@ -82,10 +87,10 @@ const CITAS_HOY = [
     cliente: 'Ernesto Báez',
     telefono: '+53 5590 1276',
     tipo: 'servicio',
-    linea: 'Corte degradado',
-    detalle: 'Con Mateo',
-    duracion: 40,
-    precio: 20,
+    linea: 'Corte caballero',
+    detalle: 'Con Miguel',
+    duracion: 30,
+    precio: 300,
     estado: 'cancelada',
   },
   {
@@ -94,10 +99,10 @@ const CITAS_HOY = [
     horario: '14:15',
     cliente: 'Dr. Carlos V.',
     tipo: 'servicio',
-    linea: 'Afeitado toalla caliente',
-    detalle: 'Con Julián',
+    linea: 'Corte caballero',
+    detalle: 'Con Carlos',
     duracion: 30,
-    precio: 15,
+    precio: 300,
     estado: 'confirmada',
   },
   {
@@ -106,17 +111,17 @@ const CITAS_HOY = [
     horario: '16:40',
     cliente: 'Mairelys Soto',
     telefono: '+53 5221 6604',
-    tipo: 'mesa',
-    linea: 'Mesa T5 · Salón',
-    detalle: '2 personas',
-    duracion: 60,
-    precio: 0,
+    tipo: 'servicio',
+    linea: 'Corte dama',
+    detalle: 'Con Laura',
+    duracion: 45,
+    precio: 450,
     estado: 'pendiente',
   },
 ]
 
 /* Reloj fijo del mock, para ver el timeline a mitad de turno mientras se estila. */
-const AHORA_DEMO = new Date(2026, 8, 24, 10, 48)
+const AHORA_DEMO = new Date()
 
 const MODALES = {
   siguiente: { titulo: 'Siguiente cita', subtitulo: 'Quién viene ahora', tono: 'verde', Icono: Timer },
@@ -124,7 +129,18 @@ const MODALES = {
   estimado: { titulo: 'Estimado', subtitulo: 'Dinero del día', tono: 'verde', Icono: Banknote },
   pausa: { titulo: 'Pausar agenda', subtitulo: 'Cerrar reservas un rato', tono: 'amarillo', Icono: ZapOff },
   express: { titulo: 'Cliente express', subtitulo: 'Llega sin reserva', tono: 'verde', Icono: UserPlus },
+  ficha: { titulo: 'Ficha del local', subtitulo: 'Lo que ven tus clientes', tono: 'verde', Icono: Store },
+  galeria: { titulo: 'Galería', subtitulo: 'Fotos del local', tono: 'verde', Icono: Images },
+  editar: { titulo: 'Editar local', subtitulo: 'Datos de tu ficha', tono: 'verde', Icono: Pencil },
+  servicios: { titulo: 'Servicios', subtitulo: 'Lo que ofreces', tono: 'verde', Icono: Scissors },
+  servicio: { titulo: 'Servicio', subtitulo: 'Precio, duración y quién lo hace', tono: 'verde', Icono: Scissors },
+  equipo: { titulo: 'Equipo', subtitulo: 'Quién atiende', tono: 'verde', Icono: Users },
+  buscar: { titulo: 'Añadir profesional', subtitulo: 'Busca su cuenta de Citaly', tono: 'verde', Icono: UserPlus },
+  profesional: { titulo: 'Profesional', subtitulo: 'Servicios que hace en tu local', tono: 'verde', Icono: UserRound },
 }
+
+const MODALES_FICHA = new Set(['ficha', 'galeria', 'editar'])
+const MODALES_CATALOGO = new Set(['servicios', 'servicio', 'equipo', 'buscar', 'profesional'])
 
 const FILTROS = [
   { id: 'todas', label: 'Todas' },
@@ -226,7 +242,14 @@ function detalleOcupacion(porcentaje) {
   return 'Día tranquilo'
 }
 
-function resumenDelDia(citas, ahora) {
+function resumenDelDia(citas, ahora, local) {
+  const apertura = aMinutos(local.horarioApertura)
+  const cierre = apertura + minutosAbierto(local.horarioApertura, local.horarioCierre)
+  const profesionales = profesionalesActivos(local).map((p) => String(p.name).split(' ')[0])
+  const capacidad =
+    turnosDelDia(local.horarioApertura, local.horarioCierre, local.intervaloMinutos).length *
+    Math.max(1, profesionales.length)
+
   const activas = citas.filter((c) => c.estado !== 'cancelada')
   const proximas = activas
     .filter((c) => minutosHastaCita(c, ahora) > 0)
@@ -240,20 +263,20 @@ function resumenDelDia(citas, ahora) {
   const pendientes = porGrupo('pendientes')
 
   const ocupados = activas.length
-  const libres = Math.max(CAPACIDAD_TURNOS - ocupados, 0)
-  const porcentaje = Math.min(Math.round((ocupados / CAPACIDAD_TURNOS) * 100), 100)
+  const libres = Math.max(capacidad - ocupados, 0)
+  const porcentaje = capacidad ? Math.min(Math.round((ocupados / capacidad) * 100), 100) : 0
 
-  const iniH = Math.floor(aMinutos(APERTURA) / 60)
-  const finH = Math.ceil(aMinutos(CIERRE) / 60)
-  const horaAhora = ahora.getHours()
+  const iniH = Math.floor(apertura / 60)
+  const finH = Math.ceil(cierre / 60)
+  const horaAhora = ahora.getHours() < iniH && finH > 24 ? ahora.getHours() + 24 : ahora.getHours()
   const porHora = []
   for (let h = iniH; h < finH; h++) {
     porHora.push({
       etiqueta: String(h % 12 || 12),
-      cantidad: activas.filter((c) => Math.floor(aMinutos(c.horario) / 60) === h).length,
+      cantidad: activas.filter((c) => Math.floor(aMinutos(c.horario) / 60) === h % 24).length,
       esAhora: h === horaAhora,
       pasada: h < horaAhora,
-      hora: h,
+      hora: h % 24,
     })
   }
   const pico = porHora.reduce((max, f) => (f.cantidad > (max?.cantidad ?? 0) ? f : max), null)
@@ -275,10 +298,10 @@ function resumenDelDia(citas, ahora) {
     ocupacion: {
       porcentaje,
       detalle: detalleOcupacion(porcentaje),
-      capacidad: CAPACIDAD_TURNOS,
+      capacidad,
       ocupados,
       libres,
-      ventana: `${horaAmPm(FECHA_DEMO, APERTURA)} – ${horaAmPm(FECHA_DEMO, CIERRE)}`,
+      ventana: `${horaDeMinutos(apertura)} – ${horaDeMinutos(cierre)}`,
       segmentos: [
         { id: 'atendidas', label: 'Atendidas', cantidad: atendidas.length, color: 'var(--primary-color-weak)' },
         { id: 'confirmadas', label: 'Confirmadas', cantidad: confirmadas.length, color: 'var(--primary-color)' },
@@ -286,7 +309,7 @@ function resumenDelDia(citas, ahora) {
         { id: 'libres', label: 'Libres', cantidad: libres, color: '#3a403e' },
       ],
       porHora,
-      horaPico: pico ? horaAmPm(FECHA_DEMO, `${String(pico.hora).padStart(2, '0')}:00`) : null,
+      horaPico: pico ? horaDeMinutos(pico.hora * 60) : null,
     },
     estimado: {
       total,
@@ -312,19 +335,21 @@ function resumenDelDia(citas, ahora) {
         },
       ],
     },
-    hueco: proximoHueco(citas, ahora, aMinutos(CIERRE)),
-    profesionales: PROFESIONALES,
+    hueco: proximoHueco(citas, ahora, cierre),
+    profesionales,
   }
 }
 
 function MiNegocio() {
+  const [local, setLocal] = useState(() => getLocalById(ID_LOCAL))
   const [citas, setCitas] = useState(CITAS_HOY)
   const [filtro, setFiltro] = useState('todas')
   const [modal, setModal] = useState(null)
   const [modalAbierto, setModalAbierto] = useState(false)
   const listaRef = useRef(null)
 
-  const resumen = resumenDelDia(citas, AHORA_DEMO)
+  const resumen = resumenDelDia(citas, AHORA_DEMO, local)
+  const fotos = fotosDe(local)
   const conHora = citas.map((c) => ({ ...c, horaTexto: horaAmPm(c.fecha, c.horario) }))
   const citaSiguiente = conHora.find((c) => c.id === resumen.siguiente?.citaId)
   const despues = resumen.despues ? conHora.find((c) => c.id === resumen.despues.id) : null
@@ -340,12 +365,17 @@ function MiNegocio() {
   const visibles = filtro === 'todas' ? conHora : conHora.filter((c) => grupoCita(c, AHORA_DEMO) === filtro)
   const franjas = agruparPorFranja([...visibles].sort((a, b) => aMinutos(a.horario) - aMinutos(b.horario)))
 
-  const abrirModal = (tipo) => {
-    setModal({ tipo })
+  const abrirModal = (tipo, extra) => {
+    setModal({ tipo, ...extra })
     setModalAbierto(true)
   }
   const cerrarModal = useCallback(() => setModalAbierto(false), [])
   const cambiarEstado = (id, estado) => setCitas((prev) => prev.map((c) => (c.id === id ? { ...c, estado } : c)))
+
+  const guardarFicha = (cambios) => {
+    setLocal((prev) => conPerfiles({ ...prev, ...cambios }))
+    saveFicha(ID_LOCAL, cambios)
+  }
 
   const configModal = MODALES[modal?.tipo] ?? {}
 
@@ -367,12 +397,21 @@ function MiNegocio() {
   return (
     <section className="negocio" aria-label="Mi Negocio">
       <CabeceraNegocio
-        nombre="Itaka"
-        url="https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=735&auto=format&fit=crop"
-        recibiendo
-        apertura={APERTURA}
-        cierre={CIERRE}
+        nombre={local.localName}
+        url={local.url}
+        categoria={local.categoria}
+        nota={local.points}
+        opiniones={local.opiniones}
+        fotos={fotos}
+        cerrado={Boolean(local.close)}
+        abreHoy={local.dias.includes(codigoDia(AHORA_DEMO))}
+        recibiendo={!local.close}
+        apertura={local.horarioApertura}
+        cierre={local.horarioCierre}
         ahora={AHORA_DEMO}
+        onGaleria={() => abrirModal('galeria')}
+        onEditar={() => abrirModal('editar')}
+        animacionPausada={modalAbierto}
       />
       <ResumenNegocio
         siguiente={resumen.siguiente}
@@ -435,21 +474,53 @@ function MiNegocio() {
         </div>
       </div>
 
+      <FichaLocal
+        local={local}
+        onAbrir={(pestana) => abrirModal('ficha', { pestana })}
+        onCatalogo={(tipo) => abrirModal(tipo)}
+      />
+
       <ModalNegocioShell
         abierto={modalAbierto}
-        titulo={configModal.titulo}
+        titulo={modal?.titulo ?? configModal.titulo}
         subtitulo={configModal.subtitulo}
         tono={configModal.tono}
         Icono={configModal.Icono}
+        vista={`${modal?.tipo}-${modal?.id ?? modal?.usuarioId ?? ''}`}
         onCerrar={cerrarModal}
       >
-        <ContenidoModalNegocio
-          modal={modal}
-          resumen={{ ...resumen, despues }}
-          citas={conHora}
-          citaSiguiente={citaSiguiente}
-          ahora={AHORA_DEMO}
-        />
+        {MODALES_CATALOGO.has(modal?.tipo) ? (
+          <ContenidoCatalogo
+            modal={modal}
+            local={local}
+            onNavegar={setModal}
+            onGuardar={(cambios, siguiente) => {
+              guardarFicha(cambios)
+              setModal(siguiente)
+            }}
+          />
+        ) : MODALES_FICHA.has(modal?.tipo) ? (
+          <ContenidoFichaLocal
+            modal={modal}
+            local={local}
+            ahora={AHORA_DEMO}
+            onEditar={() => setModal({ tipo: 'editar' })}
+            onGaleria={() => setModal({ tipo: 'galeria' })}
+            onPortada={(foto) => guardarFicha({ url: foto, urls: fotos })}
+            onGuardar={(cambios) => {
+              guardarFicha(cambios)
+              cerrarModal()
+            }}
+          />
+        ) : (
+          <ContenidoModalNegocio
+            modal={modal}
+            resumen={{ ...resumen, despues }}
+            citas={conHora}
+            citaSiguiente={citaSiguiente}
+            ahora={AHORA_DEMO}
+          />
+        )}
       </ModalNegocioShell>
     </section>
   )

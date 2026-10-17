@@ -1,5 +1,6 @@
 import './selectPro.css'
 import { Check, Flame, ThumbsUp, Sparkles, Smile } from 'lucide-react'
+import { iniciales } from '../../utils/fichaLocal.js'
 
 const NIVELES = [
   { min: 4.5, text: 'GOAT', Icono: Flame },
@@ -33,7 +34,13 @@ function SelectPro({ url, name, points, seleccionado, onClick }) {
         </span>
       )}
       <div className="tarjeta-pro-img-container">
-        <img src={url} alt={`Foto de ${name}`} className="tarjeta-pro-img" />
+        {url ? (
+          <img src={url} alt={`Foto de ${name}`} className="tarjeta-pro-img" loading="lazy" decoding="async" />
+        ) : (
+          <span className="tarjeta-pro-img tarjeta-pro-iniciales" aria-hidden="true">
+            {iniciales(name)}
+          </span>
+        )}
       </div>
       <div className="tarjeta-pro-info-container">
         <h3 className="tarjeta-pro-name">{name}</h3>

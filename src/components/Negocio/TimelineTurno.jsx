@@ -1,4 +1,4 @@
-import { useId, useRef } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import './timelineTurno.css'
@@ -68,8 +68,20 @@ const faseLuna = (p) => limitar((p - 60) / 28)
 const faseNoche = (p) => limitar((p - 55) / 35)
 const faseDia = (p) => 1 - limitar((p - 62) / 20)
 
-function TimelineTurno({ porcentaje, inicioMin, finMin, enCurso, horaTexto, aperturaTexto, cierreTexto, mitadTexto }) {
+function TimelineTurno({
+  porcentaje,
+  inicioMin,
+  finMin,
+  enCurso,
+  horaTexto,
+  aperturaTexto,
+  cierreTexto,
+  mitadTexto,
+  pausado = false,
+}) {
   const id = useId().replace(/:/g, '')
+  const [enVista, setEnVista] = useState(true)
+  const buclesRef = useRef([])
   const raizRef = useRef(null)
   const rutaRef = useRef(null)
   const estelaRef = useRef(null)
@@ -131,6 +143,7 @@ function TimelineTurno({ porcentaje, inicioMin, finMin, enCurso, horaTexto, aper
         })
       }
 
+      buclesRef.current = []
       if (reducir) {
         pintar(porcentaje)
         return
@@ -146,55 +159,72 @@ function TimelineTurno({ porcentaje, inicioMin, finMin, enCurso, horaTexto, aper
         onUpdate: () => pintar(proxy.p),
       })
 
-      gsap.to(rayosRef.current, { rotation: 360, transformOrigin: '50% 50%', duration: 48, repeat: -1, ease: 'none' })
-      gsap.to(haloRef.current, {
-        scale: 1.14,
-        transformOrigin: '50% 50%',
-        duration: 2.6,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      })
-
-      gsap.utils.toArray('.timeline-turno-ave', avesRef.current).forEach((ave, i) => {
-        const datos = AVES[i]
-        gsap.set(ave, { y: datos.y, scale: datos.escala })
-        gsap
-          .fromTo(ave, { x: -24 }, { x: 384, duration: datos.duracion, repeat: -1, ease: 'none' })
-          .progress(datos.inicio)
-        gsap.to(ave, { y: datos.y - 6, duration: 2.2 + i, repeat: -1, yoyo: true, ease: 'sine.inOut' })
-        gsap.to(ave.querySelector('path'), {
-          scaleY: -0.55,
+      /* Bucles de ambiente: se pausan cuando el timeline no se ve (ver efecto de abajo). */
+      buclesRef.current = [
+        gsap.to(rayosRef.current, { rotation: 360, transformOrigin: '50% 50%', duration: 48, repeat: -1, ease: 'none' }),
+        gsap.to(haloRef.current, {
+          scale: 1.14,
           transformOrigin: '50% 50%',
-          duration: 0.26 + i * 0.05,
+          duration: 2.6,
           repeat: -1,
           yoyo: true,
           ease: 'sine.inOut',
-        })
-      })
-
-      gsap.utils.toArray('.timeline-turno-nube', nubesRef.current).forEach((nube, i) => {
-        gsap.to(nube, { x: i ? -22 : 26, duration: 16 + i * 6, repeat: -1, yoyo: true, ease: 'sine.inOut' })
-      })
-
-      gsap.to(estrellasRef.current.children, {
-        opacity: 0.25,
-        duration: 1.4,
-        ease: 'sine.inOut',
-        stagger: { each: 0.35, repeat: -1, yoyo: true },
-      })
-
-      gsap.to('.timeline-turno-palma', {
-        rotation: 3,
-        transformOrigin: '50% 100%',
-        duration: 3.4,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      })
+        }),
+        ...gsap.utils.toArray('.timeline-turno-ave', avesRef.current).flatMap((ave, i) => {
+          const datos = AVES[i]
+          gsap.set(ave, { y: datos.y, scale: datos.escala })
+          return [
+            gsap
+              .fromTo(ave, { x: -24 }, { x: 384, duration: datos.duracion, repeat: -1, ease: 'none' })
+              .progress(datos.inicio),
+            gsap.to(ave, { y: datos.y - 6, duration: 2.2 + i, repeat: -1, yoyo: true, ease: 'sine.inOut' }),
+            gsap.to(ave.querySelector('path'), {
+              scaleY: -0.55,
+              transformOrigin: '50% 50%',
+              duration: 0.26 + i * 0.05,
+              repeat: -1,
+              yoyo: true,
+              ease: 'sine.inOut',
+            }),
+          ]
+        }),
+        ...gsap.utils
+          .toArray('.timeline-turno-nube', nubesRef.current)
+          .map((nube, i) =>
+            gsap.to(nube, { x: i ? -22 : 26, duration: 16 + i * 6, repeat: -1, yoyo: true, ease: 'sine.inOut' })
+          ),
+        gsap.to(estrellasRef.current.children, {
+          opacity: 0.25,
+          duration: 1.4,
+          ease: 'sine.inOut',
+          stagger: { each: 0.35, repeat: -1, yoyo: true },
+        }),
+        gsap.to('.timeline-turno-palma', {
+          rotation: 3,
+          transformOrigin: '50% 100%',
+          duration: 3.4,
+          repeat: -1,
+          yoyo: true,
+          ease: 'sine.inOut',
+        }),
+      ]
     },
     { scope: raizRef, dependencies: [porcentaje, inicioMin, finMin] }
   )
+
+  /* Un SVG en línea se repinta entero en cada frame: fuera de pantalla o tapado por una hoja no vale la pena. */
+  useEffect(() => {
+    const raiz = raizRef.current
+    if (!raiz) return
+    const observador = new IntersectionObserver(([entrada]) => setEnVista(entrada.isIntersecting))
+    observador.observe(raiz)
+    return () => observador.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const parar = pausado || !enVista
+    buclesRef.current.forEach((bucle) => (parar ? bucle.pause() : bucle.resume()))
+  }, [pausado, enVista, porcentaje, inicioMin, finMin])
 
   return (
     <div className="timeline-turno" ref={raizRef}>
