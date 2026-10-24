@@ -7,6 +7,7 @@ import { elegirTexto, TEXTOS_CANCELAR, TEXTOS_VOY } from '../components/ModalAcc
 import RolloRecibos from '../components/RolloRecibos/RolloRecibos.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import { useCitas } from '../hooks/useCitas.js'
+import { CANCELADA, CONFIRMADA } from '../utils/estadosCita.js'
 import { esCitaPasada, propsDesdeCita } from '../utils/citasVista.js'
 import './misCitas.css'
 
@@ -34,11 +35,18 @@ function MisCitas() {
     if (!accion) return
     const ahoraIso = new Date().toISOString()
     if (accion.tipo === 'cancelar') {
-      actualizarCita(accion.citaId, { estadoReserva: 3, canceladaEn: ahoraIso })
+      actualizarCita(accion.citaId, {
+        estadoReserva: CANCELADA,
+        canceladaEn: ahoraIso,
+        canceladaPor: 'cliente',
+      })
       setVista('pasadas')
     } else {
-      /* Confirmado: el estado verde ya reservado para cuando el cliente afirma que va. */
-      actualizarCita(accion.citaId, { estadoReserva: 1, voyPaAlla: true, voyPaAllaEn: ahoraIso })
+      actualizarCita(accion.citaId, {
+        estadoReserva: CONFIRMADA,
+        voyPaAlla: true,
+        voyPaAllaEn: ahoraIso,
+      })
     }
     cerrarAccion()
   }

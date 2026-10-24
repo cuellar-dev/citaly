@@ -424,7 +424,8 @@
   background: color-mix(in srgb, currentColor 14%, transparent);
 }
 
-.modal-negocio-chip-estado--pendiente {
+.modal-negocio-chip-estado--pendiente,
+.modal-negocio-chip-estado--porTi {
   color: var(--yellow-color, #ffd166);
 }
 

@@ -40,7 +40,6 @@ export const CAMPOS_EDITABLES = [
   'whatsapp',
   'direccion',
   'iconos',
-  'close',
   'servicios',
   'profesionales',
 ]
@@ -52,6 +51,48 @@ export function codigoDia(fecha) {
 export function aMinutos(hhmm) {
   const [h, m] = String(hhmm || '0:0').split(':').map(Number)
   return h * 60 + (m || 0)
+}
+
+/* Misma cuenta que la cabecera de Mi Negocio: ¿el reloj cae dentro del turno de hoy? */
+export function franjaTurno(apertura, cierre, ahora = new Date()) {
+  const ini = aMinutos(apertura)
+  const finBase = aMinutos(cierre)
+  const cruzaMedianoche = finBase <= ini
+  const fin = cruzaMedianoche ? finBase + 24 * 60 : finBase
+  const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes()
+  const cursor = ahoraMin < ini && cruzaMedianoche ? ahoraMin + 24 * 60 : ahoraMin
+  return {
+    ini,
+    fin,
+    ahoraMin,
+    cursor,
+    total: Math.max(fin - ini, 0),
+    enCurso: cursor >= ini && cursor < fin,
+  }
+}
+
+export function estaAbierto(local, ahora = new Date()) {
+  if (!local?.horarioApertura || !local?.horarioCierre) return false
+  if (!(local.dias ?? []).includes(codigoDia(ahora))) return false
+  return franjaTurno(local.horarioApertura, local.horarioCierre, ahora).enCurso
+}
+
+/* El texto "9AM - 6PM" sale de las horas, no de un string guardado aparte. */
+export function horarioDeLocal(local) {
+  if (local?.horarioApertura && local?.horarioCierre) {
+    return horarioTexto(local.horarioApertura, local.horarioCierre)
+  }
+  return local?.horario ?? ''
+}
+
+export function notaDeComentarios(local) {
+  const lista = local?.comentarios ?? []
+  if (!lista.length) return { nota: 0, cantidad: 0 }
+  const suma = lista.reduce((total, c) => total + (Number(c.calificacion) || 0), 0)
+  return {
+    nota: Math.round((suma / lista.length) * 10) / 10,
+    cantidad: lista.length,
+  }
 }
 
 /* Cierre a la madrugada (18:00 → 01:00) cuenta como el mismo turno. */
@@ -117,7 +158,7 @@ export function fotosDe(local) {
 
 /* Las fotos vienen de Unsplash a 1100px: para miniaturas se piden más pequeñas. */
 export function fotoAncho(url, ancho) {
-  if (!/images\.unsplash\.com|plus\.unsplash\.com/.test(url)) return url
+  if (!url || !/images\.unsplash\.com|plus\.unsplash\.com/.test(url)) return url
   return /[?&]w=\d+/.test(url) ? url.replace(/([?&])w=\d+/, `$1w=${ancho}`) : `${url}&w=${ancho}`
 }
 
@@ -125,8 +166,9 @@ export function digitos(telefono) {
   return String(telefono || '').replace(/\D/g, '')
 }
 
-/* Catálogo: la duración se guarda como texto ("40 min", "2h", "1h 30 min") porque así la lee la reserva. */
+/* La duración se guarda en minutos. El texto viejo ("45 min", "2h") se sigue leyendo. */
 export function duracionAMinutos(duracion) {
+  if (typeof duracion === 'number' && Number.isFinite(duracion)) return duracion
   const texto = String(duracion || '').toLowerCase()
   const horas = Number(texto.match(/(\d+)\s*h/)?.[1] ?? 0)
   const minutos = Number(texto.match(/(\d+)\s*min/)?.[1] ?? 0)

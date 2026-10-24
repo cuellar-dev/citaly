@@ -95,9 +95,14 @@
   pointer-events: none;
 }
 
-.mesa--ocupado {
+.mesa--ocupado,
+.mesa--no-cabe {
   pointer-events: none;
   cursor: default;
+}
+
+.mesa--no-cabe {
+  opacity: 0.35;
 }
 
 .mesa--ocupado .mesa-forma {

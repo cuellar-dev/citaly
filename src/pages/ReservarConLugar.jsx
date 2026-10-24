@@ -1,8 +1,9 @@
-import { Link, useParams,useNavigate } from 'react-router-dom'
+import { Link, Navigate, useParams,useNavigate } from 'react-router-dom'
 import { parse, addMinutes, format, isSameDay, isAfter, isBefore, startOfToday } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { ArrowLeft, CalendarDays, Info, User } from 'lucide-react'
 import { getLocalById } from '../services/locales.js'
+import { MESAS_MAPA } from '../data/mesasMapa.js'
 import { useCitas } from '../hooks/useCitas.js'
 import { fechasDisponiblesLocal, fechaEnUso } from '../utils/fechasLocal.js'
 import './ReservarConLugar.css'
@@ -27,11 +28,13 @@ function ReservarConLugar() {
   const [horarioSeleccionado, setHorarioSeleccionado] = useState(null)
   const [mesaActiva, setMesaActiva] = useState(null)
   const [mesaSeleccionada, setMesaSeleccionada] = useState(null)
+  const [personas, setPersonas] = useState(null)
   const [panelMesaVisible, setPanelMesaVisible] = useState(false)
   const [stepperVisible, setStepperVisible] = useState(false)
   const [reservaConfirmada, setReservaConfirmada] = useState(false)
   const { agregarCita } = useCitas()
   const panelMesaRef = useRef(null)
+  const refPersonas = useRef(null)
   const refMesa = useRef(null)
   const refHorario = useRef(null)
   const navigate = useNavigate()
@@ -104,6 +107,10 @@ function ReservarConLugar() {
     )
   }
 
+  if (!local.lugar) {
+    return <Navigate to={`/local/${id}/reservar-cita`} replace />
+  }
+
   if (reservaConfirmada) {
     return (
       <section className='reservar-local reservar-local--exito'>
@@ -174,8 +181,17 @@ function formatearPrecio(precio) {
   return `${precio} CUP`
 }
 
+const maxPersonas = Math.max(...MESAS_MAPA.map((mesa) => mesa.capacidad))
+
+function elegirPersonas(cantidad) {
+  setPersonas(cantidad)
+  setMesaSeleccionada((prev) => (prev && prev.capacidad >= cantidad ? prev : null))
+  setMesaActiva(null)
+  setPanelMesaVisible(false)
+}
+
 function handleMesaClick(mesa) {
-  if (mesa.estado === 'ocupado') return
+  if (!personas || mesa.estado === 'ocupado' || mesa.estado === 'no-cabe' || mesa.capacidad < personas) return
   setMesaActiva(mesa)
   setPanelMesaVisible(true)
   setMesaSeleccionada(mesa)
@@ -187,7 +203,7 @@ function establecerPrecio(){
 }
 function handleConfirmarReserva(e) {
   e.preventDefault()
-  if (!mesaSeleccionada || !horarioSeleccionado) return
+  if (!personas || !mesaSeleccionada || !horarioSeleccionado) return
 
   agregarCita({
     id: crypto.randomUUID(),
@@ -204,6 +220,7 @@ function handleConfirmarReserva(e) {
     },
     precioReserva: mesaSeleccionada.precio ?? 0,
     consumoMinimo: mesaSeleccionada.consumoMinimo ?? null,
+    personas,
     estadoReserva: 0,
     creadaEn: new Date().toISOString(),
   })
@@ -217,29 +234,38 @@ function handleConfirmarReserva(e) {
 }
 
 function datosReserva() {
+  if (!personas) {
+    return {
+      mensaje: 'Dinos cuántos van, para ver las mesas que caben',
+      pasoActivo: 0,
+    }
+  }
   if (!mesaSeleccionada) {
     return {
       mensaje: 'Seleccione una mesa en el mapa para continuar',
-      pasoActivo: 0,
+      pasoActivo: 1,
     }
   }
   if (!horarioSeleccionado) {
     return {
       mensaje: 'Escoja la hora para reservar su cita',
-      pasoActivo: 1,
+      pasoActivo: 2,
     }
   }
   return {
     mensaje: 'Todo correcto, puede confirmar su reserva',
-    pasoActivo: 2,
+    pasoActivo: 3,
   }
 }
 const PASOS = [
+  { id: 'personas', label: 'Personas' },
   { id: 'mesa', label: 'Mesa' },
   { id: 'horario', label: 'Fecha' },
 ]
 function pasoCompleto(id) {
   switch (id) {
+    case 'personas':
+      return personas != null
     case 'mesa':
       return mesaSeleccionada != null
     case 'horario':
@@ -266,6 +292,7 @@ if (mesaSeleccionada) {
 }
 
 const seccionRefPorPaso = {
+  personas: refPersonas,
   mesa: refMesa,
   horario: refHorario,
 }
@@ -295,9 +322,32 @@ function handlePasoClick(idPaso) {
         onPasoClick={handlePasoClick}
       />
 
+      <div ref={refPersonas} className="reservar-personas">
+        <h2 className="reservar-local-bloque-titulo">
+          <User size={20} className="reservar-local-bloque-icono" />
+          ¿Cuántos van?
+        </h2>
+        <p className="reservar-local-texto">Te mostramos las mesas con sitio para todos.</p>
+        <div className="reservar-personas-opciones" role="group" aria-label="Cantidad de personas">
+          {Array.from({ length: maxPersonas }, (_, i) => i + 1).map((n) => (
+            <button
+              key={n}
+              type="button"
+              className={`reservar-personas-opcion${personas === n ? ' reservar-personas-opcion--activa' : ''}`}
+              aria-pressed={personas === n}
+              onClick={() => elegirPersonas(n)}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+      </div>
       <div ref={refMesa} className='reservar-local-mapa-div-container'>
         <div className='reservar-local-mapa-texto'>
           <h2 className='reservar-local-bloque-titulo'>Reserve una mesa</h2>
+          {personas && (
+            <p className="reservar-local-texto">Mesas para {personas} {personas === 1 ? 'persona' : 'personas'} o más.</p>
+          )}
           <div className='reservar-local-mapa-texto-explicacion'>
             <p className='reservar-local-texto'>Seleccione el lugar que mas le guste para reservar, basandose en la leyenda. </p>
           </div>
@@ -306,6 +356,7 @@ function handlePasoClick(idPaso) {
               <MapaMesas
                 mesaSeleccionada={mesaSeleccionada}
                 onMesaClick={handleMesaClick}
+                capacidadMinima={personas ?? 0}
               />
             </div>
             {mesaActiva && (
@@ -410,7 +461,7 @@ function handlePasoClick(idPaso) {
               <p className='reservar-local-texto-valor-coste'>{mesaSeleccionada ? establecerPrecio() : '-' } <span className='reservar-local-texto-valor-coste-span'>{mesaSeleccionada && mesaSeleccionada.precio === 0 ? `(${mesaSeleccionada.consumoMinimo} CUP a consumir)` : ''}</span></p>
             </div>
           </div>
-          <button className='reservar-local-boton' disabled={!mesaSeleccionada || !horarioSeleccionado} onClick={handleConfirmarReserva}>Confirmar reserva</button>
+          <button className='reservar-local-boton' disabled={!personas || !mesaSeleccionada || !horarioSeleccionado} onClick={handleConfirmarReserva}>Confirmar reserva</button>
         </div>
       </div>
       

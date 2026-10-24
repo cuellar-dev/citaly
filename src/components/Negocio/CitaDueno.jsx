@@ -2,15 +2,10 @@ import { useId, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { Check, ChevronDown, Clock, MessageCircle, Phone, Scissors, UtensilsCrossed, X } from 'lucide-react'
+import { PENDIENTE, claveEstadoReserva, textoEstadoReserva } from '../../utils/estadosCita.js'
 import './citaDueno.css'
 
 gsap.registerPlugin(useGSAP)
-
-const ESTADO_TEXTO = {
-  pendiente: 'Pendiente',
-  confirmada: 'Confirmada',
-  cancelada: 'Cancelada',
-}
 
 function textoDuracion(min) {
   if (!min) return null
@@ -28,10 +23,10 @@ function CitaDueno({
   telefono,
   linea,
   detalle,
-  tipo = 'servicio',
+  esLugar = false,
   duracion,
   precio,
-  estado = 'pendiente',
+  estadoReserva = PENDIENTE,
   atendida = false,
   destacada = false,
   onConfirmar,
@@ -42,11 +37,12 @@ function CitaDueno({
   const detalleRef = useRef(null)
   const primeraVezRef = useRef(true)
 
-  const estadoTexto = destacada ? 'En curso' : atendida ? 'Atendida' : (ESTADO_TEXTO[estado] ?? 'Pendiente')
-  const IconoTipo = tipo === 'mesa' ? UtensilsCrossed : Scissors
+  const estadoTexto = destacada ? 'En curso' : atendida ? 'Atendida' : textoEstadoReserva(estadoReserva)
+  const IconoTipo = esLugar ? UtensilsCrossed : Scissors
   const tel = String(telefono || '').replace(/\D/g, '')
   const duracionTexto = textoDuracion(duracion)
-  const pendiente = estado === 'pendiente' && (onConfirmar || onRechazar)
+  const pendiente = estadoReserva === PENDIENTE && (onConfirmar || onRechazar)
+  const clave = claveEstadoReserva(estadoReserva)
   const idDetalle = useId()
 
   useGSAP(
@@ -73,7 +69,7 @@ function CitaDueno({
   return (
     <article
       ref={raizRef}
-      className={`cita-dueno cita-dueno--${estado}${atendida ? ' cita-dueno--atendida' : ''}${destacada ? ' cita-dueno--destacada' : ''}${abierta ? ' cita-dueno--abierta' : ''}`}
+      className={`cita-dueno cita-dueno--${clave}${atendida ? ' cita-dueno--atendida' : ''}${destacada ? ' cita-dueno--destacada' : ''}${abierta ? ' cita-dueno--abierta' : ''}`}
     >
       <div className="cita-dueno-fila">
         <button

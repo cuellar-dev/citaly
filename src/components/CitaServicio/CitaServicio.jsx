@@ -8,6 +8,7 @@ import {
   ReciboTalon,
 } from '../CitaCard/ReciboPartes.jsx'
 import { tinta } from '../CitaCard/tinta.js'
+import { duracionAMinutos, duracionTexto } from '../../utils/fichaLocal.js'
 
 /* Segmento de recibo para una cita de servicio (peluquería, barbería, etc.). */
 function CitaServicio({
@@ -43,7 +44,7 @@ function CitaServicio({
         <ul className="recibo-lista" aria-label="Servicios">
           {lineas.map((linea) => (
             <li key={linea.id ?? linea.nombre}>
-              <span>{tinta(`${linea.nombre}${linea.duracion ? ` (${linea.duracion})` : ''}`)}</span>
+              <span>{tinta(`${linea.nombre}${linea.duracion ? ` (${duracionTexto(duracionAMinutos(linea.duracion))})` : ''}`)}</span>
               <span className="recibo-lista-precio">
                 {linea.precio === 0 ? 'GRATIS' : `${linea.precio} CUP`}
               </span>

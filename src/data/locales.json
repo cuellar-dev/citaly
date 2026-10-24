@@ -16,7 +16,7 @@
     "horarioCierre": "21:00",
     "intervaloMinutos": 60,
     "dias": ["m","x","j","v","s","d"],
-    "points": "2.5",
+    "points": "4.3",
     "direccion": "Kilo 12, Sancti Spiritus",
     "telefono": "+53 41 123456",
     "whatsapp": "+53 5 8123456",
@@ -26,46 +26,45 @@
       {"id" : "parking"},
       {"id" : "snow"}
     ],
-    "close": true,
-    "opiniones": 120,
+    "opiniones": 4,
     "lugar" : true,
     "servicios": [
-      { "id": "mesa-2", "nombre": "Mesa para 2", "precio": 0, "duracion": "2h", "nota": "Consumo mínimo 800 CUP" },
-      { "id": "mesa-4", "nombre": "Mesa para 4", "precio": 0, "duracion": "2h", "nota": "Consumo mínimo 1500 CUP" },
-      { "id": "reserva-evento", "nombre": "Reserva para evento", "precio": 2500, "duracion": "4h", "nota": "Incluye decoración básica" }
+      { "id": "mesa-2", "nombre": "Mesa para 2", "precio": 0, "duracion": 120, "nota": "Consumo mínimo 800 CUP" },
+      { "id": "mesa-4", "nombre": "Mesa para 4", "precio": 0, "duracion": 120, "nota": "Consumo mínimo 1500 CUP" },
+      { "id": "reserva-evento", "nombre": "Reserva para evento", "precio": 2500, "duracion": 240, "nota": "Incluye decoración básica" }
     ],
     "comentarios": [
       {
         "id": "1",
-        "nombre": "Juan Perez",
-        "fecha": "2026-01-01",
+        "nombre": "Camila Soto",
+        "fecha": "2026-01-12",
         "calificacion": 5,
-        "comentario": "Excelente servicio, la comida es deliciosa y el ambiente es muy acogedor.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "comentario": "El congrí y el pollo frito salieron de maravilla. Volvemos el domingo.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
       },
       {
         "id": "2",
-        "nombre": "Maria Gomez",
-        "fecha": "2026-01-01",
-        "calificacion": 3,
-        "comentario": "No sirve pa na la taza del baño, al menos me pusieron una cuchara pa comel.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "nombre": "Luis Herrera",
+        "fecha": "2026-02-14",
+        "calificacion": 4,
+        "comentario": "Buena comida criolla. La espera del postre se alargó un poco, pero el café de después estaba rico.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
       },
       {
         "id": "3",
-        "nombre": "Pedro Rodriguez",
-        "fecha": "2026-01-01",
-        "calificacion": 4,
-        "comentario": "La comida es buena, pero el servicio es un poco lento.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "nombre": "Yania Cruz",
+        "fecha": "2026-03-02",
+        "calificacion": 3,
+        "comentario": "El lugar es bonito, pero el día que fui la pasta llegó tibia.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
       },
       {
         "id": "4",
-        "nombre": "Ana Garcia",
-        "fecha": "2026-01-01",
-        "calificacion": 2,
-        "comentario": "No me gusto el servicio, me pusieron una cuchara pa comel.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "nombre": "Omar Vidal",
+        "fecha": "2026-03-20",
+        "calificacion": 5,
+        "comentario": "Atención rápida y la mesa estaba lista a la hora. Repetimos.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
       }
     ]
   },
@@ -86,7 +85,7 @@
     "horarioCierre": "18:00",
     "intervaloMinutos": 90,
     "dias": ["x","j","v","s","d"],
-    "points": "3.8",
+    "points": "4.3",
     "direccion": "Parque central, Cabaiguan",
     "telefono": "+53 41 654321",
     "whatsapp": "+53 5 8765432",
@@ -97,13 +96,13 @@
       {"id" : "cigarrete"},
       {"id" : "transfer"}
     ],
-    "opiniones": 100,
+    "opiniones": 4,
     "lugar" : false,
     "servicios": [
-      { "id": "corte-caballero", "nombre": "Corte caballero", "precio": 300, "duracion": "30 min" },
-      { "id": "corte-dama", "nombre": "Corte dama", "precio": 450, "duracion": "45 min" },
-      { "id": "tinte", "nombre": "Tinte completo", "precio": 1200, "duracion": "2h" },
-      { "id": "manicura", "nombre": "Manicura", "precio": 250, "duracion": "40 min" }
+      { "id": "corte-caballero", "nombre": "Corte caballero", "precio": 300, "duracion": 30 },
+      { "id": "corte-dama", "nombre": "Corte dama", "precio": 450, "duracion": 45 },
+      { "id": "tinte", "nombre": "Tinte completo", "precio": 1200, "duracion": 120 },
+      { "id": "manicura", "nombre": "Manicura", "precio": 250, "duracion": 40 }
     ],
     "profesionales": [
       {
@@ -138,35 +137,35 @@
     "comentarios": [
       {
         "id": "1",
-        "nombre": "Juan Perez",
-        "fecha": "2026-01-01",
+        "nombre": "Lisandra Pérez",
+        "fecha": "2026-02-03",
         "calificacion": 5,
-        "comentario": "Excelente servicio, la comida es deliciosa y el ambiente es muy acogedor. Ojala y no se cierre nunca, de madre compadre",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "comentario": "Laura me dejó el corte exacto. Salí feliz.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
       },
       {
         "id": "2",
-        "nombre": "Maria Gomez",
-        "fecha": "2026-01-01",
-        "calificacion": 3,
-        "comentario": "No sirve pa na la taza del baño, al menos me pusieron una cuchara pa comel.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "nombre": "Yosvany Morales",
+        "fecha": "2026-02-18",
+        "calificacion": 4,
+        "comentario": "Carlos es rápido y el corte quedó parejo. El local estaba lleno, pero valió la espera.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
       },
       {
         "id": "3",
-        "nombre": "Pedro Rodriguez",
-        "fecha": "2026-01-01",
-        "calificacion": 4,
-        "comentario": "La comida es buena, pero el servicio es un poco lento.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "nombre": "Dayana Ruiz",
+        "fecha": "2026-03-08",
+        "calificacion": 5,
+        "comentario": "El tinte no me manchó la piel y el color quedó parejo.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
       },
       {
         "id": "4",
-        "nombre": "Ana Garcia",
-        "fecha": "2026-01-01",
-        "calificacion": 2,
-        "comentario": "No me gusto el servicio, me pusieron una cuchara pa comel.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "nombre": "Ernesto Báez",
+        "fecha": "2026-03-22",
+        "calificacion": 3,
+        "comentario": "La manicura quedó bien, pero tuve que esperar más de la hora de la cita.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
       }
     ]
   },
@@ -184,10 +183,10 @@
     ],
     "horario": "6PM - 1AM",
     "horarioApertura": "18:00",
-    "horarioCierre": "23:00",
+    "horarioCierre": "01:00",
     "intervaloMinutos": 60,
     "dias": ["l","m","x","j","v","s","d"],
-    "points": "4",
+    "points": "3.8",
     "direccion": "Colon, Sancti Spiritus",
     "telefono": "+53 41 789012",
     "whatsapp": "+53 5 8978901",
@@ -197,41 +196,41 @@
       {"id" : "parking"},
       {"id" : "snow"}
     ],
-    "opiniones": 80,
+    "opiniones": 4,
     "lugar" : true,
     
     "comentarios": [
       {
         "id": "1",
-        "nombre": "Juan Perez",
-        "fecha": "2026-01-01",
+        "nombre": "Aylen Mesa",
+        "fecha": "2026-01-24",
         "calificacion": 5,
-        "comentario": "Excelente servicio, la comida es deliciosa y el ambiente es muy acogedor.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "comentario": "El viernes la banda sonó brutal y el mojito estaba frío.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
       },
       {
         "id": "2",
-        "nombre": "Maria Gomez",
-        "fecha": "2026-01-01",
-        "calificacion": 3,
-        "comentario": "No sirve pa na la taza del baño, al menos me pusieron una cuchara pa comel.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "nombre": "Héctor Lima",
+        "fecha": "2026-02-07",
+        "calificacion": 4,
+        "comentario": "Buen ambiente. La cerveza importada sale un poco cara, pero vale.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
       },
       {
         "id": "3",
-        "nombre": "Pedro Rodriguez",
-        "fecha": "2026-01-01",
-        "calificacion": 4,
-        "comentario": "La comida es buena, pero el servicio es un poco lento.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "nombre": "Nuria Paz",
+        "fecha": "2026-02-28",
+        "calificacion": 2,
+        "comentario": "Muy alto el volumen: en la mesa de atrás no se podía hablar.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
       },
       {
         "id": "4",
-        "nombre": "Ana Garcia",
-        "fecha": "2026-01-01",
-        "calificacion": 2,
-        "comentario": "No me gusto el servicio, me pusieron una cuchara pa comel.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=761&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        "nombre": "Pavel Díaz",
+        "fecha": "2026-03-15",
+        "calificacion": 4,
+        "comentario": "Reservamos y la mesa estaba lista. La picadera llegó rápido.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
       }
     ]
   }

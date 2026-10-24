@@ -1,16 +1,17 @@
 import { MapPin, Phone, Scissors } from 'lucide-react'
 import IconoWhatsApp from '../IconoWhatsApp/IconoWhatsApp.jsx'
+import { CANCELADA, CONFIRMADA, PENDIENTE, POR_TI } from '../../utils/estadosCita.js'
 import { tinta } from './tinta.js'
 import './citaCard.css'
 
 /* Piezas de un segmento de recibo térmico. Se comparten entre CitaServicio y CitaLugar. */
 
-/* Los cuatro estados de reserva, en tinta (mismo mapeo que antes: 0/2 ámbar, 1 verde, 3 rojo). */
+/* 0 y 1 ámbar (aún no está cerrada la cita), 2 verde, 3 rojo. */
 const ESTADOS = {
-  0: { texto: 'Pendiente', clase: 'recibo-estado--aviso' },
-  1: { texto: 'Confirmado', clase: 'recibo-estado--ok' },
-  2: { texto: 'Pendiente de confirmar', clase: 'recibo-estado--aviso' },
-  3: { texto: 'Cancelado', clase: 'recibo-estado--mal' },
+  [PENDIENTE]: { texto: 'Pendiente', clase: 'recibo-estado--aviso' },
+  [POR_TI]: { texto: 'Por ti', clase: 'recibo-estado--aviso' },
+  [CONFIRMADA]: { texto: 'Confirmada', clase: 'recibo-estado--ok' },
+  [CANCELADA]: { texto: 'Cancelada', clase: 'recibo-estado--mal' },
 }
 
 export function ReciboEncabezado({ lugar, numero, tipo }) {
@@ -103,18 +104,26 @@ export function ReciboTalon({
     return <ReciboArchivo cancelada={cancelada} textoCancelar={textoCancelar} />
   }
 
-  const confirmada = estadoReserva === 1
+  const confirmada = estadoReserva === CONFIRMADA
+  const teToca = estadoReserva === POR_TI
 
   return (
     <footer className="recibo-talon">
       <ReciboCorte texto="acciones" />
       {confirmada ? (
         <ReciboCartel tono="primario">{`Confirmaste ${sujetoReserva(textoCancelar)}`}</ReciboCartel>
-      ) : (
+      ) : teToca ? (
         <div className="recibo-botones">
           <button type="button" className="recibo-boton recibo-boton--primario" onClick={onVoyPaAlla}>
             Voy pa alla
           </button>
+          <button type="button" className="recibo-boton recibo-boton--cancelar" onClick={onCancelar}>
+            {textoCancelar}
+          </button>
+        </div>
+      ) : (
+        <div className="recibo-botones">
+          <p className="recibo-nota">Cuando el local acepte, podrás confirmar que vas.</p>
           <button type="button" className="recibo-boton recibo-boton--cancelar" onClick={onCancelar}>
             {textoCancelar}
           </button>

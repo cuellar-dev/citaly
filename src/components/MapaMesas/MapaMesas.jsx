@@ -14,12 +14,12 @@ function clasesMesa(mesa, mesaSeleccionada) {
 }
 
 function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, soloLectura, children }) {
-  const esOcupada = mesa.estado === 'ocupado'
+  const bloqueada = mesa.estado === 'ocupado' || mesa.estado === 'no-cabe'
 
   return (
     <g
       className={clasesMesa(mesa, mesaSeleccionada)}
-      {...(!esOcupada && !soloLectura && {
+      {...(!bloqueada && !soloLectura && {
         onClick: () => onMesaClick(mesa),
         role: 'button',
         tabIndex: 0,
@@ -31,7 +31,7 @@ function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, soloLectura, children 
           }
         },
       })}
-      {...((esOcupada || soloLectura) && {
+      {...((bloqueada || soloLectura) && {
         'aria-hidden': true,
       })}
     >
@@ -45,8 +45,12 @@ function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, soloLectura, children 
  * Las clases mapa-fondo / mapa-detalle / mapa-detalle-borde permiten
  * re-entintar el plano desde CSS (variante tÃ©rmica en citaCard.css).
  */
-export default function MapaMesas({ mesaSeleccionada, onMesaClick, soloLectura = false }) {
-  const mesas = MESAS_MAPA
+export default function MapaMesas({ mesaSeleccionada, onMesaClick, soloLectura = false, capacidadMinima = 0 }) {
+  const mesas = MESAS_MAPA.map((mesa) =>
+    capacidadMinima && mesa.capacidad < capacidadMinima && mesa.estado !== 'ocupado'
+      ? { ...mesa, estado: 'no-cabe' }
+      : mesa
+  )
   const propsGrupo = { mesaSeleccionada, onMesaClick, soloLectura }
 
   return (

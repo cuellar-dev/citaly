@@ -1,8 +1,11 @@
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useState, useRef } from 'react'
-import { ArrowLeft, MapPin, Phone, Star, Share2, Send } from 'lucide-react'
+import { format } from 'date-fns'
+import { ArrowLeft, MapPin, Phone, Star, Share2, Send, Clock, ChevronRight, Images } from 'lucide-react'
 import CaraRating from '../components/CaraRating/CaraRating.jsx'
 import { getLocalById } from '../services/locales.js'
+import { saveFicha } from '../services/storage.js'
+import { estaAbierto, horarioDeLocal, notaDeComentarios } from '../utils/fichaLocal.js'
 import Icons from '../components/Icons/Icons.jsx'
 import ImagenLocal from '../components/imagenLocal/ImagenLocal.jsx'
 import VisorImagen from '../components/VisorImagen/VisorImagen.jsx'
@@ -11,11 +14,23 @@ import Opiniones from '../components/Opiniones/Opiniones.jsx'
 import IconoWhatsApp from '../components/IconoWhatsApp/IconoWhatsApp.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 
+const DIAS = [
+  { id: 'l', letra: 'L' },
+  { id: 'm', letra: 'M' },
+  { id: 'x', letra: 'X' },
+  { id: 'j', letra: 'J' },
+  { id: 'v', letra: 'V' },
+  { id: 's', letra: 'S' },
+  { id: 'd', letra: 'D' },
+]
+
 function DetalleLocal() {
   const { id } = useParams()
-  const local = getLocalById(id)
+  const [local, setLocal] = useState(() => getLocalById(id))
   const navigate = useNavigate()
   const [imagenActiva, setImagenActiva] = useState(null)
+  const [errorComentario, setErrorComentario] = useState('')
+  const [comentarioNuevoId, setComentarioNuevoId] = useState(null)
 
   const textareaRef = useRef(null)
   const [comentarioAbierto, setComentarioAbierto] = useState(null)
@@ -28,16 +43,29 @@ function DetalleLocal() {
     e.preventDefault()
     const comentario = textoComentario.trim()
     if(!comentario){
-      alert('El comentario no se puede quedar vacio')
+      setErrorComentario('Escribe el comentario antes de enviarlo.')
       return
     }
     if(!emojiSeleccionado){
-      alert('Debes seleccionar una calificacion')
+      setErrorComentario('Elige de 1 a 5 estrellas.')
       return
     }
+    const nuevo = {
+      id: crypto.randomUUID(),
+      nombre: 'Tú',
+      fecha: format(new Date(), 'yyyy-MM-dd'),
+      calificacion: emojiSeleccionado,
+      comentario,
+    }
+    const comentarios = [nuevo, ...(local.comentarios ?? [])]
+    const { nota, cantidad } = notaDeComentarios({ comentarios })
+    const cambios = { comentarios, points: String(nota), opiniones: cantidad }
+    saveFicha(id, cambios)
+    setLocal((prev) => ({ ...prev, ...cambios }))
+    setComentarioNuevoId(nuevo.id)
+    setErrorComentario('')
     setAnimarLimpiar(true)
     setAnimarSubmit(true)
-    console.log('Recibido el comentario:', comentario, 'estrellas:', emojiSeleccionado)
     setTimeout(() => {
       setTextoComentario('')
       setEmojiSeleccionado(0)
@@ -75,9 +103,12 @@ function DetalleLocal() {
     }
     navigate(`/local/${id}/reservar-cita`)
   }
-  const horarioClassName = local.close ? 'detalle-horario-cerrado'  : 'detalle-horario-abierto'
-  const textHorario = local.close ? 'Cerrado' : 'Abierto'
-  const rating = Math.min(5, Math.max(0, Number(local.points) || 0))
+  const abiertoAhora = estaAbierto(local)
+  const horarioTextoVisible = horarioDeLocal(local)
+  const { nota, cantidad } = notaDeComentarios(local)
+  const horarioClassName = abiertoAhora ? 'detalle-horario-abierto' : 'detalle-horario-cerrado'
+  const textHorario = abiertoAhora ? 'Abierto' : 'Cerrado'
+  const rating = Math.min(5, Math.max(0, Number(nota) || 0))
   let fillPercent = (rating / 5) * 100
   if (rating >= 3.8 && rating <= 5) {
     fillPercent = 75
@@ -175,7 +206,7 @@ return (
               </div>
               <Star size={20} strokeWidth={1} className="icono-estrella-vacia" />
             </div>
-            <span>{local.points} ({local.opiniones} opiniones)</span>
+            <span>{nota} ({cantidad} opiniones)</span>
             <span className="detalle-local-distancia">· A {local.metros} m</span>
           </div>
           
@@ -183,102 +214,137 @@ return (
       </div>
 
       <div className="detalle-local-body"> 
-        <div className='detalle-local-descripcion-container'>
-          <span className='detalle-local-descripcion-titulo'>{local.localName} es...</span>
-          <p className="detalle-local-descripcion">{local.descripcion}</p>
-          <div className='detalle-local-icons-container'>
-            {iconos}
+        <div className="detalle-local-stats">
+          <div className="detalle-local-stat">
+            <span className="detalle-local-stat-valor">{nota}</span>
+            <span className="detalle-local-stat-label">Valoración</span>
+          </div>
+          <div className="detalle-local-stat">
+            <span className="detalle-local-stat-valor">{cantidad}</span>
+            <span className="detalle-local-stat-label">Opiniones</span>
+          </div>
+          <div className="detalle-local-stat">
+            <span className="detalle-local-stat-valor">{local.metros} m</span>
+            <span className="detalle-local-stat-label">Distancia</span>
           </div>
         </div>
-        <div className="detalle-local-datos">
-          <div className='detalle-local-datos-horarios-container detalle-local-datos-div'>
-            <p className='detalle-local-datos-horarios'>
-              Horarios 
-            </p>
-            <div className='detalle-local-datos-horarios-dias'>
-              <div className='dia-div-container'> 
-                <span className='dia-div-span'>L</span>
-                <div className={`dia-div ${local.dias.includes('l') ? 'abierto' : 'cerrado'}`}>{local.dias.includes('l') ? '•' : '-'}</div>
-              </div>
-              <div className='dia-div-container'> 
-                <span className='dia-div-span'>M</span>
-                <div className={`dia-div ${local.dias.includes('m') ? 'abierto' : 'cerrado'}`}>{local.dias.includes('m') ? '•' : '-'}</div>
-                </div>
-              <div className='dia-div-container'> 
-                <span className='dia-div-span'>X</span>
-                <div className={`dia-div ${local.dias.includes('x') ? 'abierto' : 'cerrado'}`}>{local.dias.includes('x') ? '•' : '-'}</div>
-              </div>
-              <div className='dia-div-container'>
-                <span className='dia-div-span'>J</span>
-                <div className={`dia-div ${local.dias.includes('j') ? 'abierto' : 'cerrado'}`}>{local.dias.includes('j') ? '•' : '-'}</div>
-              </div>
-              <div className='dia-div-container'>
-                <span className='dia-div-span'>V</span>
-                <div className={`dia-div ${local.dias.includes('v') ? 'abierto' : 'cerrado'}`}>{local.dias.includes('v') ? '•' : '-'}</div>
-              </div>
-              <div className='dia-div-container'> 
-                <span className='dia-div-span'>S</span>
-                <div className={`dia-div ${local.dias.includes('s') ? 'abierto' : 'cerrado'}`}>{local.dias.includes('s') ? '•' : '-'}</div>
-              </div>
-              <div className='dia-div-container'> 
-                <span className='dia-div-span'>D</span>
-                <div className={`dia-div ${local.dias.includes('d') ? 'abierto' : 'cerrado'}`}>{local.dias.includes('d') ? '•' : '-'}</div>
-              </div>
-            </div>
-            <p className='horario'> 
 
-              {local.horario}
-            </p>
+        <section className="detalle-local-seccion">
+          <h2 className="detalle-local-seccion-titulo">{local.localName} es...</h2>
+          <div className='detalle-local-descripcion-container'>
+            <p className="detalle-local-descripcion">{local.descripcion}</p>
+            <div className='detalle-local-icons-container'>
+              {iconos}
+            </div>
           </div>
-          <div className='detalle-local-datos-direccion-container'>
+        </section>
+
+        <section className="detalle-local-seccion">
+          <h2 className="detalle-local-seccion-titulo">
+            Horario
+            <span className={`detalle-local-pastilla ${abiertoAhora ? '' : 'detalle-local-pastilla--cerrado'}`}>
+              {textHorario}
+            </span>
+          </h2>
+          <div className="detalle-local-grupo">
+            <div className="detalle-local-fila detalle-local-fila--semana">
+              {DIAS.map(({ id, letra }) => {
+                const abre = local.dias.includes(id)
+                return (
+                  <div key={id} className='dia-div-container'>
+                    <span className='dia-div-span'>{letra}</span>
+                    <div className={`dia-div ${abre ? 'abierto' : 'cerrado'}`}>{abre ? '•' : '-'}</div>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="detalle-local-fila">
+              <span className="detalle-local-fila-icono"><Clock size={19} /></span>
+              <span className="detalle-local-fila-textos">
+                <span className="detalle-local-fila-titulo">Abierto de</span>
+                <span className="detalle-local-fila-valor">{horarioTextoVisible}</span>
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <section className="detalle-local-seccion">
+          <h2 className="detalle-local-seccion-titulo">Contacto</h2>
+          <div className="detalle-local-grupo">
             <a
-              className="detalle-local-datos-link detalle-local-dato detalle-local-p-blanco"
+              className="detalle-local-fila detalle-local-fila--link"
               href={urlGoogleMaps}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Cómo llegar a ${local.localName}`}
             >
-              <MapPin size={22} className='detalle-local-datos-icono' />
-              {local.direccion}
+              <span className="detalle-local-fila-icono"><MapPin size={19} /></span>
+              <span className="detalle-local-fila-textos">
+                <span className="detalle-local-fila-titulo">Cómo llegar</span>
+                <span className="detalle-local-fila-valor">{local.direccion}</span>
+              </span>
+              <ChevronRight size={18} className="detalle-local-fila-flecha" />
             </a>
             <a
-              className="detalle-local-datos-link detalle-local-dato detalle-local-p-blanco"
+              className="detalle-local-fila detalle-local-fila--link"
               href={urlLlamar}
               aria-label={`Llamar a ${local.localName}`}
             >
-              <Phone size={22} className='detalle-local-datos-icono' />
-              {local.telefono}
+              <span className="detalle-local-fila-icono"><Phone size={19} /></span>
+              <span className="detalle-local-fila-textos">
+                <span className="detalle-local-fila-titulo">Llamar</span>
+                <span className="detalle-local-fila-valor">{local.telefono}</span>
+              </span>
+              <ChevronRight size={18} className="detalle-local-fila-flecha" />
             </a>
             <a
-              className="detalle-local-datos-link detalle-local-dato detalle-local-p-blanco"
+              className="detalle-local-fila detalle-local-fila--link"
               href={urlWhatsApp}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={`Escribir por WhatsApp a ${local.localName}`}
             >
-              <IconoWhatsApp size={22} className="detalle-local-datos-icono detalle-local-datos-icono--whatsapp" />
-              {local.whatsapp ?? local.telefono}
+              <span className="detalle-local-fila-icono detalle-local-fila-icono--whatsapp">
+                <IconoWhatsApp size={19} />
+              </span>
+              <span className="detalle-local-fila-textos">
+                <span className="detalle-local-fila-titulo">WhatsApp</span>
+                <span className="detalle-local-fila-valor">{local.whatsapp ?? local.telefono}</span>
+              </span>
+              <ChevronRight size={18} className="detalle-local-fila-flecha" />
             </a>
           </div>
-        </div>
-        
+        </section>
+
+        <section className="detalle-local-seccion">
+          <h2 className="detalle-local-seccion-titulo">
+            <Images size={18} className="detalle-local-seccion-icono" />
+            Fotos
+            <span className="detalle-local-pastilla">{local.urls.length}</span>
+          </h2>
           <div className='detalle-local-imagenes-container'>
             {local.urls.map((url) => (
               <ImagenLocal key={url} url={url} nombreLugar={local.localName} onClick={() => setImagenActiva(url)}/>
             ))}
           </div>
-          <button type="button" className="detalle-local-reservar" onClick={handleReservar}>
+        </section>
+
+        <button type="button" className="detalle-local-reservar" onClick={handleReservar}>
           Elegir horario y reservar
         </button>
           {imagenActiva && 
           <VisorImagen url={imagenActiva} alt={`Imagen de ${local.localName}`} onClose={() => setImagenActiva(null)} />}
           <div className='detalle-local-opiniones-container'>
-            <h2 className='detalle-local-seccion-titulo'>Comentarios</h2>
+            <h2 className='detalle-local-seccion-titulo'>
+              Comentarios
+              <span className="detalle-local-pastilla">{local.comentarios.length}</span>
+            </h2>
             <div className='detalle-local-opiniones-tu-comentario-container'>
               <form className='detalle-local-opiniones-tu-comentario-form' onSubmit={handleTextoComentario}>
                 <textarea className={`detalle-local-opiniones-tu-comentario-textarea ${animarLimpiar ? 'limpiando' : ''}`} 
-                value={textoComentario}  onChange={(e) => {
+                value={textoComentario}                  onChange={(e) => {
                   setTextoComentario(e.target.value)
+                  setErrorComentario('')
                   ajustarAltura()
                 }}
                 rows={1} 
@@ -291,7 +357,7 @@ return (
                 <button className='detalle-local-opiniones-tu-comentario-boton' type="submit" aria-label='Enviar comentario'><Send size={20} className='detalle-local-opiniones-tu-comentario-boton-icono' style={{animation: animarSubmit ? 'icono-rotar 2s ease-in 1' : 'none',animationFillMode: 'forwards'}} /></button>
               </form>
               <div className='detalle-local-opiniones-dar-estrellas-container'>
-                <p className='detalle-local-opiniones-dar-estrellas-titulo'>Púntua el lugar :</p>
+                <p className='detalle-local-opiniones-dar-estrellas-titulo'>Puntúa el lugar :</p>
                 <div className='detalle-local-opiniones-dar-estrellas-estrellas-container'>
                   <Star size={20} className={`detalle-local-opiniones-dar-estrellas-estrella-icono ${emojiSeleccionado >= 1 ? 'rellena' : ''}`} onClick={() => handleEmoji(1)}/>
                   <Star size={20} className={`detalle-local-opiniones-dar-estrellas-estrella-icono ${emojiSeleccionado >= 2 ? 'rellena' : ''}`} onClick={() => handleEmoji(2)}/>
@@ -305,10 +371,11 @@ return (
                   />
               </div>
             </div>
+            {errorComentario && <p className="detalle-local-comentario-error">{errorComentario}</p>}
             </div>
             <div className='detalle-local-opiniones-list'>
-              {local.comentarios.map((comentario) => (
-                <Opiniones key={comentario.id} nombre={comentario.nombre} fecha={comentario.fecha} calificacion={comentario.calificacion} comentario={comentario.comentario} imagenPerfil={comentario.imagenPerfil} expandido = {comentarioAbierto ===comentario.id} onToggle={() => handleMostrarComentario(comentario.id)}/>
+              {(local.comentarios ?? []).map((comentario) => (
+                <Opiniones key={comentario.id} nombre={comentario.nombre} fecha={comentario.fecha} calificacion={comentario.calificacion} comentario={comentario.comentario} imagenPerfil={comentario.imagenPerfil} reciente={comentario.id === comentarioNuevoId} expandido = {comentarioAbierto ===comentario.id} onToggle={() => handleMostrarComentario(comentario.id)}/>
               ))}
             </div>    
           </div>

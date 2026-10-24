@@ -1,9 +1,14 @@
 import { Link } from 'react-router-dom'
 import './tarjetalocal.css'
-
 import { Clock, Star } from 'lucide-react'
+import { estaAbierto, horarioDeLocal, notaDeComentarios } from '../../utils/fichaLocal.js'
 
-function TarjetaLocal({ id, localName, categoria, metros, url, horario, points, close, direccion }) {
+function TarjetaLocal(local) {
+  const { id, localName, categoria, metros, url, direccion } = local
+  const { nota, cantidad } = notaDeComentarios(local)
+  const horario = horarioDeLocal(local)
+  const abierto = estaAbierto(local)
+  const points = cantidad ? nota : 0
   const rating = Math.min(5, Math.max(0, Number(points) || 0))
   let fillPercent = (rating / 5) * 100
   if (rating >= 4 && rating <= 5) {
@@ -12,8 +17,8 @@ function TarjetaLocal({ id, localName, categoria, metros, url, horario, points, 
   if(rating <= 3.5) {
     fillPercent += 10
   }
-  const horarioClassName = close ? 'horario-close' : 'horario-open'
-  const clockColor = close ? 'var(--close-color)' : 'var(--fonts-color-primary-alternative)'
+  const horarioClassName = abierto ? 'horario-open' : 'horario-close'
+  const clockColor = abierto ? 'var(--fonts-color-primary-alternative)' : 'var(--close-color)'
   return (
     <Link to={`/local/${id}`} className="tarjeta-link">
       <article className="tarjeta">

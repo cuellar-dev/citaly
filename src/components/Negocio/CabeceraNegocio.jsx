@@ -1,7 +1,7 @@
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { Pencil, Star } from 'lucide-react'
-import { fotoAncho } from '../../utils/fichaLocal.js'
+import { fotoAncho, franjaTurno } from '../../utils/fichaLocal.js'
 import TimelineTurno from './TimelineTurno.jsx'
 import './cabeceraNegocio.css'
 
@@ -13,7 +13,6 @@ function CabeceraNegocio({
   nota,
   opiniones,
   fotos = [],
-  cerrado = false,
   abreHoy = true,
   recibiendo = false,
   apertura,
@@ -71,19 +70,11 @@ function CabeceraNegocio({
             {turno.estado}
           </p>
         </div>
-        {cerrado ? (
-          <p className="cabecera-negocio-recibiendo cabecera-negocio-recibiendo--cerrado">
+        {recibiendo && turno.enCurso && (
+          <p className="cabecera-negocio-recibiendo">
             <span className="cabecera-negocio-recibiendo-luz" aria-hidden="true" />
-            Ficha cerrada al público
+            Recibiendo reservas
           </p>
-        ) : (
-          recibiendo &&
-          turno.enCurso && (
-            <p className="cabecera-negocio-recibiendo">
-              <span className="cabecera-negocio-recibiendo-luz" aria-hidden="true" />
-              Recibiendo reservas
-            </p>
-          )
         )}
       </div>
 
@@ -111,11 +102,6 @@ function CabeceraNegocio({
   )
 }
 
-function aMinutos(hhmm) {
-  const [h, m] = String(hhmm).split(':').map(Number)
-  return h * 60 + (m || 0)
-}
-
 function etiquetaHora(minutos) {
   const normalizado = ((minutos % (24 * 60)) + 24 * 60) % (24 * 60)
   const h24 = Math.floor(normalizado / 60)
@@ -134,13 +120,9 @@ function textoRestante(minutos) {
 }
 
 function calcularTurno({ apertura, cierre, ahora, abreHoy }) {
-  const ini = aMinutos(apertura)
-  const finBase = aMinutos(cierre)
-  const fin = finBase <= ini ? finBase + 24 * 60 : finBase
-  const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes()
-  const cursor = ahoraMin < ini && finBase <= ini ? ahoraMin + 24 * 60 : ahoraMin
-  const total = fin - ini
-  const enCurso = abreHoy && cursor >= ini && cursor < fin
+  const franja = franjaTurno(apertura, cierre, ahora)
+  const { ini, fin, ahoraMin, cursor, total } = franja
+  const enCurso = abreHoy && franja.enCurso
   const antes = cursor < ini
   const porcentaje = abreHoy && total ? (Math.min(Math.max(cursor - ini, 0), total) / total) * 100 : 0
   const dia = format(ahora, 'EEEE d', { locale: es })

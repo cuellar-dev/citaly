@@ -19,7 +19,6 @@ import ServicioItem from '../../ServicioItem/ServicioItem.jsx'
 import { buscarUsuarios, getUsuarioById, profesionalesActivos, sinPerfil } from '../../../services/usuarios.js'
 import {
   duracionAMinutos,
-  duracionGuardada,
   duracionTexto,
   fotoAncho,
   iniciales,
@@ -189,7 +188,7 @@ function FormServicio({ local, id, onGuardar, onNavegar }) {
       id: idServicio,
       nombre,
       precio: Math.round(precio),
-      duracion: duracionGuardada(form.minutos),
+      duracion: form.minutos,
       nota: form.nota.trim() || undefined,
     }
     onGuardar(
@@ -223,7 +222,7 @@ function FormServicio({ local, id, onGuardar, onNavegar }) {
           <ServicioItem
             nombre={nombre || 'Nombre del servicio'}
             precio={Number.isFinite(precio) ? Math.round(precio) : 0}
-            duracion={duracionGuardada(form.minutos)}
+            duracion={form.minutos}
             nota={form.nota.trim()}
           />
         </ul>

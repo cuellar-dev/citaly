@@ -527,13 +527,23 @@
   gap: 10px;
 }
 
-.ficha-comentario-cabecera img {
+.ficha-comentario-cabecera img,
+.ficha-comentario-inicial {
   width: 34px;
   height: 34px;
   flex-shrink: 0;
   border-radius: 50%;
   object-fit: cover;
   background: #252926;
+}
+
+.ficha-comentario-inicial {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color, #00c2ad);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .ficha-comentario-quien {

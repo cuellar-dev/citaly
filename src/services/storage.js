@@ -1,5 +1,6 @@
 const STORAGE_KEY = 'citaly_citas'
 const FICHAS_KEY = 'citaly_fichas'
+export const ESTADOS_V_KEY = 'citaly_estados_v'
 
 export function getCitas() {
   const data = localStorage.getItem(STORAGE_KEY)
@@ -14,6 +15,7 @@ export function seedCitasIfEmpty(citasIniciales) {
   const actuales = getCitas()
   if (!localStorage.getItem(STORAGE_KEY) || actuales.length === 0) {
     saveCitas(citasIniciales)
+    localStorage.setItem(ESTADOS_V_KEY, '2')
   }
 }
 

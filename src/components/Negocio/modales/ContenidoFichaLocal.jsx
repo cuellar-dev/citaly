@@ -15,7 +15,9 @@ import {
   fotosDe,
   horaAmPm,
   horarioTexto,
+  estaAbierto,
   minutosAbierto,
+  notaDeComentarios,
   tipoLocalTexto,
   turnosDelDia,
 } from '../../../utils/fichaLocal.js'
@@ -81,10 +83,6 @@ function PanelHorario({ local, ahora }) {
 
   return (
     <>
-      {local.close && (
-        <p className="ficha-aviso">Tu ficha está marcada como cerrada: los clientes ven el local cerrado y no reservan.</p>
-      )}
-
       <div className="ficha-horas">
         <span className="ficha-horas-valor">
           {horaAmPm(ini)}
@@ -245,9 +243,9 @@ function PanelLocal({ local, onGaleria }) {
       </Seccion>
 
       <Seccion titulo="Visibilidad">
-        <p className={`ficha-visibilidad${local.close ? ' ficha-visibilidad--cerrado' : ''}`}>
+        <p className={`ficha-visibilidad${estaAbierto(local) ? '' : ' ficha-visibilidad--cerrado'}`}>
           <span aria-hidden="true" />
-          {local.close ? 'Marcado como cerrado: no entran reservas' : 'Visible y abierto a reservas'}
+          {estaAbierto(local) ? 'Ahora mismo está abierto, según su horario' : 'Ahora mismo está cerrado, según su horario'}
         </p>
       </Seccion>
     </>
@@ -256,7 +254,7 @@ function PanelLocal({ local, onGaleria }) {
 
 function PanelOpiniones({ local }) {
   const [abierto, setAbierto] = useState(null)
-  const nota = Number(local.points) || 0
+  const { nota, cantidad } = notaDeComentarios(local)
   const comentarios = local.comentarios ?? []
   const reparto = [5, 4, 3, 2, 1].map((n) => ({
     n,
@@ -270,7 +268,7 @@ function PanelOpiniones({ local }) {
         <span className="ficha-nota-valor">{nota.toFixed(1)}</span>
         <span className="ficha-nota-textos">
           <Estrellas valor={nota} tamano={16} />
-          <span className="ficha-nota-sub">{local.opiniones ?? comentarios.length} opiniones en total</span>
+          <span className="ficha-nota-sub">{cantidad} opiniones en total</span>
         </span>
       </div>
 
@@ -298,7 +296,13 @@ function PanelOpiniones({ local }) {
               return (
                 <li key={c.id}>
                   <header className="ficha-comentario-cabecera">
-                    <img src={fotoAncho(c.imagenPerfil, 80)} alt="" loading="lazy" decoding="async" />
+                    {c.imagenPerfil ? (
+                      <img src={fotoAncho(c.imagenPerfil, 80)} alt="" loading="lazy" decoding="async" />
+                    ) : (
+                      <span className="ficha-comentario-inicial" aria-hidden="true">
+                        {String(c.nombre || '?').trim().charAt(0).toUpperCase()}
+                      </span>
+                    )}
                     <span className="ficha-comentario-quien">
                       <strong>{c.nombre}</strong>
                       <time dateTime={c.fecha}>{format(parseISO(c.fecha), 'd MMM yyyy', { locale: es })}</time>
@@ -475,7 +479,6 @@ function formularioDesde(local) {
     whatsapp: local.whatsapp ?? '',
     direccion: local.direccion ?? '',
     iconos: (local.iconos ?? []).map((i) => i.id),
-    close: Boolean(local.close),
   }
 }
 
@@ -669,22 +672,10 @@ function ModalEditarLocal({ local, onGuardar }) {
         </div>
       </Seccion>
 
-      <Seccion titulo="Visibilidad">
-        <button
-          type="button"
-          role="switch"
-          aria-checked={form.close}
-          className="ficha-interruptor"
-          onClick={() => cambiar('close', !form.close)}
-        >
-          <span className="ficha-interruptor-textos">
-            <strong>Mostrar como cerrado</strong>
-            <span>Tus clientes verán el local cerrado y no podrán reservar.</span>
-          </span>
-          <span className="ficha-interruptor-pista" aria-hidden="true">
-            <span />
-          </span>
-        </button>
+      <Seccion titulo="Ahora">
+        <p className="modal-negocio-nota">
+          Abierto o cerrado lo marca el horario y los días. No hay un interruptor aparte, y nunca bloquea la reserva.
+        </p>
       </Seccion>
 
       {error && (

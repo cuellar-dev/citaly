@@ -21,6 +21,7 @@ import {
   horaAmPm,
   iniciales,
   minutosAbierto,
+  notaDeComentarios,
   precioTexto,
   tipoLocalTexto,
   turnosDelDia,
@@ -42,7 +43,7 @@ function FichaLocal({ local, onAbrir, onCatalogo }) {
   const fin = ini + minutosAbierto(local.horarioApertura, local.horarioCierre)
   const turnos = turnosDelDia(local.horarioApertura, local.horarioCierre, local.intervaloMinutos)
   const comodidades = COMODIDADES.filter((c) => local.iconos?.some((i) => i.id === c.id))
-  const opiniones = local.opiniones ?? local.comentarios?.length ?? 0
+  const { nota, cantidad: opiniones } = notaDeComentarios(local)
 
   /* Solo los locales de citas tienen catálogo; los de mesas no lo usan al reservar. */
   const catalogo = local.lugar
@@ -150,10 +151,10 @@ function FichaLocal({ local, onAbrir, onCatalogo }) {
         Icono: MessageSquareQuote,
         titulo: 'Opiniones',
         valor: `${opiniones} opiniones`,
-        extra: local.points && (
+        extra: opiniones > 0 && (
           <span className="ficha-local-nota">
             <Star size={13} strokeWidth={2} fill="currentColor" aria-hidden="true" />
-            {local.points}
+            {nota}
           </span>
         ),
       },

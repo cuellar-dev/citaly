@@ -3,15 +3,10 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { Clock, MessageCircle, Phone, Scissors, UtensilsCrossed } from 'lucide-react'
 import { minutosHastaCita, textoEnCita } from '../../../utils/citasVista.js'
+import { CANCELADA, claveEstadoReserva, textoEstadoReserva } from '../../../utils/estadosCita.js'
 import { Dato, FilaDato, Seccion } from './piezas.jsx'
 
 gsap.registerPlugin(useGSAP)
-
-const ESTADO_RESERVA = {
-  pendiente: 'Pendiente',
-  confirmada: 'Confirmada',
-  cancelada: 'Cancelada',
-}
 
 const reducirMovimiento = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -118,7 +113,7 @@ function ModalSiguiente({ cita, despues, ahora }) {
 
   const minutos = minutosHastaCita(cita, ahora)
   const tel = digitos(cita.telefono)
-  const IconoTipo = cita.tipo === 'mesa' ? UtensilsCrossed : Scissors
+  const IconoTipo = cita.esLugar ? UtensilsCrossed : Scissors
 
   return (
     <div className="modal-negocio-stack">
@@ -135,8 +130,8 @@ function ModalSiguiente({ cita, despues, ahora }) {
           <p className="modal-negocio-cliente-nombre">{cita.cliente}</p>
           <p className="modal-negocio-cliente-tel">{cita.telefono ?? 'Sin teléfono'}</p>
         </div>
-        <span className={`modal-negocio-chip-estado modal-negocio-chip-estado--${cita.estado}`}>
-          {ESTADO_RESERVA[cita.estado] ?? cita.estado}
+        <span className={`modal-negocio-chip-estado modal-negocio-chip-estado--${claveEstadoReserva(cita.estadoReserva)}`}>
+          {textoEstadoReserva(cita.estadoReserva)}
         </span>
       </div>
 
@@ -405,7 +400,7 @@ function ModalPausa({ citas, ahora }) {
   const [duracion, setDuracion] = useState(30)
 
   const afectadas = citas.filter((c) => {
-    if (c.estado === 'cancelada') return false
+    if (c.estadoReserva === CANCELADA) return false
     const min = minutosHastaCita(c, ahora)
     return min >= 0 && min <= duracion
   })

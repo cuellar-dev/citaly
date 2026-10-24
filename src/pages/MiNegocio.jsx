@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import gsap from 'gsap'
@@ -17,29 +17,33 @@ import { getLocalById } from '../services/locales.js'
 import { saveFicha } from '../services/storage.js'
 import { conPerfiles, profesionalesActivos } from '../services/usuarios.js'
 import { minutosHastaCita, textoEnCita } from '../utils/citasVista.js'
+import { CANCELADA, CONFIRMADA, PENDIENTE, POR_TI, caducarPendientes } from '../utils/estadosCita.js'
+import { notaDeComentarios } from '../utils/fichaLocal.js'
 import { codigoDia, fotosDe, horaAmPm as horaDeMinutos, minutosAbierto, turnosDelDia } from '../utils/fichaLocal.js'
 import './miNegocio.css'
 
 gsap.registerPlugin(useGSAP)
 
-/* Local del dueño mientras no hay sesión. Sara abre jueves 9AM–6PM, y el reloj del mock cae dentro. */
+/* Local del dueño mientras no hay sesión. Sara abre 9:00–18:00 cada 90 min. */
 const ID_LOCAL = 'sara'
-const FECHA_DEMO = '2026-09-24'
+const FECHA_DEMO = format(new Date(), 'yyyy-MM-dd')
+const CREADA_DEMO = new Date().toISOString()
 
-/* Datos de mentira para estilar, con los servicios y profesionales de Sara. */
+/* Citas de hoy en los turnos reales del local (09:00, 10:30, 12:00, 13:30, 15:00, 16:30). */
 const CITAS_HOY = [
   {
     id: '1',
     fecha: FECHA_DEMO,
-    horario: '09:15',
+    horario: '09:00',
     cliente: 'Lisandra Pérez',
     telefono: '+53 5412 9083',
-    tipo: 'servicio',
+    esLugar: false,
     linea: 'Manicura',
     detalle: 'Con Sofía',
     duracion: 40,
     precio: 250,
-    estado: 'confirmada',
+    estadoReserva: PENDIENTE,
+    creadaEn: CREADA_DEMO,
   },
   {
     id: '2',
@@ -47,25 +51,27 @@ const CITAS_HOY = [
     horario: '10:30',
     cliente: 'Yosvany Morales',
     telefono: '+53 5284 1802',
-    tipo: 'servicio',
+    esLugar: false,
     linea: 'Corte caballero',
     detalle: 'Con Carlos',
     duracion: 30,
     precio: 300,
-    estado: 'confirmada',
+    estadoReserva: CONFIRMADA,
+    creadaEn: CREADA_DEMO,
   },
   {
     id: '3',
     fecha: FECHA_DEMO,
-    horario: '11:15',
+    horario: '10:30',
     cliente: 'Dayana Ruiz',
     telefono: '+53 5367 2241',
-    tipo: 'servicio',
+    esLugar: false,
     linea: 'Tinte completo',
     detalle: 'Con Laura',
     duracion: 120,
     precio: 1200,
-    estado: 'pendiente',
+    estadoReserva: POR_TI,
+    creadaEn: CREADA_DEMO,
   },
   {
     id: '4',
@@ -73,12 +79,13 @@ const CITAS_HOY = [
     horario: '12:00',
     cliente: 'Gretel Rodríguez',
     telefono: '+53 5340 7711',
-    tipo: 'servicio',
+    esLugar: false,
     linea: 'Corte dama',
     detalle: 'Con Sofía',
     duracion: 45,
     precio: 450,
-    estado: 'pendiente',
+    estadoReserva: PENDIENTE,
+    creadaEn: CREADA_DEMO,
   },
   {
     id: '5',
@@ -86,37 +93,40 @@ const CITAS_HOY = [
     horario: '13:30',
     cliente: 'Ernesto Báez',
     telefono: '+53 5590 1276',
-    tipo: 'servicio',
+    esLugar: false,
     linea: 'Corte caballero',
     detalle: 'Con Miguel',
     duracion: 30,
     precio: 300,
-    estado: 'cancelada',
+    estadoReserva: CANCELADA,
+    creadaEn: CREADA_DEMO,
   },
   {
     id: '6',
     fecha: FECHA_DEMO,
-    horario: '14:15',
+    horario: '15:00',
     cliente: 'Dr. Carlos V.',
-    tipo: 'servicio',
+    esLugar: false,
     linea: 'Corte caballero',
     detalle: 'Con Carlos',
     duracion: 30,
     precio: 300,
-    estado: 'confirmada',
+    estadoReserva: CONFIRMADA,
+    creadaEn: CREADA_DEMO,
   },
   {
     id: '7',
     fecha: FECHA_DEMO,
-    horario: '16:40',
+    horario: '16:30',
     cliente: 'Mairelys Soto',
     telefono: '+53 5221 6604',
-    tipo: 'servicio',
+    esLugar: false,
     linea: 'Corte dama',
     detalle: 'Con Laura',
     duracion: 45,
     precio: 450,
-    estado: 'pendiente',
+    estadoReserva: POR_TI,
+    creadaEn: CREADA_DEMO,
   },
 ]
 
@@ -205,25 +215,25 @@ function valorMinutosHasta(minutos) {
 
 /* Cada cita cae en un solo grupo del filtro. Empezada y confirmada cuenta como atendida. */
 function grupoCita(cita, ahora) {
-  if (cita.estado === 'cancelada') return 'canceladas'
-  if (cita.estado === 'pendiente') return 'pendientes'
+  if (cita.estadoReserva === CANCELADA) return 'canceladas'
+  if (cita.estadoReserva === PENDIENTE || cita.estadoReserva === POR_TI) return 'pendientes'
   return minutosHastaCita(cita, ahora) <= 0 ? 'atendidas' : 'confirmadas'
 }
 
 function enCurso(cita, ahora) {
-  if (cita.estado === 'cancelada') return false
+  if (cita.estadoReserva === CANCELADA) return false
   const min = minutosHastaCita(cita, ahora)
   return min <= 0 && min > -(cita.duracion ?? 30)
 }
 
 function relativoCita(cita, ahora) {
-  if (cita.estado === 'cancelada') return 'cancelada'
+  if (cita.estadoReserva === CANCELADA) return 'cancelada'
   if (enCurso(cita, ahora)) return 'en curso'
   return textoEnCita(cita, ahora)
 }
 
 function proximoHueco(citas, ahora, cierreMin) {
-  const activas = citas.filter((c) => c.estado !== 'cancelada')
+  const activas = citas.filter((c) => c.estadoReserva !== CANCELADA)
   const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes()
   for (let inicio = Math.ceil(ahoraMin / 15) * 15; inicio + 30 <= cierreMin; inicio += 15) {
     const choca = activas.some((c) => {
@@ -250,7 +260,7 @@ function resumenDelDia(citas, ahora, local) {
     turnosDelDia(local.horarioApertura, local.horarioCierre, local.intervaloMinutos).length *
     Math.max(1, profesionales.length)
 
-  const activas = citas.filter((c) => c.estado !== 'cancelada')
+  const activas = citas.filter((c) => c.estadoReserva !== CANCELADA)
   const proximas = activas
     .filter((c) => minutosHastaCita(c, ahora) > 0)
     .sort((a, b) => minutosHastaCita(a, ahora) - minutosHastaCita(b, ahora))
@@ -348,7 +358,14 @@ function MiNegocio() {
   const [modalAbierto, setModalAbierto] = useState(false)
   const listaRef = useRef(null)
 
+  useEffect(() => {
+    const tick = () => setCitas((prev) => caducarPendientes(prev))
+    const id = setInterval(tick, 30000)
+    return () => clearInterval(id)
+  }, [])
+
   const resumen = resumenDelDia(citas, AHORA_DEMO, local)
+  const notaLocal = notaDeComentarios(local)
   const fotos = fotosDe(local)
   const conHora = citas.map((c) => ({ ...c, horaTexto: horaAmPm(c.fecha, c.horario) }))
   const citaSiguiente = conHora.find((c) => c.id === resumen.siguiente?.citaId)
@@ -370,7 +387,8 @@ function MiNegocio() {
     setModalAbierto(true)
   }
   const cerrarModal = useCallback(() => setModalAbierto(false), [])
-  const cambiarEstado = (id, estado) => setCitas((prev) => prev.map((c) => (c.id === id ? { ...c, estado } : c)))
+  const cambiarEstado = (id, estadoReserva) =>
+    setCitas((prev) => prev.map((c) => (c.id === id ? { ...c, estadoReserva } : c)))
 
   const guardarFicha = (cambios) => {
     setLocal((prev) => conPerfiles({ ...prev, ...cambios }))
@@ -400,12 +418,11 @@ function MiNegocio() {
         nombre={local.localName}
         url={local.url}
         categoria={local.categoria}
-        nota={local.points}
-        opiniones={local.opiniones}
+        nota={notaLocal.nota}
+        opiniones={notaLocal.cantidad}
         fotos={fotos}
-        cerrado={Boolean(local.close)}
         abreHoy={local.dias.includes(codigoDia(AHORA_DEMO))}
-        recibiendo={!local.close}
+        recibiendo
         apertura={local.horarioApertura}
         cierre={local.horarioCierre}
         ahora={AHORA_DEMO}
@@ -462,8 +479,8 @@ function MiNegocio() {
                         relativo={relativoCita(cita, AHORA_DEMO)}
                         destacada={ahoraEnCurso}
                         atendida={!ahoraEnCurso && grupoCita(cita, AHORA_DEMO) === 'atendidas'}
-                        onConfirmar={cita.estado === 'pendiente' ? () => cambiarEstado(cita.id, 'confirmada') : undefined}
-                        onRechazar={cita.estado === 'pendiente' ? () => cambiarEstado(cita.id, 'cancelada') : undefined}
+                        onConfirmar={cita.estadoReserva === PENDIENTE ? () => cambiarEstado(cita.id, POR_TI) : undefined}
+                        onRechazar={cita.estadoReserva === PENDIENTE ? () => cambiarEstado(cita.id, CANCELADA) : undefined}
                       />
                     </div>
                   )

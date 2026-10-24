@@ -1,4 +1,5 @@
 import './servicioitem.css'
+import { duracionAMinutos, duracionTexto } from '../../utils/fichaLocal.js'
 
 function ServicioItem({ nombre, precio, duracion, nota, seleccionado, onSeleccionar }) {
   const precioTexto = precio > 0 ? `${precio} CUP` : 'Gratis / consumo en local'
@@ -11,7 +12,7 @@ function ServicioItem({ nombre, precio, duracion, nota, seleccionado, onSeleccio
       <div className="servicio-item-info">
         <h3 className="servicio-item-nombre">{nombre}</h3>
         <p className="servicio-item-meta">
-          {duracion}
+          {duracionTexto(duracionAMinutos(duracion))}
           {nota ? ` · ${nota}` : ''}
         </p>
       </div>

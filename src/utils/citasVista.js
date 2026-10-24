@@ -68,10 +68,9 @@ function digitosWhatsApp(valor) {
   return String(valor || '').replace(/\D/g, '')
 }
 
-/** Mesa vs servicio. Acepta citas nuevas (esLugar) y las viejas (tipo texto). */
+/** Mesa (true) o servicio (false). */
 export function esCitaDeLugar(cita) {
-  if (typeof cita.esLugar === 'boolean') return cita.esLugar
-  return cita.tipo === 'con-lugar'
+  return cita?.esLugar === true
 }
 
 export function propsDesdeCita(cita) {

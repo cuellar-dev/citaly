@@ -1,4 +1,4 @@
-import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useParams, useNavigate } from 'react-router-dom'
 import { parse, addMinutes, format, isSameDay, isAfter, isBefore, startOfToday} from 'date-fns'
 import { es } from 'date-fns/locale'
 import { ArrowLeft, CalendarDays, Info, Scissors, Scroll} from 'lucide-react'
@@ -6,6 +6,7 @@ import { getLocalById } from '../services/locales.js'
 import { profesionalesActivos } from '../services/usuarios.js'
 import { useCitas } from '../hooks/useCitas.js'
 import { fechasDisponiblesLocal, fechaEnUso } from '../utils/fechasLocal.js'
+import { duracionAMinutos } from '../utils/fichaLocal.js'
 import './ReservarConLugar.css'
 import './ReservarSinLugar.css'
 import { useState, useEffect, useRef } from 'react'
@@ -56,6 +57,10 @@ function ReservarSinLugar() {
     return () => window.removeEventListener('scroll', manejarScroll)
   }, [])
 
+  if (local?.lugar) {
+    return <Navigate to={`/local/${id}/reservar`} replace />
+  }
+
   if (!local) {
     return (
       <section className="reservar-local reservar-local--error">
@@ -103,15 +108,6 @@ function ReservarSinLugar() {
   )
   const precioTotal = serviciosElegidos.reduce((sum, s) => sum + (s.precio || 0), 0)
   const profesionales = todosLosProfesionales.filter((p) => hace(p, serviciosSeleccionados))
-  function duracionAMinutos(duracion) {
-    if (!duracion) return 0
-    const texto = String(duracion).trim().toLowerCase()
-    const matchHoras = texto.match(/(\d+)\s*h/)
-    const matchMinutos = texto.match(/(\d+)\s*min/)
-    const horas = matchHoras ? Number(matchHoras[1]) : 0
-    const minutos = matchMinutos ? Number(matchMinutos[1]) : 0
-    return horas * 60 + minutos
-  }
 
   function formatearDemora(minutosTotales) {
     if (!minutosTotales) return '—'
