@@ -433,6 +433,7 @@ function MiNegocio() {
 
   return (
     <section className="negocio" aria-label="Mi Negocio">
+      <div className="negocio-tablero">
       <CabeceraNegocio
         nombre={local.localName}
         url={local.url}
@@ -526,6 +527,7 @@ function MiNegocio() {
         onAbrir={(pestana) => abrirModal('ficha', { pestana })}
         onCatalogo={(tipo) => abrirModal(tipo)}
       />
+      </div>
 
       <ModalNegocioShell
         abierto={modalAbierto}

@@ -3,6 +3,8 @@
 .negocio {
   box-sizing: border-box;
   width: 100%;
+  max-width: 480px;
+  margin-inline: auto;
   min-height: calc(100dvh - 150px);
   padding-bottom: 20px;
   background: var(--background-color);
@@ -186,4 +188,65 @@
   border-radius: 50%;
   box-shadow: inset -9px -3px 0 0 #ece9df;
   filter: drop-shadow(0 0 10px rgba(127, 216, 206, 0.3));
+}
+
+/* PC: foto, mapa de horario y resumen se quedan a ancho de celular. Las citas usan el resto. */
+@media (min-width: 960px) {
+  .negocio {
+    max-width: 1120px;
+    margin-inline: auto;
+    padding: 12px 24px 56px;
+  }
+
+  .negocio-tablero {
+    display: grid;
+    grid-template-columns: 390px minmax(0, 1fr);
+    grid-template-areas:
+      'cabecera citas'
+      'resumen citas'
+      'ficha citas';
+    column-gap: 24px;
+    row-gap: 0;
+    align-items: start;
+  }
+
+  .negocio-tablero > .cabecera-negocio {
+    grid-area: cabecera;
+  }
+
+  .negocio-tablero > .cabecera-negocio .cabecera-negocio-identidad {
+    min-height: 200px;
+    border-radius: 22px;
+  }
+
+  .negocio-tablero > .cabecera-negocio .cabecera-negocio-nombre {
+    font-size: 36px;
+  }
+
+  .negocio-tablero > .resumen-negocio {
+    grid-area: resumen;
+    padding: 8px 0 4px;
+  }
+
+  .negocio-tablero > .negocio-citas {
+    grid-area: citas;
+    position: sticky;
+    top: 84px;
+    max-height: calc(100dvh - 110px);
+    overflow: auto;
+    padding: 16px 16px 20px;
+    border-radius: 24px;
+    border: 1px solid rgba(240, 240, 240, 0.06);
+    background: linear-gradient(165deg, #1a1f1e 0%, #151918 100%);
+  }
+
+  .negocio-tablero > .ficha-local {
+    grid-area: ficha;
+    padding: 4px 0 8px;
+  }
+
+  .negocio-tablero .filtro-citas {
+    margin-inline: 0;
+    padding-inline: 0;
+  }
 }
