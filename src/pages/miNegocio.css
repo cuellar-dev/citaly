@@ -47,12 +47,46 @@
   text-transform: uppercase;
 }
 
+.negocio-citas-acciones {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 .negocio-citas-contador {
   margin: 0;
   font-size: 12px;
   font-weight: 600;
   color: var(--fonts-color-primary-weak, #bdbaba);
   white-space: nowrap;
+}
+
+.negocio-citas-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent);
+  color: var(--primary-color, #00c2ad);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.negocio-citas-pdf:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.negocio-citas-pdf:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
 }
 
 .negocio-citas-contador strong {

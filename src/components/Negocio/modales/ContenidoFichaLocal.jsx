@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { MapPin, MessageCircle, Pencil, Phone, Star } from 'lucide-react'
+import { MapPin, Megaphone, MessageCircle, Pencil, Phone, Star } from 'lucide-react'
 import {
   COMODIDADES,
   DIAS,
@@ -29,6 +30,14 @@ const PESTANAS = [
   { id: 'contacto', label: 'Contacto' },
   { id: 'local', label: 'Local' },
   { id: 'opiniones', label: 'Opiniones' },
+]
+
+const MOTIVOS_REPORTE = [
+  { id: 'obsceno', titulo: 'Lenguaje obsceno', texto: 'Insultos, sexo o palabras que no deberían estar a la vista.' },
+  { id: 'privado', titulo: 'Datos privados', texto: 'Teléfono, dirección u otro dato personal de alguien.' },
+  { id: 'spam', titulo: 'Sin sentido o spam', texto: 'Publicidad, texto vacío o que no habla de este local.' },
+  { id: 'dano', titulo: 'Hecho para dañar', texto: 'Parece escrito solo para hundir la nota, sin una visita real.' },
+  { id: 'otra', titulo: 'Otra razón', texto: 'Ninguna de las de arriba. Cuéntala en el cuadro de abajo.' },
 ]
 
 const CATEGORIAS = [
@@ -252,10 +261,67 @@ function PanelLocal({ local, onGaleria }) {
   )
 }
 
-function PanelOpiniones({ local }) {
+function PanelOpiniones({ local, onGuardar }) {
   const [abierto, setAbierto] = useState(null)
+  const [reporteId, setReporteId] = useState(null)
+  const [motivo, setMotivo] = useState(null)
+  const [detalleReporte, setDetalleReporte] = useState('')
+  const [errorReporte, setErrorReporte] = useState('')
+  const [respondiendo, setRespondiendo] = useState(null)
+  const [textoRespuesta, setTextoRespuesta] = useState('')
   const { nota, cantidad } = notaDeComentarios(local)
   const comentarios = local.comentarios ?? []
+
+  const guardarComentarios = (next) => {
+    const { nota: notaNueva, cantidad: cantidadNueva } = notaDeComentarios({ comentarios: next })
+    onGuardar?.({
+      comentarios: next,
+      points: String(notaNueva),
+      opiniones: cantidadNueva,
+    })
+  }
+
+  const abrirReporte = (id) => {
+    setReporteId(id)
+    setMotivo(null)
+    setDetalleReporte('')
+    setErrorReporte('')
+  }
+
+  const enviarReporte = (e) => {
+    e.preventDefault()
+    const detalle = detalleReporte.trim()
+    if (!motivo) {
+      setErrorReporte('Elige un motivo.')
+      return
+    }
+    if (motivo === 'otra' && detalle.length < 8) {
+      setErrorReporte('Cuéntanos la razón, aunque sea en una frase.')
+      return
+    }
+    guardarComentarios(
+      comentarios.map((c) =>
+        c.id === reporteId
+          ? { ...c, reporte: { motivo, detalle: detalle || null, fecha: format(new Date(), 'yyyy-MM-dd') } }
+          : c
+      )
+    )
+    setReporteId(null)
+  }
+
+  const enviarRespuesta = (id) => {
+    const texto = textoRespuesta.trim()
+    if (texto.length < 2) return
+    guardarComentarios(
+      comentarios.map((c) =>
+        c.id === id
+          ? { ...c, respuesta: { texto, fecha: format(new Date(), 'yyyy-MM-dd'), autor: 'Dueño' } }
+          : c
+      )
+    )
+    setRespondiendo(null)
+    setTextoRespuesta('')
+  }
   const reparto = [5, 4, 3, 2, 1].map((n) => ({
     n,
     cantidad: comentarios.filter((c) => Math.round(c.calificacion) === n).length,
@@ -293,8 +359,18 @@ function PanelOpiniones({ local }) {
             {comentarios.map((c) => {
               const largo = String(c.comentario).length > 110
               const expandido = abierto === c.id
+              const escribiendo = respondiendo === c.id
               return (
-                <li key={c.id}>
+                <li key={c.id} className="ficha-comentario">
+                  <button
+                    type="button"
+                    className={`ficha-reportar${c.reporte ? ' ficha-reportar--hecho' : ''}`}
+                    aria-label={c.reporte ? `Comentario de ${c.nombre} ya reportado` : `Reportar el comentario de ${c.nombre}`}
+                    disabled={Boolean(c.reporte)}
+                    onClick={() => abrirReporte(c.id)}
+                  >
+                    <Megaphone size={15} strokeWidth={2.25} />
+                  </button>
                   <header className="ficha-comentario-cabecera">
                     {c.imagenPerfil ? (
                       <img src={fotoAncho(c.imagenPerfil, 80)} alt="" loading="lazy" decoding="async" />
@@ -322,17 +398,119 @@ function PanelOpiniones({ local }) {
                       {expandido ? 'Ver menos' : 'Ver más'}
                     </button>
                   )}
+                  {c.respuesta && !escribiendo && (
+                    <div className="ficha-respuesta">
+                      <span className="ficha-respuesta-pill">Dueño</span>
+                      <p>{c.respuesta.texto}</p>
+                    </div>
+                  )}
+                  {escribiendo ? (
+                    <form
+                      className="ficha-respuesta-form"
+                      onSubmit={(e) => {
+                        e.preventDefault()
+                        enviarRespuesta(c.id)
+                      }}
+                    >
+                      <textarea
+                        value={textoRespuesta}
+                        onChange={(e) => setTextoRespuesta(e.target.value)}
+                        rows={2}
+                        placeholder="Tu respuesta se verá debajo de este comentario"
+                        aria-label={`Responder a ${c.nombre}`}
+                      />
+                      <div className="ficha-respuesta-acciones">
+                        <button type="button" onClick={() => setRespondiendo(null)}>
+                          Cancelar
+                        </button>
+                        <button type="submit" disabled={textoRespuesta.trim().length < 2}>
+                          Publicar
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <button
+                      type="button"
+                      className="ficha-responder"
+                      onClick={() => {
+                        setRespondiendo(c.id)
+                        setTextoRespuesta(c.respuesta?.texto ?? '')
+                      }}
+                    >
+                      {c.respuesta ? 'Editar respuesta' : 'Responder'}
+                    </button>
+                  )}
                 </li>
               )
             })}
           </ul>
         </Seccion>
       )}
+
+      {reporteId && createPortal(
+        <div className="ficha-reporte-velo" role="presentation" onClick={() => setReporteId(null)}>
+          <form
+            className="ficha-reporte"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ficha-reporte-titulo"
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={enviarReporte}
+          >
+            <div className="ficha-reporte-cuerpo">
+              <h3 id="ficha-reporte-titulo">¿Por qué lo reportas?</h3>
+              <p className="ficha-reporte-lead">Elige una razón. El comentario sigue visible hasta que se revise.</p>
+              <div className="ficha-reporte-opciones" role="radiogroup" aria-label="Motivo del reporte">
+                {MOTIVOS_REPORTE.map((op) => (
+                  <label key={op.id} className={`ficha-reporte-opcion${motivo === op.id ? ' ficha-reporte-opcion--activa' : ''}`}>
+                    <input
+                      type="radio"
+                      name="motivo-reporte"
+                      value={op.id}
+                      checked={motivo === op.id}
+                      onChange={() => {
+                        setMotivo(op.id)
+                        setErrorReporte('')
+                      }}
+                    />
+                    <span>
+                      <strong>{op.titulo}</strong>
+                      <small>{op.texto}</small>
+                    </span>
+                  </label>
+                ))}
+              </div>
+              <label className="ficha-reporte-propia">
+                <span>{motivo === 'otra' ? 'Tu razón' : 'Detalle, si quieres'}</span>
+                <textarea
+                  value={detalleReporte}
+                  onChange={(e) => {
+                    setDetalleReporte(e.target.value)
+                    setErrorReporte('')
+                  }}
+                  rows={3}
+                  placeholder="Qué viste en este comentario"
+                />
+              </label>
+              {errorReporte && <p className="ficha-error">{errorReporte}</p>}
+              <div className="ficha-respuesta-acciones">
+                <button type="button" onClick={() => setReporteId(null)}>
+                  Cancelar
+                </button>
+                <button type="submit" className="ficha-reporte-enviar">
+                  Enviar reporte
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>,
+        document.body
+      )}
     </>
   )
 }
 
-function ModalFicha({ local, pestanaInicial = 'horario', ahora, onEditar, onGaleria }) {
+function ModalFicha({ local, pestanaInicial = 'horario', ahora, onEditar, onGaleria, onGuardar }) {
   const [pestana, setPestana] = useState(pestanaInicial)
 
   return (
@@ -368,7 +546,7 @@ function ModalFicha({ local, pestanaInicial = 'horario', ahora, onEditar, onGale
         {pestana === 'horario' && <PanelHorario local={local} ahora={ahora} />}
         {pestana === 'contacto' && <PanelContacto local={local} />}
         {pestana === 'local' && <PanelLocal local={local} onGaleria={onGaleria} />}
-        {pestana === 'opiniones' && <PanelOpiniones local={local} />}
+        {pestana === 'opiniones' && <PanelOpiniones local={local} onGuardar={onGuardar} />}
       </div>
 
       {pestana !== 'opiniones' && (
@@ -703,6 +881,7 @@ export default function ContenidoFichaLocal({ modal, local, ahora, onEditar, onG
           ahora={ahora}
           onEditar={onEditar}
           onGaleria={onGaleria}
+          onGuardar={onGuardar}
         />
       )
     case 'galeria':

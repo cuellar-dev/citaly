@@ -1,6 +1,6 @@
 import './opiniones.css'
 import { Star, ChevronDown} from 'lucide-react'
-function Opiniones({ nombre, fecha, calificacion, comentario, imagenPerfil, onToggle, expandido, reciente = false }) {
+function Opiniones({ nombre, fecha, calificacion, comentario, imagenPerfil, onToggle, expandido, reciente = false, respuesta }) {
   const inicial = String(nombre || '?').trim().charAt(0).toUpperCase()
   return (
     <div className={`opiniones-container${reciente ? ' opiniones-container--nueva' : ''}`}>
@@ -32,10 +32,16 @@ function Opiniones({ nombre, fecha, calificacion, comentario, imagenPerfil, onTo
         color='var(--primary-color)' 
         className='opiniones-arrow-down' 
         onClick={onToggle}
-        style={{transform: `rotate(${expandido ? 0 : 180}deg)`,}}
+        style={{transform: `rotate(${expandido ? 180 : 0}deg)`,}}
         />
       <p className='opiniones-comentario' style={{lineClamp: expandido ? 999 : 2 ,WebkitLineClamp: expandido ? 999 : 2}}>{comentario}</p>
     </div>
+    {respuesta?.texto && (
+      <div className="opiniones-respuesta">
+        <span className="opiniones-pill">Dueño</span>
+        <p className="opiniones-respuesta-texto">{respuesta.texto}</p>
+      </div>
+    )}
   </div>
 )
 }

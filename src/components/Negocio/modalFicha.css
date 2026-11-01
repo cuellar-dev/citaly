@@ -515,10 +515,196 @@
 }
 
 .ficha-comentarios > li {
-  padding: 12px 14px;
+  position: relative;
+  padding: 12px 44px 12px 14px;
   border-radius: 16px;
   border: 1px solid rgba(240, 240, 240, 0.06);
   background: rgba(240, 240, 240, 0.03);
+}
+
+.ficha-reportar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--close-color, #c53f3f) 18%, transparent);
+  color: #ff8d8d;
+  cursor: pointer;
+}
+
+.ficha-reportar--hecho {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.ficha-responder {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primary-color, #00c2ad);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ficha-respuesta {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 28%, transparent);
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 8%, transparent);
+}
+
+.ficha-respuesta-pill,
+.opiniones-pill {
+  display: inline-flex;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: #121413;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ficha-respuesta p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.ficha-respuesta-form textarea,
+.ficha-reporte-propia textarea {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid rgba(240, 240, 240, 0.12);
+  border-radius: 12px;
+  background: var(--background-color, #121413);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font: inherit;
+  font-size: 13px;
+  resize: vertical;
+}
+
+.ficha-respuesta-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ficha-respuesta-acciones button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(240, 240, 240, 0.08);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ficha-respuesta-acciones button[type='submit'],
+.ficha-reporte-enviar {
+  background: var(--primary-color, #00c2ad);
+  color: #121413;
+}
+
+.ficha-respuesta-acciones button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ficha-reporte-velo {
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+  display: grid;
+  place-items: end center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.ficha-reporte {
+  display: flex;
+  flex-direction: column;
+  width: min(440px, 100%);
+  max-height: min(86dvh, 640px);
+  overflow: hidden;
+  margin-bottom: 8px;
+  padding: 16px;
+  border-radius: 20px;
+  background: var(--background-color-secondary, #1e2221);
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.ficha-reporte-cuerpo {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.ficha-reporte h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.ficha-reporte-lead {
+  margin: 6px 0 12px;
+  font-size: 13px;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.ficha-reporte-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ficha-reporte-opcion {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(240, 240, 240, 0.08);
+  cursor: pointer;
+}
+
+.ficha-reporte-opcion--activa {
+  border-color: color-mix(in srgb, var(--close-color, #c53f3f) 55%, transparent);
+  background: color-mix(in srgb, var(--close-color, #c53f3f) 10%, transparent);
+}
+
+.ficha-reporte-opcion strong,
+.ficha-reporte-opcion small {
+  display: block;
+}
+
+.ficha-reporte-opcion small {
+  margin-top: 2px;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ficha-reporte-propia {
+  display: block;
+  margin-top: 12px;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 .ficha-comentario-cabecera {

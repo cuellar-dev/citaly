@@ -12,14 +12,15 @@ export const CANCELADA = 3
 export const MINUTOS_PARA_CONFIRMAR = 15
 
 export const ESTADOS_CITA = {
-  [PENDIENTE]: { texto: 'Pendiente', clave: 'pendiente' },
-  [POR_TI]: { texto: 'Por ti', clave: 'porTi' },
-  [CONFIRMADA]: { texto: 'Confirmada', clave: 'confirmada' },
-  [CANCELADA]: { texto: 'Cancelada', clave: 'cancelada' },
+  [PENDIENTE]: { texto: 'Pendiente', textoDueno: 'Pendiente', clave: 'pendiente' },
+  [POR_TI]: { texto: 'Por ti', textoDueno: 'Por cliente', clave: 'porTi' },
+  [CONFIRMADA]: { texto: 'Confirmada', textoDueno: 'Confirmada', clave: 'confirmada' },
+  [CANCELADA]: { texto: 'Cancelada', textoDueno: 'Cancelada', clave: 'cancelada' },
 }
 
-export function textoEstadoReserva(estado) {
-  return ESTADOS_CITA[estado]?.texto ?? ESTADOS_CITA[PENDIENTE].texto
+export function textoEstadoReserva(estado, { dueno = false } = {}) {
+  const item = ESTADOS_CITA[estado] ?? ESTADOS_CITA[PENDIENTE]
+  return dueno ? item.textoDueno : item.texto
 }
 
 export function claveEstadoReserva(estado) {

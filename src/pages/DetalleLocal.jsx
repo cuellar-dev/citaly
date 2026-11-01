@@ -375,7 +375,7 @@ return (
             </div>
             <div className='detalle-local-opiniones-list'>
               {(local.comentarios ?? []).map((comentario) => (
-                <Opiniones key={comentario.id} nombre={comentario.nombre} fecha={comentario.fecha} calificacion={comentario.calificacion} comentario={comentario.comentario} imagenPerfil={comentario.imagenPerfil} reciente={comentario.id === comentarioNuevoId} expandido = {comentarioAbierto ===comentario.id} onToggle={() => handleMostrarComentario(comentario.id)}/>
+                <Opiniones key={comentario.id} nombre={comentario.nombre} fecha={comentario.fecha} calificacion={comentario.calificacion} comentario={comentario.comentario} imagenPerfil={comentario.imagenPerfil} respuesta={comentario.respuesta} reciente={comentario.id === comentarioNuevoId} expandido = {comentarioAbierto ===comentario.id} onToggle={() => handleMostrarComentario(comentario.id)}/>
               ))}
             </div>    
           </div>

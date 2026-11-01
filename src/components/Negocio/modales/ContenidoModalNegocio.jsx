@@ -131,7 +131,7 @@ function ModalSiguiente({ cita, despues, ahora }) {
           <p className="modal-negocio-cliente-tel">{cita.telefono ?? 'Sin teléfono'}</p>
         </div>
         <span className={`modal-negocio-chip-estado modal-negocio-chip-estado--${claveEstadoReserva(cita.estadoReserva)}`}>
-          {textoEstadoReserva(cita.estadoReserva)}
+          {textoEstadoReserva(cita.estadoReserva, { dueno: true })}
         </span>
       </div>
 

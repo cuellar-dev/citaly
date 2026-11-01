@@ -165,7 +165,12 @@
         "fecha": "2026-03-22",
         "calificacion": 3,
         "comentario": "La manicura quedó bien, pero tuve que esperar más de la hora de la cita.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop",
+        "respuesta": {
+          "texto": "Tienes razón con la espera. Ese día nos atrasamos y ya abrimos un hueco extra para que no vuelva a pasar.",
+          "fecha": "2026-03-23",
+          "autor": "Dueño"
+        }
       }
     ]
   },

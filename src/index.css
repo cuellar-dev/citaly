@@ -1,14 +1,29 @@
+/* Sin font-weight en @font-face, Firefox usa un solo corte y finge el 600/700.
+   Chromium (Opera GX) interpola la variable igual; Mozilla no. */
 @font-face {
   font-family: 'Quicksand';
-  src: url(fonts/Quicksand/subset-Quicksand-Light.woff) format('woff');
+  src:
+    url('./fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype-variations'),
+    url('./fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: 'drink';
-  src: url(fonts/Outfit/Outfit-VariableFont_wght.woff2) format('woff2');
+  src:
+    url('./fonts/Outfit/Outfit-VariableFont_wght.woff2') format('woff2-variations'),
+    url('./fonts/Outfit/Outfit-VariableFont_wght.woff2') format('woff2'),
+    url('./fonts/Outfit/Outfit-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: 'Merchant';
   src: url('fonts/merchant_copy/Merchant Copy.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
   font-display: swap;
 }
 
@@ -40,6 +55,9 @@ body{
   min-height: 100vh;
   width: 100%;
   overflow-x: clip;
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 *{
   -webkit-tap-highlight-color: transparent;

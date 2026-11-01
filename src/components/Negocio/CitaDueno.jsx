@@ -37,7 +37,7 @@ function CitaDueno({
   const detalleRef = useRef(null)
   const primeraVezRef = useRef(true)
 
-  const estadoTexto = destacada ? 'En curso' : atendida ? 'Atendida' : textoEstadoReserva(estadoReserva)
+  const estadoTexto = destacada ? 'En curso' : atendida ? 'Atendida' : textoEstadoReserva(estadoReserva, { dueno: true })
   const IconoTipo = esLugar ? UtensilsCrossed : Scissors
   const tel = String(telefono || '').replace(/\D/g, '')
   const duracionTexto = textoDuracion(duracion)

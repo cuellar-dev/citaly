@@ -3,7 +3,7 @@ import { format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { Banknote, Images, Pencil, Scissors, Store, Timer, UserPlus, UserRound, Users, ZapOff } from 'lucide-react'
+import { Banknote, FileDown, Images, Pencil, Scissors, Store, Timer, UserPlus, UserRound, Users, ZapOff } from 'lucide-react'
 import CabeceraNegocio from '../components/Negocio/CabeceraNegocio.jsx'
 import CitaDueno from '../components/Negocio/CitaDueno.jsx'
 import FichaLocal from '../components/Negocio/FichaLocal.jsx'
@@ -17,8 +17,9 @@ import { getLocalById } from '../services/locales.js'
 import { saveFicha } from '../services/storage.js'
 import { conPerfiles, profesionalesActivos } from '../services/usuarios.js'
 import { minutosHastaCita, textoEnCita } from '../utils/citasVista.js'
-import { CANCELADA, CONFIRMADA, PENDIENTE, POR_TI, caducarPendientes } from '../utils/estadosCita.js'
+import { CANCELADA, CONFIRMADA, PENDIENTE, POR_TI, caducarPendientes, textoEstadoReserva } from '../utils/estadosCita.js'
 import { notaDeComentarios } from '../utils/fichaLocal.js'
+import { descargarPdfCitas } from '../utils/pdfCitasNegocio.js'
 import { codigoDia, fotosDe, horaAmPm as horaDeMinutos, minutosAbierto, turnosDelDia } from '../utils/fichaLocal.js'
 import './miNegocio.css'
 
@@ -395,6 +396,24 @@ function MiNegocio() {
     saveFicha(ID_LOCAL, cambios)
   }
 
+  const exportarPdf = () => {
+    if (!visibles.length) return
+    const ordenadas = [...visibles].sort((a, b) => aMinutos(a.horario) - aMinutos(b.horario))
+    descargarPdfCitas({
+      localNombre: local.localName,
+      fechaTexto: format(AHORA_DEMO, "EEEE d 'de' MMMM yyyy", { locale: es }),
+      filtroLabel: FILTROS.find((f) => f.id === filtro)?.label ?? 'Todas',
+      citas: ordenadas.map((cita) => ({
+        ...cita,
+        estadoPdf: enCurso(cita, AHORA_DEMO)
+          ? 'En curso'
+          : grupoCita(cita, AHORA_DEMO) === 'atendidas'
+            ? 'Atendida'
+            : textoEstadoReserva(cita.estadoReserva, { dueno: true }),
+      })),
+    })
+  }
+
   const configModal = MODALES[modal?.tipo] ?? {}
 
   useGSAP(
@@ -446,9 +465,20 @@ function MiNegocio() {
             <h2 className="negocio-citas-titulo">Citas de hoy</h2>
             <p className="negocio-citas-fecha">{format(AHORA_DEMO, "EEEE d 'de' MMMM", { locale: es })}</p>
           </div>
-          <p className="negocio-citas-contador">
-            <strong>{citas.length - cantidades.canceladas}</strong> en agenda
-          </p>
+          <div className="negocio-citas-acciones">
+            <p className="negocio-citas-contador">
+              <strong>{citas.length - cantidades.canceladas}</strong> en agenda
+            </p>
+            <button
+              type="button"
+              className="negocio-citas-pdf"
+              onClick={exportarPdf}
+              disabled={!visibles.length}
+            >
+              <FileDown size={16} strokeWidth={2.25} />
+              PDF
+            </button>
+          </div>
         </header>
 
         <FiltroCitas opciones={opcionesFiltro} activo={filtro} onCambiar={setFiltro} />

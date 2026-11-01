@@ -114,6 +114,34 @@
   overflow: hidden;
   transition: line-clamp 0.3s ease-in-out, webkitLineClamp 0.3s ease-in-out,width 0.3s ease-in-out;
 }
+.opiniones-respuesta {
+  margin: 0 12px 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--primary-color) 28%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+}
+
+.opiniones-pill {
+  display: inline-flex;
+  margin-bottom: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--primary-color);
+  color: #121413;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.opiniones-respuesta-texto {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--fonts-color-primary);
+}
+
 .opiniones-arrow-down{
   position: absolute;
   top: -10px;
