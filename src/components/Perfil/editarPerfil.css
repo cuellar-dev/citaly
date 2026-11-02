@@ -1,0 +1,53 @@
+.editar-perfil-foto {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  margin: 4px auto 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-color, #00c2ad), var(--primary-color-strong, #06dfc9));
+  cursor: pointer;
+}
+
+.editar-perfil-foto img,
+.editar-perfil-foto span {
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: center;
+  background: #252926;
+  color: var(--primary-color, #00c2ad);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.editar-perfil-foto i {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary-color, #00c2ad);
+  color: #121413;
+}
+
+.editar-perfil-foto:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+}
+
+.editar-perfil-error {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ff8d8d;
+}

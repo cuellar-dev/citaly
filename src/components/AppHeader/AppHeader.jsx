@@ -1,5 +1,5 @@
 import { useAppHeader } from '../../hooks/useAppHeader.js'
-import { Search, Ellipsis, Plus,ClipboardClock,Bell,Pencil } from 'lucide-react'
+import { Search, Ellipsis, Plus, ClipboardClock, Bell } from 'lucide-react'
 import './AppHeader.css'
 
 
@@ -47,10 +47,6 @@ function getHeaderIcons(title) {
 
     case 'Mi Perfil':
       return [
-        {
-          name: 'edit',
-          content: <Pencil size={24} color="currentColor" />,
-        },
         {
           name: 'settings',
           content: <Ellipsis size={24} color="currentColor" />,

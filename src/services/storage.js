@@ -1,5 +1,6 @@
 const STORAGE_KEY = 'citaly_citas'
 const FICHAS_KEY = 'citaly_fichas'
+const PERFILES_KEY = 'citaly_perfiles'
 export const ESTADOS_V_KEY = 'citaly_estados_v'
 
 export function getCitas() {
@@ -34,6 +35,25 @@ export function saveFicha(id, cambios) {
   fichas[id] = { ...fichas[id], ...cambios }
   try {
     localStorage.setItem(FICHAS_KEY, JSON.stringify(fichas))
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function getPerfiles() {
+  try {
+    return JSON.parse(localStorage.getItem(PERFILES_KEY)) ?? {}
+  } catch {
+    return {}
+  }
+}
+
+export function savePerfil(id, cambios) {
+  const perfiles = getPerfiles()
+  perfiles[id] = { ...perfiles[id], ...cambios }
+  try {
+    localStorage.setItem(PERFILES_KEY, JSON.stringify(perfiles))
     return true
   } catch {
     return false

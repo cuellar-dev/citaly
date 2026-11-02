@@ -1,0 +1,10 @@
+.perfil {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 500px;
+  margin-inline: auto;
+  min-height: calc(100dvh - 150px);
+  background: var(--background-color);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+}

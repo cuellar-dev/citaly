@@ -162,6 +162,22 @@ export function fotoAncho(url, ancho) {
   return /[?&]w=\d+/.test(url) ? url.replace(/([?&])w=\d+/, `$1w=${ancho}`) : `${url}&w=${ancho}`
 }
 
+/* Recorte 1:1 (cara al centro) para avatares tipo WhatsApp. */
+export function fotoCuadrada(url, lado = 400) {
+  if (!url) return url
+  if (!/images\.unsplash\.com|plus\.unsplash\.com/.test(url)) return url
+  try {
+    const u = new URL(url)
+    u.searchParams.set('w', String(lado))
+    u.searchParams.set('h', String(lado))
+    u.searchParams.set('fit', 'crop')
+    u.searchParams.set('crop', 'faces')
+    return u.toString()
+  } catch {
+    return url
+  }
+}
+
 export function digitos(telefono) {
   return String(telefono || '').replace(/\D/g, '')
 }

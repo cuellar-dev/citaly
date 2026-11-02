@@ -1,0 +1,77 @@
+.visor-foto {
+  --dy: 0px;
+  --velo: 0;
+  position: fixed;
+  inset: 0;
+  z-index: 100010;
+  display: grid;
+  place-items: center;
+  background: #000;
+  opacity: var(--velo);
+  touch-action: none;
+}
+
+.visor-foto-lienzo {
+  width: 100%;
+  height: 100%;
+  transform: translateY(var(--dy)) scale(0.94);
+  transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.visor-foto--abierto .visor-foto-lienzo {
+  transform: translateY(var(--dy)) scale(1);
+}
+
+.visor-foto--arrastrando .visor-foto-lienzo {
+  transition: none;
+}
+
+.visor-foto-cerrar {
+  position: absolute;
+  top: max(16px, env(safe-area-inset-top));
+  right: 16px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(240, 240, 240, 0.12);
+  color: var(--fonts-color-primary, #f0f0f0);
+  cursor: pointer;
+}
+
+.visor-foto-cerrar:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+.visor-foto-zoom {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.visor-foto-contenido {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.visor-foto-contenido img {
+  width: min(100vw, 100dvh);
+  height: min(100vw, 100dvh);
+  object-fit: cover;
+  object-position: center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visor-foto-lienzo {
+    transition: none;
+  }
+}

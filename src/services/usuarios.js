@@ -1,4 +1,5 @@
 import usuarios from '../data/usuarios.json'
+import { getPerfiles } from './storage.js'
 
 /* Cuentas de la plataforma (mock). Nombre y foto los edita cada usuario desde su perfil, nunca el local. */
 
@@ -10,7 +11,10 @@ const normalizar = (texto) =>
     .trim()
 
 export function getUsuarioById(id) {
-  return usuarios.find((u) => u.id === id) ?? null
+  const base = usuarios.find((u) => u.id === id) ?? null
+  if (!base) return null
+  /* Overlay de lo que el usuario guardó en su perfil (local por ahora). */
+  return { ...base, ...getPerfiles()[id] }
 }
 
 /* Busca por nombre, @usuario, correo o teléfono (dígitos). */
