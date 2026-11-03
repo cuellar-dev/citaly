@@ -30,7 +30,7 @@ function textoDuracion(min) {
 }
 
 /* Número que sube desde cero al abrir. React no pinta dentro: el texto lo pone GSAP. */
-function Contador({ valor, formato = String, retraso = 0.25, duracion = 1.1, className }) {
+function Contador({ valor, formato = String, retraso = 0.05, duracion = 0.55, className }) {
   const ref = useRef(null)
   useGSAP(
     () => {
@@ -72,8 +72,8 @@ function AnilloCuenta({ minutos }) {
       if (reducirMovimiento()) return
       gsap.from('.modal-negocio-anillo-progreso', {
         attr: { 'stroke-dasharray': '0 100' },
-        duration: 1.2,
-        delay: 0.25,
+        duration: 0.55,
+        delay: 0.05,
         ease: 'power3.out',
       })
     },

@@ -81,6 +81,7 @@ function TimelineTurno({
 }) {
   const id = useId().replace(/:/g, '')
   const [enVista, setEnVista] = useState(true)
+  const [pestanaVisible, setPestanaVisible] = useState(() => !document.hidden)
   const buclesRef = useRef([])
   const raizRef = useRef(null)
   const rutaRef = useRef(null)
@@ -153,15 +154,15 @@ function TimelineTurno({
       const proxy = { p: 0 }
       gsap.to(proxy, {
         p: porcentaje,
-        duration: 1.9,
-        delay: 0.3,
+        duration: 1.2,
+        delay: 0.1,
         ease: 'power2.inOut',
         onUpdate: () => pintar(proxy.p),
       })
 
-      /* Bucles de ambiente: se pausan cuando el timeline no se ve (ver efecto de abajo). */
+      /* Ambiente mínimo: halo, vuelo y aleteo de aves. Estrellas y palmas quietas:
+         cada bucle infinito extra repinta el SVG entero y compite con las hojas. */
       buclesRef.current = [
-        gsap.to(rayosRef.current, { rotation: 360, transformOrigin: '50% 50%', duration: 48, repeat: -1, ease: 'none' }),
         gsap.to(haloRef.current, {
           scale: 1.14,
           transformOrigin: '50% 50%',
@@ -177,7 +178,13 @@ function TimelineTurno({
             gsap
               .fromTo(ave, { x: -24 }, { x: 384, duration: datos.duracion, repeat: -1, ease: 'none' })
               .progress(datos.inicio),
-            gsap.to(ave, { y: datos.y - 6, duration: 2.2 + i, repeat: -1, yoyo: true, ease: 'sine.inOut' }),
+            gsap.to(ave, {
+              y: datos.y - 6,
+              duration: 2.2 + i,
+              repeat: -1,
+              yoyo: true,
+              ease: 'sine.inOut',
+            }),
             gsap.to(ave.querySelector('path'), {
               scaleY: -0.55,
               transformOrigin: '50% 50%',
@@ -187,25 +194,6 @@ function TimelineTurno({
               ease: 'sine.inOut',
             }),
           ]
-        }),
-        ...gsap.utils
-          .toArray('.timeline-turno-nube', nubesRef.current)
-          .map((nube, i) =>
-            gsap.to(nube, { x: i ? -22 : 26, duration: 16 + i * 6, repeat: -1, yoyo: true, ease: 'sine.inOut' })
-          ),
-        gsap.to(estrellasRef.current.children, {
-          opacity: 0.25,
-          duration: 1.4,
-          ease: 'sine.inOut',
-          stagger: { each: 0.35, repeat: -1, yoyo: true },
-        }),
-        gsap.to('.timeline-turno-palma', {
-          rotation: 3,
-          transformOrigin: '50% 100%',
-          duration: 3.4,
-          repeat: -1,
-          yoyo: true,
-          ease: 'sine.inOut',
         }),
       ]
     },
@@ -222,9 +210,15 @@ function TimelineTurno({
   }, [])
 
   useEffect(() => {
-    const parar = pausado || !enVista
+    const alCambiar = () => setPestanaVisible(!document.hidden)
+    document.addEventListener('visibilitychange', alCambiar)
+    return () => document.removeEventListener('visibilitychange', alCambiar)
+  }, [])
+
+  useEffect(() => {
+    const parar = pausado || !enVista || !pestanaVisible
     buclesRef.current.forEach((bucle) => (parar ? bucle.pause() : bucle.resume()))
-  }, [pausado, enVista, porcentaje, inicioMin, finMin])
+  }, [pausado, enVista, pestanaVisible, porcentaje, inicioMin, finMin])
 
   return (
     <div className="timeline-turno" ref={raizRef}>

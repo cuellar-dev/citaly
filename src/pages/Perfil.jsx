@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { Briefcase, LogOut, Pencil } from 'lucide-react'
 import CabeceraPerfil from '../components/Perfil/CabeceraPerfil.jsx'
 import DatosPerfil from '../components/Perfil/DatosPerfil.jsx'
@@ -53,12 +54,12 @@ function Perfil() {
           texto="No tienes una cuenta iniciada."
         />
         <div className="perfil-auth">
-          <button type="button" className="perfil-auth-entrar">
+          <Link to="/auth" className="perfil-auth-entrar">
             Iniciar sesión
-          </button>
-          <button type="button" className="perfil-auth-registro">
+          </Link>
+          <Link to="/auth?modo=registro" className="perfil-auth-registro">
             Registrarse
-          </button>
+          </Link>
         </div>
       </section>
     )

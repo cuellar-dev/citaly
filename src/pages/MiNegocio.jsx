@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import gsap from 'gsap'
@@ -365,23 +365,33 @@ function MiNegocio() {
     return () => clearInterval(id)
   }, [])
 
-  const resumen = resumenDelDia(citas, AHORA_DEMO, local)
-  const notaLocal = notaDeComentarios(local)
-  const fotos = fotosDe(local)
-  const conHora = citas.map((c) => ({ ...c, horaTexto: horaAmPm(c.fecha, c.horario) }))
+  const resumen = useMemo(() => resumenDelDia(citas, AHORA_DEMO, local), [citas, local])
+  const notaLocal = useMemo(() => notaDeComentarios(local), [local])
+  const fotos = useMemo(() => fotosDe(local), [local])
+  const conHora = useMemo(() => citas.map((c) => ({ ...c, horaTexto: horaAmPm(c.fecha, c.horario) })), [citas])
   const citaSiguiente = conHora.find((c) => c.id === resumen.siguiente?.citaId)
   const despues = resumen.despues ? conHora.find((c) => c.id === resumen.despues.id) : null
 
-  const cantidades = conHora.reduce(
-    (acc, c) => {
-      acc[grupoCita(c, AHORA_DEMO)] += 1
-      return acc
-    },
-    { todas: conHora.length, pendientes: 0, confirmadas: 0, atendidas: 0, canceladas: 0 }
+  const cantidades = useMemo(
+    () =>
+      conHora.reduce(
+        (acc, c) => {
+          acc[grupoCita(c, AHORA_DEMO)] += 1
+          return acc
+        },
+        { todas: conHora.length, pendientes: 0, confirmadas: 0, atendidas: 0, canceladas: 0 }
+      ),
+    [conHora]
   )
-  const opcionesFiltro = FILTROS.map((f) => ({ ...f, cantidad: cantidades[f.id] }))
-  const visibles = filtro === 'todas' ? conHora : conHora.filter((c) => grupoCita(c, AHORA_DEMO) === filtro)
-  const franjas = agruparPorFranja([...visibles].sort((a, b) => aMinutos(a.horario) - aMinutos(b.horario)))
+  const opcionesFiltro = useMemo(() => FILTROS.map((f) => ({ ...f, cantidad: cantidades[f.id] })), [cantidades])
+  const visibles = useMemo(
+    () => (filtro === 'todas' ? conHora : conHora.filter((c) => grupoCita(c, AHORA_DEMO) === filtro)),
+    [conHora, filtro]
+  )
+  const franjas = useMemo(
+    () => agruparPorFranja([...visibles].sort((a, b) => aMinutos(a.horario) - aMinutos(b.horario))),
+    [visibles]
+  )
 
   const abrirModal = (tipo, extra) => {
     setModal({ tipo, ...extra })

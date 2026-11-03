@@ -1,4 +1,3 @@
-import { jsPDF } from 'jspdf'
 import { textoEstadoReserva } from './estadosCita.js'
 
 const MARGEN = 8
@@ -71,12 +70,14 @@ function dibujarFila(doc, y, celdas, { cabezera = false, zebra = false } = {}) {
 }
 
 /* Hoja de agenda: texto vectorial, sin fotos. Pesa pocos KB y se lee en el móvil. */
-export function descargarPdfCitas({
+export async function descargarPdfCitas({
   localNombre,
   fechaTexto,
   filtroLabel,
   citas,
 }) {
+  /* jsPDF pesa: solo se descarga cuando alguien pide el PDF. */
+  const { jsPDF } = await import('jspdf')
   const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true })
   let y = MARGEN
 

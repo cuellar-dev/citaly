@@ -1,0 +1,233 @@
+.auth {
+  position: relative;
+  box-sizing: border-box;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 500px;
+  margin-inline: auto;
+  padding: 12px 20px 40px;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  overflow: hidden;
+}
+
+.auth-fondo {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 90% 55% at 50% -10%, color-mix(in srgb, var(--primary-color, #00c2ad) 28%, transparent), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 100% 80%, color-mix(in srgb, var(--primary-color-weak, #077a6f) 18%, transparent), transparent 65%),
+    var(--background-color, #121413);
+}
+
+/* Tres Talys de fondo: misma opacidad suave, sitio y tamaño distintos. */
+.auth-taly {
+  position: absolute;
+  height: auto;
+  opacity: 0.13;
+  filter: saturate(0.85) brightness(0.92);
+  user-select: none;
+}
+
+.auth-taly--papel {
+  top: 18%;
+  left: -10%;
+  width: min(88%, 290px);
+  transform: rotate(0deg);
+  opacity: 0.09;
+}
+
+.auth-taly--crayon {
+  top: -4%;
+  left: 30%;
+  width: min(72%, 260px);
+  transform: rotate(-12deg);
+  opacity: 0.12;
+}
+
+.auth-taly--mano {
+  right: -18%;
+  bottom: -6%;
+  width: min(118%, 400px);
+  opacity: 0.14;
+}
+.auth-taly--mano-2 {
+  right: 60%;
+  bottom: 0%;
+  width: min(55%, 180px);
+  transform: rotateY(180deg);
+  opacity: 0.14;
+}
+.auth-taly--mano-3 {
+  right: 70%;
+  bottom: 20%;
+  width: min(40%, 120px);
+  transform: rotateY(180deg) rotate(-90deg);
+  opacity: 0.14;
+}
+
+.auth-top,
+.auth-cuerpo {
+  position: relative;
+  z-index: 1;
+}
+
+.auth-top {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: 28px;
+}
+
+.auth-volver {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(240, 240, 240, 0.1);
+  background: color-mix(in srgb, var(--background-color-secondary, #1e2221) 80%, transparent);
+  color: var(--fonts-color-primary, #f0f0f0);
+  text-decoration: none;
+}
+
+.auth-volver:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+.auth-marca {
+  margin: 0 0 8px;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: clamp(2.4rem, 9vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--primary-color, #00c2ad);
+}
+
+.auth-titulo {
+  margin: 0 0 8px;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.auth-lead {
+  margin: 0 0 28px;
+  max-width: 32ch;
+  font-size: 0.95rem;
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.auth-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.auth-input {
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(240, 240, 240, 0.1);
+  background: var(--background-color-secondary, #1e2221);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 55%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color, #00c2ad) 16%, transparent);
+}
+
+.auth-clave {
+  position: relative;
+  display: block;
+}
+
+.auth-clave .auth-input {
+  padding-right: 48px;
+}
+
+.auth-ojo {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  cursor: pointer;
+}
+
+.auth-error {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ff8d8d;
+}
+
+.auth-enviar {
+  width: 100%;
+  min-height: 52px;
+  margin-top: 6px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-enviar:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.auth-cambio {
+  margin: 22px 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.auth-enlace {
+  border: 0;
+  padding: 0;
+  background: none;
+  color: var(--primary-color, #00c2ad);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

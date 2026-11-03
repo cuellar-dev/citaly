@@ -123,21 +123,9 @@
   overscroll-behavior: contain;
 }
 
+/* La entrada la lleva GSAP en la hoja; aquí no se anima otra vez el contenido. */
 .modal-negocio-vista {
-  animation: modal-negocio-vista 0.24s ease-out both;
-}
-
-@keyframes modal-negocio-vista {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .modal-negocio-vista {
-    animation: none;
-  }
+  animation: none;
 }
 
 .modal-negocio-stack {

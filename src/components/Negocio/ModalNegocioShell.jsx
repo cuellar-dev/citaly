@@ -34,22 +34,24 @@ function ModalNegocioShell({ abierto, titulo, subtitulo, tono = 'neutro', Icono,
       if (abierto) {
         /* Solo los primeros bloques entran escalonados: el resto queda debajo del pliegue. */
         const entradas = gsap.utils.toArray('[data-entra]', hoja).slice(0, 5)
-        gsap
+        const tl = gsap
           .timeline()
-          .fromTo(velo, { opacity: 0 }, { opacity: 1, duration: 0.35 * d, ease: 'power1.out' }, 0)
-          .fromTo(hoja, { yPercent: 100 }, { yPercent: 0, duration: 0.55 * d, ease: 'expo.out', force3D: true }, 0)
-          .from(
+          .fromTo(velo, { opacity: 0 }, { opacity: 1, duration: 0.2 * d, ease: 'power1.out' }, 0)
+          .fromTo(hoja, { yPercent: 100 }, { yPercent: 0, duration: 0.34 * d, ease: 'expo.out', force3D: true }, 0)
+        if (entradas.length) {
+          tl.from(
             entradas,
-            { y: 14, opacity: 0, duration: 0.4 * d, stagger: 0.05 * d, ease: 'power3.out', clearProps: 'transform,opacity' },
-            0.12 * d
+            { y: 10, opacity: 0, duration: 0.22 * d, stagger: 0.03 * d, ease: 'power3.out', clearProps: 'transform,opacity' },
+            0.05 * d
           )
+        }
         return
       }
 
       gsap
         .timeline({ onComplete: () => setMontado(false) })
-        .to(hoja, { yPercent: 100, duration: 0.3 * d, ease: 'power2.in', force3D: true }, 0)
-        .to(velo, { opacity: 0, duration: 0.28 * d }, 0.02 * d)
+        .to(hoja, { yPercent: 100, duration: 0.22 * d, ease: 'power2.in', force3D: true }, 0)
+        .to(velo, { opacity: 0, duration: 0.2 * d }, 0.02 * d)
     },
     { dependencies: [abierto, montado] }
   )

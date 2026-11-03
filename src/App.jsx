@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
 import Layout from './layout/Layout.jsx'
+import Auth from './pages/Auth.jsx'
 import Descubre from './pages/Descubre.jsx'
 import MisCitas from './pages/MisCitas.jsx'
 import MiNegocio from './pages/MiNegocio.jsx'
@@ -22,6 +23,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Auth fuera del Layout: sin navbar ni header, pantalla a foco. */}
+        <Route path="/auth" element={<Auth />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Descubre />} />
           <Route path="local/:id" element={<DetalleLocal />} />

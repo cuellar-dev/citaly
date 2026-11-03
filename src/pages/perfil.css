@@ -27,12 +27,17 @@
 
 .perfil-auth-entrar,
 .perfil-auth-registro {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
   width: 100%;
   padding: 14px 20px;
   border-radius: 999px;
   font: inherit;
   font-size: 0.95rem;
   font-weight: 700;
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
 }
 
