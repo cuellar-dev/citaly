@@ -32,19 +32,26 @@
 }
 
 .auth-taly--papel {
-  top: 18%;
-  left: -10%;
-  width: min(88%, 290px);
+  top: 30%;
+  left: 0%;
+  width: min(70%, 240px);
   transform: rotate(0deg);
   opacity: 0.09;
 }
 
 .auth-taly--crayon {
-  top: -4%;
-  left: 30%;
-  width: min(72%, 260px);
+  top: 0%;
+  left: 25%;
+  width: min(60%, 220px);
   transform: rotate(-12deg);
   opacity: 0.12;
+}
+.auth-taly--crayon-2 {
+  top: 27%;
+  right: -10%;
+  width: min(88%, 230px);
+  transform: rotate(0deg);
+  opacity: 0.09;
 }
 
 .auth-taly--mano {
@@ -130,6 +137,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+  margin-top: 38px;
 }
 
 .auth-campo {

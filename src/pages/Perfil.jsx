@@ -44,13 +44,14 @@ function Perfil() {
     setHoja(null)
     setFuera(motivo)
   }
-
+  const guardados = ['Buenas Forastero', 'Quien Eres?', 'UN DESCONOCIDOOOO', 'Mamá ?', 'Ya era hora, no ?']
+  const guardadoRandom = guardados[Math.floor(Math.random() * guardados.length)]
   if (fuera) {
     return (
       <section className="perfil perfil--fuera" aria-label="Sin cuenta">
         <TalyMomento
           escena="vacio"
-          titulo={fuera === 'borrar' ? 'Cuenta eliminada' : 'Sesión cerrada'}
+          titulo={guardadoRandom}
           texto="No tienes una cuenta iniciada."
         />
         <div className="perfil-auth">

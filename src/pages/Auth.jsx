@@ -5,6 +5,7 @@ import { iniciarSesion, registrarse } from '../services/auth.js'
 import talyAMano from '../components/Taly/taly-a-mano.svg'
 import talyPapel from '../components/Taly/taly-papel.svg'
 import talyCrayon from '../components/Taly/taly-crayon.svg'
+import talyCrayon2 from '../components/Taly/taly-crayon-dormido.svg'
 import './auth.css'
 
 function Auth() {
@@ -56,6 +57,7 @@ function Auth() {
       <div className="auth-fondo" aria-hidden="true">
         <img className="auth-taly auth-taly--papel" src={talyPapel} alt="" />
         <img className="auth-taly auth-taly--crayon" src={talyCrayon} alt="" />
+        <img className="auth-taly auth-taly--crayon-2" src={talyCrayon2} alt="" />
         <img className="auth-taly auth-taly--mano" src={talyAMano} alt="" />
         <img className="auth-taly auth-taly--mano-2" src={talyAMano} alt="" />
         <img className="auth-taly auth-taly--mano-3" src={talyAMano} alt="" />
@@ -70,11 +72,7 @@ function Auth() {
       <div className="auth-cuerpo">
         <p className="auth-marca">Citaly</p>
         <h1 className="auth-titulo">{esRegistro ? 'Crea tu cuenta' : 'Bienvenido de nuevo'}</h1>
-        <p className="auth-lead">
-          {esRegistro
-            ? 'Reserva, guarda favoritos y gestiona tu local desde un solo sitio.'
-            : 'Entra para ver tus citas, favoritos y tu perfil.'}
-        </p>
+        
 
         <form className="auth-form" onSubmit={enviar} noValidate>
           {esRegistro && (
