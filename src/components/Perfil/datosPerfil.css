@@ -86,8 +86,13 @@
 }
 
 .perfil-fila-icono--rojo {
-  background: color-mix(in srgb, var(--close-color, #c53f3f) 16%, transparent);
-  color: #ff8d8d;
+  background: color-mix(in srgb, var(--close-color, #c53f3f) 22%, transparent);
+  color: #ff6b6b;
+}
+
+.perfil-fila--rojo .perfil-fila-icono {
+  background: color-mix(in srgb, var(--close-color, #c53f3f) 22%, transparent);
+  color: #ff6b6b;
 }
 
 .perfil-fila:focus-visible {
@@ -132,6 +137,100 @@
 .perfil-fila-flecha {
   flex-shrink: 0;
   color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 55%, transparent);
+  transition: transform 0.2s ease;
+}
+
+.perfil-fila-flecha--abierta {
+  transform: rotate(90deg);
+}
+
+.perfil-despliegue--citas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 6px;
+  min-height: 150px;
+  box-sizing: border-box;
+  padding: 4px 14px 14px 62px;
+}
+
+.perfil-despliegue--citas p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+  min-height: 62px;
+}
+
+.perfil-despliegue--citas strong {
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-color, #00c2ad);
+}
+
+.perfil-despliegue--citas p {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.perfil-despliegue-vacio {
+  margin: 0;
+  padding: 4px 14px 14px 62px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.perfil-favs {
+  margin: 0;
+  padding: 0 8px 10px;
+  list-style: none;
+}
+
+.perfil-fav {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 6px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.perfil-fav-foto {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #252926 center / cover no-repeat;
+  flex-shrink: 0;
+}
+
+.perfil-sesion-accion {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 62px;
+  margin: 0;
+  padding: 11px 4px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.perfil-sesion-accion:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.perfil-sesion-accion--peligro .perfil-fila-titulo {
+  color: #ff6b6b;
 }
 
 .perfil-pastilla {

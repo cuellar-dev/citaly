@@ -8,3 +8,42 @@
   color: var(--fonts-color-primary);
   font-family: var(--font-familyPrincipal);
 }
+
+.perfil--fuera {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px 40px;
+}
+
+.perfil-auth {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(100%, 260px);
+  margin-top: 4px;
+}
+
+.perfil-auth-entrar,
+.perfil-auth-registro {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.perfil-auth-entrar {
+  border: 0;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.perfil-auth-registro {
+  border: 1px solid rgba(240, 240, 240, 0.12);
+  background: #121413;
+  color: var(--fonts-color-primary, #f0f0f0);
+}

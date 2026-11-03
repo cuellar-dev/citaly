@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import './tarjetalocal.css'
 import { Clock, Star } from 'lucide-react'
 import { estaAbierto, horarioDeLocal, notaDeComentarios } from '../../utils/fichaLocal.js'
+import BotonFavorito from '../Favorito/BotonFavorito.jsx'
 
 function TarjetaLocal(local) {
   const { id, localName, categoria, metros, url, direccion } = local
@@ -20,7 +21,8 @@ function TarjetaLocal(local) {
   const horarioClassName = abierto ? 'horario-open' : 'horario-close'
   const clockColor = abierto ? 'var(--fonts-color-primary-alternative)' : 'var(--close-color)'
   return (
-    <Link to={`/local/${id}`} className="tarjeta-link">
+    <div className="tarjeta-wrap">
+      <Link to={`/local/${id}`} className="tarjeta-link">
       <article className="tarjeta">
         <div
           className="img-container"
@@ -64,7 +66,9 @@ function TarjetaLocal(local) {
           </div>
         </div>
       </article>
-    </Link>
+      </Link>
+      <BotonFavorito id={id} className="boton-favorito--tarjeta" />
+    </div>
   )
 }
 

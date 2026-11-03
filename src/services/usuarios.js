@@ -31,8 +31,23 @@ export function buscarUsuarios(texto, limite = 8) {
 }
 
 /* Lo que el local guarda de cada trabajador: el vínculo con la cuenta y lo propio del local. */
-export function sinPerfil({ id, usuarioId, estado, points, servicios }) {
-  return { id, usuarioId, estado, points: points ?? null, servicios: servicios ?? [] }
+export function sinPerfil(p) {
+  const base = {
+    id: p.id,
+    usuarioId: p.usuarioId,
+    estado: p.estado,
+    points: p.points ?? null,
+    servicios: p.servicios ?? [],
+  }
+  if (p.origen !== 'solicito') return base
+  return {
+    ...base,
+    origen: 'solicito',
+    oficio: p.oficio,
+    oficioDetalle: p.oficioDetalle,
+    desdeCuando: p.desdeCuando,
+    solicitadoEn: p.solicitadoEn,
+  }
 }
 
 /* Une cada trabajador con su cuenta para pintarlo. `name` y `url` son los campos que ya lee la reserva. */
@@ -42,7 +57,16 @@ export function conPerfiles(local) {
     ...local,
     profesionales: local.profesionales.map((p) => {
       const u = getUsuarioById(p.usuarioId)
-      return u ? { ...p, name: u.nombre, url: u.foto, usuario: u.usuario, oficio: u.oficio, ciudad: u.ciudad } : p
+      return u
+        ? {
+            ...p,
+            name: u.nombre,
+            url: u.foto,
+            usuario: u.usuario,
+            oficio: p.oficio || u.oficio,
+            ciudad: u.ciudad,
+          }
+        : p
     }),
   }
 }

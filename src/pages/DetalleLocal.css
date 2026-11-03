@@ -33,6 +33,12 @@
   align-items: center;
 }
 
+.detalle-local-hero-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .detalle-local-share-container {
   padding: 11px;
   border-radius: 100%;

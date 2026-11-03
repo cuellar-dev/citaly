@@ -1,0 +1,111 @@
+.solicitar-buscador {
+  position: relative;
+  display: block;
+}
+
+.solicitar-buscador svg {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  transform: translateY(-50%);
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  pointer-events: none;
+}
+
+.solicitar-buscador .modal-negocio-input {
+  padding-left: 44px;
+}
+
+.solicitar-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.solicitar-fila,
+.solicitar-elegido {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 4px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.solicitar-elegido {
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(240, 240, 240, 0.08);
+  background: rgba(240, 240, 240, 0.03);
+}
+
+.solicitar-foto {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #252926 center / cover no-repeat;
+  display: grid;
+  place-items: center;
+  color: var(--primary-color, #00c2ad);
+}
+
+.solicitar-fila-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.solicitar-fila-textos span {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.solicitar-fila-textos small {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.solicitar-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.solicitar-chip {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(240, 240, 240, 0.1);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.solicitar-campo {
+  margin-top: 10px;
+}
+
+.solicitar-error {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #ff8d8d;
+}
+
+.solicitar-chip--on {
+  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 50%, transparent);
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 16%, transparent);
+  color: var(--primary-color, #00c2ad);
+}

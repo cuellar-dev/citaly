@@ -14,7 +14,10 @@ import {
   Store,
   UserRound,
 } from 'lucide-react'
+import { FAVORITOS_EVENTO, getFavoritos } from '../../services/favoritos.js'
+import { getAllLocales, getLocalById } from '../../services/locales.js'
 import { fotoAncho, horarioDeLocal } from '../../utils/fichaLocal.js'
+import { statsCitasPerfil } from '../../utils/statsCitasPerfil.js'
 import './datosPerfil.css'
 
 const AVISOS_KEY = 'citaly_perfil_avisos'
@@ -51,7 +54,7 @@ function Switch({ activo, label, onChange, disabled }) {
   )
 }
 
-function Fila({ Icono, titulo, valor, extra, to, tono }) {
+function Fila({ Icono, titulo, valor, extra, to, tono, onClick, abierto, panel }) {
   const cuerpo = (
     <>
       <span className={`perfil-fila-icono${tono === 'rojo' ? ' perfil-fila-icono--rojo' : ''}`}>
@@ -62,21 +65,31 @@ function Fila({ Icono, titulo, valor, extra, to, tono }) {
         {valor && <span className="perfil-fila-valor">{valor}</span>}
       </span>
       {extra}
-      {to && <ChevronRight className="perfil-fila-flecha" size={16} strokeWidth={2.25} aria-hidden="true" />}
+      {(to || onClick) && (
+        <ChevronRight
+          className={`perfil-fila-flecha${abierto ? ' perfil-fila-flecha--abierta' : ''}`}
+          size={16}
+          strokeWidth={2.25}
+          aria-hidden="true"
+        />
+      )}
     </>
   )
-  if (to) {
-    return (
-      <li>
-        <Link className={`perfil-fila${tono === 'rojo' ? ' perfil-fila--rojo' : ''}`} to={to}>
-          {cuerpo}
-        </Link>
-      </li>
-    )
-  }
+  const clase = `perfil-fila${tono === 'rojo' ? ' perfil-fila--rojo' : ''}`
   return (
     <li>
-      <div className={`perfil-fila perfil-fila--quieta${tono === 'rojo' ? ' perfil-fila--rojo' : ''}`}>{cuerpo}</div>
+      {to ? (
+        <Link className={clase} to={to}>
+          {cuerpo}
+        </Link>
+      ) : onClick ? (
+        <button type="button" className={clase} aria-expanded={abierto} onClick={onClick}>
+          {cuerpo}
+        </button>
+      ) : (
+        <div className={`${clase} perfil-fila--quieta`}>{cuerpo}</div>
+      )}
+      {abierto && panel}
     </li>
   )
 }
@@ -111,14 +124,98 @@ function TarjetaLocalDueno({ local }) {
   )
 }
 
-function DatosPerfil({ dueno, trabajo = [] }) {
+function PanelCitas() {
+  const s = statsCitasPerfil()
+  const local = s.masVisitadoId ? getLocalById(s.masVisitadoId) : null
+  return (
+    <div className="perfil-despliegue perfil-despliegue--citas">
+      <p>
+        <strong>{s.idas}</strong>
+        idas
+      </p>
+      <p>
+        <strong>{s.canceladas}</strong>
+        canceladas
+      </p>
+      <p>
+        <strong>{s.enCurso}</strong>
+        en curso
+      </p>
+      <p>
+        <strong>{s.promedioMes}</strong>
+        al mes
+      </p>
+      <p>
+        <strong>{s.puntualidad != null ? `${s.puntualidad}%` : '—'}</strong>
+        puntual
+      </p>
+      <p>
+        <strong>{local?.localName ?? '—'}</strong>
+        más idas
+      </p>
+    </div>
+  )
+}
+
+function PanelFavoritos() {
+  const [ids, setIds] = useState(getFavoritos)
+
+  useEffect(() => {
+    const sync = () => setIds(getFavoritos())
+    window.addEventListener(FAVORITOS_EVENTO, sync)
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener(FAVORITOS_EVENTO, sync)
+      window.removeEventListener('storage', sync)
+    }
+  }, [])
+
+  const locales = getAllLocales().filter((l) => ids.includes(l.id))
+  const orden = ids.map((id) => locales.find((l) => l.id === id)).filter(Boolean)
+
+  if (orden.length === 0) {
+    return <p className="perfil-despliegue-vacio">Todavía no marcas locales. El corazón está en Descubre y en cada ficha.</p>
+  }
+
+  return (
+    <ul className="perfil-favs">
+      {orden.map((l) => (
+        <li key={l.id}>
+          <Link className="perfil-fav" to={`/local/${l.id}`}>
+            <span className="perfil-fav-foto" style={{ backgroundImage: `url(${fotoAncho(l.url, 200)})` }} />
+            <span className="perfil-fila-textos">
+              <span className="perfil-fila-titulo">{l.localName}</span>
+              <span className="perfil-fila-valor">{l.categoria}</span>
+            </span>
+            <ChevronRight className="perfil-fila-flecha" size={16} strokeWidth={2.25} aria-hidden="true" />
+          </Link>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+function DatosPerfil({ dueno, trabajo = [], onPedirTrabajo, onSesion }) {
   const [avisos, setAvisos] = useState(leerAvisos)
+  const [panel, setPanel] = useState(null)
+  const [nFavs, setNFavs] = useState(() => getFavoritos().length)
 
   useEffect(() => {
     localStorage.setItem(AVISOS_KEY, JSON.stringify(avisos))
   }, [avisos])
 
+  useEffect(() => {
+    const sync = () => setNFavs(getFavoritos().length)
+    window.addEventListener(FAVORITOS_EVENTO, sync)
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener(FAVORITOS_EVENTO, sync)
+      window.removeEventListener('storage', sync)
+    }
+  }, [])
+
   const cambiar = (clave, valor) => setAvisos((prev) => ({ ...prev, [clave]: valor }))
+  const alternar = (id) => setPanel((p) => (p === id ? null : id))
 
   return (
     <div className="perfil-datos">
@@ -204,22 +301,30 @@ function DatosPerfil({ dueno, trabajo = [] }) {
         </header>
         <ul className="perfil-grupo">
           {trabajo.length === 0 ? (
-            <Fila Icono={Briefcase} titulo="Trabajas en" valor="En ningún local de Citaly" />
+            <Fila
+              Icono={Briefcase}
+              titulo="Trabajas en"
+              valor="En ningún local de Citaly"
+              onClick={onPedirTrabajo}
+            />
           ) : (
-            trabajo.map((item) => (
-              <Fila
-                key={item.id}
-                Icono={Briefcase}
-                titulo={`Trabajas en ${item.localName}`}
-                valor={[item.rol, item.desde].filter(Boolean).join(' · ')}
-                extra={
-                  <span className={`perfil-pastilla${item.estado === 'pendiente' ? ' perfil-pastilla--espera' : ' perfil-pastilla--si'}`}>
-                    {item.estado === 'pendiente' ? 'Pendiente' : 'Activo'}
-                  </span>
-                }
-                to={`/local/${item.id}`}
-              />
-            ))
+            <>
+              {trabajo.map((item) => (
+                <Fila
+                  key={item.id}
+                  Icono={Briefcase}
+                  titulo={`Trabajas en ${item.localName}`}
+                  valor={item.rol}
+                  extra={
+                    <span className={`perfil-pastilla${item.estado === 'pendiente' ? ' perfil-pastilla--espera' : ' perfil-pastilla--si'}`}>
+                      {item.estado === 'pendiente' ? 'Pendiente' : 'Activo'}
+                    </span>
+                  }
+                  to={`/local/${item.id}`}
+                />
+              ))}
+              <Fila Icono={Store} titulo="Pedir entrar a otro local" valor="El dueño lo confirma" onClick={onPedirTrabajo} />
+            </>
           )}
         </ul>
       </section>
@@ -229,8 +334,22 @@ function DatosPerfil({ dueno, trabajo = [] }) {
           <h2 id="perfil-actividad">Actividad</h2>
         </header>
         <ul className="perfil-grupo">
-          <Fila Icono={CalendarDays} titulo="Mis citas" valor="Próximas y pasadas" to="/citas" />
-          <Fila Icono={Heart} titulo="Favoritos" valor="Todavía no marcas locales" />
+          <Fila
+            Icono={CalendarDays}
+            titulo="Mis citas"
+            valor="Un resumen, no la agenda"
+            abierto={panel === 'citas'}
+            onClick={() => alternar('citas')}
+            panel={<PanelCitas />}
+          />
+          <Fila
+            Icono={Heart}
+            titulo="Favoritos"
+            valor={nFavs ? `${nFavs} ${nFavs === 1 ? 'local' : 'locales'}` : 'Todavía no marcas locales'}
+            abierto={panel === 'favs'}
+            onClick={() => alternar('favs')}
+            panel={<PanelFavoritos />}
+          />
         </ul>
       </section>
 
@@ -262,14 +381,15 @@ function DatosPerfil({ dueno, trabajo = [] }) {
         </header>
         <ul className="perfil-grupo">
           <li>
-            <button type="button" className="perfil-fila perfil-fila--rojo" disabled>
+            <button type="button" className="perfil-fila perfil-fila--rojo" onClick={onSesion}>
               <span className="perfil-fila-icono perfil-fila-icono--rojo">
                 <LogOut size={17} strokeWidth={2.15} aria-hidden="true" />
               </span>
               <span className="perfil-fila-textos">
                 <span className="perfil-fila-titulo">Cerrar sesión</span>
-                <span className="perfil-fila-valor">Cuando haya cuenta de verdad</span>
+                <span className="perfil-fila-valor">Salir de esta cuenta</span>
               </span>
+              <ChevronRight className="perfil-fila-flecha" size={16} strokeWidth={2.25} aria-hidden="true" />
             </button>
           </li>
         </ul>

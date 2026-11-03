@@ -2,6 +2,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useState, useRef } from 'react'
 import { format } from 'date-fns'
 import { ArrowLeft, MapPin, Phone, Star, Share2, Send, Clock, ChevronRight, Images } from 'lucide-react'
+import BotonFavorito from '../components/Favorito/BotonFavorito.jsx'
 import CaraRating from '../components/CaraRating/CaraRating.jsx'
 import { getLocalById } from '../services/locales.js'
 import { saveFicha } from '../services/storage.js'
@@ -187,14 +188,17 @@ return (
           <ArrowLeft size={20} />
           Descubre
         </Link>
-        <button
-          type="button"
-          className="detalle-local-share-container"
-          onClick={handleShare}
-          aria-label="Compartir local"
-        >
-          <Share2 width={24} className="detalle-local-share" color="currentColor" />
-        </button>
+        <div className="detalle-local-hero-acciones">
+          <BotonFavorito id={id} className="boton-favorito--hero" tamano={22} />
+          <button
+            type="button"
+            className="detalle-local-share-container"
+            onClick={handleShare}
+            aria-label="Compartir local"
+          >
+            <Share2 width={24} className="detalle-local-share" color="currentColor" />
+          </button>
+        </div>
         </div>
         <div className="detalle-local-hero-content">
           <span className={`${horarioClassName} detalle-horario`}>{textHorario}</span>

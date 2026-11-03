@@ -17,6 +17,7 @@ import {
 import SelectPro from '../../SelectPro/SelectPro.jsx'
 import ServicioItem from '../../ServicioItem/ServicioItem.jsx'
 import { buscarUsuarios, getUsuarioById, profesionalesActivos, sinPerfil } from '../../../services/usuarios.js'
+import { formatearMes } from '../../../services/trabajo.js'
 import {
   duracionAMinutos,
   duracionTexto,
@@ -359,7 +360,7 @@ function EstadoPro({ pro }) {
     return (
       <span className="catalogo-pendiente">
         <Clock3 size={12} strokeWidth={2.25} aria-hidden="true" />
-        Pendiente
+        {pro.origen === 'solicito' ? 'Te pidió entrar' : 'Pendiente'}
       </span>
     )
   }
@@ -601,7 +602,12 @@ function FormProfesional({ local, id, usuarioId, onGuardar, onNavegar }) {
     e.preventDefault()
     if (error) return
     if (actual) {
-      guardarLista(profesionales.map((p) => (p.id === id ? { ...p, servicios: ordenados } : p)))
+      const acepta = pendiente && actual.origen === 'solicito'
+      guardarLista(
+        profesionales.map((p) =>
+          p.id === id ? { ...p, servicios: ordenados, estado: acepta ? 'activo' : p.estado } : p
+        )
+      )
       return
     }
     guardarLista([
@@ -627,7 +633,18 @@ function FormProfesional({ local, id, usuarioId, onGuardar, onNavegar }) {
         </div>
       </div>
 
-      {pendiente && (
+      {pendiente && actual?.origen === 'solicito' && (
+        <div className="catalogo-invitacion" data-entra>
+          <Clock3 size={18} strokeWidth={2.25} aria-hidden="true" />
+          <p>
+            <strong>Pidió entrar al equipo.</strong> Trabaja de {actual.oficio || '—'}
+            {actual.oficioDetalle ? ` (${actual.oficioDetalle})` : ''}
+            {actual.desdeCuando ? `. Desde ${formatearMes(actual.desdeCuando)}.` : '.'} Confírmalo si es verdad.
+          </p>
+        </div>
+      )}
+
+      {pendiente && actual?.origen !== 'solicito' && (
         <div className="catalogo-invitacion" data-entra>
           <Clock3 size={18} strokeWidth={2.25} aria-hidden="true" />
           <p>
@@ -695,7 +712,7 @@ function FormProfesional({ local, id, usuarioId, onGuardar, onNavegar }) {
           {actual ? 'Cancelar' : 'Volver'}
         </button>
         <button type="submit" className="modal-negocio-accion-principal" disabled={Boolean(error)}>
-          {actual ? 'Guardar' : 'Enviar invitación'}
+          {actual?.origen === 'solicito' && pendiente ? 'Aceptar en el equipo' : actual ? 'Guardar' : 'Enviar invitación'}
         </button>
       </div>
 
@@ -711,7 +728,7 @@ function FormProfesional({ local, id, usuarioId, onGuardar, onNavegar }) {
 
       {actual && (
         <BotonEliminar
-          texto={pendiente ? 'Cancelar invitación' : 'Quitar del equipo'}
+          texto={pendiente ? (actual.origen === 'solicito' ? 'Rechazar petición' : 'Cancelar invitación') : 'Quitar del equipo'}
           aviso={
             soloEl.length
               ? `${soloEl.map((s) => s.nombre).join(', ')} se ${soloEl.length === 1 ? 'queda' : 'quedan'} sin nadie que lo haga.`

@@ -41,6 +41,10 @@
   --tono: #ef476f;
 }
 
+.modal-negocio--rojo {
+  --tono: var(--close-color, #c53f3f);
+}
+
 .modal-negocio-asa {
   align-self: center;
   width: 38px;

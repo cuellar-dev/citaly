@@ -42,7 +42,7 @@ function EditarPerfil({ usuario, onGuardar }) {
   const hayCambios = JSON.stringify(form) !== JSON.stringify(original)
   let error = null
   if (!form.nombre.trim()) error = 'Pon tu nombre.'
-  else if (handleLimpio(form.usuario).length < 3) error = 'El usuario necesita al menos 3 caracteres.'
+  else if (handleLimpio(form.usuario).length < 6) error = 'El usuario necesita al menos 6 caracteres.'
   else if (!form.telefono.trim()) error = 'Pon un teléfono.'
   else if (!form.correo.trim() || !form.correo.includes('@')) error = 'Pon un correo válido.'
 
@@ -100,10 +100,9 @@ function EditarPerfil({ usuario, onGuardar }) {
             hidden
             onChange={alArchivo}
           />
-          <p className="modal-negocio-nota">JPG, PNG, WEBP o GIF. Luego recortas en cuadrado.</p>
-        </Seccion>
+             </Seccion>
 
-        <Seccion titulo="Quién eres">
+        <Seccion>
           <label className="modal-negocio-campo">
             <span>Nombre</span>
             <input
@@ -133,7 +132,7 @@ function EditarPerfil({ usuario, onGuardar }) {
           </label>
         </Seccion>
 
-        <Seccion titulo="Contacto">
+        <Seccion >
           <label className="modal-negocio-campo">
             <span>Teléfono</span>
             <input
