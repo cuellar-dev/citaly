@@ -513,6 +513,10 @@
   min-height: 0;
 }
 
+.detalle-local--error .taly-momento-figura--ilustracion {
+  width: min(220px, 58vw);
+}
+
 .detalle-local--error h1,
 .detalle-local--error p {
   font-family: var(--font-familyPrincipal);

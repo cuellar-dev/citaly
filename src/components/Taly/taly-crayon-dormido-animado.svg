@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 420" width="400" height="420" role="img" aria-label="Taly dormido, en crayón, respirando">
+  <title>Taly dormido (crayón, animado)</title>
+
+  <style>
+    /* Todo el movimiento va por CSS dentro del propio SVG:
+       funciona abierto directo, insertado como imagen o pegado inline en la web. */
+
+    /* Respiración: el cuerpo se infla desde los pies y la cabeza sube con él */
+    .respira { transform-origin: 200px 335px; animation: respira 4.2s ease-in-out infinite; }
+    @keyframes respira {
+      0%, 100% { transform: scale(1, 1); }
+      50%      { transform: scale(1.018, 1.036); }
+    }
+
+    /* La cabeza cabecea un poquito, un instante después del pecho */
+    .cabeza { transform-origin: 190px 150px; animation: cabeza 4.2s ease-in-out .25s infinite; }
+    @keyframes cabeza {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(1.6px) rotate(-1.6deg); }
+    }
+
+    /* El ala sube y baja con el aire */
+    .ala { transform-origin: 170px 245px; animation: ala 4.2s ease-in-out .15s infinite; }
+    @keyframes ala {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(-2.2px) rotate(-1.6deg); }
+    }
+
+    /* El copete, lacio, se balancea más lento */
+    .copete { transform-origin: 170px 100px; animation: copete 6.4s ease-in-out infinite; }
+    @keyframes copete {
+      0%, 100% { transform: rotate(0deg); }
+      50%      { transform: rotate(-4deg); }
+    }
+
+    /* Sombra en el suelo: se ensancha cuando infla */
+    .sombra { transform-origin: 203px 381px; animation: sombra 4.2s ease-in-out infinite; }
+    @keyframes sombra {
+      0%, 100% { transform: scaleX(1); }
+      50%      { transform: scaleX(1.035); }
+    }
+
+    /* Burbuja de la nariz: se infla al inspirar y se desinfla al soltar */
+    .burbuja-nariz { transform-box: fill-box; transform-origin: 20% 50%; animation: burbuja 4.2s ease-in-out infinite; }
+    @keyframes burbuja {
+      0%, 100% { transform: scale(.7); }
+      50%      { transform: scale(1.2); }
+    }
+    .burbuja-media { transform-box: fill-box; transform-origin: center; animation: media 4.2s ease-in-out .3s infinite; }
+    @keyframes media {
+      0%, 100% { transform: scale(.94); }
+      50%      { transform: scale(1.08); }
+    }
+
+    /* El sueño flota despacito y la tarjeta se mece dentro */
+    .sueno { animation: sueno 6s ease-in-out infinite; }
+    @keyframes sueno {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-5px); }
+    }
+    .carta { transform-box: fill-box; transform-origin: center; animation: carta 5s ease-in-out infinite; }
+    @keyframes carta {
+      0%, 100% { transform: rotate(-3deg); }
+      50%      { transform: rotate(3deg); }
+    }
+
+    /* Las Z: nacen pequeñas cerca de la cabeza, suben ondulando y se desvanecen */
+    .z { transform-box: fill-box; transform-origin: center; opacity: 0; animation: z 5.4s ease-in-out infinite; }
+    .z1 { animation-delay: 0s; }
+    .z2 { animation-delay: 1.8s; }
+    .z3 { animation-delay: 3.6s; }
+    @keyframes z {
+      0%   { opacity: 0; transform: translate(12px, 28px) scale(.5) rotate(6deg); }
+      18%  { opacity: 1; }
+      50%  { transform: translate(-3px, -4px) scale(.9) rotate(-5deg); }
+      80%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(-20px, -46px) scale(1.15) rotate(5deg); }
+    }
+
+    /* Si el sistema pide menos movimiento, se queda quieto y las Z visibles */
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+      .z { opacity: 1; }
+    }
+  </style>
+
+  <defs>
+    <filter id="cera" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3" result="w"/>
+      <feDisplacementMap in="SourceGraphic" in2="w" scale="7" result="d"/>
+      <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11" result="g"/>
+      <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -3.2 0 0 0 2.5" result="m"/>
+      <feComposite in="d" in2="m" operator="in"/>
+    </filter>
+
+    <path id="cuerpo" d="M175 85 C215 68 246 94 249 134 C252 166 286 186 304 226 C324 278 286 328 200 330 C114 334 78 282 98 226 C116 180 150 162 152 126 C152 106 160 92 175 85 Z"/>
+    <clipPath id="dentro"><use href="#cuerpo"/></clipPath>
+  </defs>
+
+  <!-- sombra en el suelo -->
+  <g filter="url(#cera)" stroke-linecap="round" fill="none">
+    <g class="sombra">
+      <path d="M110 376 C160 386 250 386 296 375" stroke="#0E2E2A" stroke-opacity=".3" stroke-width="10"/>
+    </g>
+  </g>
+
+  <!-- Taly. El filtro va en el grupo de fuera y la animación por dentro:
+       así el grano de la cera queda fijo mientras el dibujo se mueve. -->
+  <g filter="url(#cera)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <g transform="translate(0 8) rotate(3 200 340)">
+
+      <!-- patas, quietas -->
+      <g stroke="#FFD166" stroke-width="11">
+        <path d="M178 326 L176 358 M176 358 L158 365 M176 358 L192 366"/>
+        <path d="M226 327 L228 358 M228 358 L210 366 M228 358 L244 365"/>
+      </g>
+
+      <g class="respira">
+        <!-- cuerpo -->
+        <use href="#cuerpo" fill="#4FD8C4"/>
+
+        <g clip-path="url(#dentro)">
+          <path d="M205 214 C256 210 304 236 296 286 C288 328 236 336 190 326 C232 306 244 256 205 214 Z" fill="#BDF4E8"/>
+          <g stroke="#2FBDA8" stroke-width="5" stroke-opacity=".85">
+            <path d="M96 240 l22 -14 M94 258 l30 -20 M98 276 l36 -24 M108 296 l36 -24 M124 312 l34 -22 M146 324 l30 -18"/>
+            <path d="M160 96 l16 -10 M158 112 l24 -16 M156 128 l22 -14"/>
+          </g>
+          <g stroke="#8FE0D0" stroke-width="5">
+            <path d="M232 262 l24 -10 M228 280 l36 -14 M224 298 l42 -16 M226 314 l36 -12"/>
+          </g>
+        </g>
+
+        <!-- ala -->
+        <g class="ala">
+          <path d="M122 232 C146 216 196 220 224 252 C216 292 160 306 126 284 C112 268 110 246 122 232 Z" fill="#2AA795"/>
+          <g stroke="#4FD8C4" stroke-width="5">
+            <path d="M140 246 C162 238 190 242 208 258"/>
+            <path d="M136 262 C158 256 184 260 204 274"/>
+            <path d="M140 278 C160 276 178 280 192 288"/>
+          </g>
+          <path d="M122 232 C146 216 196 220 224 252 C216 292 160 306 126 284 C112 268 110 246 122 232 Z" stroke="#0E2E2A" stroke-width="5" stroke-opacity=".8"/>
+        </g>
+
+        <!-- contorno del cuerpo -->
+        <g stroke="#0E2E2A" stroke-width="7" stroke-opacity=".9">
+          <use href="#cuerpo"/>
+        </g>
+
+        <!-- cabeza: copete, pico y ojo -->
+        <g class="cabeza">
+          <g class="copete">
+            <path d="M166 94 C148 80 136 82 124 94 C134 96 142 102 148 110 C152 102 160 100 170 104 C174 100 178 96 184 92 Z" fill="#FFD166"/>
+          </g>
+          <path d="M246 112 C268 112 290 122 300 134 C282 146 262 150 247 146 Z" fill="#FFD166"/>
+          <path d="M250 134 C266 134 282 134 296 134" stroke="#0E2E2A" stroke-width="4" stroke-opacity=".6"/>
+          <path d="M212 112 C218 126 234 126 240 112" stroke="#0E2E2A" stroke-width="7"/>
+          <path d="M240 112 l8 -5" stroke="#0E2E2A" stroke-width="4"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- sueños -->
+  <g filter="url(#cera)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <circle class="burbuja-nariz" cx="322" cy="162" r="8" fill="#BDF4E8" stroke="#0E2E2A" stroke-width="4"/>
+    <circle class="burbuja-media" cx="346" cy="132" r="14" fill="#BDF4E8" stroke="#0E2E2A" stroke-width="4"/>
+
+    <g class="sueno">
+      <circle cx="352" cy="82" r="30" fill="#BDF4E8" stroke="#0E2E2A" stroke-width="5"/>
+      <g class="carta">
+        <rect x="334" y="68" width="36" height="28" rx="3" fill="#F2EBDD" stroke="#0E2E2A" stroke-width="3"/>
+        <rect x="334" y="68" width="9" height="28" rx="3" fill="#FFD166" stroke="#0E2E2A" stroke-width="3"/>
+        <path d="M348 78 l16 0 M348 86 l12 0" stroke="#0E2E2A" stroke-width="3" stroke-opacity=".6"/>
+      </g>
+    </g>
+
+    <!-- las Z, cada una con su propio ritmo -->
+    <g stroke="#2AA795" stroke-width="7">
+      <g class="z z1"><path d="M96 168 l16 0 l-16 20 l16 0" stroke-width="6"/></g>
+      <g class="z z2"><path d="M62 120 l22 0 l-22 26 l22 0"/></g>
+      <g class="z z3"><path d="M36 74 l30 0 l-30 34 l30 0" stroke-width="8"/></g>
+    </g>
+  </g>
+</svg>

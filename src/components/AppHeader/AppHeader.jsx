@@ -1,5 +1,5 @@
 import { useAppHeader } from '../../hooks/useAppHeader.js'
-import { Search, Ellipsis, Plus, ClipboardClock, Bell } from 'lucide-react'
+import { Ellipsis, Plus, ClipboardClock, Bell } from 'lucide-react'
 import './AppHeader.css'
 
 
@@ -7,10 +7,6 @@ function getHeaderIcons(title) {
   switch (title) {
     case 'Descubre':
       return [
-        {
-          name: 'search',
-          content: <Search size={25} color="currentColor" />,
-        },
         {
           name: 'settings',
           content: <Ellipsis size={25} color="currentColor" />,

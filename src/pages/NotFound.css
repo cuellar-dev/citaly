@@ -1,0 +1,114 @@
+.not-found {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.85fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(18px, 5vw, 42px);
+  width: min(100%, 620px);
+  min-height: calc(100dvh - 150px);
+  margin: 0 auto;
+  padding: 28px 20px 46px;
+  box-sizing: border-box;
+}
+
+.not-found-ilustracion {
+  width: min(260px, 42vw);
+  justify-self: center;
+}
+
+.not-found-ilustracion img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.not-found-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.not-found-codigo {
+  color: var(--primary-color, #00c2ad);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: clamp(3.2rem, 11vw, 5.2rem);
+  font-weight: 700;
+  line-height: 0.8;
+}
+
+.not-found h1 {
+  margin: 8px 0 0;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: clamp(1.7rem, 5vw, 2.45rem);
+  line-height: 1;
+}
+
+.not-found p {
+  max-width: 24em;
+  margin: 0;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-family: var(--font-familyPrincipal, sans-serif);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.not-found-boton,
+.not-found-volver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-familyPrincipal, sans-serif);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.not-found-boton {
+  margin-top: 8px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.not-found-volver {
+  border: 0;
+  background: transparent;
+  padding: 3px 4px;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.not-found-boton:focus-visible,
+.not-found-volver:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  .not-found {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 14px;
+    padding-top: 22px;
+  }
+
+  .not-found-ilustracion {
+    width: min(250px, 68vw);
+  }
+
+  .not-found-contenido {
+    align-items: center;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found-ilustracion *,
+  .not-found-ilustracion *::before,
+  .not-found-ilustracion *::after {
+    animation: none !important;
+  }
+}

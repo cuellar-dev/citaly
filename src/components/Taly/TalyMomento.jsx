@@ -15,23 +15,28 @@ function TalyMomento({
   onAccion,
   accionSecundaria,
   onAccionSecundaria,
+  ilustracion,
   tamano = 16,
   brillo = true,
   className = '',
 }) {
   return (
     <section className={`taly-momento ${className}`.trim()}>
-      <div className='taly-momento-figura'>
-        <Taly
-          escena={escena}
-          pose={pose}
-          objetos={objetos}
-          tamano={tamano}
-          brillo={brillo}
-          encuadre='compacto'
-          titulo={titulo || 'Taly'}
-        />
-      </div>
+      {ilustracion ? (
+        <div className='taly-momento-figura taly-momento-figura--ilustracion'>{ilustracion}</div>
+      ) : (
+        <div className='taly-momento-figura'>
+          <Taly
+            escena={escena}
+            pose={pose}
+            objetos={objetos}
+            tamano={tamano}
+            brillo={brillo}
+            encuadre='compacto'
+            titulo={titulo || 'Taly'}
+          />
+        </div>
+      )}
       {titulo ? <h2 className='taly-momento-titulo'>{titulo}</h2> : null}
       {texto ? <p className='taly-momento-texto'>{texto}</p> : null}
       {(accion || accionSecundaria) ? (

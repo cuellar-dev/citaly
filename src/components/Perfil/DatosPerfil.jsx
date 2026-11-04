@@ -89,7 +89,12 @@ function Fila({ Icono, titulo, valor, extra, to, tono, onClick, abierto, panel }
       ) : (
         <div className={`${clase} perfil-fila--quieta`}>{cuerpo}</div>
       )}
-      {abierto && panel}
+      <div
+        className={`perfil-despliegue-contenedor${abierto ? ' perfil-despliegue-contenedor--abierto' : ''}`}
+        aria-hidden={!abierto}
+      >
+        {panel}
+      </div>
     </li>
   )
 }
@@ -174,7 +179,7 @@ function PanelFavoritos() {
   const orden = ids.map((id) => locales.find((l) => l.id === id)).filter(Boolean)
 
   if (orden.length === 0) {
-    return <p className="perfil-despliegue-vacio">Todavía no marcas locales. El corazón está en Descubre y en cada ficha.</p>
+    return <p className="perfil-despliegue-vacio">Todavía no marcas locales. Puedes hacerlo desde la seccion de Descubre o entrado a los detalles de algun negocio.</p>
   }
 
   return (
@@ -323,7 +328,7 @@ function DatosPerfil({ dueno, trabajo = [], onPedirTrabajo, onSesion }) {
                   to={`/local/${item.id}`}
                 />
               ))}
-              <Fila Icono={Store} titulo="Pedir entrar a otro local" valor="El dueño lo confirma" onClick={onPedirTrabajo} />
+              <Fila Icono={Store} titulo="Trabajas en más de un lugar ? " valor="Solicita unirte" onClick={onPedirTrabajo} />
             </>
           )}
         </ul>
@@ -337,7 +342,7 @@ function DatosPerfil({ dueno, trabajo = [], onPedirTrabajo, onSesion }) {
           <Fila
             Icono={CalendarDays}
             titulo="Mis citas"
-            valor="Un resumen, no la agenda"
+            valor="Un resumen de tus citas"
             abierto={panel === 'citas'}
             onClick={() => alternar('citas')}
             panel={<PanelCitas />}
@@ -368,7 +373,7 @@ function DatosPerfil({ dueno, trabajo = [], onPedirTrabajo, onSesion }) {
                 <span className="perfil-fila-titulo">Verificación en dos pasos</span>
                 <span className="perfil-fila-valor">Llega más adelante</span>
               </span>
-              <Switch activo={false} disabled label="Verificación en dos pasos" onChange={() => {}} />
+              <Switch activo={false} disabled label="Verificación en dos pasos" onChange={() => { }} />
             </div>
           </li>
           <Fila Icono={Shield} titulo="Sesiones activas" valor="Solo este dispositivo" />

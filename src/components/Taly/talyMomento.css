@@ -23,6 +23,17 @@
   margin: 0 auto;
 }
 
+.taly-momento-figura--ilustracion {
+  width: min(200px, 50vw);
+  opacity: 0.8;
+}
+
+.taly-momento-figura--ilustracion img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
 .taly-momento .taly {
   display: block;
   width: 100%;

@@ -9,6 +9,7 @@ import SolicitarTrabajo from '../components/Perfil/SolicitarTrabajo.jsx'
 import VisorFotoPerfil from '../components/Perfil/VisorFotoPerfil.jsx'
 import ModalNegocioShell from '../components/Negocio/ModalNegocioShell.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
+import talyDormido from '../components/Taly/taly-a-mano-dormido-animado.svg'
 import { getLocalById } from '../services/locales.js'
 import { getPerfiles, savePerfil } from '../services/storage.js'
 import { trabajoDeUsuario } from '../services/trabajo.js'
@@ -51,6 +52,7 @@ function Perfil() {
       <section className="perfil perfil--fuera" aria-label="Sin cuenta">
         <TalyMomento
           escena="vacio"
+          ilustracion={<img src={talyDormido} alt="Taly dormido" />}
           titulo={guardadoRandom}
           texto="No tienes una cuenta iniciada."
         />
@@ -137,4 +139,3 @@ function Perfil() {
 }
 
 export default Perfil
-

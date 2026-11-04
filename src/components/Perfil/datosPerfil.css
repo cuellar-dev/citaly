@@ -144,6 +144,60 @@
   transform: rotate(90deg);
 }
 
+.perfil-despliegue-contenedor {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transition:
+    grid-template-rows 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.24s ease;
+}
+
+.perfil-despliegue-contenedor--abierto {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.perfil-despliegue-contenedor > * {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.perfil-despliegue-contenedor > .perfil-despliegue--citas {
+  min-height: 0;
+  padding-block: 0;
+}
+
+.perfil-despliegue-contenedor--abierto > .perfil-despliegue--citas {
+  min-height: 150px;
+  padding: 4px 14px 14px 62px;
+}
+
+.perfil-despliegue-contenedor > .perfil-despliegue-vacio {
+  padding-block: 0;
+}
+
+.perfil-despliegue-contenedor--abierto > .perfil-despliegue-vacio {
+  padding: 4px 14px 14px 62px;
+}
+
+.perfil-despliegue-contenedor > .perfil-favs {
+  padding-block: 0;
+}
+
+.perfil-despliegue-contenedor--abierto > .perfil-favs {
+  padding: 0 8px 10px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .perfil-despliegue-contenedor {
+    transition: none;
+  }
+}
+
 .perfil-despliegue--citas {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

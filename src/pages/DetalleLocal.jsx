@@ -14,6 +14,7 @@ import './DetalleLocal.css'
 import Opiniones from '../components/Opiniones/Opiniones.jsx'
 import IconoWhatsApp from '../components/IconoWhatsApp/IconoWhatsApp.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
+import taly404 from '../components/Taly/taly-404-animado.svg'
 
 const DIAS = [
   { id: 'l', letra: 'L' },
@@ -87,8 +88,7 @@ function DetalleLocal() {
           Volver a Descubre
         </Link>
         <TalyMomento
-          escena='loader'
-          pose='busca'
+          ilustracion={<img src={taly404} alt="Taly buscando un local" />}
           titulo='Local no encontrado'
           texto={`No existe un local con el id “${id}”. Revisa el enlace e inténtalo de nuevo.`}
           accion='Volver a Descubre'

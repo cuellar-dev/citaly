@@ -8,6 +8,8 @@ import Perfil from './pages/Perfil.jsx'
 import DetalleLocal from './pages/DetalleLocal.jsx'
 import ReservarConLugar from './pages/ReservarConLugar.jsx'
 import ReservarSinLugar from './pages/ReservarSinLugar.jsx'
+import NotFound from './pages/NotFound.jsx'
+import Busqueda from './pages/Busqueda.jsx'
 
 function ReservarConLugarPage() {
   const { id } = useParams()
@@ -27,12 +29,14 @@ function App() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/" element={<Layout />}>
           <Route index element={<Descubre />} />
+          <Route path="buscar" element={<Busqueda />} />
           <Route path="local/:id" element={<DetalleLocal />} />
           <Route path="local/:id/reservar" element={<ReservarConLugarPage />} />
           <Route path="local/:id/reservar-cita" element={<ReservarSinLugarPage />} />
           <Route path="citas" element={<MisCitas />} />
           <Route path="negocio" element={<MiNegocio />} />
           <Route path="perfil" element={<Perfil />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>
