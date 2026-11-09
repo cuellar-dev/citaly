@@ -8,15 +8,14 @@ import { COMODIDADES, codigoDia, estaAbierto, franjaTurno, horaAmPm, aMinutos, n
    y qué dice la gente que ya fue. */
 
 /**
- * Nota del local. Prioriza la media real de comentarios; si todavía no tiene,
- * cae al `points` del listado. Antes se devolvía 0 sin más y los locales demo
- * salían con "0 (0 opiniones)" aunque el listado los diera como 4.7.
+ * Nota del local: SOLO la media real de sus comentarios, la misma que enseña
+ * la ficha. El campo `points` guardado a mano ya no se usa como respaldo: antes
+ * los locales sin reseñas salían con un 4.8 inventado en el listado mientras
+ * su ficha decía "0 (0 opiniones)".
  */
 export function notaLocal(local) {
   const { nota, cantidad } = notaDeComentarios(local)
-  if (cantidad > 0) return { nota, cantidad, estimada: false }
-  const suelta = Number(local?.points) || 0
-  return { nota: suelta, cantidad: 0, estimada: suelta > 0 }
+  return { nota, cantidad, estimada: false }
 }
 
 /** Próximo día que abre, a partir de mañana si hoy ya no vale. */
