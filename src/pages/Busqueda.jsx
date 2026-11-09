@@ -1,81 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ArrowLeft, ArrowRight, Filter, Search, SlidersHorizontal, X } from 'lucide-react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import TarjetaLocal from '../components/TarjetaLocal/TarjetaLocal.jsx'
+import CarruselLocales from '../components/Busqueda/CarruselLocales.jsx'
 import PanelFiltros from '../components/Filtros/PanelFiltros.jsx'
 import { getAllLocales } from '../services/locales.js'
-import { coincideFiltros } from '../utils/busqueda.js'
+import { coincideFiltros, filtrosIniciales, normalizar } from '../utils/busqueda.js'
 import talyBuscando from '../components/Taly/taly-buscando-animado.svg'
 import talySinResultados from '../components/Taly/taly-sin-resultados-animado.svg'
 import './Busqueda.css'
 import './Descubre.css'
-
-const normalizar = (value) => value.toLocaleLowerCase('es').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-const filtrosIniciales = { zona: 'Todas', categoria: 'Todas', abiertos: false, rating: '0' }
-
-function LocalHorizontal({ local, onClick }) {
-  const rating = Number(local.points || 0).toFixed(1)
-  return (
-    <button type="button" className="local-horizontal" onClick={onClick}>
-      <img src={local.url} alt="" />
-      <span className="local-horizontal-info">
-        <strong>{local.localName}</strong>
-        <small>{local.categoria}</small>
-        <span className="local-horizontal-meta"><span className="local-rating">★ {rating}</span><span>{local.metros} m</span></span>
-      </span>
-
-    </button>
-  )
-}
-
-function CarruselLocales({ locales, onSelect, etiqueta }) {
-  const railRef = useRef(null)
-  const [indiceActivo, setIndiceActivo] = useState(0)
-
-  const actualizarIndice = useCallback(() => {
-    const rail = railRef.current
-    if (!rail || locales.length < 2) return
-    const recorrido = rail.scrollWidth - rail.clientWidth
-    const progreso = recorrido > 0 ? rail.scrollLeft / recorrido : 0
-    setIndiceActivo(Math.min(locales.length - 1, Math.round(progreso * (locales.length - 1))))
-  }, [locales.length])
-
-  useEffect(() => {
-    actualizarIndice()
-  }, [actualizarIndice])
-
-  return (
-    <div className="carrusel-locales">
-      <div className="carrusel-locales-footer">
-        <span className="carrusel-locales-hint">
-          <ArrowRight size={13} />
-          Desliza para ver más
-        </span>
-        <div className="carrusel-locales-navigation" aria-label={`Opción ${indiceActivo + 1} de ${locales.length}`}>
-          <span className="carrusel-locales-count">{indiceActivo + 1} / {locales.length}</span>
-          <div className="carrusel-locales-dots" aria-hidden="true">
-            {locales.map((local, index) => (
-              <span className={index === indiceActivo ? 'is-active' : ''} key={local.id} />
-            ))}
-          </div>
-        </div>
-      </div>
-      <div className="carrusel-locales-rail-wrap">
-        <div
-          ref={railRef}
-          className="similares-scroll"
-          onScroll={actualizarIndice}
-          aria-label={etiqueta}
-        >
-          {locales.map((local) => (
-            <LocalHorizontal key={local.id} local={local} onClick={() => onSelect(local)} />
-          ))}
-        </div>
-        <span className="carrusel-locales-fade" aria-hidden="true" />
-      </div>
-    </div>
-  )
-}
 
 function Busqueda() {
   const navigate = useNavigate()

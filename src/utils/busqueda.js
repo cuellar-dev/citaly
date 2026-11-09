@@ -1,3 +1,17 @@
+export const filtrosIniciales = {
+  zona: 'Todas',
+  categoria: 'Todas',
+  abiertos: false,
+  rating: '0',
+}
+
+export function normalizar(texto) {
+  return String(texto || '')
+    .toLocaleLowerCase('es')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+}
+
 export function coincideFiltros(local, filtros) {
   const zona = local.direccion?.split(',').pop()?.trim() || 'Sin zona'
   return (
