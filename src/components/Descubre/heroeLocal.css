@@ -1,0 +1,206 @@
+/* Lugar destacado que abre Descubre. */
+
+.heroe-local {
+  position: relative;
+  width: 100%;
+}
+
+.heroe-local-link {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  max-height: 440px;
+  overflow: hidden;
+  border: 1px solid rgba(240, 240, 240, 0.09);
+  border-radius: 26px;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 22px 46px -22px rgba(0, 0, 0, 0.95);
+}
+
+.heroe-local-link:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+}
+
+.heroe-local-foto {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.heroe-local-velo {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(8, 10, 9, 0.97) 0%,
+    rgba(8, 10, 9, 0.72) 32%,
+    rgba(8, 10, 9, 0.1) 62%,
+    rgba(8, 10, 9, 0.35) 100%
+  );
+}
+
+.heroe-local-arriba {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 58px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.heroe-local-etiqueta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.heroe-local-puertas {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: rgba(8, 10, 9, 0.68);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.heroe-local-puertas small {
+  font-size: 10.5px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.heroe-local-punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--close-color, #c53f3f);
+}
+
+.heroe-local-puertas--abierto {
+  color: var(--primary-color, #00c2ad);
+}
+
+.heroe-local-puertas--abierto .heroe-local-punto {
+  background: var(--primary-color, #00c2ad);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color, #00c2ad) 22%, transparent);
+}
+
+.heroe-local-abajo {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+}
+
+.heroe-local-abajo h2 {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  text-align: left;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.heroe-local-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 8px 0 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.heroe-local-nota {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--yellow-color, #ffd166);
+}
+
+.heroe-local-nota svg {
+  fill: currentColor;
+}
+
+.heroe-local-nota small {
+  font-size: 10.5px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.heroe-local-lejos {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.heroe-local-frase {
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.4;
+  color: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 88%, transparent);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.heroe-local-comodidades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 11px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.heroe-local-comodidades li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 24px;
+  padding: 0 9px;
+  border: 1px solid rgba(240, 240, 240, 0.14);
+  border-radius: 999px;
+  background: rgba(8, 10, 9, 0.4);
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.heroe-local-favorito {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+}
+
+@media (max-width: 360px) {
+  .heroe-local-abajo h2 {
+    font-size: 1.7rem;
+  }
+}

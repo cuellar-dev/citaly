@@ -1,0 +1,64 @@
+/* Ambiente de Descubre. Va detrás de todo, no se toca y no captura el puntero.
+   Se funde con el fondo de la app por abajo, así la lista nace del paisaje. */
+
+.cielo-descubre {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 340px;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* El cielo se desvanece hacia la lista en vez de cortarse en seco. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 100%);
+}
+
+.cielo-descubre svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.cielo-descubre-estrellas circle {
+  fill: #f4f1e4;
+}
+
+.cielo-descubre-nubes {
+  fill: #f0f0f0;
+  opacity: 0.5;
+}
+
+.cielo-descubre-rayos line {
+  stroke: #ffd166;
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.85;
+}
+
+.cielo-descubre-sierra {
+  fill: #16211f;
+  opacity: 0.85;
+}
+
+.cielo-descubre-loma {
+  fill: #121413;
+}
+
+.cielo-descubre-palma path {
+  fill: none;
+  stroke: #0b1110;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.cielo-descubre-tronco {
+  stroke-width: 2.6;
+}
+
+@media (min-width: 700px) {
+  .cielo-descubre {
+    height: 400px;
+  }
+}

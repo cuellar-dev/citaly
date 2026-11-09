@@ -1,0 +1,46 @@
+.rail-descubre {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.rail-descubre-cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 2px;
+}
+
+.rail-descubre-cabecera h2 {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-align: left;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.rail-descubre-cabecera span {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.rail-descubre-pista {
+  display: flex;
+  gap: 12px;
+  /* Los márgenes negativos sangran la pista hasta el borde de la pantalla:
+     la tarjeta cortada del final se ve y se entiende que hay más. */
+  margin: 0 -18px;
+  padding: 2px 18px 4px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.rail-descubre-pista::-webkit-scrollbar {
+  display: none;
+}
