@@ -4,11 +4,11 @@ import CitaServicio from '../components/CitaServicio/CitaServicio.jsx'
 import CitaLugar from '../components/CitaLugar/CitaLugar.jsx'
 import ModalAccionCita from '../components/ModalAccionCita/ModalAccionCita.jsx'
 import { elegirTexto, TEXTOS_CANCELAR, TEXTOS_VOY } from '../components/ModalAccionCita/textosAccionCita.js'
-import RolloRecibos from '../components/RolloRecibos/RolloRecibos.jsx'
+import ListaCitas from '../components/ListaCitas/ListaCitas.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import { useCitas } from '../hooks/useCitas.js'
 import { CANCELADA, CONFIRMADA } from '../utils/estadosCita.js'
-import { esCitaPasada, propsDesdeCita } from '../utils/citasVista.js'
+import { esCitaDeLugar, esCitaPasada, propsDesdeCita } from '../utils/citasVista.js'
 import './misCitas.css'
 
 function MisCitas() {
@@ -24,6 +24,7 @@ function MisCitas() {
     setAccion({
       tipo,
       citaId: cita.id,
+      esMesa: esCitaDeLugar(cita),
       textoSi: elegirTexto(pack.si),
       textoNo: elegirTexto(pack.no),
     })
@@ -61,12 +62,13 @@ function MisCitas() {
 
   const hayCitas = citasVista.length > 0
 
-  /* Cada cita es un segmento del rollo; `numero` es su posición impresa en el recibo. */
+  /* Una tarjeta por cita. `proxima` marca la más cercana en Próximas: es la
+     única donde Taly asoma y la única que va destacada. */
   const renderCita = (cita, i) => {
     const props = propsDesdeCita(cita)
     const handlers = {
-      numero: i + 1,
       pasada: esCitaPasada(cita, ahora),
+      proxima: esProximas && i === 0,
       onVoyPaAlla: () => abrirAccion('voy', cita),
       onCancelar: () => abrirAccion('cancelar', cita),
     }
@@ -79,7 +81,7 @@ function MisCitas() {
 
   return (
     <section
-      className={`citas ${esProximas ? 'citas--proximas' : 'citas--pasadas'}${hayCitas ? ' citas--recibo' : ''}`}
+      className={`citas ${esProximas ? 'citas--proximas' : 'citas--pasadas'}${hayCitas ? ' citas--lista' : ''}`}
     >
       <div className='switch-color-container'>
         <div
@@ -117,8 +119,8 @@ function MisCitas() {
           onAccion={esProximas ? () => navigate('/') : undefined}
         />
       ) : (
-        /* key={vista}: al cambiar de pestaña el rollo arranca en la primera cita, sin animar el salto. */
-        <RolloRecibos key={vista} citas={citasVista} renderCita={renderCita} />
+        /* key={vista}: al cambiar de pestaña la lista arranca arriba, sin animar el salto. */
+        <ListaCitas key={vista} citas={citasVista} renderCita={renderCita} />
       )}
       <ModalAccionCita accion={accion} onConfirmar={confirmarAccion} onCerrar={cerrarAccion} />
     </section>

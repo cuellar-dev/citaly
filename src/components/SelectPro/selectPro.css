@@ -5,7 +5,7 @@
   align-items: center;
   flex-shrink: 0;
   scroll-snap-align: center;
-  width: 128px;
+  width: 142px;
   padding: 16px 10px 14px;
   border-radius: 14px;
   background-color: var(--background-color-secondary);
@@ -18,12 +18,14 @@
   outline-offset: 2px;
 }
 
+/* Sin transform: la tarjeta vive en un carrusel con overflow-x, y al crecer se
+   le cortaba el anillo contra el borde del contenedor. El marcado se nota por
+   el color y el anillo, que caben dentro de la caja. */
 .tarjeta-pro-seleccionado {
   background-color: color-mix(in srgb, var(--primary-color) 16%, var(--background-color-secondary));
   box-shadow:
-    0 0 0 2px var(--primary-color),
-    0 8px 18px color-mix(in srgb, var(--primary-color) 35%, transparent);
-  transform: translateY(-2px) scale(1.05);
+    inset 0 0 0 2px var(--primary-color),
+    0 8px 18px color-mix(in srgb, var(--primary-color) 28%, transparent);
 }
 
 .tarjeta-pro-check {
@@ -109,9 +111,11 @@
 .tarjeta-pro-badge {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   max-width: 100%;
-  padding: 3px 9px;
+  min-height: 24px;
+  padding: 4px 9px;
   border-radius: 999px;
   background-color: color-mix(in srgb, var(--primary-color) 14%, transparent);
   transition: background-color 0.3s ease;
@@ -126,13 +130,16 @@
   color: var(--fonts-color-primary-alternative);
 }
 
+/* El texto del nivel se parte en dos líneas si hace falta; antes se cortaba
+   con puntos suspensivos ("Buenas man…") y no se entendía. */
 .tarjeta-pro-text {
   margin: 0;
+  min-width: 0;
   font-size: 11px;
   font-weight: 600;
+  line-height: 1.25;
   letter-spacing: 0.2px;
+  text-align: center;
   color: var(--fonts-color-primary-alternative);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
 }

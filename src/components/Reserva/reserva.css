@@ -1,0 +1,568 @@
+/* Pantallas de reserva (mesa y servicio). Mismo idioma que Mi Negocio y Mi
+   Perfil: fondo #121413, superficies #1E2221, radio 18, acento teal, títulos en
+   la tipografía drink y píldoras de 999px. */
+
+.reserva {
+  --reserva-nav: 70px; /* alto de la navbar: la barra de confirmar se apoya encima */
+  --reserva-ancho: 480px;
+
+  box-sizing: border-box;
+  width: 100%;
+  min-height: calc(100dvh - 150px);
+  padding-bottom: 96px; /* hueco para la barra de confirmar */
+  background: var(--background-color, #121413);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+/* ---------- Cabecera ---------- */
+
+.reserva-header {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--reserva-ancho);
+  margin-inline: auto;
+  padding: 14px 16px 18px;
+}
+
+.reserva-volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  margin-bottom: 14px;
+  padding: 0 13px 0 10px;
+  border: 1px solid rgba(240, 240, 240, 0.09);
+  border-radius: 999px;
+  background: var(--background-color-secondary, #1e2221);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reserva-titulo {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.7rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-align: left;
+}
+
+.reserva-subtitulo {
+  margin: 6px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+/* ---------- Cuerpo: la pila de bloques ---------- */
+
+.reserva-cuerpo {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--reserva-ancho);
+  margin-inline: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.reserva-bloque {
+  position: relative;
+  padding: 16px;
+  border: 1px solid rgba(240, 240, 240, 0.08);
+  border-radius: 18px;
+  background: var(--background-color-secondary, #1e2221);
+  /* La guía pegada arriba mide ~104px; sin esto el salto a un paso lo deja debajo. */
+  scroll-margin-top: 118px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* El paso en curso se resalta igual que .cita-dueno--destacada en Mi Negocio. */
+.reserva-bloque--activo {
+  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 30%, transparent);
+  background:
+    radial-gradient(
+      120% 110% at 0% 0%,
+      color-mix(in srgb, var(--primary-color, #00c2ad) 9%, transparent) 0%,
+      transparent 62%
+    ),
+    var(--background-color-secondary, #1e2221);
+  box-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.9);
+}
+
+.reserva-bloque-cabecera {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-bottom: 14px;
+}
+
+.reserva-bloque-numero {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgba(240, 240, 240, 0.14);
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.reserva-bloque--activo .reserva-bloque-numero {
+  box-shadow: inset 0 0 0 2px var(--primary-color, #00c2ad);
+  color: var(--primary-color, #00c2ad);
+}
+
+.reserva-bloque--hecho .reserva-bloque-numero {
+  background: var(--primary-color, #00c2ad);
+  box-shadow: none;
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.reserva-bloque-textos {
+  min-width: 0;
+}
+
+.reserva-bloque-titulo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 3px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: left;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.reserva-bloque-titulo svg {
+  flex-shrink: 0;
+  color: var(--primary-color, #00c2ad);
+}
+
+.reserva-bloque-descripcion {
+  margin: 5px 0 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+/* ---------- Vacíos con cara (antes eran cajas huecas) ---------- */
+
+.reserva-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  padding: 24px 18px;
+  border: 1px dashed rgba(240, 240, 240, 0.1);
+  border-radius: 14px;
+  text-align: center;
+}
+
+.reserva-vacio--plano {
+  border: 0;
+  padding: 18px 10px;
+}
+
+.reserva-vacio-icono {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 10%, transparent);
+  color: var(--primary-color, #00c2ad);
+}
+
+.reserva-vacio-titulo {
+  margin: 2px 0 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.reserva-vacio-texto {
+  margin: 0;
+  max-width: 34ch;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.reserva-vacio-accion {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  margin-top: 6px;
+  padding: 0 15px;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.reserva-vacio-accion:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+/* ---------- Paso de fecha y hora ---------- */
+
+.reserva-fechahora {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reserva-horas-titulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.reserva-horas-titulo svg {
+  color: var(--yellow-color, #ffd166);
+}
+
+.reserva-horas-leyenda {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 75%, transparent);
+}
+
+/* ---------- Personas (solo mesa) ---------- */
+
+.reserva-personas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
+  gap: 8px;
+}
+
+.reserva-persona {
+  min-height: 46px;
+  border: 1px solid rgba(240, 240, 240, 0.09);
+  border-radius: 14px;
+  background: var(--background-color, #121413);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.reserva-persona:active {
+  transform: scale(0.94);
+}
+
+.reserva-persona--activa {
+  border-color: transparent;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  box-shadow: 0 8px 18px -10px color-mix(in srgb, var(--primary-color, #00c2ad) 90%, transparent);
+}
+
+/* "+6": no es una cantidad más, es otro camino (juntar mesas con el local). */
+.reserva-persona--grupo {
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--yellow-color, #ffd166) 40%, transparent);
+  color: var(--yellow-color, #ffd166);
+}
+
+.reserva-persona--grupo.reserva-persona--activa {
+  border-style: solid;
+  border-color: transparent;
+  background: var(--yellow-color, #ffd166);
+  color: var(--fonts-color-secondary, #121413);
+  box-shadow: 0 8px 18px -10px color-mix(in srgb, var(--yellow-color, #ffd166) 90%, transparent);
+}
+
+/* Sin saber cuántos van, el plano se ve pero no invita a tocarlo. */
+.mapa-mesas-container--apagado {
+  opacity: 0.45;
+  pointer-events: none;
+  filter: saturate(0.5);
+}
+
+/* ---------- Servicios y profesionales (solo servicio) ---------- */
+
+.reserva-servicios {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.reserva-pros {
+  display: flex;
+  gap: 10px;
+  padding: 2px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+
+.reserva-pros::-webkit-scrollbar {
+  display: none;
+}
+
+.reserva-pros > * {
+  scroll-snap-align: center;
+}
+
+/* ---------- Resumen ---------- */
+
+.reserva-resumen {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.reserva-resumen-fila {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.reserva-resumen-fila dt {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 80%, transparent);
+}
+
+.reserva-resumen-fila dd {
+  margin: 0;
+  min-width: 0;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.reserva-resumen-fila--fuerte {
+  padding-top: 11px;
+  border-top: 1px solid rgba(240, 240, 240, 0.07);
+}
+
+.reserva-resumen-fila--fuerte dd {
+  color: var(--primary-color, #00c2ad);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 18px;
+  line-height: 1;
+}
+
+.reserva-resumen-nota {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+/* ---------- Barra de confirmar, pegada encima de la navbar ---------- */
+
+.reserva-barra {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--reserva-nav);
+  z-index: 50;
+  box-sizing: border-box;
+  padding: 10px 16px 12px;
+  background: linear-gradient(
+    to top,
+    var(--background-color, #121413) 62%,
+    color-mix(in srgb, var(--background-color, #121413) 0%, transparent) 100%
+  );
+  pointer-events: none;
+}
+
+.reserva-barra-caja {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(var(--reserva-ancho) - 32px);
+  margin-inline: auto;
+  padding: 10px 10px 10px 18px;
+  border: 1px solid rgba(240, 240, 240, 0.09);
+  /* 18 como las tarjetas y no una píldora: con el radio redondo del todo, el
+     bloque del total quedaba mordido por la curva y la barra no casaba con el
+     borde izquierdo de las tarjetas de arriba. */
+  border-radius: 18px;
+  background: var(--background-color-secondary, #1e2221);
+  box-shadow: 0 14px 32px -16px rgba(0, 0, 0, 0.95);
+  pointer-events: auto;
+}
+
+.reserva-barra-cifra {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.reserva-barra-cifra span {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 80%, transparent);
+}
+
+.reserva-barra-cifra strong {
+  color: var(--primary-color, #00c2ad);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+.reserva-barra-cifra small {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.reserva-barra-boton {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--primary-color, #00c2ad) 90%, transparent);
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.reserva-barra-boton:active {
+  transform: scale(0.97);
+}
+
+/* Bloqueado se nota: sin relleno, solo contorno y el cursor cambia. */
+.reserva-barra-boton:disabled {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba(240, 240, 240, 0.14);
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 75%, transparent);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.reserva-barra-boton:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+.reserva-barra-falta {
+  max-width: calc(var(--reserva-ancho) - 32px);
+  margin: 7px auto 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  pointer-events: none;
+}
+
+/* ---------- Error y éxito ---------- */
+
+.reserva--centrada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  padding-bottom: 24px;
+}
+
+.reserva--centrada .taly-momento {
+  width: 100%;
+  min-height: 0;
+}
+
+/* ---------- Escritorio ---------- */
+
+@media (min-width: 720px) {
+  .reserva {
+    --reserva-ancho: 560px;
+  }
+}
+
+/* ---------- Móvil estrecho ---------- */
+
+@media (max-width: 360px) {
+  .reserva-cuerpo {
+    padding: 12px;
+    gap: 11px;
+  }
+
+  .reserva-bloque {
+    padding: 14px 13px;
+  }
+
+  .reserva-barra {
+    padding: 8px 12px 10px;
+  }
+
+  .reserva-barra-caja {
+    padding-left: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reserva-bloque,
+  .reserva-persona,
+  .reserva-barra-boton {
+    transition: none;
+  }
+
+  .reserva-persona:active,
+  .reserva-barra-boton:active {
+    transform: none;
+  }
+}

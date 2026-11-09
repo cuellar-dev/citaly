@@ -1,16 +1,10 @@
-import '../CitaCard/citaCard.css'
-import './citaLugar.css'
+import { UsersRound } from 'lucide-react'
+import TarjetaCita, { DatoCita } from '../CitaCard/TarjetaCita.jsx'
 import MapaMesas from '../MapaMesas/MapaMesas.jsx'
 import { MESAS_MAPA } from '../../data/mesasMapa.js'
-import {
-  ReciboEncabezado,
-  ReciboEstado,
-  ReciboFila,
-  ReciboSeparador,
-  ReciboTalon,
-} from '../CitaCard/ReciboPartes.jsx'
 
-/* Segmento de recibo para una reserva de mesa. El plano se imprime en tinta (ver .recibo-mapa). */
+/* Tarjeta de una reserva de mesa. Lleva el plano del local con la mesa marcada,
+   salvo que sea una reserva de grupo: ahí no hay mesa que marcar todavía. */
 function CitaLugar({
   lugar,
   wasa,
@@ -21,14 +15,17 @@ function CitaLugar({
   mesaCodigo,
   mesaUbicacion,
   capacidad,
-  fechaTexto,
+  diaTexto,
+  horaTexto,
   estadoTexto,
   consumoTexto,
   mapsHref,
-  numero = 1,
+  grupoGrande = false,
+  minimoPersonas,
   onVoyPaAlla,
   onCancelar,
   pasada = false,
+  proxima = false,
 }) {
   const mesaReservada =
     mesaId != null
@@ -36,51 +33,59 @@ function CitaLugar({
       : MESAS_MAPA.find((m) => m.codigo === mesaCodigo) ?? null
 
   return (
-    <article className="recibo cita-lugar" aria-label={`Reserva en ${lugar}`}>
-      <ReciboEncabezado lugar={lugar} numero={numero} tipo="Mesa" />
-      <ReciboSeparador doble />
+    <TarjetaCita
+      lugar={lugar}
+      tipo={grupoGrande ? 'Grupo' : 'Mesa'}
+      diaTexto={diaTexto}
+      horaTexto={horaTexto}
+      estadoReserva={estadoReserva}
+      estadoTexto={estadoTexto}
+      coste={coste}
+      costeEtiqueta="Reserva"
+      wasa={wasa}
+      telefono={telefono}
+      mapsHref={mapsHref}
+      textoCancelar="Cancelar mesa"
+      onVoyPaAlla={onVoyPaAlla}
+      onCancelar={onCancelar}
+      pasada={pasada}
+      proxima={proxima}
+      etiquetaAria={grupoGrande ? `Reserva de grupo en ${lugar}` : `Reserva en ${lugar}`}
+    >
+      {grupoGrande ? (
+        <>
+          <dl className="tarjeta-cita-datos">
+            <DatoCita etiqueta="Grupo" ancho>
+              {minimoPersonas ? `Más de ${minimoPersonas} personas` : 'Grupo grande'}
+            </DatoCita>
+          </dl>
+          <p className="tarjeta-cita-grupo">
+            <UsersRound size={16} strokeWidth={2} aria-hidden="true" />
+            Juntan las mesas al llegar. Si quieres adelantarlo, escríbeles.
+          </p>
+        </>
+      ) : (
+        <>
+          <dl className="tarjeta-cita-datos">
+            <DatoCita etiqueta="Mesa">
+              {`${mesaCodigo ?? '—'}${capacidad != null ? ` (${capacidad} pers.)` : ''}`}
+            </DatoCita>
+            <DatoCita etiqueta="Zona">{mesaUbicacion ?? '—'}</DatoCita>
+            <DatoCita etiqueta="Consumo" ancho>
+              {consumoTexto ?? '—'}
+            </DatoCita>
+          </dl>
 
-      <dl className="recibo-filas">
-        <ReciboFila etiqueta="Fecha">{fechaTexto}</ReciboFila>
-        <ReciboFila etiqueta="Mesa">
-          {`${mesaCodigo ?? '—'}${capacidad != null ? ` (${capacidad} pers.)` : ''}`}
-        </ReciboFila>
-        <ReciboFila etiqueta="Zona">{mesaUbicacion ?? '—'}</ReciboFila>
-      </dl>
-
-      {/* Plano térmico: la mesa reservada es la única rellena, no hace falta leyenda. */}
-      <div className="recibo-mapa" role="img" aria-label={`Plano del local, mesa ${mesaCodigo ?? ''} marcada`}>
-        <MapaMesas mesaSeleccionada={mesaReservada} onMesaClick={() => {}} soloLectura />
-      </div>
-
-      <ReciboSeparador />
-
-      <dl className="recibo-filas">
-        <ReciboFila etiqueta="Consumo">{consumoTexto ?? '—'}</ReciboFila>
-        <ReciboFila etiqueta="Reserva" grande>
-          {coste}
-        </ReciboFila>
-        <ReciboFila etiqueta="Estado">
-          <ReciboEstado estadoReserva={estadoReserva} />
-        </ReciboFila>
-        <ReciboFila etiqueta="Falta">{estadoTexto}</ReciboFila>
-      </dl>
-
-      <ReciboSeparador doble />
-
-      <ReciboTalon
-        lugar={lugar}
-        wasa={wasa}
-        telefono={telefono}
-        mapsHref={mapsHref}
-        textoCancelar="Cancelar mesa"
-        onVoyPaAlla={onVoyPaAlla}
-        onCancelar={onCancelar}
-        archivada={pasada}
-        cancelada={estadoReserva === 3}
-        estadoReserva={estadoReserva}
-      />
-    </article>
+          <div
+            className="tarjeta-cita-mapa"
+            role="img"
+            aria-label={`Plano del local, mesa ${mesaCodigo ?? ''} marcada`}
+          >
+            <MapaMesas mesaSeleccionada={mesaReservada} onMesaClick={() => {}} soloLectura />
+          </div>
+        </>
+      )}
+    </TarjetaCita>
   )
 }
 

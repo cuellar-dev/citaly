@@ -1,61 +1,52 @@
-import { Link, Navigate, useParams, useNavigate } from 'react-router-dom'
-import { parse, addMinutes, format, isSameDay, isAfter, isBefore, startOfToday} from 'date-fns'
+import { useRef, useState } from 'react'
+import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { ArrowLeft, CalendarDays, Info, Scissors, Scroll} from 'lucide-react'
+import { CalendarDays, Scissors, UserRound, UsersRound } from 'lucide-react'
 import { getLocalById } from '../services/locales.js'
 import { profesionalesActivos } from '../services/usuarios.js'
 import { useCitas } from '../hooks/useCitas.js'
-import { fechasDisponiblesLocal, fechaEnUso } from '../utils/fechasLocal.js'
+import { useReserva } from '../hooks/useReserva.js'
 import { duracionAMinutos } from '../utils/fichaLocal.js'
-import './ReservarConLugar.css'
-import './ReservarSinLugar.css'
-import { useState, useEffect, useRef } from 'react'
-import SelectorFecha from '../components/SelectorFecha/SelectorFecha.jsx'
-import SelectorHorario from '../components/SelectorHorario/SelectorHorario.jsx'
+import ReservaShell, {
+  BarraConfirmar,
+  BloqueReserva,
+  ResumenReserva,
+  VacioReserva,
+} from '../components/Reserva/ReservaShell.jsx'
+import PasoFechaHora from '../components/Reserva/PasoFechaHora.jsx'
 import ServicioItem from '../components/ServicioItem/ServicioItem.jsx'
 import SelectPro from '../components/SelectPro/SelectPro.jsx'
-import Stepper from '../components/Stepper/Stepper.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
+import '../components/Reserva/reserva.css'
 
-// Cuanto hay que bajar (en px) para que aparezca el stepper.
-// Ajusta este numero si el header cambia de alto.
-const STEPPER_APARECE_SCROLL = 140
+function formatearPrecio(precio) {
+  return precio === 0 ? 'GRATIS' : `${precio} CUP`
+}
+
+function formatearDemora(minutos) {
+  if (!minutos) return null
+  const h = Math.floor(minutos / 60)
+  const m = minutos % 60
+  if (h && m) return `~ ${h} h ${m} min`
+  if (h) return `~ ${h} h`
+  return `~ ${m} min`
+}
 
 function ReservarSinLugar() {
   const { id } = useParams()
   const local = getLocalById(id)
   const navigate = useNavigate()
-  const { agregarCita } = useCitas()
-  const [hoy, setHoy] = useState(() => startOfToday())
-  const [fechaSeleccionada, setFechaSeleccionada] = useState(hoy)
-  const [horarioSeleccionado, setHorarioSeleccionado] = useState(null)
-  // Aquí vivirá la selección de servicios (ids), no en DetalleLocal
+  const { citas, agregarCita } = useCitas()
+
+  /* Todos los hooks antes de cualquier return: useReserva aguanta local nulo. */
+  const reserva = useReserva(local, citas)
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState([])
   const [profesionalSeleccionado, setProfesionalSeleccionado] = useState(null)
-  const [stepperVisible, setStepperVisible] = useState(false)
-  const [reservaConfirmada, setReservaConfirmada] = useState(false)
+  const [confirmada, setConfirmada] = useState(false)
   const refServicios = useRef(null)
   const refProfesional = useRef(null)
-  const refHorario = useRef(null)
-  useEffect(() => {
-    const actualizarHoy = () => setHoy(startOfToday())
-    const onVisible = () => {
-      if (document.visibilityState === 'visible') {
-        actualizarHoy()
-      }
-    }
-    document.addEventListener('visibilitychange', onVisible)
-    return () => document.removeEventListener('visibilitychange', onVisible)
-  }, [])
-
-  useEffect(() => {
-    function manejarScroll() {
-      setStepperVisible(window.scrollY > STEPPER_APARECE_SCROLL)
-    }
-    manejarScroll() // por si la pagina carga ya con scroll
-    window.addEventListener('scroll', manejarScroll, { passive: true })
-    return () => window.removeEventListener('scroll', manejarScroll)
-  }, [])
+  const refFecha = useRef(null)
 
   if (local?.lugar) {
     return <Navigate to={`/local/${id}/reservar`} replace />
@@ -63,396 +54,299 @@ function ReservarSinLugar() {
 
   if (!local) {
     return (
-      <section className="reservar-local reservar-local--error">
-        <Link to="/" className="reservar-local-volver">
-          <ArrowLeft size={20} />
-          Volver a Descubre
-        </Link>
+      <section className="reserva reserva--centrada">
         <TalyMomento
-          escena='loader'
-          pose='busca'
-          titulo='No encontramos ese local'
+          escena="loader"
+          pose="busca"
+          titulo="No encontramos ese local"
           texto={`No existe un local con el id “${id}”. Revisa el enlace e inténtalo de nuevo.`}
-          accion='Volver a Descubre'
+          accion="Volver a Descubre"
           onAccion={() => navigate('/')}
         />
       </section>
     )
   }
 
-  if (reservaConfirmada) {
+  if (confirmada) {
     return (
-      <section className='reservar-local reservar-local--exito'>
+      <section className="reserva reserva--centrada">
         <TalyMomento
-          escena='confirmacion'
-          titulo='¡Cita confirmada!'
+          escena="confirmacion"
+          titulo="¡Cita confirmada!"
           texto={`Tu cita en ${local.localName} ya está guardada. Taly la tendrá lista en Mis citas.`}
-          accion='Ver mis citas'
+          accion="Ver mis citas"
           onAccion={() => navigate('/citas')}
-          accionSecundaria='Seguir explorando'
+          accionSecundaria="Seguir explorando"
           onAccionSecundaria={() => navigate(`/local/${id}`)}
         />
       </section>
     )
   }
-  
-  /* Un profesional sin lista de servicios los hace todos (datos viejos de locales.json). */
+
+  /* Un profesional sin lista propia de servicios los hace todos (datos viejos). */
   const todosLosProfesionales = profesionalesActivos(local)
-  const hace = (profesional, ids) =>
-    !Array.isArray(profesional.servicios) || ids.every((id) => profesional.servicios.includes(id))
+  const hace = (pro, ids) =>
+    !Array.isArray(pro.servicios) || ids.every((s) => pro.servicios.includes(s))
+
   const serviciosDisponibles = (local.servicios ?? []).filter(
-    (s) => !todosLosProfesionales.length || todosLosProfesionales.some((p) => hace(p, [s.id]))
+    (s) => !todosLosProfesionales.length || todosLosProfesionales.some((p) => hace(p, [s.id])),
   )
   const serviciosElegidos = serviciosDisponibles.filter((s) =>
-    serviciosSeleccionados.includes(s.id)
+    serviciosSeleccionados.includes(s.id),
   )
-  const precioTotal = serviciosElegidos.reduce((sum, s) => sum + (s.precio || 0), 0)
   const profesionales = todosLosProfesionales.filter((p) => hace(p, serviciosSeleccionados))
 
-  function formatearDemora(minutosTotales) {
-    if (!minutosTotales) return '—'
-    const horas = Math.floor(minutosTotales / 60)
-    const minutos = minutosTotales % 60
-    if (horas > 0 && minutos > 0) return `~ ${horas}h ${minutos} min`
-    if (horas > 0) return `~ ${horas}h`
-    return `~ ${minutos} min`
-  }
-  const demoraTotalMinutos = serviciosElegidos.reduce(
+  const precioTotal = serviciosElegidos.reduce((sum, s) => sum + (s.precio || 0), 0)
+  const demoraMinutos = serviciosElegidos.reduce(
     (sum, s) => sum + duracionAMinutos(s.duracion),
-    0
+    0,
   )
-  const diasAMostrar = 14
-  const fechasDisponibles = fechasDisponiblesLocal(hoy, local.dias, diasAMostrar)
-  const fechaReserva = fechaEnUso(fechaSeleccionada, fechasDisponibles)
-  
-  function generarHorarios(apertura, cierre, intervaloMinutos) {
-    const slots = []
-    let actual = parse(apertura, 'HH:mm', new Date())
-    const fin = parse(cierre, 'HH:mm', new Date())
-    while (isBefore(actual, fin)) {
-      slots.push(format(actual, 'HH:mm'))
-      actual = addMinutes(actual, intervaloMinutos)
-    }
-    return slots
+  const proElegido = profesionales.find((p) => p.id === profesionalSeleccionado)
+
+  function alternarServicio(idServicio) {
+    const siguiente = serviciosSeleccionados.includes(idServicio)
+      ? serviciosSeleccionados.filter((s) => s !== idServicio)
+      : [...serviciosSeleccionados, idServicio]
+    setServiciosSeleccionados(siguiente)
+    /* Si el profesional elegido ya no hace todo lo marcado, se suelta. */
+    const actual = todosLosProfesionales.find((p) => p.id === profesionalSeleccionado)
+    if (actual && !hace(actual, siguiente)) setProfesionalSeleccionado(null)
   }
-  
-  const horarios = generarHorarios(
-    local.horarioApertura,
-    local.horarioCierre,
-    local.intervaloMinutos
-  )
-  let horariosDisponibles = horarios
-  if (isSameDay(fechaReserva, hoy)) {
-    const ahora = new Date()
-    horariosDisponibles = horarios.filter((h) =>
-      isAfter(parse(h, 'HH:mm', fechaReserva), ahora)
+
+  // ---- pasos -------------------------------------------------------------
+
+  const hechos = {
+    servicios: serviciosElegidos.length > 0,
+    profesional: profesionalSeleccionado != null,
+    fecha: reserva.horario != null,
+  }
+  const pasos = [
+    { id: 'servicios', label: 'Servicios', completo: hechos.servicios },
+    { id: 'profesional', label: 'Profesional', completo: hechos.profesional },
+    { id: 'fecha', label: 'Día y hora', completo: hechos.fecha },
+  ]
+  const pasoActivo = pasos.findIndex((p) => !p.completo)
+  const todoListo = pasoActivo === -1
+
+  const mensaje = !hechos.servicios
+    ? 'Marca los servicios que quieres hacerte'
+    : !hechos.profesional
+      ? 'Elige quién te atiende'
+      : !hechos.fecha
+        ? 'Escoge el día y la hora'
+        : 'Todo listo, ya puedes confirmar'
+
+  const falta = !hechos.servicios
+    ? 'Marca al menos un servicio'
+    : !hechos.profesional
+      ? 'Falta elegir profesional'
+      : !hechos.fecha
+        ? 'Falta elegir la hora'
+        : null
+
+  const resumenGuia = []
+  if (serviciosElegidos.length) {
+    resumenGuia.push(
+      `${serviciosElegidos.length} servicio${serviciosElegidos.length > 1 ? 's' : ''}`,
     )
   }
-
-  function formatearFechaReserva(fecha, horario) {
-    const fechaTexto = format(fecha, "EEE d '/' MMM", { locale: es })
-    if (!horario) {
-      return fechaTexto
-    }
-    const hora = format(parse(horario, 'HH:mm', fecha), 'H:mm', { locale: es })
-    return `${fechaTexto} a las ${hora}`
+  if (proElegido?.name) resumenGuia.push(proElegido.name.split(' ')[0])
+  if (reserva.horario && reserva.fecha) {
+    resumenGuia.push(`${format(reserva.fecha, "EEE d", { locale: es })} · ${reserva.horario}`)
   }
 
-  function formatearFechaReservaMin(fecha, horario) {
-    const fechaTexto = format(fecha, "EEE'-'dd", { locale: es }).charAt(0).toUpperCase() + format(fecha, "EEE'-'dd", { locale: es }).slice(1)
-    if (!horario) {
-      return fechaTexto
-    }
-    const hora = format(parse(horario, 'HH:mm', fecha), 'H:mm', { locale: es })
-    return `${fechaTexto} - ${hora}`
-  }
+  const anclas = { servicios: refServicios, profesional: refProfesional, fecha: refFecha }
+  const irAPaso = (idPaso) =>
+    anclas[idPaso]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
-  function formatearPrecio(precio) {
-    if (precio === 0) return 'GRATIS'
-    return `${precio} CUP`
-  }
-
-  function handleConfirmarReserva(e) {
-    e.preventDefault()
-    if (
-      serviciosElegidos.length === 0 ||
-      !profesionalSeleccionado ||
-      !horarioSeleccionado
-    ) {
-      return
-    }
-
-    const profesional = profesionales.find((p) => p.id === profesionalSeleccionado)
-
+  function confirmar() {
+    if (!todoListo) return
     agregarCita({
       id: crypto.randomUUID(),
       esLugar: false,
       localId: id,
       localNombre: local.localName,
-      fecha: format(fechaReserva, 'yyyy-MM-dd'),
-      horario: horarioSeleccionado,
+      fecha: format(reserva.fecha, 'yyyy-MM-dd'),
+      horario: reserva.horario,
       servicios: serviciosElegidos.map((s) => ({
         id: s.id,
         nombre: s.nombre,
         precio: s.precio ?? 0,
         duracion: s.duracion ?? null,
       })),
-      profesional: profesional
-        ? { id: profesional.id, name: profesional.name }
+      profesional: proElegido
+        ? { id: proElegido.id, name: proElegido.name }
         : { id: profesionalSeleccionado, name: null },
       precioTotal,
-      demoraMinutos: demoraTotalMinutos,
+      demoraMinutos,
       estadoReserva: 0,
       creadaEn: new Date().toISOString(),
     })
-
     setServiciosSeleccionados([])
     setProfesionalSeleccionado(null)
-    setHorarioSeleccionado(null)
-    setFechaSeleccionada(fechasDisponibles[0] ?? hoy)
-    setReservaConfirmada(true)
-  }
-  function toggleServicio(idServicio){
-    const siguiente = serviciosSeleccionados.includes(idServicio)
-      ? serviciosSeleccionados.filter((id) => id !== idServicio)
-      : [...serviciosSeleccionados, idServicio]
-    setServiciosSeleccionados(siguiente)
-    const elegido = todosLosProfesionales.find((p) => p.id === profesionalSeleccionado)
-    if (elegido && !hace(elegido, siguiente)) setProfesionalSeleccionado(null)
+    reserva.reiniciarFechaYHora()
+    setConfirmada(true)
   }
 
-  function handleSeleccionProfesional(idProfesional){
-    setProfesionalSeleccionado((prev)=> prev === idProfesional ? null : idProfesional)
-  }
-
-  const seccionRefPorPaso = {
-    servicios: refServicios,
-    profesional: refProfesional,
-    horario: refHorario,
-  }
-  function handlePasoClick(idPaso) {
-    const ref = seccionRefPorPaso[idPaso]
-    ref?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
-  function datosReserva() {
-    if (serviciosElegidos.length === 0) {
-      return {
-        mensaje: 'Escoja un servicio entre los disponibles para hacerse en nuestro lugar',
-        pasoActivo: 0,
-      }
-    }
-    if (profesionalSeleccionado === null) {
-      return {
-        mensaje: 'Escoja el profesional que le hará su servicio',
-        pasoActivo: 1,
-      }
-    }
-    if (horarioSeleccionado === null) {
-      return {
-        mensaje: 'Escoja la hora para reservar su cita',
-        pasoActivo: 2,
-      }
-    }
-    return {
-      mensaje: 'Todo correcto, puede confirmar su reserva',
-      pasoActivo: 3,
-    }
-  }
-  const PASOS = [
-  { id: 'servicios', label: 'Servicios' },
-  { id: 'profesional', label: 'Profesional' },
-  { id: 'horario', label: 'Fecha' },
-]
-  function pasoCompleto(id) {
-  switch (id) {
-    case 'servicios':
-      return serviciosSeleccionados.length > 0
-    case 'profesional':
-      return profesionalSeleccionado != null
-    case 'horario':
-      return horarioSeleccionado != null  // fecha casi siempre tiene valor
-    case 'confirmar':
-      return (
-        serviciosSeleccionados.length > 0 &&
-        profesionalSeleccionado != null &&
-        horarioSeleccionado != null
-      )
-    default:
-      return false
-  }
-  
-}
-  const pasos = PASOS.map((paso) => ({
-    ...paso,
-    completo: pasoCompleto(paso.id),
-  }))
-  const { mensaje, pasoActivo } = datosReserva()
-
-  const partesResumen = []
-  const cantidadServicios = serviciosSeleccionados.length
-  if (cantidadServicios > 0) {
-    partesResumen.push(`${cantidadServicios} servicio${cantidadServicios > 1 ? 's' : ''}`)
-  }
-  const nombrePro = profesionales.find((p) => p.id === profesionalSeleccionado)?.name?.split(' ')[0]?.trim()
-  if (nombrePro) {
-    partesResumen.push(nombrePro)
-  }
-  if (horarioSeleccionado) {
-    partesResumen.push(formatearFechaReservaMin(fechaReserva, horarioSeleccionado))
-  }
-  if (cantidadServicios > 0) {
-    partesResumen.push(formatearPrecio(precioTotal))
-  }
+  const fechaTexto =
+    reserva.fecha && reserva.horario
+      ? `${format(reserva.fecha, "EEE d 'de' MMM", { locale: es })}, ${format(
+          parse(reserva.horario, 'HH:mm', reserva.fecha),
+          'h:mm a',
+          { locale: es },
+        )}`
+      : reserva.fecha
+        ? format(reserva.fecha, "EEE d 'de' MMM", { locale: es })
+        : null
 
   return (
-    <section className="reservar-local reservar-sin-lugar">
-      <header className="reservar-local-header">
-        <Link to={`/local/${id}`} className="reservar-local-volver">
-          <ArrowLeft size={20} />
-          {local.localName}
-        </Link>
-        <h1 className="reservar-local-titulo">Reservar cita</h1>
-        <p className="reservar-local-subtitulo">
-          Elige servicios, fecha y hora para confirmar tu cita en {local.localName}.
-        </p>
-      </header>
-
-      <Stepper
-        texto={partesResumen}
-        mensaje={mensaje}
-        pasos={pasos}
-        pasoActual={pasoActivo}
-        visible={stepperVisible}
-        onPasoClick={handlePasoClick}
-      />
-
-      <div className="reservar-local-body">
-        <section ref={refServicios} className="reservar-local-bloque">
-          <h2 className="reservar-local-bloque-titulo">
-            <Scissors size={20} className="reservar-local-bloque-icono" />
-            Servicios
-          </h2>
-          <ul className="reservar-sin-lugar-servicios">
+    <ReservaShell
+      volverA={`/local/${id}`}
+      volverTexto={local.localName}
+      titulo="Reservar cita"
+      subtitulo={`Elige servicios, profesional y hora en ${local.localName}.`}
+      guia={{
+        pasos,
+        pasoActual: todoListo ? pasos.length : pasoActivo,
+        mensaje,
+        resumen: resumenGuia,
+        pegada: reserva.guiaPegada,
+        onPasoClick: irAPaso,
+      }}
+      barra={
+        <BarraConfirmar
+          etiqueta="Total"
+          valor={serviciosElegidos.length ? formatearPrecio(precioTotal) : '—'}
+          nota={formatearDemora(demoraMinutos)}
+          texto="Confirmar cita"
+          falta={falta}
+          onConfirmar={confirmar}
+        />
+      }
+    >
+      <BloqueReserva
+        anclaRef={refServicios}
+        numero={1}
+        icono={Scissors}
+        titulo="Servicios"
+        descripcion="Marca todo lo que quieras hacerte en la misma cita."
+        hecho={hechos.servicios}
+        activo={pasoActivo === 0}
+        vacio={
+          serviciosDisponibles.length === 0 ? (
+            <VacioReserva
+              icono={Scissors}
+              titulo="Este local aún no publicó servicios"
+              texto="Todavía no hay nada que reservar aquí. Escríbeles y pregunta qué ofrecen."
+            />
+          ) : null
+        }
+      >
+        <ul className="reserva-servicios">
           {serviciosDisponibles.map((servicio) => (
             <ServicioItem
               key={servicio.id}
               {...servicio}
+              marcable
               seleccionado={serviciosSeleccionados.includes(servicio.id)}
-              onSeleccionar={() => toggleServicio(servicio.id)}
+              onSeleccionar={() => alternarServicio(servicio.id)}
             />
           ))}
-          </ul>
-        </section>
-        <section ref={refProfesional} className="reservar-local-bloque">
-          <h2 className="reservar-local-bloque-titulo">
-            < Scroll size={20} className="reservar-local-bloque-icono" />
-            Elija un Profesional 
-          </h2>
-          <p className="reservar-local-texto-profesionales">Escoja un profesional entre los disponibles para que le atienda</p>
-          {profesionales.length === 0 && (
-            <p className="reservar-local-texto-profesionales">
-              Nadie hace todos esos servicios en la misma cita. Prueba quitando alguno.
-            </p>
-          )}
-          <div className='reservar-local-profesionales-container'>
-            {profesionales.map((profesional) => (
-              <SelectPro
-                key={profesional.id}
-                name={profesional.name}
-                url={profesional.url}
-                points={profesional.points}
-                seleccionado={profesional.id === profesionalSeleccionado}
-                onClick={(e) => {
-                  handleSeleccionProfesional(profesional.id)
-                  e.currentTarget.scrollIntoView({  behavior: 'smooth', inline: 'center', block: 'nearest'})
-                }}
-              />
-            ))}
-          </div>
-        </section>
-        <section ref={refHorario} className="reservar-local-bloque horario">
-          <h2 className="reservar-local-bloque-titulo fecha">
-            <CalendarDays size={20} className="reservar-local-bloque-icono" color='var(--yellow-color)'/>
-            Fecha
-          </h2>
-          <p className="reservar-local-texto">Escoja un dia disponible</p>
-          <div className="reservar-local-fecha-container">
-            <SelectorFecha
-              fechas={fechasDisponibles}
-              fechaSeleccionada={fechaReserva}
-              onSeleccionar={setFechaSeleccionada}
-            />
-          </div>
-          <div className="reservar-local-horarios-container">
-            <p className="reservar-local-texto">
-              Seleccione la hora que desea reservar
-            </p>
-            <div className="reservar-local-horarios-container-divs">
-              <SelectorHorario
-                horarios={horariosDisponibles}
-                horarioSeleccionado={horarioSeleccionado}
-                onSeleccionar={setHorarioSeleccionado}
-              />
-            </div>
-          </div>
-        </section>
+        </ul>
+      </BloqueReserva>
 
-        <div className="reservar-local-info-container">
-          <h2 className="reservar-local-bloque-titulo">
-            <Info size={20} className="reservar-local-bloque-icono" />
-            Detalles de la reserva
-          </h2>
-          <div className="reservar-local-info-container-divs">
-            <div className="reservar-local-info-container-div">
-              <p className="reservar-local-texto-nombre">Servicios: </p>
-              <p className="reservar-local-texto-valor-fecha">
-                {serviciosElegidos.length > 0
-                  ? `${serviciosElegidos.length} seleccionado${serviciosElegidos.length > 1 ? 's' : ''}`
-                  : '—'}
-              </p>
-            </div>
-            <div className="reservar-local-info-container-div">
-              <p className="reservar-local-texto-nombre">Profesional: </p>
-              <p className="reservar-local-texto-valor-fecha">
-                {profesionales.find((p) => p.id === profesionalSeleccionado)?.name ?? '—'}
-              </p>
-            </div>
-            <div className="reservar-local-info-container-div">
-              <p className="reservar-local-texto-nombre">Fecha: </p>
-              <p className="reservar-local-texto-valor-fecha">
-                {formatearFechaReserva(fechaReserva, horarioSeleccionado)}
-              </p>
-            </div>
-             <div className="reservar-local-info-container-div">
-              <p className="reservar-local-texto-nombre">Demora: </p>
-              <p className="reservar-local-texto-valor-fecha">
-                {formatearDemora(demoraTotalMinutos)}
-              </p>
-            </div>
-            <div className="reservar-local-info-container-div">
-              <p className="reservar-local-texto-nombre">Coste: </p>
-              <p className="reservar-local-texto-valor-coste">
-                {formatearPrecio(precioTotal)}
-              </p>
-            </div>
-            
-          </div>  
+      <BloqueReserva
+        anclaRef={refProfesional}
+        numero={2}
+        icono={UserRound}
+        titulo="Profesional"
+        descripcion={
+          hechos.servicios
+            ? 'Estos pueden hacerte todo lo que marcaste.'
+            : 'Marca primero los servicios y te decimos quién puede hacerlos.'
+        }
+        hecho={hechos.profesional}
+        activo={pasoActivo === 1}
+        vacio={
+          /* El aviso de "nadie hace todos esos servicios" solo tiene sentido si
+             el usuario YA marcó algo. Antes salía también con la lista vacía,
+             mandándote a quitar un servicio que nunca pusiste. */
+          !hechos.servicios ? (
+            <VacioReserva
+              icono={Scissors}
+              titulo="Primero los servicios"
+              texto="Cuando marques lo que quieres, aquí salen quienes lo hacen."
+            />
+          ) : profesionales.length === 0 ? (
+            <VacioReserva
+              icono={UsersRound}
+              titulo="Nadie hace todo eso en una sola cita"
+              texto="Prueba a quitar alguno de los servicios y vuelve a mirar."
+            />
+          ) : null
+        }
+      >
+        <div className="reserva-pros">
+          {profesionales.map((pro) => (
+            <SelectPro
+              key={pro.id}
+              name={pro.name}
+              url={pro.url}
+              points={pro.points}
+              seleccionado={pro.id === profesionalSeleccionado}
+              onClick={(e) => {
+                setProfesionalSeleccionado((prev) => (prev === pro.id ? null : pro.id))
+                e.currentTarget.scrollIntoView({
+                  behavior: 'smooth',
+                  inline: 'center',
+                  block: 'nearest',
+                })
+              }}
+            />
+          ))}
         </div>
-        <button
-            type="button"
-            className="reservar-local-boton"
-            disabled={
-              serviciosSeleccionados.length === 0 ||
-              !horarioSeleccionado ||
-              !profesionalSeleccionado
-            }
-            onClick={handleConfirmarReserva}
-          >
-            Confirmar cita
-          </button>
-      </div>
-      
-    </section>
+      </BloqueReserva>
+
+      <BloqueReserva
+        anclaRef={refFecha}
+        numero={3}
+        icono={CalendarDays}
+        titulo="Día y hora"
+        descripcion="Solo te mostramos los días en que abren y con hueco libre."
+        hecho={hechos.fecha}
+        activo={pasoActivo === 2}
+      >
+        <PasoFechaHora
+          agenda={reserva.agenda}
+          dia={reserva.dia}
+          horario={reserva.horario}
+          onFecha={reserva.elegirFecha}
+          onHora={reserva.setHorario}
+        />
+      </BloqueReserva>
+
+      <BloqueReserva numero={4} titulo="Resumen" hecho={todoListo} activo={todoListo}>
+        <ResumenReserva
+          filas={[
+            {
+              etiqueta: 'Servicios',
+              valor: serviciosElegidos.length
+                ? serviciosElegidos.map((s) => s.nombre).join(', ')
+                : null,
+            },
+            { etiqueta: 'Profesional', valor: proElegido?.name ?? null },
+            { etiqueta: 'Cuándo', valor: fechaTexto },
+            { etiqueta: 'Demora', valor: formatearDemora(demoraMinutos) },
+            {
+              etiqueta: 'Total',
+              /* Sin nada marcado no decimos GRATIS: decimos que falta elegir. */
+              valor: serviciosElegidos.length ? formatearPrecio(precioTotal) : '—',
+              fuerte: true,
+            },
+          ]}
+        />
+      </BloqueReserva>
+    </ReservaShell>
   )
 }
 

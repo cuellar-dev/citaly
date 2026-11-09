@@ -1,0 +1,66 @@
+/* Lista de tarjetas de cita: una columna centrada con scroll propio.
+   Lo único que se mueve es el scrollTop. */
+
+.lista-citas {
+  /* flex:1 + min-height:0 dentro de .citas--lista: sin el min-height la lista
+     crece con las tarjetas, no se desborda nunca y el scroll se iría a la
+     página en vez de quedarse aquí. */
+  flex: 1 1 auto;
+  min-height: 0;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 10px 2px 24px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  /* Suaviza los saltos de teclado y los programáticos; el dedo y la rueda ya
+     son suaves de por sí. */
+  scroll-behavior: smooth;
+  /* Proximity y no mandatory: el dedo puede parar entre dos tarjetas sin tirones. */
+  scroll-snap-type: y proximity;
+  scroll-padding-top: 10px;
+  /* La tarjeta se desvanece al entrar y al salir, sin corte duro. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 20px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 20px), transparent 100%);
+  scrollbar-width: none;
+}
+
+.lista-citas::-webkit-scrollbar {
+  display: none;
+}
+
+.lista-citas:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--citas-accent, #00c2ad) 70%, transparent);
+  outline-offset: 2px;
+  border-radius: 14px;
+}
+
+.lista-citas-item {
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-margin-top: 10px;
+}
+
+@media (min-width: 720px) {
+  .lista-citas {
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 360px) {
+  .lista-citas {
+    gap: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lista-citas {
+    scroll-behavior: auto;
+  }
+}

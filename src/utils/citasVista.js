@@ -13,10 +13,19 @@ export function esCitaPasada(cita, ahora = new Date()) {
 }
 
 export function formatearFechaCita(cita) {
+  const { diaTexto, horaTexto } = partesFechaCita(cita)
+  return `${diaTexto}, ${horaTexto}`
+}
+
+/** Día y hora por separado: la tarjeta los pinta en dos líneas. */
+export function partesFechaCita(cita) {
   const fecha = fechaHoraCita(cita)
   const etiqueta = format(fecha, "EEE'-'dd", { locale: es })
-  const hora = format(fecha, 'h:mm a', { locale: es })
-  return `${etiqueta.charAt(0).toUpperCase()}${etiqueta.slice(1)}, ${hora}`
+  return {
+    diaTexto: `${etiqueta.charAt(0).toUpperCase()}${etiqueta.slice(1)}`,
+    horaTexto: format(fecha, 'h:mm a', { locale: es }),
+    mesTexto: format(fecha, 'MMM', { locale: es }),
+  }
 }
 
 export function fechaHoraDesdeCita(cita, diaReferencia = new Date()) {
@@ -49,7 +58,14 @@ export function textoEnCita(cita, ahora = new Date()) {
 }
 
 export function textoEstadoCita(cita, ahora = new Date()) {
-  if (cita.estadoReserva === 3) return 'Cancelada'
+  /* No repetimos "Cancelada": eso ya lo dice la píldora de estado. Aquí se
+     cuenta QUIÉN la canceló, que es el dato que falta. */
+  if (cita.estadoReserva === 3) {
+    if (cita.canceladaPor === 'cliente') return 'La soltaste tú'
+    if (cita.canceladaPor === 'tiempo') return 'Se venció el plazo'
+    if (cita.canceladaPor === 'local') return 'La soltó el local'
+    return 'Ya no cuenta'
+  }
   const minutos = minutosHastaCita(cita, ahora)
   if (minutos < 0) return 'Ya pasó'
   if (minutos < 60) return `Quedan ${minutos} min`
@@ -82,6 +98,7 @@ export function propsDesdeCita(cita) {
     wasa: digitosWhatsApp(local?.whatsapp),
     telefono: local?.telefono || '',
     fechaTexto: formatearFechaCita(cita),
+    ...partesFechaCita(cita),
     estadoTexto: textoEstadoCita(cita),
     estadoReserva: cita.estadoReserva ?? 0,
     mapsHref: local?.direccion
@@ -93,6 +110,10 @@ export function propsDesdeCita(cita) {
     const precio = cita.precioReserva ?? 0
     return {
       ...base,
+      /* Reserva de grupo: no hay mesa concreta, las juntan en el local. */
+      grupoGrande: cita.grupoGrande === true,
+      minimoPersonas: cita.minimoPersonas ?? null,
+      personas: cita.personas ?? null,
       mesaId: cita.mesa?.id,
       mesaCodigo: cita.mesa?.codigo,
       mesaUbicacion: cita.mesa?.ubicacion,

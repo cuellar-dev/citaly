@@ -1,0 +1,75 @@
+/* Sello de goma de la tarjeta de cita. Hereda el color por currentColor:
+   quien lo coloca (.tarjeta-cita) decide el tono con color: var(--tono). */
+
+.sello-cita {
+  width: 56px;
+  height: 56px;
+  overflow: visible;
+  /* Girado a pulso, como un sello mal puesto. */
+  transform: rotate(-11deg);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.sello-cita-trazo {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sello-cita-trazo--grueso {
+  stroke-width: 4.4;
+}
+
+.sello-cita-anillo {
+  stroke-width: 2.6;
+}
+
+/* La tinta no agarra por igual: el anillo interior va discontinuo. */
+.sello-cita-anillo-interior {
+  stroke-width: 1.2;
+  stroke-dasharray: 9 5 14 4 7 6;
+  opacity: 0.75;
+}
+
+.sello-cita-motas circle {
+  fill: currentColor;
+  opacity: 0.55;
+}
+
+/* ---------- Sello "YA FUE" de las citas cuya fecha ya pasó ---------- */
+
+.sello-cita--pasada {
+  width: 94px;
+  height: 36px;
+  transform: rotate(-12deg);
+  opacity: 0.5;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.sello-cita-marco {
+  stroke-width: 2.4;
+  stroke-dasharray: 16 4 26 5 12 4;
+}
+
+.sello-cita-palabra {
+  fill: currentColor;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+@media (max-width: 360px) {
+  .sello-cita {
+    width: 46px;
+    height: 46px;
+  }
+
+  .sello-cita--pasada {
+    width: 84px;
+    height: 32px;
+  }
+}

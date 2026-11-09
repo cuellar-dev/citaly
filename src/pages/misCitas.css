@@ -29,8 +29,8 @@
 }
 
 /* Con citas: la sección ocupa exactamente la pantalla menos header y navbar,
-   y la escena POS (RolloRecibos) se estira para llenar el resto. */
-.citas--recibo {
+   y la lista de tarjetas se estira para llenar el resto con su propio scroll. */
+.citas--lista {
   --citas-cromo: 150px; /* header + navbar, misma cifra que el estado vacío */
   position: relative;
   isolation: isolate; /* sin overflow:hidden aquí: rompería el sticky del switch */
@@ -39,16 +39,11 @@
   justify-content: flex-start;
   gap: 14px;
   padding: 14px 12px 10px;
-  /* Vignette cálido de toda la sección: es la luz de la cámara, por eso no se mueve con el rollo. */
-  background: radial-gradient(120% 85% at 50% 60%, #2b241e 0%, #17171a 46%, #0d0d0e 100%);
-}
-
-.citas--recibo .switch-color-container {
-  z-index: 40; /* por encima del fondo con paralaje */
+  background: var(--background-color, #121413);
 }
 
 @media (max-width: 360px) {
-  .citas--recibo {
+  .citas--lista {
     padding: 12px 8px 8px;
   }
 }

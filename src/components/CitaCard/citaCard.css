@@ -1,385 +1,508 @@
-/* Segmento de recibo térmico (una cita) — vive dentro de .rollo-tira (RolloRecibos).
-   Solo estilo de "tinta sobre papel": los colores llegan por variables desde .pos-escena:
-   --papel, --tinta, --tinta-suave, --tinta-linea, --tinta-ok, --tinta-aviso, --tinta-mal.
-   Sin transforms 3D aquí: el contenido debe leerse igual si se quitan. */
+/* Tarjeta de cita del cliente. Mismo lenguaje que la agenda de Mi Negocio
+   (.cita-dueno) y que Mi Perfil: superficie #1E2221, radio 18, acento --tono
+   según el estado, horas en la tipografía drink y píldoras de 999px.
+   Nada se anima en bucle: el movimiento lo pone el scroll de la lista. */
 
-.recibo {
-  padding: 18px 18px 4px;
-  color: var(--tinta, #3a2e23);
-  font-size: 17px;
-  line-height: 1.35;
-  letter-spacing: 0.01em;
-}
+.tarjeta-cita {
+  /* Pendiente: ámbar, igual que .cita-dueno sin confirmar. */
+  --tono: var(--yellow-color, #ffd166);
 
-/* Opiniones/opiniones.css declara `* { font-family }` global: hay que fijar la fuente
-   en cada descendiente, no basta con heredarla. */
-.recibo,
-.recibo * {
-  font-family: var(--recibo-fuente, ui-monospace, monospace);
-}
-
-/* ---------- Encabezado ---------- */
-
-.recibo-encabezado {
-  text-align: center;
-}
-
-.recibo-marca {
-  margin: 0;
-  font-size: 15px;
-  letter-spacing: 0.3em;
-  color: var(--tinta-suave, #6e5e4c);
-}
-
-.recibo-lugar {
-  margin: 6px 0 2px;
-  font-size: 26px;
-  font-weight: 400;
-  line-height: 1.05;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  overflow-wrap: anywhere;
-  min-width: 0;
-}
-
-.recibo-tipo {
-  margin: 0;
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--tinta-suave, #6e5e4c);
-}
-
-/* ---------- Separadores ---------- */
-
-.recibo-sep {
-  border: 0;
-  border-top: 1px dashed var(--tinta-linea, #a89a84);
-  margin: 10px 0;
-}
-
-.recibo-sep--doble {
-  border-top: 3px double var(--tinta-linea, #a89a84);
-}
-
-/* ---------- Filas etiqueta / valor ---------- */
-
-.recibo-filas {
-  margin: 0;
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 12px;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 16px 16px 14px;
+  border: 1px solid rgba(240, 240, 240, 0.09);
+  border-radius: 18px;
+  background: var(--background-color-secondary, #1e2221);
+  box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.7);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
 }
 
-.recibo-fila {
+.tarjeta-cita--porTi {
+  --tono: var(--primary-color, #00c2ad);
+}
+
+.tarjeta-cita--confirmada {
+  --tono: var(--primary-color, #00c2ad);
+}
+
+.tarjeta-cita--cancelada {
+  --tono: var(--close-color, #c53f3f);
+}
+
+/* La cita más cercana se destaca con el mismo recurso que .cita-dueno--destacada:
+   un halo lateral y un filo del tono, sin animación. */
+.tarjeta-cita--proxima {
+  margin-top: 28px;
+  background:
+    radial-gradient(
+      120% 120% at 0% 0%,
+      color-mix(in srgb, var(--tono) 12%, transparent) 0%,
+      transparent 68%
+    ),
+    var(--background-color-secondary, #1e2221);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--tono) 26%, transparent),
+    0 12px 28px -14px rgba(0, 0, 0, 0.75);
+}
+
+/* Las pasadas pierden fuerza: la tinta se apaga, como el archivo del recibo. */
+.tarjeta-cita--pasada {
+  background: color-mix(in srgb, var(--background-color-secondary, #1e2221) 72%, transparent);
+  box-shadow: none;
+}
+
+.tarjeta-cita--pasada .tarjeta-cita-lugar,
+.tarjeta-cita--pasada .tarjeta-cita-cuando time {
+  color: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 62%, transparent);
+}
+
+.tarjeta-cita--cancelada .tarjeta-cita-lugar {
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--close-color, #c53f3f) 65%, transparent);
+}
+
+/* ---------- Taly asomando (solo en la próxima) ---------- */
+
+/* El SVG de Taly trae width:100% en estilo en línea, así que el ancho real lo
+   decide esta caja; sin ancho propio se estiraría a toda la tarjeta. */
+.tarjeta-cita-taly {
+  position: absolute;
+  top: -27px;
+  right: 16px;
+  z-index: 2;
+  width: 56px;
+  pointer-events: none;
+}
+
+/* ---------- Cabecera: lugar a la izquierda, hora a la derecha ---------- */
+
+.tarjeta-cita-cabecera {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 14px;
-}
-
-.recibo-fila dt {
-  flex: 0 0 auto;
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--tinta-suave, #6e5e4c);
-}
-
-.recibo-fila dd {
-  margin: 0;
-  min-width: 0;
-  text-align: right;
-  overflow-wrap: anywhere;
-}
-
-.recibo-fila--grande dd {
-  font-size: 22px;
-  line-height: 1.1;
-}
-
-.recibo-lista {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.recibo-lista li {
-  display: flex;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
 }
 
-.recibo-lista-precio {
-  flex: 0 0 auto;
+.tarjeta-cita-identidad {
+  min-width: 0;
 }
 
-.recibo-nota {
-  margin: 6px 0 0;
-  font-size: 14px;
-  letter-spacing: 0.04em;
-  text-align: center;
-  color: var(--tinta-suave, #6e5e4c);
+.tarjeta-cita-tipo {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--tono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-/* ---------- Estado de la reserva (los 4 estados, pasados a tinta) ---------- */
+.tarjeta-cita-lugar {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-.recibo-estado {
+.tarjeta-cita-cuando {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.tarjeta-cita-cuando time {
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.tarjeta-cita-cuando small {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  white-space: nowrap;
+}
+
+/* ---------- Fila de estado ---------- */
+
+.tarjeta-cita-estado {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tarjeta-cita-chip {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  min-height: 24px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--tono) 40%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--tono) 13%, transparent);
+  color: var(--tono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 
-.recibo-estado::before {
-  content: '';
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: currentColor;
-  flex: 0 0 auto;
+.tarjeta-cita-falta {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
-.recibo-estado--ok {
-  color: var(--tinta-ok, #1a6a5c);
+/* ---------- Datos en dos columnas (como .cita-dueno-datos) ---------- */
+
+.tarjeta-cita-datos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px 14px;
+  margin: 0;
+  padding: 2px 0;
+  border-top: 1px solid rgba(240, 240, 240, 0.07);
+  padding-top: 12px;
 }
 
-.recibo-estado--aviso {
-  color: var(--tinta-aviso, #8a6512);
+.tarjeta-cita-dato--ancho {
+  grid-column: 1 / -1;
 }
 
-.recibo-estado--mal {
-  color: var(--tinta-mal, #8f2c2c);
+.tarjeta-cita-datos dt {
+  margin-bottom: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 80%, transparent);
 }
 
-.recibo-estado--mal::before {
-  background: transparent;
-  box-shadow: inset 0 0 0 2px currentColor;
+.tarjeta-cita-datos dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
 }
 
-/* ---------- Mapa de mesas como impresión térmica ---------- */
+/* ---------- Lista de servicios ---------- */
 
-.recibo-mapa {
-  margin: 12px -6px 4px;
+.tarjeta-cita-lista {
+  margin: 0;
+  padding: 12px 0 0;
+  border-top: 1px solid rgba(240, 240, 240, 0.07);
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.recibo-mapa .mapa-mesas-svg {
+.tarjeta-cita-lista li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.tarjeta-cita-lista-nombre {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tarjeta-cita-lista-precio {
+  flex-shrink: 0;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Aviso de reserva de grupo: no hay mesa, la juntan en el local. */
+.tarjeta-cita-grupo {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px dashed color-mix(in srgb, var(--yellow-color, #ffd166) 34%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 7%, transparent);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.tarjeta-cita-grupo svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--yellow-color, #ffd166);
+}
+
+/* ---------- Plano de mesas ---------- */
+
+.tarjeta-cita-mapa {
+  padding: 10px;
+  border: 1px solid rgba(240, 240, 240, 0.07);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--background-color, #121413) 70%, transparent);
+}
+
+.tarjeta-cita-mapa .mapa-mesas-svg {
+  display: block;
   width: 100%;
   height: auto;
-  display: block;
 }
 
-.recibo-mapa .mapa-fondo {
+.tarjeta-cita-mapa .mapa-fondo {
   fill: transparent;
 }
 
-.recibo-mapa .mapa-detalle {
-  fill: var(--tinta-suave, #6e5e4c);
+.tarjeta-cita-mapa .mapa-detalle {
+  fill: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 35%, transparent);
 }
 
-.recibo-mapa .mapa-detalle-borde {
+.tarjeta-cita-mapa .mapa-detalle-borde {
   fill: transparent;
-  stroke: var(--tinta-suave, #6e5e4c);
+  stroke: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 35%, transparent);
   stroke-width: 1;
 }
 
-.recibo-mapa .mesa .mesa-forma {
+.tarjeta-cita-mapa .mesa .mesa-forma {
   fill: transparent;
-  stroke: var(--tinta-suave, #6e5e4c);
+  stroke: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 45%, transparent);
   stroke-width: 1.1;
   transition: none;
 }
 
-.recibo-mapa .mesa--ocupado .mesa-forma {
+.tarjeta-cita-mapa .mesa--ocupado .mesa-forma {
   stroke-dasharray: 2.5 2;
   opacity: 0.7;
 }
 
-.recibo-mapa .mesa .mesa-etiqueta {
-  fill: var(--tinta, #3a2e23);
+.tarjeta-cita-mapa .mesa .mesa-etiqueta {
+  fill: var(--fonts-color-primary-weak, #bdbaba);
 }
 
-.recibo-mapa .mesa--seleccionada .mesa-forma {
-  fill: var(--tinta, #3a2e23);
-  stroke: var(--tinta, #3a2e23);
+.tarjeta-cita-mapa .mesa--seleccionada .mesa-forma {
+  fill: var(--tono);
+  stroke: var(--tono);
   stroke-width: 1.5;
   stroke-dasharray: none;
   opacity: 1;
 }
 
-.recibo-mapa .mesa--seleccionada .mesa-etiqueta {
-  fill: var(--papel, #efe6d2);
+.tarjeta-cita-mapa .mesa--seleccionada .mesa-etiqueta {
+  fill: var(--fonts-color-secondary, #121413);
 }
 
-/* ---------- Línea de corte + talón recortable ---------- */
+/* ---------- Total + sello ---------- */
 
-.recibo-corte {
+.tarjeta-cita-total {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 12px -18px 10px;
-  padding: 0 10px;
-  color: var(--tinta-linea, #a89a84);
-  font-size: 13px;
-  letter-spacing: 0.28em;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(240, 240, 240, 0.07);
+}
+
+.tarjeta-cita-total-cifra {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.tarjeta-cita-total-cifra span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 80%, transparent);
+}
+
+.tarjeta-cita-total-cifra strong {
+  color: var(--primary-color, #00c2ad);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 19px;
+  font-weight: 600;
   line-height: 1;
 }
 
-.recibo-corte::before,
-.recibo-corte::after {
-  content: '';
-  flex: 1;
-  border-top: 1px dashed currentColor;
+.tarjeta-cita--pasada .tarjeta-cita-total-cifra strong,
+.tarjeta-cita--cancelada .tarjeta-cita-total-cifra strong {
+  color: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 55%, transparent);
 }
 
-.recibo-corte-tijera {
-  flex: 0 0 auto;
-}
-
-.recibo-talon {
+.tarjeta-cita-sello {
+  flex-shrink: 0;
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  /* El sello toma el tono del estado; el de "VIVIDA" se tiñe él mismo. */
+  color: var(--tono);
 }
 
-/* Talón de una cita pasada o cancelada: sin acciones; el hueco se deja en blanco. */
-.recibo-archivo {
-  padding-bottom: 72px;
-}
+/* ---------- Acciones ---------- */
 
-.recibo-archivo-hueco {
-  min-height: 60px;
-}
-
-.recibo-archivo-nota {
-  margin: 0 0 4px;
-  text-align: center;
-  font-size: 14px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--tinta-suave, #6e5e4c);
-}
-
-.recibo-botones {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+.tarjeta-cita-botones {
+  display: flex;
+  align-items: center;
   gap: 10px;
 }
 
-.recibo-botones--cartel {
-  grid-template-columns: minmax(0, 1fr);
+.tarjeta-cita-nota {
+  flex: 1;
+  margin: 0;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
-.recibo-boton--cartel {
-  margin: 0;
+.tarjeta-cita-boton {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.tarjeta-cita-boton:active {
+  transform: scale(0.96);
+}
+
+.tarjeta-cita-boton--primario {
+  flex: 1;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  box-shadow: 0 6px 16px -8px color-mix(in srgb, var(--primary-color, #00c2ad) 90%, transparent);
+}
+
+.tarjeta-cita-boton--cancelar {
+  border: 1px solid color-mix(in srgb, var(--close-color, #c53f3f) 40%, transparent);
+  background: color-mix(in srgb, var(--close-color, #c53f3f) 10%, transparent);
+  color: #e06a6a;
+}
+
+.tarjeta-cita-cartel {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: default;
-  pointer-events: none;
+  min-height: 40px;
+  margin: 0;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: center;
 }
 
-.recibo-boton--cartel:active {
-  transform: none;
+.tarjeta-cita-cartel--primario {
+  border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 35%, transparent);
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 11%, transparent);
+  color: var(--primary-color, #00c2ad);
 }
 
-.recibo-boton {
-  font: inherit;
-  font-size: 16px;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  min-height: 46px;
-  padding: 12px 6px;
-  border-radius: 3px;
-  border: 1.5px solid var(--tinta, #3a2e23);
-  background: transparent;
-  color: var(--tinta, #3a2e23);
-  cursor: pointer;
-  transition: transform 0.15s ease, opacity 0.15s ease;
+.tarjeta-cita-cartel--cancelar {
+  border: 1px solid color-mix(in srgb, var(--close-color, #c53f3f) 32%, transparent);
+  background: color-mix(in srgb, var(--close-color, #c53f3f) 9%, transparent);
+  color: #e06a6a;
 }
 
-.recibo-boton:active {
-  transform: scale(0.97);
+/* ---------- Píldoras de contacto (como .cita-dueno-enlace) ---------- */
+
+/* Columnas automáticas de ancho igual: los tres (o dos, si no hay mapa) caben
+   siempre en un renglón y se reparten el ancho de la tarjeta. */
+.tarjeta-cita-enlaces {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 7px;
 }
 
-.recibo-boton--primario {
-  background: var(--tinta, #3a2e23);
-  color: var(--papel, #efe6d2);
-}
-
-.recibo-boton--cancelar {
-  color: var(--tinta-mal, #8f2c2c);
-  border-color: var(--tinta-mal, #8f2c2c);
-}
-
-.recibo-enlaces {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.recibo-enlace {
-  flex: 1 1 0;
-  min-width: 0;
-  min-height: 44px;
+.tarjeta-cita-enlace {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 6px;
-  border: 1px dashed var(--tinta-linea, #a89a84);
-  border-radius: 3px;
-  color: var(--tinta, #3a2e23);
+  gap: 5px;
+  min-width: 0;
+  min-height: 36px;
+  padding: 0 8px;
+  border: 1px solid rgba(240, 240, 240, 0.1);
+  border-radius: 999px;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-size: 12px;
+  font-weight: 700;
   text-decoration: none;
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
   white-space: nowrap;
 }
 
-.recibo-enlace:focus-visible,
-.recibo-boton:focus-visible {
-  outline: 2px solid var(--tinta, #3a2e23);
+.tarjeta-cita-enlace svg {
+  flex-shrink: 0;
+}
+
+.tarjeta-cita-enlace span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tarjeta-cita-boton:focus-visible,
+.tarjeta-cita-enlace:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
   outline-offset: 2px;
 }
 
-/* Papel estrecho (320–360px): botones apilados, enlaces solo icono. Nada se recorta ni parte en dos líneas. */
+/* ---------- Móvil estrecho ---------- */
+
 @media (max-width: 360px) {
-  .recibo {
-    padding-left: 14px;
-    padding-right: 14px;
+  .tarjeta-cita {
+    padding: 14px 13px 12px;
+    gap: 10px;
   }
 
-  .recibo-corte {
-    margin-left: -14px;
-    margin-right: -14px;
+  .tarjeta-cita-lugar {
+    font-size: 16px;
   }
 
-  .recibo-botones {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 8px;
+  .tarjeta-cita-cuando time {
+    font-size: 18px;
   }
 
-  .recibo-enlace span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
+  .tarjeta-cita-datos {
+    gap: 10px 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tarjeta-cita-boton {
+    transition: none;
   }
 
-  .recibo-enlace {
-    position: relative;
-    gap: 0;
+  .tarjeta-cita-boton:active {
+    transform: none;
   }
 }

@@ -1,0 +1,247 @@
+/* Guía de pasos pegada arriba. Mismo idioma que Mi Negocio: superficie #1E2221,
+   acento teal, horas y números en la tipografía drink. */
+
+.guia-reserva {
+  --marca: 30px;
+
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 14px 0;
+  /* Fondo SIEMPRE opaco. El de antes era transparente por defecto y solo se
+     pintaba al añadir una clase, así que el contenido se veía por detrás. */
+  background: var(--background-color, #121413);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.guia-reserva--pegada {
+  border-bottom-color: rgba(240, 240, 240, 0.08);
+}
+
+/* El difuminado de abajo: del fondo opaco a transparente, para que lo que pasa
+   por detrás se desvanezca en vez de cortarse de golpe contra el borde. */
+.guia-reserva::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 22px;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--background-color, #121413) 0%,
+    color-mix(in srgb, var(--background-color, #121413) 55%, transparent) 55%,
+    transparent 100%
+  );
+  transition: opacity 0.25s ease;
+}
+
+.guia-reserva--pegada::after {
+  opacity: 1;
+}
+
+/* ---------- Los pasos y el raíl que los une ---------- */
+
+.guia-reserva-pasos {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.guia-reserva-paso {
+  position: relative;
+  min-width: 0;
+}
+
+/* Raíl: una línea a la altura del centro de la marca. La marca lleva fondo
+   propio, así que corta la línea y quedan los segmentos. */
+.guia-reserva-paso::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--marca) / 2);
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(240, 240, 240, 0.1);
+}
+
+.guia-reserva-paso:first-child::before {
+  left: 50%;
+}
+
+.guia-reserva-paso:last-child::before {
+  right: 50%;
+}
+
+.guia-reserva-paso--hecho::before {
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 55%, transparent);
+}
+
+.guia-reserva-boton {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 0 2px 2px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  cursor: pointer;
+}
+
+.guia-reserva-boton:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+.guia-reserva-marca {
+  display: grid;
+  place-items: center;
+  width: var(--marca);
+  height: var(--marca);
+  border-radius: 50%;
+  /* El fondo es el de la barra: así el raíl pasa por detrás y queda cortado. */
+  background: var(--background-color, #121413);
+  box-shadow: inset 0 0 0 2px rgba(240, 240, 240, 0.14);
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, color 0.25s ease;
+}
+
+.guia-reserva-paso--hecho .guia-reserva-marca {
+  background: var(--primary-color, #00c2ad);
+  box-shadow: none;
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.guia-reserva-paso--ahora .guia-reserva-marca {
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 15%, var(--background-color, #121413));
+  box-shadow:
+    inset 0 0 0 2px var(--primary-color, #00c2ad),
+    0 0 0 4px color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent);
+  color: var(--primary-color, #00c2ad);
+}
+
+.guia-reserva-label {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  transition: color 0.25s ease;
+}
+
+.guia-reserva-paso--ahora .guia-reserva-label {
+  color: var(--primary-color, #00c2ad);
+}
+
+.guia-reserva-paso--hecho .guia-reserva-label {
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.guia-reserva-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Pie: qué falta, o lo ya elegido ---------- */
+
+.guia-reserva-pie {
+  display: flex;
+  justify-content: center;
+  min-height: 26px;
+  margin: 8px 0 0;
+}
+
+.guia-reserva-mensaje {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.guia-reserva-resumen {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+.guia-reserva-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 0 9px;
+  border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 28%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 10%, transparent);
+  color: var(--primary-color, #00c2ad);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ---------- Barra de progreso ---------- */
+
+.guia-reserva-barra {
+  height: 2px;
+  margin-top: 10px;
+  border-radius: 2px;
+  background: rgba(240, 240, 240, 0.07);
+  overflow: hidden;
+}
+
+.guia-reserva-barra-relleno {
+  display: block;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color, #00c2ad),
+    var(--primary-color-strong, #06dfc9)
+  );
+  transition: width 0.45s ease;
+}
+
+@media (max-width: 360px) {
+  .guia-reserva {
+    --marca: 27px;
+    padding: 10px 10px 0;
+  }
+
+  .guia-reserva-label {
+    font-size: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guia-reserva-barra-relleno,
+  .guia-reserva-marca,
+  .guia-reserva-label {
+    transition: none;
+  }
+}

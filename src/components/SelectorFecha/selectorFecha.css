@@ -1,67 +1,102 @@
-.selector-fecha-scroll {
+/* Tira de días. Un día sin huecos se apaga en vez de dejarse elegir. */
+
+.selector-fecha-container {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+  padding: 2px;
   overflow-x: auto;
-  padding: 12px 4px;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   scrollbar-width: none;
 }
 
-.selector-fecha-scroll::-webkit-scrollbar {
+.selector-fecha-container::-webkit-scrollbar {
   display: none;
 }
 
 .selector-fecha-item {
   flex: 0 0 auto;
   scroll-snap-align: center;
-  width: 58px;
-  padding: 10px 8px;
-  border: none;
-  border-radius: 12px;
-  background-color: var(--background-color-another);
-  color: var(--fonts-color-primary-weak);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  /* Con menos aire los tres renglones (día, número, mes) se veían ahorcados. */
+  gap: 5px;
+  width: 62px;
+  min-height: 86px;
+  justify-content: center;
+  padding: 13px 4px 12px;
+  border: 1px solid rgba(240, 240, 240, 0.09);
+  border-radius: 16px;
+  background: var(--background-color, #121413);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
   cursor: pointer;
-  transform: scale(0.9);
-  transition: transform 0.25s ease, background-color 0.25s ease, color 0.25s ease;
+  transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.selector-fecha-item--activa {
-  background-color:
-      color-mix(in srgb, var(--yellow-color) 85%, transparent);
-  color: var(--fonts-color-secondary);
-  transform: scale(1.08);
+.selector-fecha-item:active {
+  transform: scale(0.95);
 }
 
-.selector-fecha-mes,
 .selector-fecha-semana {
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
 .selector-fecha-dia {
-  font-size: 20px;
-  font-weight: bold;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 23px;
+  font-weight: 600;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
 }
 
-.selector-fecha-item--activa .selector-fecha-dia {
-  font-size: 24px;
+.selector-fecha-mes {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 75%, transparent);
 }
+
+.selector-fecha-item--activa {
+  border-color: transparent;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  box-shadow: 0 8px 18px -10px color-mix(in srgb, var(--primary-color, #00c2ad) 90%, transparent);
+}
+
 .selector-fecha-item--activa .selector-fecha-semana,
 .selector-fecha-item--activa .selector-fecha-mes {
-  font-weight: bold;
+  color: color-mix(in srgb, var(--fonts-color-secondary, #121413) 72%, transparent);
 }
-.selector-fecha-container{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  gap: 12px;
-  padding: 20px 4px;
-  padding-top: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
+
+/* Día abierto pero sin una sola hora libre: se ve, no se puede coger. */
+.selector-fecha-item--llena {
+  opacity: 0.32;
+  cursor: not-allowed;
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 60%, transparent);
+}
+
+.selector-fecha-item--llena:active {
+  transform: none;
+}
+
+.selector-fecha-item:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .selector-fecha-item {
+    transition: none;
+  }
+
+  .selector-fecha-item:active {
+    transform: none;
+  }
 }
