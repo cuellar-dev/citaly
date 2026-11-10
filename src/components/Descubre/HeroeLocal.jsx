@@ -59,8 +59,9 @@ function HeroeLocal({ local, etiqueta = 'El de hoy' }) {
             </ul>
           ) : null}
         </div>
+        <BotonFavorito id={local.id} className="heroe-local-favorito" />
+
       </Link>
-      <BotonFavorito id={local.id} className="heroe-local-favorito" />
     </article>
   )
 }

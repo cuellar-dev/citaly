@@ -34,7 +34,7 @@
   gap: 12px;
   /* Los márgenes negativos sangran la pista hasta el borde de la pantalla:
      la tarjeta cortada del final se ve y se entiende que hay más. */
-  margin: 0 -18px;
+
   padding: 2px 18px 4px;
   overflow-x: auto;
   scroll-snap-type: x proximity;

@@ -15,23 +15,54 @@
     "horarioApertura": "10:00",
     "horarioCierre": "21:00",
     "intervaloMinutos": 60,
-    "dias": ["m","x","j","v","s","d"],
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
     "points": "4.3",
     "direccion": "Kilo 12, Sancti Spiritus",
     "telefono": "+53 41 123456",
     "whatsapp": "+53 5 8123456",
     "descripcion": "Restaurante familiar con comida criolla, pastas y opciones para llevar. Ambiente tranquilo cerca del kilo 12.",
-    "iconos" :[
-      {"id" : "wifi"},
-      {"id" : "parking"},
-      {"id" : "snow"}
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      }
     ],
     "opiniones": 4,
-    "lugar" : true,
+    "lugar": true,
     "servicios": [
-      { "id": "mesa-2", "nombre": "Mesa para 2", "precio": 0, "duracion": 120, "nota": "Consumo mínimo 800 CUP" },
-      { "id": "mesa-4", "nombre": "Mesa para 4", "precio": 0, "duracion": 120, "nota": "Consumo mínimo 1500 CUP" },
-      { "id": "reserva-evento", "nombre": "Reserva para evento", "precio": 2500, "duracion": 240, "nota": "Incluye decoración básica" }
+      {
+        "id": "mesa-2",
+        "nombre": "Mesa para 2",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 800 CUP"
+      },
+      {
+        "id": "mesa-4",
+        "nombre": "Mesa para 4",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 1500 CUP"
+      },
+      {
+        "id": "reserva-evento",
+        "nombre": "Reserva para evento",
+        "precio": 2500,
+        "duracion": 240,
+        "nota": "Incluye decoración básica"
+      }
     ],
     "comentarios": [
       {
@@ -84,25 +115,59 @@
     "horarioApertura": "09:00",
     "horarioCierre": "18:00",
     "intervaloMinutos": 90,
-    "dias": ["x","j","v","s","d"],
+    "dias": [
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
     "points": "4.3",
     "direccion": "Parque central, Cabaiguan",
     "telefono": "+53 41 654321",
     "whatsapp": "+53 5 8765432",
     "descripcion": "Peluquería unisex. Cortes, tintes, manicura y tratamientos capilares. Cita con o sin espera según disponibilidad.",
-    "iconos" :[
-      {"id" : "wifi"},
-      {"id" : "snow"},
-      {"id" : "cigarrete"},
-      {"id" : "transfer"}
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
     ],
     "opiniones": 4,
-    "lugar" : false,
+    "lugar": false,
     "servicios": [
-      { "id": "corte-caballero", "nombre": "Corte caballero", "precio": 300, "duracion": 30 },
-      { "id": "corte-dama", "nombre": "Corte dama", "precio": 450, "duracion": 45 },
-      { "id": "tinte", "nombre": "Tinte completo", "precio": 1200, "duracion": 120 },
-      { "id": "manicura", "nombre": "Manicura", "precio": 250, "duracion": 40 }
+      {
+        "id": "corte-caballero",
+        "nombre": "Corte caballero",
+        "precio": 300,
+        "duracion": 30
+      },
+      {
+        "id": "corte-dama",
+        "nombre": "Corte dama",
+        "precio": 450,
+        "duracion": 45
+      },
+      {
+        "id": "tinte",
+        "nombre": "Tinte completo",
+        "precio": 1200,
+        "duracion": 120
+      },
+      {
+        "id": "manicura",
+        "nombre": "Manicura",
+        "precio": 250,
+        "duracion": 40
+      }
     ],
     "profesionales": [
       {
@@ -110,28 +175,41 @@
         "usuarioId": "u-laura-mendez",
         "estado": "activo",
         "points": 4.8,
-        "servicios": ["corte-dama", "tinte"]
+        "servicios": [
+          "corte-dama",
+          "tinte"
+        ]
       },
       {
         "id": "pro-sara-2",
         "usuarioId": "u-carlos-ruiz",
         "estado": "activo",
         "points": 4.5,
-        "servicios": ["corte-caballero", "corte-dama"]
+        "servicios": [
+          "corte-caballero",
+          "corte-dama"
+        ]
       },
       {
         "id": "pro-sara-3",
         "usuarioId": "u-sofia-herrera",
         "estado": "activo",
         "points": 4.2,
-        "servicios": ["manicura", "corte-dama"]
+        "servicios": [
+          "manicura",
+          "corte-dama"
+        ]
       },
       {
         "id": "pro-sara-4",
         "usuarioId": "u-miguel-torres",
         "estado": "activo",
         "points": 3.9,
-        "servicios": ["corte-caballero", "tinte", "manicura"]
+        "servicios": [
+          "corte-caballero",
+          "tinte",
+          "manicura"
+        ]
       }
     ],
     "comentarios": [
@@ -190,20 +268,38 @@
     "horarioApertura": "18:00",
     "horarioCierre": "01:00",
     "intervaloMinutos": 60,
-    "dias": ["l","m","x","j","v","s","d"],
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
     "points": "3.8",
     "direccion": "Colon, Sancti Spiritus",
     "telefono": "+53 41 789012",
     "whatsapp": "+53 5 8978901",
     "descripcion": "Bar con música en vivo los fines de semana. Cócteles, cervezas importadas y picadera. Reserva mesa en horario pico.",
-    "iconos" :[
-      {"id" : "wifi"},
-      {"id" : "parking"},
-      {"id" : "snow"}
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      }
     ],
     "opiniones": 4,
-    "lugar" : true,
-    
+    "lugar": true,
+    "servicios": [
+      { "id": "mesa-estandar", "nombre": "Mesa estándar", "precio": 0, "duracion": 120, "nota": "Consumo mínimo 600 CUP" },
+      { "id": "mesa-vip", "nombre": "Mesa VIP", "precio": 0, "duracion": 150, "nota": "Consumo mínimo 1800 CUP" },
+      { "id": "reserva-grupo", "nombre": "Reserva de grupo", "precio": 0, "duracion": 180, "nota": "Consumo mínimo 3000 CUP" }
+    ],
     "comentarios": [
       {
         "id": "1",
@@ -236,6 +332,2947 @@
         "calificacion": 4,
         "comentario": "Reservamos y la mesa estaba lista. La picadera llegó rápido.",
         "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "grano-y-nube",
+    "localName": "Grano y Nube",
+    "categoria": "Cafetería",
+    "metros": "60",
+    "url": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "7AM - 8PM",
+    "horarioApertura": "07:00",
+    "horarioCierre": "20:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.7",
+    "direccion": "Centro, Sancti Spiritus",
+    "telefono": "+53 41 112271",
+    "whatsapp": "+53 5820797",
+    "descripcion": "Cafetería de especialidad con repostería casera y rincones tranquilos para trabajar o conversar.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": true,
+    "servicios": [
+      {
+        "id": "mesa-2",
+        "nombre": "Mesa para 2",
+        "precio": 0,
+        "duracion": 90,
+        "nota": "Consumo mínimo 300 CUP"
+      },
+      {
+        "id": "mesa-4",
+        "nombre": "Mesa para 4",
+        "precio": 0,
+        "duracion": 90,
+        "nota": "Consumo mínimo 600 CUP"
+      },
+      {
+        "id": "rincon-trabajo",
+        "nombre": "Rincón de trabajo",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Wifi y enchufe"
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "María Rodríguez",
+        "fecha": "2026-01-10",
+        "calificacion": 5,
+        "comentario": "El café de especialidad vale cada peso. Volví tres veces esta semana.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Carlos López",
+        "fecha": "2026-01-24",
+        "calificacion": 5,
+        "comentario": "Repostería fresca y buen wifi para trabajar un rato.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Ana García",
+        "fecha": "2026-02-07",
+        "calificacion": 4,
+        "comentario": "Ambiente tranquilo, aunque las mesas junto a la puerta son algo ruidosas.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "el-rincon-del-cafe",
+    "localName": "El Rincón del Café",
+    "categoria": "Cafetería",
+    "metros": "197",
+    "url": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "7AM - 8PM",
+    "horarioApertura": "07:00",
+    "horarioCierre": "20:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.3",
+    "direccion": "Kilo 12, Sancti Spiritus",
+    "telefono": "+53 41 114024",
+    "whatsapp": "+53 5823768",
+    "descripcion": "Cafetería de especialidad con repostería casera y rincones tranquilos para trabajar o conversar.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": true,
+    "servicios": [
+      {
+        "id": "mesa-2",
+        "nombre": "Mesa para 2",
+        "precio": 0,
+        "duracion": 90,
+        "nota": "Consumo mínimo 300 CUP"
+      },
+      {
+        "id": "mesa-4",
+        "nombre": "Mesa para 4",
+        "precio": 0,
+        "duracion": 90,
+        "nota": "Consumo mínimo 600 CUP"
+      },
+      {
+        "id": "rincon-trabajo",
+        "nombre": "Rincón de trabajo",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Wifi y enchufe"
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Jorge Martínez",
+        "fecha": "2026-01-24",
+        "calificacion": 5,
+        "comentario": "Repostería fresca y buen wifi para trabajar un rato.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Sofía Pérez",
+        "fecha": "2026-02-07",
+        "calificacion": 4,
+        "comentario": "Ambiente tranquilo, aunque las mesas junto a la puerta son algo ruidosas.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "David Sánchez",
+        "fecha": "2026-02-18",
+        "calificacion": 3,
+        "comentario": "Buen cortado, pero tardaron en atender cuando se llenó.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Luis Fernández",
+        "fecha": "2026-03-02",
+        "calificacion": 5,
+        "comentario": "El café de especialidad vale cada peso. Volví tres veces esta semana.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "cafe-del-parque",
+    "localName": "Café del Parque",
+    "categoria": "Cafetería",
+    "metros": "334",
+    "url": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "7AM - 8PM",
+    "horarioApertura": "07:00",
+    "horarioCierre": "20:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.0",
+    "direccion": "Parque central, Cabaiguan",
+    "telefono": "+53 41 115777",
+    "whatsapp": "+53 5826739",
+    "descripcion": "Cafetería de especialidad con repostería casera y rincones tranquilos para trabajar o conversar.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": true,
+    "servicios": [
+      {
+        "id": "mesa-2",
+        "nombre": "Mesa para 2",
+        "precio": 0,
+        "duracion": 90,
+        "nota": "Consumo mínimo 300 CUP"
+      },
+      {
+        "id": "mesa-4",
+        "nombre": "Mesa para 4",
+        "precio": 0,
+        "duracion": 90,
+        "nota": "Consumo mínimo 600 CUP"
+      },
+      {
+        "id": "rincon-trabajo",
+        "nombre": "Rincón de trabajo",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Wifi y enchufe"
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Luis Fernández",
+        "fecha": "2026-02-07",
+        "calificacion": 4,
+        "comentario": "Ambiente tranquilo, aunque las mesas junto a la puerta son algo ruidosas.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Carmen Díaz",
+        "fecha": "2026-02-18",
+        "calificacion": 3,
+        "comentario": "Buen cortado, pero tardaron en atender cuando se llenó.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Elena Ruiz",
+        "fecha": "2026-03-02",
+        "calificacion": 5,
+        "comentario": "El café de especialidad vale cada peso. Volví tres veces esta semana.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "sabor-criollo",
+    "localName": "Sabor Criollo",
+    "categoria": "Restaurante",
+    "metros": "471",
+    "url": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1592861956120-e524fc739696?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "10AM - 10PM",
+    "horarioApertura": "10:00",
+    "horarioCierre": "22:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.3",
+    "direccion": "Centro, Sancti Spiritus",
+    "telefono": "+53 41 117530",
+    "whatsapp": "+53 5829710",
+    "descripcion": "Cocina criolla e internacional en un ambiente familiar, con opciones para llevar y reservas para eventos.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": true,
+    "servicios": [
+      {
+        "id": "mesa-2",
+        "nombre": "Mesa para 2",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 800 CUP"
+      },
+      {
+        "id": "mesa-4",
+        "nombre": "Mesa para 4",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 1500 CUP"
+      },
+      {
+        "id": "mesa-6",
+        "nombre": "Mesa para 6",
+        "precio": 0,
+        "duracion": 150,
+        "nota": "Consumo mínimo 2200 CUP"
+      },
+      {
+        "id": "reserva-evento",
+        "nombre": "Reserva para evento",
+        "precio": 3000,
+        "duracion": 240,
+        "nota": "Incluye decoración básica"
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Lucas Herrera",
+        "fecha": "2026-02-18",
+        "calificacion": 3,
+        "comentario": "El lugar es bonito, pero el día que fui la pasta llegó tibia.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Yania Cruz",
+        "fecha": "2026-03-02",
+        "calificacion": 5,
+        "comentario": "La comida criolla salió de maravilla y la mesa estaba lista a la hora.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Omar Vidal",
+        "fecha": "2026-03-15",
+        "calificacion": 5,
+        "comentario": "Porciones generosas y atención rápida. Repetimos seguro.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Dayana Ruiz",
+        "fecha": "2026-03-28",
+        "calificacion": 4,
+        "comentario": "Rico todo, aunque el postre se demoró un poco.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "la-terraza-de-la-abuela",
+    "localName": "La Terraza de la Abuela",
+    "categoria": "Restaurante",
+    "metros": "608",
+    "url": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1592861956120-e524fc739696?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "10AM - 10PM",
+    "horarioApertura": "10:00",
+    "horarioCierre": "22:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.7",
+    "direccion": "Colon, Sancti Spiritus",
+    "telefono": "+53 41 119283",
+    "whatsapp": "+53 5832681",
+    "descripcion": "Cocina criolla e internacional en un ambiente familiar, con opciones para llevar y reservas para eventos.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": true,
+    "servicios": [
+      {
+        "id": "mesa-2",
+        "nombre": "Mesa para 2",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 800 CUP"
+      },
+      {
+        "id": "mesa-4",
+        "nombre": "Mesa para 4",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 1500 CUP"
+      },
+      {
+        "id": "mesa-6",
+        "nombre": "Mesa para 6",
+        "precio": 0,
+        "duracion": 150,
+        "nota": "Consumo mínimo 2200 CUP"
+      },
+      {
+        "id": "reserva-evento",
+        "nombre": "Reserva para evento",
+        "precio": 3000,
+        "duracion": 240,
+        "nota": "Incluye decoración básica"
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Dayana Ruiz",
+        "fecha": "2026-03-02",
+        "calificacion": 5,
+        "comentario": "La comida criolla salió de maravilla y la mesa estaba lista a la hora.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Pavel Díaz",
+        "fecha": "2026-03-15",
+        "calificacion": 5,
+        "comentario": "Porciones generosas y atención rápida. Repetimos seguro.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Aylen Mesa",
+        "fecha": "2026-03-28",
+        "calificacion": 4,
+        "comentario": "Rico todo, aunque el postre se demoró un poco.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "fogon-habanero",
+    "localName": "Fogón Habanero",
+    "categoria": "Restaurante",
+    "metros": "745",
+    "url": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1592861956120-e524fc739696?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "10AM - 10PM",
+    "horarioApertura": "10:00",
+    "horarioCierre": "22:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.3",
+    "direccion": "Centro, Cabaiguan",
+    "telefono": "+53 41 121036",
+    "whatsapp": "+53 5835652",
+    "descripcion": "Cocina criolla e internacional en un ambiente familiar, con opciones para llevar y reservas para eventos.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": true,
+    "servicios": [
+      {
+        "id": "mesa-2",
+        "nombre": "Mesa para 2",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 800 CUP"
+      },
+      {
+        "id": "mesa-4",
+        "nombre": "Mesa para 4",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 1500 CUP"
+      },
+      {
+        "id": "mesa-6",
+        "nombre": "Mesa para 6",
+        "precio": 0,
+        "duracion": 150,
+        "nota": "Consumo mínimo 2200 CUP"
+      },
+      {
+        "id": "reserva-evento",
+        "nombre": "Reserva para evento",
+        "precio": 3000,
+        "duracion": 240,
+        "nota": "Incluye decoración básica"
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Héctor Lima",
+        "fecha": "2026-03-15",
+        "calificacion": 5,
+        "comentario": "Porciones generosas y atención rápida. Repetimos seguro.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Nuria Paz",
+        "fecha": "2026-03-28",
+        "calificacion": 4,
+        "comentario": "Rico todo, aunque el postre se demoró un poco.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Yosvany Morales",
+        "fecha": "2026-04-09",
+        "calificacion": 3,
+        "comentario": "El lugar es bonito, pero el día que fui la pasta llegó tibia.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Lisandra Pérez",
+        "fecha": "2026-04-21",
+        "calificacion": 5,
+        "comentario": "La comida criolla salió de maravilla y la mesa estaba lista a la hora.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "son-y-ron",
+    "localName": "Son y Ron",
+    "categoria": "Bar",
+    "metros": "882",
+    "url": "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1575444758702-4a6b9222336e?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1556745763-1a6f0ddb0250?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "6PM - 1AM",
+    "horarioApertura": "18:00",
+    "horarioCierre": "01:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "3.7",
+    "direccion": "Colon, Sancti Spiritus",
+    "telefono": "+53 41 122789",
+    "whatsapp": "+53 5838623",
+    "descripcion": "Bar con música en vivo los fines de semana, cócteles de autor, cervezas importadas y picadera.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": true,
+    "servicios": [
+      {
+        "id": "mesa-estandar",
+        "nombre": "Mesa estándar",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 600 CUP"
+      },
+      {
+        "id": "mesa-vip",
+        "nombre": "Mesa VIP",
+        "precio": 0,
+        "duracion": 150,
+        "nota": "Consumo mínimo 1800 CUP"
+      },
+      {
+        "id": "reserva-grupo",
+        "nombre": "Reserva de grupo",
+        "precio": 0,
+        "duracion": 180,
+        "nota": "Consumo mínimo 3000 CUP"
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Lisandra Pérez",
+        "fecha": "2026-03-28",
+        "calificacion": 4,
+        "comentario": "Reservamos y la mesa estaba lista. La picadera llegó rápido.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Ernesto Báez",
+        "fecha": "2026-04-09",
+        "calificacion": 2,
+        "comentario": "Muy alto el volumen: en la mesa de atrás no se podía hablar.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "María Rodríguez",
+        "fecha": "2026-04-21",
+        "calificacion": 5,
+        "comentario": "La banda sonó brutal el viernes y el mojito estaba bien frío.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "la-bodeguita-23",
+    "localName": "La Bodeguita 23",
+    "categoria": "Bar",
+    "metros": "1019",
+    "url": "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1575444758702-4a6b9222336e?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1556745763-1a6f0ddb0250?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "6PM - 1AM",
+    "horarioApertura": "18:00",
+    "horarioCierre": "01:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "3.8",
+    "direccion": "Centro, Sancti Spiritus",
+    "telefono": "+53 41 124542",
+    "whatsapp": "+53 5841594",
+    "descripcion": "Bar con música en vivo los fines de semana, cócteles de autor, cervezas importadas y picadera.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": true,
+    "servicios": [
+      {
+        "id": "mesa-estandar",
+        "nombre": "Mesa estándar",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 600 CUP"
+      },
+      {
+        "id": "mesa-vip",
+        "nombre": "Mesa VIP",
+        "precio": 0,
+        "duracion": 150,
+        "nota": "Consumo mínimo 1800 CUP"
+      },
+      {
+        "id": "reserva-grupo",
+        "nombre": "Reserva de grupo",
+        "precio": 0,
+        "duracion": 180,
+        "nota": "Consumo mínimo 3000 CUP"
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Carlos López",
+        "fecha": "2026-04-09",
+        "calificacion": 2,
+        "comentario": "Muy alto el volumen: en la mesa de atrás no se podía hablar.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Ana García",
+        "fecha": "2026-04-21",
+        "calificacion": 5,
+        "comentario": "La banda sonó brutal el viernes y el mojito estaba bien frío.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Jorge Martínez",
+        "fecha": "2026-05-03",
+        "calificacion": 4,
+        "comentario": "Buen ambiente. La cerveza importada sale cara, pero vale.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Sofía Pérez",
+        "fecha": "2026-01-10",
+        "calificacion": 4,
+        "comentario": "Reservamos y la mesa estaba lista. La picadera llegó rápido.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "navaja-de-oro",
+    "localName": "Navaja de Oro",
+    "categoria": "Barbería",
+    "metros": "1156",
+    "url": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1512690459411-b9245aed614b?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "9AM - 7PM",
+    "horarioApertura": "09:00",
+    "horarioCierre": "19:00",
+    "intervaloMinutos": 30,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.7",
+    "direccion": "Kilo 12, Sancti Spiritus",
+    "telefono": "+53 41 126295",
+    "whatsapp": "+53 5844565",
+    "descripcion": "Barbería con barberos de confianza: cortes clásicos y modernos, arreglo de barba y afeitado tradicional.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "corte-basico",
+        "nombre": "Corte básico",
+        "precio": 300,
+        "duracion": 30
+      },
+      {
+        "id": "corte-barba",
+        "nombre": "Corte + barba",
+        "precio": 450,
+        "duracion": 45
+      },
+      {
+        "id": "afeitado",
+        "nombre": "Afeitado tradicional",
+        "precio": 250,
+        "duracion": 30
+      },
+      {
+        "id": "tinte",
+        "nombre": "Tinte",
+        "precio": 600,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Sofía Pérez",
+        "fecha": "2026-04-21",
+        "calificacion": 5,
+        "comentario": "El barbero es un profesional. Salí con el corte exacto que pedí.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "David Sánchez",
+        "fecha": "2026-05-03",
+        "calificacion": 5,
+        "comentario": "Muy limpio y ordenado, y respetan la hora de la cita.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Luis Fernández",
+        "fecha": "2026-01-10",
+        "calificacion": 4,
+        "comentario": "Buen corte de barba, aunque el local estaba lleno.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "caballero-fino",
+    "localName": "Caballero Fino",
+    "categoria": "Barbería",
+    "metros": "1293",
+    "url": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1512690459411-b9245aed614b?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "9AM - 7PM",
+    "horarioApertura": "09:00",
+    "horarioCierre": "19:00",
+    "intervaloMinutos": 30,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.3",
+    "direccion": "Parque central, Cabaiguan",
+    "telefono": "+53 41 128048",
+    "whatsapp": "+53 5847536",
+    "descripcion": "Barbería con barberos de confianza: cortes clásicos y modernos, arreglo de barba y afeitado tradicional.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "corte-basico",
+        "nombre": "Corte básico",
+        "precio": 300,
+        "duracion": 30
+      },
+      {
+        "id": "corte-barba",
+        "nombre": "Corte + barba",
+        "precio": 450,
+        "duracion": 45
+      },
+      {
+        "id": "afeitado",
+        "nombre": "Afeitado tradicional",
+        "precio": 250,
+        "duracion": 30
+      },
+      {
+        "id": "tinte",
+        "nombre": "Tinte",
+        "precio": 600,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Carmen Díaz",
+        "fecha": "2026-05-03",
+        "calificacion": 5,
+        "comentario": "Muy limpio y ordenado, y respetan la hora de la cita.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Elena Ruiz",
+        "fecha": "2026-01-10",
+        "calificacion": 4,
+        "comentario": "Buen corte de barba, aunque el local estaba lleno.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Lucas Herrera",
+        "fecha": "2026-01-24",
+        "calificacion": 3,
+        "comentario": "Corte parejo, pero esperé más de lo previsto.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Yania Cruz",
+        "fecha": "2026-02-07",
+        "calificacion": 5,
+        "comentario": "El barbero es un profesional. Salí con el corte exacto que pedí.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "estilo-y-tijera",
+    "localName": "Estilo y Tijera",
+    "categoria": "Peluquería",
+    "metros": "1430",
+    "url": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=800&auto=format&fit=crop",
+      "https://plus.unsplash.com/premium_photo-1661963320607-aebac6fcb40d?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "9AM - 6PM",
+    "horarioApertura": "09:00",
+    "horarioCierre": "18:00",
+    "intervaloMinutos": 45,
+    "dias": [
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.0",
+    "direccion": "Centro, Sancti Spiritus",
+    "telefono": "+53 41 129801",
+    "whatsapp": "+53 5850507",
+    "descripcion": "Peluquería unisex: cortes, tintes, peinados y tratamientos capilares con cita previa.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "corte-dama",
+        "nombre": "Corte dama",
+        "precio": 450,
+        "duracion": 45
+      },
+      {
+        "id": "corte-caballero",
+        "nombre": "Corte caballero",
+        "precio": 300,
+        "duracion": 30
+      },
+      {
+        "id": "tinte-completo",
+        "nombre": "Tinte completo",
+        "precio": 1200,
+        "duracion": 120
+      },
+      {
+        "id": "peinado",
+        "nombre": "Peinado",
+        "precio": 500,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Yania Cruz",
+        "fecha": "2026-01-10",
+        "calificacion": 4,
+        "comentario": "Buen trabajo, el local es acogedor.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Omar Vidal",
+        "fecha": "2026-01-24",
+        "calificacion": 3,
+        "comentario": "Quedó bien, pero tuve que esperar más de la hora de la cita.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Dayana Ruiz",
+        "fecha": "2026-02-07",
+        "calificacion": 5,
+        "comentario": "Me dejaron el corte exacto. Salí feliz.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "glam-studio",
+    "localName": "Glam Studio",
+    "categoria": "Peluquería",
+    "metros": "1567",
+    "url": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?q=80&w=800&auto=format&fit=crop",
+      "https://plus.unsplash.com/premium_photo-1661963320607-aebac6fcb40d?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "9AM - 6PM",
+    "horarioApertura": "09:00",
+    "horarioCierre": "18:00",
+    "intervaloMinutos": 45,
+    "dias": [
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.3",
+    "direccion": "Olivos, Sancti Spiritus",
+    "telefono": "+53 41 131554",
+    "whatsapp": "+53 5853478",
+    "descripcion": "Peluquería unisex: cortes, tintes, peinados y tratamientos capilares con cita previa.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "corte-dama",
+        "nombre": "Corte dama",
+        "precio": 450,
+        "duracion": 45
+      },
+      {
+        "id": "corte-caballero",
+        "nombre": "Corte caballero",
+        "precio": 300,
+        "duracion": 30
+      },
+      {
+        "id": "tinte-completo",
+        "nombre": "Tinte completo",
+        "precio": 1200,
+        "duracion": 120
+      },
+      {
+        "id": "peinado",
+        "nombre": "Peinado",
+        "precio": 500,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Pavel Díaz",
+        "fecha": "2026-01-24",
+        "calificacion": 3,
+        "comentario": "Quedó bien, pero tuve que esperar más de la hora de la cita.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Aylen Mesa",
+        "fecha": "2026-02-07",
+        "calificacion": 5,
+        "comentario": "Me dejaron el corte exacto. Salí feliz.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Héctor Lima",
+        "fecha": "2026-02-18",
+        "calificacion": 5,
+        "comentario": "El tinte no me manchó la piel y el color quedó parejo.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Nuria Paz",
+        "fecha": "2026-03-02",
+        "calificacion": 4,
+        "comentario": "Buen trabajo, el local es acogedor.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "esmalte-perfecto",
+    "localName": "Esmalte Perfecto",
+    "categoria": "Uñas",
+    "metros": "1704",
+    "url": "https://images.unsplash.com/photo-1604654894610-df63bc536371?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1632345031435-8727f6897d53?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1619451683315-b2e3a9c3a3f0?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "10AM - 6PM",
+    "horarioApertura": "10:00",
+    "horarioCierre": "18:00",
+    "intervaloMinutos": 45,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.7",
+    "direccion": "Parque central, Cabaiguan",
+    "telefono": "+53 41 133307",
+    "whatsapp": "+53 5856449",
+    "descripcion": "Estudio de uñas: manicura, pedicura, acrílicas y diseños personalizados con productos de calidad.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "manicura-basica",
+        "nombre": "Manicura básica",
+        "precio": 300,
+        "duracion": 40
+      },
+      {
+        "id": "pedicura",
+        "nombre": "Pedicura",
+        "precio": 350,
+        "duracion": 50
+      },
+      {
+        "id": "unas-acrilicas",
+        "nombre": "Uñas acrílicas",
+        "precio": 900,
+        "duracion": 90
+      },
+      {
+        "id": "diseno",
+        "nombre": "Diseño especial",
+        "precio": 500,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Nuria Paz",
+        "fecha": "2026-02-07",
+        "calificacion": 5,
+        "comentario": "Trabajo impecable y muy atenta con los detalles.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Yosvany Morales",
+        "fecha": "2026-02-18",
+        "calificacion": 5,
+        "comentario": "Las acrílicas me duraron semanas. Recomendado 100%.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Lisandra Pérez",
+        "fecha": "2026-03-02",
+        "calificacion": 4,
+        "comentario": "Buen diseño, aunque la cita se alargó un poco.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "diva-nails",
+    "localName": "Diva Nails",
+    "categoria": "Uñas",
+    "metros": "101",
+    "url": "https://images.unsplash.com/photo-1604654894610-df63bc536371?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1632345031435-8727f6897d53?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1522337660859-02fbefca4702?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1619451683315-b2e3a9c3a3f0?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "10AM - 6PM",
+    "horarioApertura": "10:00",
+    "horarioCierre": "18:00",
+    "intervaloMinutos": 45,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.5",
+    "direccion": "Colon, Sancti Spiritus",
+    "telefono": "+53 41 135060",
+    "whatsapp": "+53 5859420",
+    "descripcion": "Estudio de uñas: manicura, pedicura, acrílicas y diseños personalizados con productos de calidad.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "manicura-basica",
+        "nombre": "Manicura básica",
+        "precio": 300,
+        "duracion": 40
+      },
+      {
+        "id": "pedicura",
+        "nombre": "Pedicura",
+        "precio": 350,
+        "duracion": 50
+      },
+      {
+        "id": "unas-acrilicas",
+        "nombre": "Uñas acrílicas",
+        "precio": 900,
+        "duracion": 90
+      },
+      {
+        "id": "diseno",
+        "nombre": "Diseño especial",
+        "precio": 500,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Ernesto Báez",
+        "fecha": "2026-02-18",
+        "calificacion": 5,
+        "comentario": "Las acrílicas me duraron semanas. Recomendado 100%.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "María Rodríguez",
+        "fecha": "2026-03-02",
+        "calificacion": 4,
+        "comentario": "Buen diseño, aunque la cita se alargó un poco.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Carlos López",
+        "fecha": "2026-03-15",
+        "calificacion": 4,
+        "comentario": "Bonito resultado, el local algo pequeño.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Ana García",
+        "fecha": "2026-03-28",
+        "calificacion": 5,
+        "comentario": "Trabajo impecable y muy atenta con los detalles.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "fuerza-total",
+    "localName": "Fuerza Total",
+    "categoria": "Gimnasio",
+    "metros": "238",
+    "url": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "6AM - 10PM",
+    "horarioApertura": "06:00",
+    "horarioCierre": "22:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.0",
+    "direccion": "Kilo 12, Sancti Spiritus",
+    "telefono": "+53 41 136813",
+    "whatsapp": "+53 5862391",
+    "descripcion": "Gimnasio con área de pesas, clases dirigidas y entrenadores personales. Ambiente motivador.",
+    "iconos": [
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "pase-dia",
+        "nombre": "Pase del día",
+        "precio": 200,
+        "duracion": 60
+      },
+      {
+        "id": "clase-dirigida",
+        "nombre": "Clase dirigida",
+        "precio": 250,
+        "duracion": 60
+      },
+      {
+        "id": "entrenador-personal",
+        "nombre": "Entrenador personal",
+        "precio": 800,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Ana García",
+        "fecha": "2026-03-02",
+        "calificacion": 4,
+        "comentario": "Buenas clases, aunque a hora pico se llena bastante.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Jorge Martínez",
+        "fecha": "2026-03-15",
+        "calificacion": 3,
+        "comentario": "Correcto, pero faltan más duchas.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Sofía Pérez",
+        "fecha": "2026-03-28",
+        "calificacion": 5,
+        "comentario": "Instructores muy preparados y equipos en buen estado.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "energym",
+    "localName": "Energym",
+    "categoria": "Gimnasio",
+    "metros": "375",
+    "url": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "6AM - 10PM",
+    "horarioApertura": "06:00",
+    "horarioCierre": "22:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.3",
+    "direccion": "Centro, Cabaiguan",
+    "telefono": "+53 41 138566",
+    "whatsapp": "+53 5865362",
+    "descripcion": "Gimnasio con área de pesas, clases dirigidas y entrenadores personales. Ambiente motivador.",
+    "iconos": [
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "pase-dia",
+        "nombre": "Pase del día",
+        "precio": 200,
+        "duracion": 60
+      },
+      {
+        "id": "clase-dirigida",
+        "nombre": "Clase dirigida",
+        "precio": 250,
+        "duracion": 60
+      },
+      {
+        "id": "entrenador-personal",
+        "nombre": "Entrenador personal",
+        "precio": 800,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "David Sánchez",
+        "fecha": "2026-03-15",
+        "calificacion": 3,
+        "comentario": "Correcto, pero faltan más duchas.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Luis Fernández",
+        "fecha": "2026-03-28",
+        "calificacion": 5,
+        "comentario": "Instructores muy preparados y equipos en buen estado.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Carmen Díaz",
+        "fecha": "2026-04-09",
+        "calificacion": 5,
+        "comentario": "Excelentes instalaciones y ambiente motivador.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Elena Ruiz",
+        "fecha": "2026-04-21",
+        "calificacion": 4,
+        "comentario": "Buenas clases, aunque a hora pico se llena bastante.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "verde-vivo",
+    "localName": "Verde Vivo",
+    "categoria": "Comida saludable",
+    "metros": "512",
+    "url": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "9AM - 6PM",
+    "horarioApertura": "09:00",
+    "horarioCierre": "18:00",
+    "intervaloMinutos": 30,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.7",
+    "direccion": "Centro, Sancti Spiritus",
+    "telefono": "+53 41 140319",
+    "whatsapp": "+53 5868333",
+    "descripcion": "Comida saludable al momento: bowls, pokes, ensaladas y smoothies con ingredientes frescos.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "bowl-verde",
+        "nombre": "Bowl verde",
+        "precio": 950,
+        "duracion": 15
+      },
+      {
+        "id": "poke-salmon",
+        "nombre": "Poke salmón",
+        "precio": 1100,
+        "duracion": 15
+      },
+      {
+        "id": "smoothie",
+        "nombre": "Smoothie natural",
+        "precio": 450,
+        "duracion": 10
+      },
+      {
+        "id": "ensalada-premium",
+        "nombre": "Ensalada premium",
+        "precio": 1000,
+        "duracion": 15
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Elena Ruiz",
+        "fecha": "2026-03-28",
+        "calificacion": 5,
+        "comentario": "Ingredientes frescos y sabrosos. El poke estaba buenísimo.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Lucas Herrera",
+        "fecha": "2026-04-09",
+        "calificacion": 5,
+        "comentario": "Saludable y rico, buena relación calidad-precio.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Yania Cruz",
+        "fecha": "2026-04-21",
+        "calificacion": 4,
+        "comentario": "Me gustó el bowl, aunque las porciones podrían ser mayores.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "bowl-and-co",
+    "localName": "Bowl and Co",
+    "categoria": "Comida saludable",
+    "metros": "649",
+    "url": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1467003909585-2f8a72700288?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "9AM - 6PM",
+    "horarioApertura": "09:00",
+    "horarioCierre": "18:00",
+    "intervaloMinutos": 30,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.3",
+    "direccion": "Colon, Sancti Spiritus",
+    "telefono": "+53 41 142072",
+    "whatsapp": "+53 5871304",
+    "descripcion": "Comida saludable al momento: bowls, pokes, ensaladas y smoothies con ingredientes frescos.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "bowl-verde",
+        "nombre": "Bowl verde",
+        "precio": 950,
+        "duracion": 15
+      },
+      {
+        "id": "poke-salmon",
+        "nombre": "Poke salmón",
+        "precio": 1100,
+        "duracion": 15
+      },
+      {
+        "id": "smoothie",
+        "nombre": "Smoothie natural",
+        "precio": 450,
+        "duracion": 10
+      },
+      {
+        "id": "ensalada-premium",
+        "nombre": "Ensalada premium",
+        "precio": 1000,
+        "duracion": 15
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Omar Vidal",
+        "fecha": "2026-04-09",
+        "calificacion": 5,
+        "comentario": "Saludable y rico, buena relación calidad-precio.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Dayana Ruiz",
+        "fecha": "2026-04-21",
+        "calificacion": 4,
+        "comentario": "Me gustó el bowl, aunque las porciones podrían ser mayores.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Pavel Díaz",
+        "fecha": "2026-05-03",
+        "calificacion": 3,
+        "comentario": "Rico, pero el día que fui tardaron en prepararlo.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Aylen Mesa",
+        "fecha": "2026-01-10",
+        "calificacion": 5,
+        "comentario": "Ingredientes frescos y sabrosos. El poke estaba buenísimo.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "mirador-azul",
+    "localName": "Mirador Azul",
+    "categoria": "Terraza",
+    "metros": "786",
+    "url": "https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1533777324565-a040eb52facd?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "12PM - 11PM",
+    "horarioApertura": "12:00",
+    "horarioCierre": "23:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.0",
+    "direccion": "Olivos, Sancti Spiritus",
+    "telefono": "+53 41 143825",
+    "whatsapp": "+53 5874275",
+    "descripcion": "Terraza al aire libre para relajarse: copas, tablas para compartir y buena vista al atardecer.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "parking"
+      },
+      {
+        "id": "cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": true,
+    "servicios": [
+      {
+        "id": "mesa-terraza-2",
+        "nombre": "Mesa terraza 2",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 500 CUP"
+      },
+      {
+        "id": "mesa-terraza-4",
+        "nombre": "Mesa terraza 4",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 1000 CUP"
+      },
+      {
+        "id": "zona-lounge",
+        "nombre": "Zona lounge",
+        "precio": 0,
+        "duracion": 150,
+        "nota": "Consumo mínimo 2000 CUP"
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Aylen Mesa",
+        "fecha": "2026-04-21",
+        "calificacion": 4,
+        "comentario": "Muy agradable, la tabla de quesos valió la pena.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Héctor Lima",
+        "fecha": "2026-05-03",
+        "calificacion": 3,
+        "comentario": "Bonito lugar, pero a veces falta personal.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Nuria Paz",
+        "fecha": "2026-01-10",
+        "calificacion": 5,
+        "comentario": "El atardecer desde la terraza es perfecto para relajarse.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "sunset-deck",
+    "localName": "Sunset Deck",
+    "categoria": "Terraza",
+    "metros": "923",
+    "url": "https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1533777324565-a040eb52facd?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "12PM - 11PM",
+    "horarioApertura": "12:00",
+    "horarioCierre": "23:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.3",
+    "direccion": "Colon, Sancti Spiritus",
+    "telefono": "+53 41 145578",
+    "whatsapp": "+53 5877246",
+    "descripcion": "Terraza al aire libre para relajarse: copas, tablas para compartir y buena vista al atardecer.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "parking"
+      },
+      {
+        "id": "cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": true,
+    "servicios": [
+      {
+        "id": "mesa-terraza-2",
+        "nombre": "Mesa terraza 2",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 500 CUP"
+      },
+      {
+        "id": "mesa-terraza-4",
+        "nombre": "Mesa terraza 4",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 1000 CUP"
+      },
+      {
+        "id": "zona-lounge",
+        "nombre": "Zona lounge",
+        "precio": 0,
+        "duracion": 150,
+        "nota": "Consumo mínimo 2000 CUP"
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Yosvany Morales",
+        "fecha": "2026-05-03",
+        "calificacion": 3,
+        "comentario": "Bonito lugar, pero a veces falta personal.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Lisandra Pérez",
+        "fecha": "2026-01-10",
+        "calificacion": 5,
+        "comentario": "El atardecer desde la terraza es perfecto para relajarse.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Ernesto Báez",
+        "fecha": "2026-01-24",
+        "calificacion": 5,
+        "comentario": "Bebidas de excelente calidad y buen ambiente.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "María Rodríguez",
+        "fecha": "2026-02-07",
+        "calificacion": 4,
+        "comentario": "Muy agradable, la tabla de quesos valió la pena.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "oasis-urbano",
+    "localName": "Oasis Urbano",
+    "categoria": "Spa",
+    "metros": "1060",
+    "url": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "10AM - 8PM",
+    "horarioApertura": "10:00",
+    "horarioCierre": "20:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.7",
+    "direccion": "Kilo 12, Sancti Spiritus",
+    "telefono": "+53 41 147331",
+    "whatsapp": "+53 5880217",
+    "descripcion": "Spa urbano con masajes, faciales y rituales de relajación en un ambiente zen y silencioso.",
+    "iconos": [
+      {
+        "id": "snow"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "masaje-relajante",
+        "nombre": "Masaje relajante",
+        "precio": 1500,
+        "duracion": 60
+      },
+      {
+        "id": "facial",
+        "nombre": "Facial completo",
+        "precio": 1200,
+        "duracion": 50
+      },
+      {
+        "id": "paquete-spa",
+        "nombre": "Paquete spa completo",
+        "precio": 3000,
+        "duracion": 120
+      },
+      {
+        "id": "reflexologia",
+        "nombre": "Reflexología",
+        "precio": 900,
+        "duracion": 45
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "María Rodríguez",
+        "fecha": "2026-01-10",
+        "calificacion": 5,
+        "comentario": "Masajes muy relajantes y personal profesional.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Carlos López",
+        "fecha": "2026-01-24",
+        "calificacion": 5,
+        "comentario": "Ambiente zen y pacífico, salí renovada.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Ana García",
+        "fecha": "2026-02-07",
+        "calificacion": 4,
+        "comentario": "Buen facial, aunque la sala de espera es pequeña.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "serenity-spa",
+    "localName": "Serenity Spa",
+    "categoria": "Spa",
+    "metros": "1197",
+    "url": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "10AM - 8PM",
+    "horarioApertura": "10:00",
+    "horarioCierre": "20:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.3",
+    "direccion": "Parque central, Cabaiguan",
+    "telefono": "+53 41 149084",
+    "whatsapp": "+53 5883188",
+    "descripcion": "Spa urbano con masajes, faciales y rituales de relajación en un ambiente zen y silencioso.",
+    "iconos": [
+      {
+        "id": "snow"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "masaje-relajante",
+        "nombre": "Masaje relajante",
+        "precio": 1500,
+        "duracion": 60
+      },
+      {
+        "id": "facial",
+        "nombre": "Facial completo",
+        "precio": 1200,
+        "duracion": 50
+      },
+      {
+        "id": "paquete-spa",
+        "nombre": "Paquete spa completo",
+        "precio": 3000,
+        "duracion": 120
+      },
+      {
+        "id": "reflexologia",
+        "nombre": "Reflexología",
+        "precio": 900,
+        "duracion": 45
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Jorge Martínez",
+        "fecha": "2026-01-24",
+        "calificacion": 5,
+        "comentario": "Ambiente zen y pacífico, salí renovada.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Sofía Pérez",
+        "fecha": "2026-02-07",
+        "calificacion": 4,
+        "comentario": "Buen facial, aunque la sala de espera es pequeña.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "David Sánchez",
+        "fecha": "2026-02-18",
+        "calificacion": 3,
+        "comentario": "Correcto, pero algo caro para lo que ofrecen.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Luis Fernández",
+        "fecha": "2026-03-02",
+        "calificacion": 5,
+        "comentario": "Masajes muy relajantes y personal profesional.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "taller-creativo",
+    "localName": "Taller Creativo",
+    "categoria": "Arte y talleres",
+    "metros": "1334",
+    "url": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1499781350541-7783f6c6a0c8?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "3PM - 8PM",
+    "horarioApertura": "15:00",
+    "horarioCierre": "20:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v"
+    ],
+    "points": "4.3",
+    "direccion": "Centro, Cabaiguan",
+    "telefono": "+53 41 150837",
+    "whatsapp": "+53 5886159",
+    "descripcion": "Espacio creativo con talleres de pintura, cerámica y dibujo para todas las edades.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "taller-pintura",
+        "nombre": "Taller de pintura",
+        "precio": 800,
+        "duracion": 90
+      },
+      {
+        "id": "taller-ceramica",
+        "nombre": "Taller de cerámica",
+        "precio": 1000,
+        "duracion": 120
+      },
+      {
+        "id": "clase-dibujo",
+        "nombre": "Clase de dibujo",
+        "precio": 600,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Luis Fernández",
+        "fecha": "2026-02-07",
+        "calificacion": 4,
+        "comentario": "Me encantó la cerámica, el espacio es acogedor.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Carmen Díaz",
+        "fecha": "2026-02-18",
+        "calificacion": 4,
+        "comentario": "Interesante, aunque los grupos son algo grandes.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Elena Ruiz",
+        "fecha": "2026-03-02",
+        "calificacion": 5,
+        "comentario": "Talleres muy inspiradores y materiales incluidos.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "gamepoint",
+    "localName": "GamePoint",
+    "categoria": "Ocio",
+    "metros": "1471",
+    "url": "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "2PM - 11PM",
+    "horarioApertura": "14:00",
+    "horarioCierre": "23:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "j",
+      "v",
+      "s",
+      "d"
+    ],
+    "points": "4.0",
+    "direccion": "Centro, Sancti Spiritus",
+    "telefono": "+53 41 152590",
+    "whatsapp": "+53 5889130",
+    "descripcion": "Sala de juegos y ocio: consolas, mesas de billar y torneos los fines de semana.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "hora-juego",
+        "nombre": "Hora de juego",
+        "precio": 300,
+        "duracion": 60
+      },
+      {
+        "id": "torneo",
+        "nombre": "Inscripción a torneo",
+        "precio": 500,
+        "duracion": 120
+      },
+      {
+        "id": "combo-grupo",
+        "nombre": "Combo de grupo",
+        "precio": 1200,
+        "duracion": 120
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Lucas Herrera",
+        "fecha": "2026-02-18",
+        "calificacion": 3,
+        "comentario": "Correcto, pero el aire acondicionado podría ser mejor.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Yania Cruz",
+        "fecha": "2026-03-02",
+        "calificacion": 4,
+        "comentario": "Buen lugar para pasar la tarde con amigos.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Omar Vidal",
+        "fecha": "2026-03-15",
+        "calificacion": 5,
+        "comentario": "Las consolas están al día y el personal es amable.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Dayana Ruiz",
+        "fecha": "2026-03-28",
+        "calificacion": 4,
+        "comentario": "Divertido, aunque a veces hay cola en el billar.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "clinica-dental-sonrie",
+    "localName": "Clínica Dental Sonríe",
+    "categoria": "Dentista",
+    "metros": "1608",
+    "url": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "8AM - 4PM",
+    "horarioApertura": "08:00",
+    "horarioCierre": "16:00",
+    "intervaloMinutos": 30,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v"
+    ],
+    "points": "4.7",
+    "direccion": "Centro, Sancti Spiritus",
+    "telefono": "+53 41 154343",
+    "whatsapp": "+53 5892101",
+    "descripcion": "Clínica dental con atención general y estética: limpieza, extracciones y blanqueamiento con cita.",
+    "iconos": [
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "consulta",
+        "nombre": "Consulta",
+        "precio": 500,
+        "duracion": 30
+      },
+      {
+        "id": "limpieza",
+        "nombre": "Limpieza dental",
+        "precio": 1200,
+        "duracion": 45
+      },
+      {
+        "id": "extraccion",
+        "nombre": "Extracción",
+        "precio": 900,
+        "duracion": 40
+      },
+      {
+        "id": "blanqueamiento",
+        "nombre": "Blanqueamiento",
+        "precio": 3500,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Dayana Ruiz",
+        "fecha": "2026-03-02",
+        "calificacion": 5,
+        "comentario": "Muy profesional y sin dolor. Explican todo antes de empezar.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Pavel Díaz",
+        "fecha": "2026-03-15",
+        "calificacion": 5,
+        "comentario": "Limpieza rápida y la clínica muy higiénica.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Aylen Mesa",
+        "fecha": "2026-03-28",
+        "calificacion": 4,
+        "comentario": "Buen trato, aunque la cita se atrasó un poco.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "odontocenter",
+    "localName": "OdontoCenter",
+    "categoria": "Dentista",
+    "metros": "1745",
+    "url": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "8AM - 4PM",
+    "horarioApertura": "08:00",
+    "horarioCierre": "16:00",
+    "intervaloMinutos": 30,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v"
+    ],
+    "points": "4.3",
+    "direccion": "Kilo 12, Sancti Spiritus",
+    "telefono": "+53 41 156096",
+    "whatsapp": "+53 5895072",
+    "descripcion": "Clínica dental con atención general y estética: limpieza, extracciones y blanqueamiento con cita.",
+    "iconos": [
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "consulta",
+        "nombre": "Consulta",
+        "precio": 500,
+        "duracion": 30
+      },
+      {
+        "id": "limpieza",
+        "nombre": "Limpieza dental",
+        "precio": 1200,
+        "duracion": 45
+      },
+      {
+        "id": "extraccion",
+        "nombre": "Extracción",
+        "precio": 900,
+        "duracion": 40
+      },
+      {
+        "id": "blanqueamiento",
+        "nombre": "Blanqueamiento",
+        "precio": 3500,
+        "duracion": 60
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Héctor Lima",
+        "fecha": "2026-03-15",
+        "calificacion": 5,
+        "comentario": "Limpieza rápida y la clínica muy higiénica.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Nuria Paz",
+        "fecha": "2026-03-28",
+        "calificacion": 4,
+        "comentario": "Buen trato, aunque la cita se atrasó un poco.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Yosvany Morales",
+        "fecha": "2026-04-09",
+        "calificacion": 3,
+        "comentario": "Correcto, pero los precios de estética son altos.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Lisandra Pérez",
+        "fecha": "2026-04-21",
+        "calificacion": 5,
+        "comentario": "Muy profesional y sin dolor. Explican todo antes de empezar.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "patitas-felices",
+    "localName": "Patitas Felices",
+    "categoria": "Veterinaria",
+    "metros": "142",
+    "url": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "8AM - 6PM",
+    "horarioApertura": "08:00",
+    "horarioCierre": "18:00",
+    "intervaloMinutos": 30,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.0",
+    "direccion": "Parque central, Cabaiguan",
+    "telefono": "+53 41 157849",
+    "whatsapp": "+53 5898043",
+    "descripcion": "Clínica veterinaria con consultas, vacunación, peluquería canina y cirugía menor.",
+    "iconos": [
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "consulta-general",
+        "nombre": "Consulta general",
+        "precio": 400,
+        "duracion": 30
+      },
+      {
+        "id": "vacunacion",
+        "nombre": "Vacunación",
+        "precio": 600,
+        "duracion": 20
+      },
+      {
+        "id": "bano-peluqueria",
+        "nombre": "Baño y peluquería",
+        "precio": 800,
+        "duracion": 60
+      },
+      {
+        "id": "cirugia-menor",
+        "nombre": "Cirugía menor",
+        "precio": 2500,
+        "duracion": 90
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Lisandra Pérez",
+        "fecha": "2026-03-28",
+        "calificacion": 4,
+        "comentario": "Buen servicio de baño, quedó precioso.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Ernesto Báez",
+        "fecha": "2026-04-09",
+        "calificacion": 3,
+        "comentario": "Atención correcta, aunque esperamos bastante.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "María Rodríguez",
+        "fecha": "2026-04-21",
+        "calificacion": 5,
+        "comentario": "Trataron a mi perro con mucho cariño. Volveré sin duda.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "vetcare",
+    "localName": "VetCare",
+    "categoria": "Veterinaria",
+    "metros": "279",
+    "url": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "8AM - 6PM",
+    "horarioApertura": "08:00",
+    "horarioCierre": "18:00",
+    "intervaloMinutos": 30,
+    "dias": [
+      "l",
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.3",
+    "direccion": "Colon, Sancti Spiritus",
+    "telefono": "+53 41 159602",
+    "whatsapp": "+53 5901014",
+    "descripcion": "Clínica veterinaria con consultas, vacunación, peluquería canina y cirugía menor.",
+    "iconos": [
+      {
+        "id": "parking"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "consulta-general",
+        "nombre": "Consulta general",
+        "precio": 400,
+        "duracion": 30
+      },
+      {
+        "id": "vacunacion",
+        "nombre": "Vacunación",
+        "precio": 600,
+        "duracion": 20
+      },
+      {
+        "id": "bano-peluqueria",
+        "nombre": "Baño y peluquería",
+        "precio": 800,
+        "duracion": 60
+      },
+      {
+        "id": "cirugia-menor",
+        "nombre": "Cirugía menor",
+        "precio": 2500,
+        "duracion": 90
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Carlos López",
+        "fecha": "2026-04-09",
+        "calificacion": 3,
+        "comentario": "Atención correcta, aunque esperamos bastante.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Ana García",
+        "fecha": "2026-04-21",
+        "calificacion": 5,
+        "comentario": "Trataron a mi perro con mucho cariño. Volveré sin duda.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Jorge Martínez",
+        "fecha": "2026-05-03",
+        "calificacion": 5,
+        "comentario": "La veterinaria explica todo con calma y paciencia.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Sofía Pérez",
+        "fecha": "2026-01-10",
+        "calificacion": 4,
+        "comentario": "Buen servicio de baño, quedó precioso.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "tinta-negra-studio",
+    "localName": "Tinta Negra Studio",
+    "categoria": "Tatuajes",
+    "metros": "416",
+    "url": "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "12PM - 8PM",
+    "horarioApertura": "12:00",
+    "horarioCierre": "20:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.7",
+    "direccion": "Centro, Sancti Spiritus",
+    "telefono": "+53 41 161355",
+    "whatsapp": "+53 5903985",
+    "descripcion": "Estudio de tatuajes y piercing con diseños personalizados y estrictas medidas de higiene.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 3,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "tatuaje-pequeno",
+        "nombre": "Tatuaje pequeño",
+        "precio": 1500,
+        "duracion": 60
+      },
+      {
+        "id": "tatuaje-mediano",
+        "nombre": "Tatuaje mediano",
+        "precio": 3500,
+        "duracion": 120
+      },
+      {
+        "id": "diseno-personalizado",
+        "nombre": "Diseño personalizado",
+        "precio": 1000,
+        "duracion": 45
+      },
+      {
+        "id": "piercing",
+        "nombre": "Piercing",
+        "precio": 700,
+        "duracion": 30
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Sofía Pérez",
+        "fecha": "2026-04-21",
+        "calificacion": 5,
+        "comentario": "El diseño quedó mejor de lo que imaginaba. Súper higiénico.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "David Sánchez",
+        "fecha": "2026-05-03",
+        "calificacion": 5,
+        "comentario": "Artista con mucho talento y buena mano. Repetiré.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Luis Fernández",
+        "fecha": "2026-01-10",
+        "calificacion": 4,
+        "comentario": "Buen trabajo, aunque la sesión se alargó.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      }
+    ]
+  },
+  {
+    "id": "aguja-sagrada",
+    "localName": "Aguja Sagrada",
+    "categoria": "Tatuajes",
+    "metros": "553",
+    "url": "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?q=80&w=800&auto=format&fit=crop",
+    "urls": [
+      "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1562259949-e8e7689d7828?q=80&w=800&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?q=80&w=800&auto=format&fit=crop"
+    ],
+    "horario": "12PM - 8PM",
+    "horarioApertura": "12:00",
+    "horarioCierre": "20:00",
+    "intervaloMinutos": 60,
+    "dias": [
+      "m",
+      "x",
+      "j",
+      "v",
+      "s"
+    ],
+    "points": "4.5",
+    "direccion": "Centro, Cabaiguan",
+    "telefono": "+53 41 163108",
+    "whatsapp": "+53 5906956",
+    "descripcion": "Estudio de tatuajes y piercing con diseños personalizados y estrictas medidas de higiene.",
+    "iconos": [
+      {
+        "id": "wifi"
+      },
+      {
+        "id": "snow"
+      },
+      {
+        "id": "no-cigarrete"
+      },
+      {
+        "id": "transfer"
+      }
+    ],
+    "opiniones": 4,
+    "lugar": false,
+    "servicios": [
+      {
+        "id": "tatuaje-pequeno",
+        "nombre": "Tatuaje pequeño",
+        "precio": 1500,
+        "duracion": 60
+      },
+      {
+        "id": "tatuaje-mediano",
+        "nombre": "Tatuaje mediano",
+        "precio": 3500,
+        "duracion": 120
+      },
+      {
+        "id": "diseno-personalizado",
+        "nombre": "Diseño personalizado",
+        "precio": 1000,
+        "duracion": 45
+      },
+      {
+        "id": "piercing",
+        "nombre": "Piercing",
+        "precio": 700,
+        "duracion": 30
+      }
+    ],
+    "comentarios": [
+      {
+        "id": "1",
+        "nombre": "Carmen Díaz",
+        "fecha": "2026-05-03",
+        "calificacion": 5,
+        "comentario": "Artista con mucho talento y buena mano. Repetiré.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "2",
+        "nombre": "Elena Ruiz",
+        "fecha": "2026-01-10",
+        "calificacion": 4,
+        "comentario": "Buen trabajo, aunque la sesión se alargó.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "3",
+        "nombre": "Lucas Herrera",
+        "fecha": "2026-01-24",
+        "calificacion": 4,
+        "comentario": "Quedó bien, pero el estudio es algo pequeño.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+      },
+      {
+        "id": "4",
+        "nombre": "Yania Cruz",
+        "fecha": "2026-02-07",
+        "calificacion": 5,
+        "comentario": "El diseño quedó mejor de lo que imaginaba. Súper higiénico.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
       }
     ]
   }

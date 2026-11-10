@@ -1,0 +1,73 @@
+/* Carrusel del héroe. El viewport tiene el mismo radio y la misma sombra que el
+   héroe (.heroe-local-link), así que recorta los slides vecinos pero se ve
+   idéntico al héroe único de antes. */
+
+.carrusel-heroe {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin-inline: auto;
+}
+
+.carrusel-heroe-viewport {
+  overflow: hidden;
+  border-radius: 26px;
+  /* La misma sombra que llevaba .heroe-local-link, ahora en el viewport. */
+  box-shadow: 0 22px 46px -22px rgba(0, 0, 0, 0.95);
+}
+
+.carrusel-heroe-pista {
+  display: flex;
+  transition: transform 0.55s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.carrusel-heroe-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+}
+
+/* Dentro del carrusel el héroe llena el slide: se le quitan el tope y el centrado
+   que necesita cuando va suelto, para que no se encoja ni deje huecos. */
+.carrusel-heroe-slide .heroe-local {
+  max-width: none;
+  margin-inline: 0;
+}
+
+/* El viewport ya pone la sombra; la del héroe interior sobraría y se recorta. */
+.carrusel-heroe-slide .heroe-local-link {
+  box-shadow: none;
+}
+
+.carrusel-heroe-puntos {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin-top: 12px;
+}
+
+.carrusel-heroe-punto {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(240, 240, 240, 0.28);
+  cursor: pointer;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.carrusel-heroe-punto--on {
+  width: 20px;
+  background: var(--primary-color, #00c2ad);
+}
+
+.carrusel-heroe-punto:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carrusel-heroe-pista {
+    transition: none;
+  }
+}

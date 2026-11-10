@@ -3,13 +3,16 @@ import { ArrowRight, Search, SlidersHorizontal, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import TarjetaLocal from '../components/TarjetaLocal/TarjetaLocal.jsx'
 import PanelFiltros from '../components/Filtros/PanelFiltros.jsx'
-import CieloDescubre from '../components/Descubre/CieloDescubre.jsx'
-import HeroeLocal from '../components/Descubre/HeroeLocal.jsx'
+// El cielo anterior (CieloDescubre) se retiró; en su lugar va una franja
+// superior con el mundo de Taly dibujado a mano, a tinta. El componente viejo
+// y su CSS siguen existiendo por si hiciera falta recuperarlos.
+import FondoDescubre from '../components/Descubre/FondoDescubre.jsx'
+import CarruselHeroe from '../components/Descubre/CarruselHeroe.jsx'
 import RailDescubre from '../components/Descubre/RailDescubre.jsx'
 import TarjetaLocalCompacta from '../components/Descubre/TarjetaLocalCompacta.jsx'
 import { getAllLocales } from '../services/locales.js'
-import { estaAbierto } from '../utils/fichaLocal.js'
-import { notaLocal } from '../utils/descubre.js'
+import { getFavoritos, FAVORITOS_EVENTO } from '../services/favoritos.js'
+import { construirDescubre } from '../utils/descubre.js'
 import { filtrosIniciales, normalizar } from '../utils/busqueda.js'
 import './Descubre.css'
 
@@ -31,11 +34,24 @@ function Descubre() {
   const [filtros, setFiltros] = useState(filtrosIniciales)
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
   const [hora, setHora] = useState(() => new Date().getHours())
+  const [favoritos, setFavoritos] = useState(getFavoritos)
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 500)
     return () => window.clearTimeout(timer)
   }, [query])
+
+  /* Los favoritos alimentan la estanta "Porque guardaste X": si cambian, el
+     feed se rehace para que aparezca o se actualice en el acto. */
+  useEffect(() => {
+    const sync = () => setFavoritos(getFavoritos())
+    window.addEventListener(FAVORITOS_EVENTO, sync)
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener(FAVORITOS_EVENTO, sync)
+      window.removeEventListener('storage', sync)
+    }
+  }, [])
 
   useEffect(() => {
     const id = setInterval(() => setHora(new Date().getHours()), 300000)
@@ -51,34 +67,13 @@ function Descubre() {
   }, [debouncedQuery, locales])
   const mostrarSugerencias = query.trim().length >= 2
 
-  /* Tres lecturas del mismo catálogo. Cada sección ordena por un criterio
-     distinto, así la misma lista se recorre de tres maneras sin repetirse. */
-  const { heroe, abiertos, cerca, otroDia } = useMemo(() => {
-    const conDatos = locales.map((local) => ({
-      local,
-      abierto: estaAbierto(local),
-      nota: notaLocal(local).nota,
-      metros: Number(local.metros) || 0,
-    }))
-
-    const porNota = [...conDatos].sort((a, b) => b.nota - a.nota)
-    const destacado = porNota.find((x) => x.abierto) ?? porNota[0] ?? null
-    const resto = conDatos.filter((x) => x.local.id !== destacado?.local.id)
-
-    return {
-      heroe: destacado?.local ?? null,
-      heroeAbierto: destacado?.abierto ?? false,
-      abiertos: resto
-        .filter((x) => x.abierto)
-        .sort((a, b) => b.nota - a.nota)
-        .map((x) => x.local),
-      cerca: [...resto].sort((a, b) => a.metros - b.metros).map((x) => x.local),
-      otroDia: resto
-        .filter((x) => !x.abierto)
-        .sort((a, b) => b.nota - a.nota)
-        .map((x) => x.local),
-    }
-  }, [locales])
+  /* Feed al estilo Play Store: carrusel de héroes + rail de abiertos + lista
+     vertical cortada cada 5 tarjetas por estantas horizontales. Se rehace si
+     cambia el catálogo o los favoritos. */
+  const { heroLista, abiertos, bloques } = useMemo(
+    () => construirDescubre(locales, favoritos),
+    [locales, favoritos],
+  )
 
   const saludo = saludoDeLaHora(hora)
   const buscar = () => navigate(`/buscar?q=${encodeURIComponent(query.trim())}`)
@@ -86,7 +81,7 @@ function Descubre() {
 
   return (
     <section className="descubre">
-      <CieloDescubre />
+      <FondoDescubre />
 
       <div className="descubre-contenido">
         <div className="descubre-search-wrap">
@@ -161,10 +156,7 @@ function Descubre() {
         </div>
 
         <div className="descubre-secciones">
-          <HeroeLocal
-            local={heroe}
-            etiqueta={heroe && estaAbierto(heroe) ? 'Abierto ahora' : 'El mejor valorado'}
-          />
+          <CarruselHeroe locales={heroLista} />
 
           {abiertos.length > 0 && (
             <RailDescubre titulo="Puedes ir ahora mismo" nota={`${abiertos.length} abiertos`}>
@@ -174,24 +166,28 @@ function Descubre() {
             </RailDescubre>
           )}
 
-          <section className="descubre-lista">
-            <header className="descubre-lista-cabecera">
-              <h2>Cerca de ti</h2>
-              <span>Del más cercano al más lejos</span>
-            </header>
-            <div className="descubre-lista-items">
-              {cerca.map((local) => (
-                <TarjetaLocal key={local.id} {...local} />
-              ))}
-            </div>
-          </section>
-
-          {otroDia.length > 0 && (
-            <RailDescubre titulo="Para otro día" nota="Hoy están cerrados">
-              {otroDia.map((local) => (
-                <TarjetaLocalCompacta key={local.id} local={local} />
-              ))}
-            </RailDescubre>
+          {bloques.map((bloque) =>
+            bloque.tipo === 'lista' ? (
+              <section className="descubre-lista" key={bloque.clave}>
+                {bloque.titulo && (
+                  <header className="descubre-lista-cabecera">
+                    <h2>{bloque.titulo}</h2>
+                    {bloque.subtitulo && <span>{bloque.subtitulo}</span>}
+                  </header>
+                )}
+                <div className="descubre-lista-items">
+                  {bloque.items.map((local) => (
+                    <TarjetaLocal key={local.id} {...local} />
+                  ))}
+                </div>
+              </section>
+            ) : (
+              <RailDescubre key={bloque.clave} titulo={bloque.titulo} nota={bloque.nota}>
+                {bloque.items.map((local) => (
+                  <TarjetaLocalCompacta key={local.id} local={local} />
+                ))}
+              </RailDescubre>
+            ),
           )}
         </div>
       </div>

@@ -3,13 +3,19 @@
 .heroe-local {
   position: relative;
   width: 100%;
+  /* Mismo ancho tope que TarjetaLocal para que el héroe quede alineado con la
+     lista "Cerca de ti", que va centrada y topada a 420px. */
+  max-width: 420px;
+  margin-inline: auto;
+  /* Por si el contenedor usa flex/grid: que no se estire y quede centrado. */
+  align-self: center;
 }
 
 .heroe-local-link {
   position: relative;
   display: block;
   aspect-ratio: 4 / 5;
-  max-height: 440px;
+
   overflow: hidden;
   border: 1px solid rgba(240, 240, 240, 0.09);
   border-radius: 26px;
@@ -33,13 +39,11 @@
 .heroe-local-velo {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(8, 10, 9, 0.97) 0%,
-    rgba(8, 10, 9, 0.72) 32%,
-    rgba(8, 10, 9, 0.1) 62%,
-    rgba(8, 10, 9, 0.35) 100%
-  );
+  background: linear-gradient(to top,
+      rgba(8, 10, 9, 0.97) 0%,
+      rgba(8, 10, 9, 0.72) 32%,
+      rgba(8, 10, 9, 0.1) 62%,
+      rgba(8, 10, 9, 0.35) 100%);
 }
 
 .heroe-local-arriba {
@@ -192,11 +196,23 @@
   font-weight: 700;
 }
 
+/* Botón de favorito del héroe: un círculo con fondo, como el de las tarjetas,
+   para que no quede un corazón suelto colgando de la esquina redondeada. */
 .heroe-local-favorito {
   position: absolute;
   top: 12px;
   right: 12px;
   z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(8, 10, 9, 0.5);
+  border: 1px solid rgba(240, 240, 240, 0.14);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  color: var(--fonts-color-primary, #f0f0f0);
 }
 
 @media (max-width: 360px) {
