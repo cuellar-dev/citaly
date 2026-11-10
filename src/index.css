@@ -46,13 +46,25 @@
   --font-familyPrincipal: 'Quicksand', sans-serif;
   --font-familyDrink: 'drink', sans-serif;
   --font-familyMerchant: 'Merchant', sans-serif;
+
+  /* Tinta de Taly: la misma paleta del fondo dibujado a mano de Descubre.
+     Vive aquí para que cualquier pantalla pueda usar el mundo de Taly sin
+     volver a inventarse los colores. */
+  --ink-pale: #bdf4e8;
+  --ink-dark: #090f0e;
+  --ink-light: #2aa795;
+
+  /* La curva que ya usaba medio proyecto suelta. Tokenizada para no tener
+     once copias del mismo cubic-bezier. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   box-sizing: border-box;
 }
 body{
   margin: 0;
   padding: 0;
   background-color: var(--background-color);
-  min-height: 100vh;
+  min-height: 100dvh;
   width: 100%;
   overflow-x: clip;
   font-synthesis: none;

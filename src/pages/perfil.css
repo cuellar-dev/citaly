@@ -41,14 +41,58 @@
   cursor: pointer;
 }
 
+/* Los dos botones comparten caja: el de contorno lleva el borde y el lleno lo
+   lleva en su propio color, así no hay dos alturas distintas una al lado de
+   la otra. */
 .perfil-auth-entrar {
-  border: 0;
+  border: 1px solid var(--primary-color, #00c2ad);
   background: var(--primary-color, #00c2ad);
   color: var(--fonts-color-secondary, #121413);
+  transition:
+    background-color 0.2s var(--ease-out, ease-out),
+    border-color 0.2s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
 }
 
 .perfil-auth-registro {
   border: 1px solid rgba(240, 240, 240, 0.12);
   background: #121413;
   color: var(--fonts-color-primary, #f0f0f0);
+  transition:
+    background-color 0.2s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .perfil-auth-entrar:hover {
+    background: var(--primary-color-strong, #06dfc9);
+    border-color: var(--primary-color-strong, #06dfc9);
+  }
+
+  .perfil-auth-registro:hover {
+    background: #1a1f1e;
+  }
+}
+
+.perfil-auth-entrar:active,
+.perfil-auth-registro:active {
+  transform: scale(0.96);
+}
+
+.perfil-auth-entrar:focus-visible,
+.perfil-auth-registro:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .perfil-auth-entrar,
+  .perfil-auth-registro {
+    transition-duration: 0.01ms;
+  }
+
+  .perfil-auth-entrar:active,
+  .perfil-auth-registro:active {
+    transform: none;
+  }
 }

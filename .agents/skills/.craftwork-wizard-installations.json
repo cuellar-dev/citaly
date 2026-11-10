@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "skills": {
+    "craftwork-assets": {
+      "agents": [
+        "github-copilot",
+        "claude-code"
+      ],
+      "canonicalPath": "D:\\diseñoWeb\\proyectos mios\\Citaly\\.agents\\skills\\craftwork-assets",
+      "paths": {
+        "github-copilot": "D:\\diseñoWeb\\proyectos mios\\Citaly\\.agents\\skills\\craftwork-assets",
+        "claude-code": "D:\\diseñoWeb\\proyectos mios\\Citaly\\.claude\\skills\\craftwork-assets"
+      },
+      "modes": {
+        "github-copilot": "symlink",
+        "claude-code": "symlink"
+      }
+    }
+  }
+}

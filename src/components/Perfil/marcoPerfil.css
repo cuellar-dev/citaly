@@ -1,0 +1,24 @@
+.marco-perfil {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.marco-perfil-chispas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* La loma cierra la cabecera por abajo. Se monta sobre el borde para que no
+   quede una costura entre el relleno y el fondo de la página. */
+.marco-perfil-loma {
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  width: calc(100% + 2px);
+  height: 44px;
+}

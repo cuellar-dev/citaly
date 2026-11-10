@@ -4,7 +4,7 @@
 .descubre {
   position: relative;
   isolation: isolate;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--background-color, #121413);
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
 }
@@ -126,6 +126,37 @@
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
 }
 
+.sugerencia,
+.ver-todo {
+  transition: background-color 0.18s var(--ease-out, ease-out);
+}
+
+.sugerencia svg {
+  transition: transform 0.22s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sugerencia:hover,
+  .ver-todo:hover {
+    background: rgba(240, 240, 240, 0.05);
+  }
+
+  .sugerencia:hover svg {
+    transform: translateX(3px);
+  }
+}
+
+.sugerencia:active,
+.ver-todo:active {
+  background: rgba(240, 240, 240, 0.085);
+}
+
+.sugerencia:focus-visible,
+.ver-todo:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: -2px;
+}
+
 .sugerencia span {
   display: grid;
   gap: 3px;
@@ -233,6 +264,18 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sugerencia,
+  .ver-todo,
+  .sugerencia svg {
+    transition-duration: 0.01ms;
+  }
+
+  .sugerencia:hover svg {
+    transform: none;
+  }
 }
 
 /* ---------- Móvil estrecho ---------- */

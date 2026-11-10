@@ -84,7 +84,7 @@ function ModalNegocioShell({ abierto, titulo, subtitulo, tono = 'neutro', Icono,
         <header className="modal-negocio-cabecera">
           {Icono && (
             <span className="modal-negocio-icono" aria-hidden="true">
-              <Icono size={18} strokeWidth={2.25} />
+              <Icono size={22} strokeWidth={2} />
             </span>
           )}
           <div className="modal-negocio-titulos">

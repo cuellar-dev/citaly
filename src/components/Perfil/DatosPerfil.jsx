@@ -132,32 +132,26 @@ function TarjetaLocalDueno({ local }) {
 function PanelCitas() {
   const s = statsCitasPerfil()
   const local = s.masVisitadoId ? getLocalById(s.masVisitadoId) : null
+  /* Índice de cuaderno: etiqueta, puntos y cifra. Las cifras llevan el acento;
+     el nombre del local no, porque es un dato, no una medida. */
+  const filas = [
+    { k: 'idas', label: 'Idas', valor: s.idas, cifra: true },
+    { k: 'canceladas', label: 'Canceladas', valor: s.canceladas, cifra: true },
+    { k: 'curso', label: 'En curso', valor: s.enCurso, cifra: true },
+    { k: 'mes', label: 'Al mes', valor: s.promedioMes, cifra: true },
+    { k: 'puntual', label: 'Puntualidad', valor: s.puntualidad != null ? `${s.puntualidad}%` : 'Sin datos', cifra: s.puntualidad != null },
+    { k: 'top', label: 'Donde más vas', valor: local?.localName ?? 'Todavía nada', cifra: false },
+  ]
+
   return (
     <div className="perfil-despliegue perfil-despliegue--citas">
-      <p>
-        <strong>{s.idas}</strong>
-        idas
-      </p>
-      <p>
-        <strong>{s.canceladas}</strong>
-        canceladas
-      </p>
-      <p>
-        <strong>{s.enCurso}</strong>
-        en curso
-      </p>
-      <p>
-        <strong>{s.promedioMes}</strong>
-        al mes
-      </p>
-      <p>
-        <strong>{s.puntualidad != null ? `${s.puntualidad}%` : '—'}</strong>
-        puntual
-      </p>
-      <p>
-        <strong>{local?.localName ?? '—'}</strong>
-        más idas
-      </p>
+      {filas.map((f) => (
+        <p key={f.k}>
+          <span>{f.label}</span>
+          <i aria-hidden="true" />
+          <strong className={f.cifra ? 'perfil-cifra' : undefined}>{f.valor}</strong>
+        </p>
+      ))}
     </div>
   )
 }

@@ -1,28 +1,59 @@
+/* Cuerpo de Perfil.
+
+   Lo que se quitó, por genérico:
+   - la placa redondeada de color detrás de cada icono (había doce; es el tic
+     más repetido de las pantallas de ajustes generadas);
+   - el linear-gradient de 165° repetido en los seis grupos, todos idénticos;
+   - la rejilla de métricas (número gordo + etiqueta chica), que convertía el
+     resumen de citas en un panel de analítica.
+
+   Lo que entra: superficies planas, iconos desnudos al color del texto, un
+   índice de cuaderno para las cifras y hover en todo lo que se pulsa. */
+
 .perfil-datos {
   display: flex;
   flex-direction: column;
-  gap: 18px;
-  padding: 18px 14px 32px;
+  gap: 22px;
+  padding: 10px 18px 32px;
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+.perfil-bloque-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-left: 2px;
 }
 
 .perfil-bloque-cabecera h2 {
   margin: 0;
   font-family: var(--font-familyDrink, 'drink', sans-serif);
-  font-size: 1.35rem;
+  font-size: 1.2rem;
   font-weight: 600;
   letter-spacing: -0.01em;
   text-align: left;
   color: var(--fonts-color-primary, #f0f0f0);
 }
 
+/* Un filo de tinta a la derecha del título: el mismo gesto del mundo de Taly,
+   y de paso separa sin meter otra caja. */
+.perfil-bloque-cabecera::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--ink-light, #2aa795) 38%, transparent),
+    transparent 72%
+  );
+}
+
 .perfil-grupo {
   margin: 10px 0 0;
   padding: 0;
   list-style: none;
-  border-radius: 20px;
-  border: 1px solid rgba(240, 240, 240, 0.06);
-  background: linear-gradient(165deg, #1d2221 0%, #181c1b 100%);
+  border-radius: 18px;
+  background: #1a1f1e;
   overflow: hidden;
 }
 
@@ -30,7 +61,7 @@
   content: '';
   position: absolute;
   top: 0;
-  left: 62px;
+  left: 44px;
   right: 0;
   height: 1px;
   background: rgba(240, 240, 240, 0.06);
@@ -42,7 +73,7 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-height: 62px;
+  min-height: 60px;
   margin: 0;
   padding: 11px 14px;
   box-sizing: border-box;
@@ -53,6 +84,7 @@
   text-align: left;
   text-decoration: none;
   cursor: pointer;
+  transition: background-color 0.18s var(--ease-out, ease-out);
 }
 
 .perfil-fila:disabled {
@@ -77,22 +109,27 @@
   cursor: default;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .perfil-fila:not(.perfil-fila--quieta):not(:disabled):hover {
+    background: rgba(240, 240, 240, 0.045);
+  }
+
+  .perfil-fila:not(.perfil-fila--quieta):not(:disabled):hover .perfil-fila-flecha {
+    transform: translateX(2px);
+    color: var(--primary-color, #00c2ad);
+  }
+
+  .perfil-fila--rojo:hover .perfil-fila-flecha {
+    color: #ff8d8d !important;
+  }
+}
+
 .perfil-fila:not(.perfil-fila--quieta):not(:disabled):active {
-  background: rgba(240, 240, 240, 0.04);
+  background: rgba(240, 240, 240, 0.075);
 }
 
 .perfil-fila--rojo .perfil-fila-titulo {
   color: #ff8d8d;
-}
-
-.perfil-fila-icono--rojo {
-  background: color-mix(in srgb, var(--close-color, #c53f3f) 22%, transparent);
-  color: #ff6b6b;
-}
-
-.perfil-fila--rojo .perfil-fila-icono {
-  background: color-mix(in srgb, var(--close-color, #c53f3f) 22%, transparent);
-  color: #ff6b6b;
 }
 
 .perfil-fila:focus-visible {
@@ -100,16 +137,22 @@
   outline-offset: -2px;
 }
 
+/* Icono desnudo: sin placa, sin fondo de color. El acento se guarda para lo
+   que de verdad marca estado. */
 .perfil-fila-icono {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--primary-color, #00c2ad) 12%, transparent);
-  color: var(--primary-color, #00c2ad);
+  width: 18px;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 85%, transparent);
+}
+
+/* Va después de .perfil-fila-icono a propósito: las dos reglas tienen la
+   misma especificidad, así que manda el orden. */
+.perfil-fila--rojo .perfil-fila-icono,
+.perfil-fila-icono--rojo {
+  color: #ff6b6b;
 }
 
 .perfil-fila-textos {
@@ -131,17 +174,27 @@
   font-weight: 600;
   line-height: 1.3;
   color: var(--fonts-color-primary-weak, #bdbaba);
+  text-wrap: pretty;
   overflow-wrap: anywhere;
 }
 
 .perfil-fila-flecha {
   flex-shrink: 0;
   color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 55%, transparent);
-  transition: transform 0.2s ease;
+  transition:
+    transform 0.22s var(--ease-out, ease-out),
+    color 0.18s var(--ease-out, ease-out);
 }
 
 .perfil-fila-flecha--abierta {
   transform: rotate(90deg);
+  color: var(--primary-color, #00c2ad);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .perfil-fila:hover .perfil-fila-flecha--abierta {
+    transform: rotate(90deg) translateX(2px);
+  }
 }
 
 .perfil-despliegue-contenedor {
@@ -151,8 +204,8 @@
   overflow: hidden;
   pointer-events: none;
   transition:
-    grid-template-rows 0.38s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.24s ease;
+    grid-template-rows 0.34s var(--ease-out, ease-out),
+    opacity 0.2s var(--ease-out, ease-out);
 }
 
 .perfil-despliegue-contenedor--abierto {
@@ -166,26 +219,18 @@
   overflow: hidden;
 }
 
-.perfil-despliegue-contenedor > .perfil-despliegue--citas {
-  min-height: 0;
+.perfil-despliegue-contenedor > .perfil-despliegue--citas,
+.perfil-despliegue-contenedor > .perfil-despliegue-vacio,
+.perfil-despliegue-contenedor > .perfil-favs {
   padding-block: 0;
 }
 
 .perfil-despliegue-contenedor--abierto > .perfil-despliegue--citas {
-  min-height: 150px;
-  padding: 4px 14px 14px 62px;
-}
-
-.perfil-despliegue-contenedor > .perfil-despliegue-vacio {
-  padding-block: 0;
+  padding: 2px 16px 16px 44px;
 }
 
 .perfil-despliegue-contenedor--abierto > .perfil-despliegue-vacio {
-  padding: 4px 14px 14px 62px;
-}
-
-.perfil-despliegue-contenedor > .perfil-favs {
-  padding-block: 0;
+  padding: 2px 16px 16px 44px;
 }
 
 .perfil-despliegue-contenedor--abierto > .perfil-favs {
@@ -194,47 +239,62 @@
 
 @media (prefers-reduced-motion: reduce) {
   .perfil-despliegue-contenedor {
-    transition: none;
+    transition: opacity 0.2s ease;
   }
 }
 
+/* Índice de cuaderno: etiqueta, puntos y cifra. Sustituye a la rejilla de
+   tres columnas con el número gigante, que leía a panel de analítica. */
 .perfil-despliegue--citas {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px 6px;
-  min-height: 150px;
-  box-sizing: border-box;
-  padding: 4px 14px 14px 62px;
-}
-
-.perfil-despliegue--citas p {
-  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  justify-content: center;
-  min-height: 62px;
-}
-
-.perfil-despliegue--citas strong {
-  font-family: var(--font-familyDrink, 'drink', sans-serif);
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--primary-color, #00c2ad);
+  gap: 1px;
+  box-sizing: border-box;
+  padding: 2px 16px 16px 44px;
 }
 
 .perfil-despliegue--citas p {
-  font-size: 11px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  min-height: 26px;
+  font-size: 12.5px;
   font-weight: 700;
   color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
+.perfil-despliegue--citas p i {
+  flex: 1;
+  height: 0;
+  border-bottom: 1.5px dotted rgba(240, 240, 240, 0.22);
+  transform: translateY(-3px);
+}
+
+.perfil-despliegue--citas strong {
+  flex-shrink: 0;
+  max-width: 55%;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--fonts-color-primary, #f0f0f0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.perfil-despliegue--citas strong.perfil-cifra {
+  color: var(--primary-color, #00c2ad);
+}
+
 .perfil-despliegue-vacio {
   margin: 0;
-  padding: 4px 14px 14px 62px;
+  padding: 2px 16px 16px 44px;
   font-size: 12.5px;
   font-weight: 600;
   line-height: 1.4;
+  text-wrap: pretty;
   color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
@@ -249,8 +309,30 @@
   align-items: center;
   gap: 12px;
   padding: 8px 6px;
+  border-radius: 12px;
   text-decoration: none;
   color: inherit;
+  transition: background-color 0.18s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .perfil-fav:hover {
+    background: rgba(240, 240, 240, 0.05);
+  }
+
+  .perfil-fav:hover .perfil-fila-flecha {
+    transform: translateX(2px);
+    color: var(--primary-color, #00c2ad);
+  }
+}
+
+.perfil-fav:active {
+  background: rgba(240, 240, 240, 0.08);
+}
+
+.perfil-fav:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: -2px;
 }
 
 .perfil-fav-foto {
@@ -259,7 +341,14 @@
   border-radius: 10px;
   background: #252926 center / cover no-repeat;
   flex-shrink: 0;
+  /* Filo interior para que la foto no se derrame en la superficie. */
+  box-shadow: inset 0 0 0 1px rgba(240, 240, 240, 0.1);
 }
+
+/* ---------- Acciones de la hoja de sesión ----------
+   Las usa PanelSesion dentro del modal. Allí no hay grupo que las contenga,
+   así que cada una lleva su propia superficie en vez de flotar sobre el
+   fondo de la hoja. */
 
 .perfil-sesion-accion {
   position: relative;
@@ -267,15 +356,18 @@
   align-items: center;
   gap: 12px;
   width: 100%;
-  min-height: 62px;
+  min-height: 60px;
   margin: 0;
-  padding: 11px 4px;
+  padding: 12px 14px;
+  box-sizing: border-box;
   border: 0;
-  background: transparent;
-  color: inherit;
+  border-radius: 14px;
+  background: rgba(240, 240, 240, 0.04);
+  color: var(--fonts-color-primary, #f0f0f0);
   font: inherit;
   text-align: left;
   cursor: pointer;
+  transition: background-color 0.18s var(--ease-out, ease-out);
 }
 
 .perfil-sesion-accion:disabled {
@@ -283,8 +375,35 @@
   cursor: default;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .perfil-sesion-accion:not(:disabled):hover {
+    background: rgba(240, 240, 240, 0.08);
+  }
+
+  .perfil-sesion-accion--peligro:not(:disabled):hover {
+    background: color-mix(in srgb, var(--close-color, #c53f3f) 18%, transparent);
+  }
+}
+
+.perfil-sesion-accion:not(:disabled):active {
+  background: rgba(240, 240, 240, 0.11);
+}
+
+.perfil-sesion-accion:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+.perfil-sesion-accion--peligro {
+  background: color-mix(in srgb, var(--close-color, #c53f3f) 10%, transparent);
+}
+
 .perfil-sesion-accion--peligro .perfil-fila-titulo {
-  color: #ff6b6b;
+  color: #ff8d8d;
+}
+
+.perfil-sesion-accion--peligro:focus-visible {
+  outline-color: #ff8d8d;
 }
 
 .perfil-pastilla {
@@ -317,6 +436,7 @@
   border-radius: 999px;
   background: rgba(240, 240, 240, 0.14);
   cursor: pointer;
+  transition: background-color 0.2s var(--ease-out, ease-out);
 }
 
 .perfil-switch i {
@@ -327,7 +447,7 @@
   height: 20px;
   border-radius: 50%;
   background: var(--fonts-color-primary, #f0f0f0);
-  transition: transform 0.2s ease;
+  transition: transform 0.22s var(--ease-out, ease-out);
 }
 
 .perfil-switch--on {
@@ -336,6 +456,16 @@
 
 .perfil-switch--on i {
   transform: translateX(18px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .perfil-switch:not(:disabled):not(.perfil-switch--on):hover {
+    background: rgba(240, 240, 240, 0.22);
+  }
+
+  .perfil-switch--on:not(:disabled):hover {
+    background: var(--primary-color-strong, #06dfc9);
+  }
 }
 
 .perfil-switch:focus-visible {
@@ -366,6 +496,26 @@
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .perfil-segmento button:not(.perfil-segmento--activo):hover {
+    background: rgba(240, 240, 240, 0.06);
+    color: var(--fonts-color-primary, #f0f0f0);
+  }
+}
+
+.perfil-segmento button:active {
+  transform: scale(0.96);
+}
+
+.perfil-segmento button:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
 }
 
 .perfil-segmento--activo {
@@ -373,6 +523,8 @@
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent) !important;
   color: var(--primary-color, #00c2ad) !important;
 }
+
+/* ---------- Tu lugar ---------- */
 
 .perfil-grupo--solido {
   overflow: hidden;
@@ -392,12 +544,19 @@
   inset: 0;
   background-size: cover;
   background-position: center;
+  transition: transform 0.4s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .perfil-local:hover .perfil-local-foto {
+    transform: scale(1.04);
+  }
 }
 
 .perfil-local-velo {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(18, 20, 19, 0.12) 0%, rgba(18, 20, 19, 0.82) 100%);
+  background: linear-gradient(180deg, rgba(18, 20, 19, 0.05) 42%, rgba(18, 20, 19, 0.86) 100%);
   pointer-events: none;
 }
 
@@ -430,4 +589,27 @@
 .perfil-local:focus-visible {
   outline: 2px solid var(--primary-color, #00c2ad);
   outline-offset: -2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .perfil-fila,
+  .perfil-fila-flecha,
+  .perfil-fav,
+  .perfil-switch,
+  .perfil-switch i,
+  .perfil-segmento button,
+  .perfil-local-foto {
+    transition-duration: 0.01ms;
+  }
+
+  .perfil-local:hover .perfil-local-foto,
+  .perfil-segmento button:active {
+    transform: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .perfil-datos {
+    padding-inline: 14px;
+  }
 }

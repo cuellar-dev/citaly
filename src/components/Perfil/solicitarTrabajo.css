@@ -109,3 +109,53 @@
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 16%, transparent);
   color: var(--primary-color, #00c2ad);
 }
+
+/* Estados. Nada de esto existía: la lista de locales y los chips de rol se
+   pulsaban sin que cambiara nada bajo el dedo ni bajo el ratón. */
+
+.solicitar-fila {
+  border-radius: 12px;
+  transition: background-color 0.18s var(--ease-out, ease-out);
+}
+
+.solicitar-chip {
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .solicitar-fila:hover {
+    background: rgba(240, 240, 240, 0.05);
+  }
+
+  .solicitar-chip:not(.solicitar-chip--on):hover {
+    background: rgba(240, 240, 240, 0.07);
+  }
+}
+
+.solicitar-fila:active {
+  background: rgba(240, 240, 240, 0.085);
+}
+
+.solicitar-chip:active {
+  transform: scale(0.96);
+}
+
+.solicitar-fila:focus-visible,
+.solicitar-chip:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .solicitar-fila,
+  .solicitar-chip {
+    transition-duration: 0.01ms;
+  }
+
+  .solicitar-chip:active {
+    transform: none;
+  }
+}

@@ -20,9 +20,10 @@
   border-radius: 26px 26px 0 0;
   border: 1px solid rgba(240, 240, 240, 0.08);
   border-bottom: 0;
-  background:
-    radial-gradient(120% 40% at 50% 0%, color-mix(in srgb, var(--tono) 10%, transparent) 0%, transparent 70%),
-    linear-gradient(180deg, #1e2221 0%, #161918 100%);
+  /* Antes había un resplandor radial del tono en la boca de la hoja y un
+     degradado de 180° por debajo. Los dos son relleno: la hoja ya se separa
+     del velo por su propio borde y su sombra. Superficie plana. */
+  background: #1b201f;
   box-shadow: 0 -18px 48px -12px rgba(2, 8, 7, 0.7);
   color: var(--fonts-color-primary, #f0f0f0);
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
@@ -55,22 +56,39 @@
 }
 
 .modal-negocio-cabecera {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 11px;
   padding: 12px 18px 14px;
-  border-bottom: 1px solid rgba(240, 240, 240, 0.06);
 }
 
+/* El filo de abajo no es una línea de borde a borde: sale del tono de la
+   hoja y se apaga hacia la derecha, el mismo gesto que separa los bloques
+   en Perfil. */
+.modal-negocio-cabecera::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--tono) 42%, transparent),
+    rgba(240, 240, 240, 0.07) 38%,
+    transparent 92%
+  );
+}
+
+/* Icono desnudo, al tono. La placa redondeada de color detrás del icono era
+   el mismo tic que se quitó de las filas de Perfil. */
 .modal-negocio-icono {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--tono) 15%, transparent);
+  width: 22px;
   color: var(--tono);
 }
 
@@ -89,12 +107,14 @@
   text-align: left;
 }
 
+/* El subtítulo era una etiqueta en versalitas con tracking. Es una frase, no
+   una etiqueta de sección: se lee en caja normal. */
 .modal-negocio-subtitulo {
   margin: 2px 0 0;
-  font-size: 11px;
+  font-size: 12.5px;
   font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  line-height: 1.3;
+  text-wrap: pretty;
   color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
@@ -105,16 +125,41 @@
   flex-shrink: 0;
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(240, 240, 240, 0.08);
-  border-radius: 12px;
-  background: rgba(240, 240, 240, 0.05);
-  color: var(--fonts-color-primary, #f0f0f0);
+  border: 0;
+  border-radius: 50%;
+  background: rgba(240, 240, 240, 0.06);
+  color: var(--fonts-color-primary-weak, #bdbaba);
   cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .modal-negocio-cerrar:hover {
+    background: rgba(240, 240, 240, 0.12);
+    color: var(--fonts-color-primary, #f0f0f0);
+  }
+}
+
+.modal-negocio-cerrar:active {
+  transform: scale(0.92);
 }
 
 .modal-negocio-cerrar:focus-visible {
   outline: 2px solid var(--tono);
   outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-negocio-cerrar {
+    transition-duration: 0.01ms;
+  }
+
+  .modal-negocio-cerrar:active {
+    transform: none;
+  }
 }
 
 .modal-negocio-cuerpo {
@@ -848,17 +893,50 @@
   font-weight: 700;
   cursor: pointer;
   transition:
-    opacity 0.2s ease,
-    transform 0.15s ease;
+    background-color 0.2s var(--ease-out, ease-out),
+    opacity 0.2s var(--ease-out, ease-out),
+    transform 0.15s var(--ease-out, ease-out);
+}
+
+/* El tono es el color de la hoja, así que el hover aclara ese mismo tono en
+   vez de encender un borde. */
+@media (hover: hover) and (pointer: fine) {
+  .modal-negocio-accion-principal:not(:disabled):hover {
+    background: color-mix(in srgb, var(--tono) 86%, #f0f0f0);
+  }
+
+  .modal-negocio-boton--suave:hover {
+    background: color-mix(in srgb, var(--primary-color, #00c2ad) 20%, transparent);
+  }
 }
 
 .modal-negocio-accion-principal:active:not(:disabled) {
   transform: scale(0.98);
 }
 
+.modal-negocio-accion-principal:focus-visible {
+  outline: 2px solid var(--fonts-color-primary, #f0f0f0);
+  outline-offset: 2px;
+}
+
 .modal-negocio-accion-principal:disabled {
   opacity: 0.35;
   cursor: not-allowed;
+}
+
+.modal-negocio-boton--suave {
+  transition: background-color 0.2s var(--ease-out, ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-negocio-accion-principal,
+  .modal-negocio-boton--suave {
+    transition-duration: 0.01ms;
+  }
+
+  .modal-negocio-accion-principal:active:not(:disabled) {
+    transform: none;
+  }
 }
 
 @media (max-width: 360px) {
