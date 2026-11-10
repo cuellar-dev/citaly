@@ -4,8 +4,11 @@
   z-index: 100;
   width: 100%;
   padding: max(12px, env(safe-area-inset-top)) 20px 14px;
-  background-color: var(--background-color-secondary);
-  border-bottom: 1px solid color-mix(in srgb, var(--fonts-color-primary-weak) 18%, transparent);
+  /* Degradado en vez de un bloque plano con línea: arranca más oscuro que
+     antes y muere exactamente en el fondo de la app, así el header deja de
+     tener un corte y se funde con la página. Por eso ya no hay border-bottom:
+     el degradado hace ese trabajo sin dibujar una raya. */
+  background: linear-gradient(180deg, #161918 0%, #141716 58%, #121413 100%);
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
@@ -39,13 +42,63 @@
   color: var(--fonts-color-primary);
   line-height: 1.25;
 }
-.app-header-icons{
+
+.app-header-icons {
   display: flex;
   gap: 20px;
   align-items: center;
   justify-content: end;
   color: var(--fonts-color-primary-alternative);
 }
-.app-header-icon{
+
+.app-header-icon {
   cursor: pointer;
+}
+
+/* Los tres puntos eran un <span> sin semántica. Ahora es el botón que abre el
+   cartel, así que necesita ser un botón de verdad. */
+.app-header-boton {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .app-header-boton:hover {
+    background: rgba(240, 240, 240, 0.08);
+  }
+}
+
+.app-header-boton:active {
+  transform: scale(0.92);
+}
+
+.app-header-boton[aria-expanded='true'] {
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 18%, transparent);
+  color: var(--primary-color, #00c2ad);
+}
+
+.app-header-boton:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-header-boton {
+    transition-duration: 0.01ms;
+  }
+
+  .app-header-boton:active {
+    transform: none;
+  }
 }

@@ -71,6 +71,14 @@
     border-color 0.2s ease;
 }
 
+/* No había hover en esta barra (la transición de border-color no la usaba
+   nadie). Cambia el relleno, no el borde. */
+@media (hover: hover) and (pointer: fine) {
+  .cabecera-negocio-boton:hover {
+    background: color-mix(in srgb, #121413 88%, #f0f0f0);
+  }
+}
+
 .cabecera-negocio-boton:active {
   transform: scale(0.96);
 }
@@ -80,11 +88,36 @@
   outline-offset: 2px;
 }
 
-.cabecera-negocio-editar {
+.cabecera-negocio-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin-left: auto;
+}
+
+.cabecera-negocio-editar {
   padding-left: 13px;
   border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent);
   color: var(--primary-color, #00c2ad);
+}
+
+.cabecera-negocio-compartir {
+  padding-left: 13px;
+  text-decoration: none;
+}
+
+/* En pantallas estrechas el botón se queda en el icono: con galería, texto de
+   compartir y texto de editar, la barra se parte. */
+@media (max-width: 400px) {
+  .cabecera-negocio-compartir {
+    padding: 5px;
+    width: 40px;
+    justify-content: center;
+  }
+
+  .cabecera-negocio-compartir span {
+    display: none;
+  }
 }
 
 .cabecera-negocio-miniaturas {

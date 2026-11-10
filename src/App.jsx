@@ -4,6 +4,7 @@ import Auth from './pages/Auth.jsx'
 import Descubre from './pages/Descubre.jsx'
 import MisCitas from './pages/MisCitas.jsx'
 import MiNegocio from './pages/MiNegocio.jsx'
+import CompartirNegocio from './pages/CompartirNegocio.jsx'
 import Perfil from './pages/Perfil.jsx'
 import DetalleLocal from './pages/DetalleLocal.jsx'
 import ReservarConLugar from './pages/ReservarConLugar.jsx'
@@ -35,6 +36,7 @@ function App() {
           <Route path="local/:id/reservar-cita" element={<ReservarSinLugarPage />} />
           <Route path="citas" element={<MisCitas />} />
           <Route path="negocio" element={<MiNegocio />} />
+          <Route path="negocio/compartir" element={<CompartirNegocio />} />
           <Route path="perfil" element={<Perfil />} />
           <Route path="*" element={<NotFound />} />
         </Route>

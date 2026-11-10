@@ -1,0 +1,61 @@
+/* El rincón de Taly: las yerbitas y el pájaro, abajo a la izquierda de los
+   iconos del header. Taly queda parado justo sobre el borde del header. */
+
+.taly-rincon {
+  position: absolute;
+  right: 112px;
+  bottom: 0;
+  z-index: 130;
+  width: 106px;
+  height: 46px;
+  pointer-events: none;
+}
+
+/* Las yerbas se quedan pegadas al borde de abajo, detrás del pájaro. */
+.taly-yerba {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 106px;
+  height: 20px;
+  overflow: visible;
+}
+
+/* Capa del salto. La de dentro lleva el paseo; separadas para que GSAP no
+   pelee por la misma propiedad transform. */
+.taly-posado {
+  position: absolute;
+  left: 10px;
+  bottom: 0;
+  display: block;
+  width: 37px;
+  will-change: transform;
+}
+
+.taly-posado-cuerpo {
+  display: block;
+  width: 100%;
+  will-change: transform;
+}
+
+.taly-posado-cuerpo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+@media (max-width: 420px) {
+  .taly-rincon {
+    right: 96px;
+    width: 92px;
+  }
+
+  .taly-yerba {
+    width: 92px;
+  }
+
+  .taly-posado {
+    width: 33px;
+  }
+}

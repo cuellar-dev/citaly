@@ -14,6 +14,9 @@ importers:
       anime:
         specifier: ^0.1.2
         version: 0.1.2
+      animejs:
+        specifier: ^4.5.0
+        version: 4.5.0
       date-fns:
         specifier: ^4.3.0
         version: 4.4.0
@@ -26,6 +29,9 @@ importers:
       lucide-react:
         specifier: ^1.17.0
         version: 1.17.0(react@19.2.7)
+      qrcode.react:
+        specifier: ^4.2.0
+        version: 4.2.0(react@19.2.7)
       react:
         specifier: ^19.2.6
         version: 19.2.7
@@ -395,6 +401,17 @@ packages:
   anime@0.1.2:
     resolution: {integrity: sha512-zd+6UablVSkAgljrml0tx1WmDiwtv9cDsV263JDV/t2vufi0OBF+EB9nnQNmlKAuQHosxAEsDB0rh/XPrHE5YQ==}
     hasBin: true
+
+  animejs@4.5.0:
+    resolution: {integrity: sha512-NQimYX+lz8WaXonGS9zVVoviCIAjONeJayxacUditaivYLqyXgGjFKjuyl0aUUhFKm5MriX9ty1TGovNzoJQWA==}
+    peerDependencies:
+      '@types/three': '>=0.150.0'
+      three: '>=0.150.0'
+    peerDependenciesMeta:
+      '@types/three':
+        optional: true
+      three:
+        optional: true
 
   array-buffer-byte-length@1.0.2:
     resolution: {integrity: sha512-LHE+8BuR7RYGDKvnrmcuSq3tDcKv9OFEXQt/HpbZhY7V6h0zlUXutnAD82GiFx9rdieCMjkvtcsPqBwgUl1Iiw==}
@@ -1171,6 +1188,11 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  qrcode.react@4.2.0:
+    resolution: {integrity: sha512-QpgqWi8rD9DsS9EP3z7BT+5lY5SFhsqGjpgW5DY/i3mK4M9DTBNz3ErMi8BWYEfI3L0d8GIbGmcdFAS1uIRGjA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   qs@6.5.5:
     resolution: {integrity: sha512-mzR4sElr1bfCaPJe7m8ilJ6ZXdDaGoObcYR0ZHSsktM/Lt21MVHj5De30GQH2eiZ1qGRTO7LCAzQsUeXTNexWQ==}
     engines: {node: '>=0.6'}
@@ -1774,6 +1796,8 @@ snapshots:
       prompt: 0.2.14
       request: 2.88.2
       xml2js: 0.4.23
+
+  animejs@4.5.0: {}
 
   array-buffer-byte-length@1.0.2:
     dependencies:
@@ -2532,6 +2556,10 @@ snapshots:
       punycode: 2.3.1
 
   punycode@2.3.1: {}
+
+  qrcode.react@4.2.0(react@19.2.7):
+    dependencies:
+      react: 19.2.7
 
   qs@6.5.5: {}
 

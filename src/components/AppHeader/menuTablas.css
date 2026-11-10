@@ -1,0 +1,132 @@
+/* Cartel de tablas colgado del botón de los tres puntos.
+
+   La madera es apagada y fría a propósito (#4a3f33): un marrón de taberna
+   saturado se pelearía con el teal de la app. El calor lo ponen las cuerdas y
+   los clavos en mostaza, que ya es el color del copete de Taly. */
+
+.menu-tablas {
+  position: absolute;
+  top: calc(100% + 2px);
+  right: 14px;
+  z-index: 120;
+  width: 224px;
+}
+
+/* Las dos cuerdas van por detrás y se ven en los huecos entre tablas, que es
+   lo que hace que el cartel se lea como "atado" y no como una lista. */
+.menu-tablas-cuerda {
+  position: absolute;
+  top: 0;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    180deg,
+    var(--primary-color, #00c2ad) 0 4px,
+    #07796d 4px 8px
+  );
+  opacity: 0.85;
+}
+
+.menu-tablas-cuerda--izq {
+  left: 15px;
+}
+
+.menu-tablas-cuerda--der {
+  right: 15px;
+}
+
+.menu-tablas-lista {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-tablas-item {
+  /* El giro final vive en el botón, no aquí: GSAP anima la rotación de este
+     elemento hasta 0 y si compartieran propiedad se perdería la torcedura. */
+  margin: 0;
+}
+
+.menu-tabla {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 224px;
+  height: 56px;
+  padding: 0 22px 0 30px;
+  border: 0;
+  background: none;
+  color: var(--primary-color-strong, #06dfc9);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transform: rotate(var(--giro, 0deg));
+  transition: filter 0.18s var(--ease-out, ease-out);
+}
+
+.menu-tabla-fondo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 224px;
+  height: 56px;
+  /* El filtro de temblor se sale del cuadro. */
+  overflow: visible;
+  pointer-events: none;
+}
+
+.menu-tabla-icono,
+.menu-tabla-texto {
+  position: relative;
+  z-index: 1;
+}
+
+.menu-tabla-icono {
+  flex-shrink: 0;
+  color: var(--primary-color, #00c2ad);
+}
+
+.menu-tabla-texto {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* El hover aclara la madera entera con un filtro, no recolorea bordes. */
+@media (hover: hover) and (pointer: fine) {
+  .menu-tabla:hover {
+    filter: brightness(1.18);
+  }
+}
+
+.menu-tabla:active {
+  filter: brightness(0.94);
+}
+
+.menu-tabla:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-tabla {
+    transition-duration: 0.01ms;
+  }
+}
+
+@media (max-width: 420px) {
+  .menu-tablas {
+    right: 10px;
+  }
+}

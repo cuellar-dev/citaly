@@ -1,6 +1,7 @@
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { Pencil, Star } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Pencil, QrCode, Star } from 'lucide-react'
 import { fotoAncho, franjaTurno } from '../../utils/fichaLocal.js'
 import TimelineTurno from './TimelineTurno.jsx'
 import './cabeceraNegocio.css'
@@ -44,10 +45,25 @@ function CabeceraNegocio({
               {fotos.length} fotos
             </button>
           )}
-          <button type="button" className="cabecera-negocio-boton cabecera-negocio-editar" onClick={onEditar}>
-            <Pencil size={15} strokeWidth={2.25} aria-hidden="true" />
-            Editar
-          </button>
+          {/* Compartir y Editar van juntos a la derecha. Agrupados a
+              propósito: sueltos, el space-between de la barra los separaría a
+              los dos extremos cuando el local no tiene galería. */}
+          <div className="cabecera-negocio-acciones">
+            {/* Navegación de verdad, no un botón con onClick: así se puede
+                abrir en otra pestaña y la URL es compartible. */}
+            <Link
+              to="/negocio/compartir"
+              className="cabecera-negocio-boton cabecera-negocio-compartir"
+              aria-label="Compartir el local con un código QR"
+            >
+              <QrCode size={15} strokeWidth={2.25} aria-hidden="true" />
+              <span>Compartir</span>
+            </Link>
+            <button type="button" className="cabecera-negocio-boton cabecera-negocio-editar" onClick={onEditar}>
+              <Pencil size={15} strokeWidth={2.25} aria-hidden="true" />
+              Editar
+            </button>
+          </div>
         </div>
 
         <div className="cabecera-negocio-textos">

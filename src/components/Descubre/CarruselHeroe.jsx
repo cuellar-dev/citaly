@@ -8,7 +8,7 @@ import './carruselHeroe.css'
    No se toca HeroeLocal; solo se envuelve. La sombra del héroe la lleva el
    viewport (que recorta los slides vecinos), así se ve igual que el héroe único. */
 
-const PASO_MS = 6000
+const PASO_MS = 4000
 
 function prefiereQuieto() {
   if (typeof window === 'undefined' || !window.matchMedia) return false
