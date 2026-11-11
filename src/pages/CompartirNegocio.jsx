@@ -87,7 +87,7 @@ function CompartirNegocio() {
         </div>
 
         <footer className="compartir-tarjeta-pie">
-          <p className="compartir-cta">Escanea y reserva tu cita</p>
+          <p className="compartir-cta">Escanea y mira nuestro lugar</p>
           <p className="compartir-enlace">{enlace}</p>
           <p className="compartir-marca">Citaly</p>
         </footer>

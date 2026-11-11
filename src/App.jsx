@@ -11,6 +11,7 @@ import ReservarConLugar from './pages/ReservarConLugar.jsx'
 import ReservarSinLugar from './pages/ReservarSinLugar.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Busqueda from './pages/Busqueda.jsx'
+import Notificaciones from './pages/Notificaciones.jsx'
 
 function ReservarConLugarPage() {
   const { id } = useParams()
@@ -38,6 +39,7 @@ function App() {
           <Route path="negocio" element={<MiNegocio />} />
           <Route path="negocio/compartir" element={<CompartirNegocio />} />
           <Route path="perfil" element={<Perfil />} />
+          <Route path="notificaciones" element={<Notificaciones />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

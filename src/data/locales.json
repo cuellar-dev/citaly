@@ -1498,6 +1498,19 @@
     ],
     "comentarios": [
       {
+        "id": "laura-mendez-1",
+        "nombre": "Laura Méndez",
+        "fecha": "2026-11-02",
+        "calificacion": 4,
+        "comentario": "Lianet me dejó el color precioso, pero el secado fue con prisa.",
+        "imagenPerfil": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop",
+        "respuesta": {
+          "texto": "Gracias, Laura. Hablamos con el equipo: el secado no se apura más. La próxima te lo hacemos con calma.",
+          "fecha": "2026-11-09",
+          "autor": "Dueño"
+        }
+      },
+      {
         "id": "1",
         "nombre": "Pavel Díaz",
         "fecha": "2026-01-24",

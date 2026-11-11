@@ -13,6 +13,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 5px 3px #121413;
 }
 
 .app-header-inner {
@@ -101,4 +102,67 @@
   .app-header-boton:active {
     transform: none;
   }
+}
+
+/* ---------- Campana ---------- */
+
+.app-header-campana {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Mostaza, el color del copete de Taly: lo único cálido del header, así se
+   ve sin tener que ser rojo de alarma. */
+.app-header-contador {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px #151817;
+  background: var(--yellow-color, #ffd166);
+  color: var(--fonts-color-secondary, #121413);
+  font-family: var(--font-familyPrincipal);
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* ---------- Campana ---------- */
+
+.app-header-campana {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Mostaza, el color del copete de Taly: lo único cálido del header, así se
+   ve sin tener que ser rojo de alarma. */
+.app-header-contador {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px #151817;
+  background: var(--yellow-color, #ffd166);
+  color: var(--fonts-color-secondary, #121413);
+  font-family: var(--font-familyPrincipal);
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
 }

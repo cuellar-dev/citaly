@@ -73,12 +73,10 @@
   right: 18px;
   bottom: 0;
   height: 1px;
-  background: linear-gradient(
-    to right,
-    color-mix(in srgb, var(--tono) 42%, transparent),
-    rgba(240, 240, 240, 0.07) 38%,
-    transparent 92%
-  );
+  background: linear-gradient(to right,
+      color-mix(in srgb, var(--tono) 42%, transparent),
+      rgba(240, 240, 240, 0.07) 38%,
+      transparent 92%);
 }
 
 /* Icono desnudo, al tono. La placa redondeada de color detrás del icono era
@@ -873,6 +871,7 @@
   font: inherit;
   font-size: 15px;
   font-weight: 600;
+  width: 100%;
 }
 
 .modal-negocio-input:focus {
@@ -929,6 +928,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .modal-negocio-accion-principal,
   .modal-negocio-boton--suave {
     transition-duration: 0.01ms;

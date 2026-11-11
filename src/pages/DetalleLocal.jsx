@@ -1,5 +1,5 @@
-import { Link, useParams, useNavigate } from 'react-router-dom'
-import { useState, useRef } from 'react'
+import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { useEffect, useState, useRef } from 'react'
 import { format } from 'date-fns'
 import { ArrowLeft, MapPin, Phone, Star, Share2, Send, Clock, ChevronRight, Images } from 'lucide-react'
 import BotonFavorito from '../components/Favorito/BotonFavorito.jsx'
@@ -35,7 +35,24 @@ function DetalleLocal() {
   const [comentarioNuevoId, setComentarioNuevoId] = useState(null)
 
   const textareaRef = useRef(null)
-  const [comentarioAbierto, setComentarioAbierto] = useState(null)
+  /* ?opinion=<id> llega desde Notificaciones ("respondió a tu opinión"): ese
+     comentario sale abierto y resaltado, y la página baja hasta él. */
+  const [searchParams] = useSearchParams()
+  const opinionPedida = searchParams.get('opinion')
+  const [comentarioAbierto, setComentarioAbierto] = useState(opinionPedida)
+
+  useEffect(() => {
+    if (!opinionPedida) return undefined
+    /* Un frame de espera: el Layout sube el scroll arriba al cambiar de ruta,
+       y su efecto corre después que este. */
+    const frame = requestAnimationFrame(() => {
+      const suave = !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      document
+        .getElementById(`opinion-${opinionPedida}`)
+        ?.scrollIntoView({ block: 'center', behavior: suave ? 'smooth' : 'auto' })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [opinionPedida])
   const [textoComentario, setTextoComentario] = useState('')
   const [emojiSeleccionado, setEmojiSeleccionado] = useState(0)
   const [animarSubmit, setAnimarSubmit] = useState(false)
@@ -379,7 +396,7 @@ return (
             </div>
             <div className='detalle-local-opiniones-list'>
               {(local.comentarios ?? []).map((comentario) => (
-                <Opiniones key={comentario.id} nombre={comentario.nombre} fecha={comentario.fecha} calificacion={comentario.calificacion} comentario={comentario.comentario} imagenPerfil={comentario.imagenPerfil} respuesta={comentario.respuesta} reciente={comentario.id === comentarioNuevoId} expandido = {comentarioAbierto ===comentario.id} onToggle={() => handleMostrarComentario(comentario.id)}/>
+                <Opiniones key={comentario.id} id={`opinion-${comentario.id}`} destacada={comentario.id === opinionPedida} nombre={comentario.nombre} fecha={comentario.fecha} calificacion={comentario.calificacion} comentario={comentario.comentario} imagenPerfil={comentario.imagenPerfil} respuesta={comentario.respuesta} reciente={comentario.id === comentarioNuevoId} expandido = {comentarioAbierto ===comentario.id} onToggle={() => handleMostrarComentario(comentario.id)}/>
               ))}
             </div>    
           </div>

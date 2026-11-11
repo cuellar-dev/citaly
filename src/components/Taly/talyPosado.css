@@ -38,6 +38,11 @@
   will-change: transform;
 }
 
+.copete {
+  transform: translateX(-2.4px);
+
+}
+
 .taly-posado-cuerpo svg {
   display: block;
   width: 100%;

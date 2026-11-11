@@ -50,7 +50,6 @@ function TablaFondo({ semilla, chispa }) {
         <path d={MADERA} fill="none" stroke="#5d5042" strokeWidth="1.4" />
         <path d={VETA_A} fill="none" stroke="#3b3128" strokeWidth="1.6" strokeLinecap="round" opacity="0.8" />
         <path d={VETA_B} fill="none" stroke="#3b3128" strokeWidth="1.3" strokeLinecap="round" opacity="0.6" />
-        <path d={chispaPath(chispa[0], chispa[1], chispa[2])} fill="#00c2ad" fillOpacity="0.5" />
       </g>
 
       {/* Los clavos van fuera del filtro: son de metal, no de madera, y si

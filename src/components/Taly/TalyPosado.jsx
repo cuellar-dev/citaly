@@ -171,7 +171,7 @@ function TalyPosado({ menuAbierto = false }) {
 
             <g filter="url(#taly-posado-pulso)">
               <path d={PATAS} stroke="#ffd166" strokeWidth="2" strokeLinecap="round" fill="none" />
-              <path d={COPETE} fill="#ffd166" />
+              <path className='copete' d={COPETE} fill="#ffd166" />
               <path d={CUERPO} fill="#4fd8c4" />
               <path d={BARRIGA} fill="#bdf4e8" />
               <path d={ALA} fill="#2aa795" />

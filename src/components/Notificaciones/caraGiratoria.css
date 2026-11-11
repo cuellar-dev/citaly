@@ -1,0 +1,168 @@
+.cara-giratoria {
+  --lado: 96px;
+  position: relative;
+  width: var(--lado);
+  height: var(--lado);
+  perspective: 600px;
+}
+
+/* La moneda gira entera; cada cara se esconde de espaldas. Es un cambio de
+   estado deliberado y poco frecuente: puede tomarse algo más que un hover. */
+.cara-giratoria-moneda {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.5s var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1));
+}
+
+.cara-giratoria--local .cara-giratoria-moneda {
+  transform: rotateY(180deg);
+}
+
+.cara-giratoria-cara {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  /* Un anillo del color del fondo la despega de la escena; por fuera, una
+     línea finísima. Nada de aros dibujados. */
+  box-shadow:
+    0 0 0 4px var(--background-color, #121413),
+    0 0 0 5px rgba(240, 240, 240, 0.1);
+  background: var(--background-color-another, #252926);
+}
+
+.cara-giratoria-cara--tu {
+  border-radius: 50%;
+}
+
+.cara-giratoria-cara--local {
+  border-radius: 26px;
+  transform: rotateY(180deg);
+}
+
+.cara-giratoria-cara img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cara-giratoria-iniciales {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: var(--primary-color, #00c2ad);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 30px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* ---------- Botón de girar ---------- */
+
+.cara-girar {
+  position: absolute;
+  right: -10px;
+  bottom: -6px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  box-shadow: 0 0 0 4px var(--background-color, #121413);
+  cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cara-girar:hover {
+    background: var(--primary-color-strong, #06dfc9);
+  }
+}
+
+.cara-girar:active {
+  transform: scale(0.92);
+}
+
+.cara-girar:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 5px;
+}
+
+/* Las flechas dan media vuelta con la moneda. */
+.cara-girar-icono {
+  width: 21px;
+  height: 21px;
+  transition: transform 0.5s var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1));
+}
+
+.cara-giratoria--local .cara-girar-icono {
+  transform: rotate(180deg);
+}
+
+/* Cuántos avisos te esperan al otro lado. */
+.cara-girar-contador {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  background: var(--yellow-color, #ffd166);
+  color: var(--fonts-color-secondary, #121413);
+  box-shadow: 0 0 0 2px var(--background-color, #121413);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Sin giro: la cara cambia con un fundido. */
+@media (prefers-reduced-motion: reduce) {
+  .cara-giratoria-moneda,
+  .cara-girar-icono {
+    transition: none;
+  }
+
+  .cara-giratoria--local .cara-giratoria-moneda,
+  .cara-giratoria--local .cara-girar-icono {
+    transform: none;
+  }
+
+  .cara-giratoria-cara {
+    backface-visibility: visible;
+    transition: opacity 0.2s ease;
+  }
+
+  .cara-giratoria-cara--local {
+    transform: none;
+    opacity: 0;
+  }
+
+  .cara-giratoria--local .cara-giratoria-cara--local {
+    opacity: 1;
+  }
+
+  .cara-giratoria--local .cara-giratoria-cara--tu {
+    opacity: 0;
+  }
+
+  .cara-girar:active {
+    transform: none;
+  }
+}

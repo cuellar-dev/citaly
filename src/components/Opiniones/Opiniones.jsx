@@ -1,9 +1,9 @@
 import './opiniones.css'
 import { Star, ChevronDown} from 'lucide-react'
-function Opiniones({ nombre, fecha, calificacion, comentario, imagenPerfil, onToggle, expandido, reciente = false, respuesta }) {
+function Opiniones({ id, destacada = false, nombre, fecha, calificacion, comentario, imagenPerfil, onToggle, expandido, reciente = false, respuesta }) {
   const inicial = String(nombre || '?').trim().charAt(0).toUpperCase()
   return (
-    <div className={`opiniones-container${reciente ? ' opiniones-container--nueva' : ''}`}>
+    <div id={id} className={`opiniones-container${reciente ? ' opiniones-container--nueva' : ''}${destacada ? ' opiniones-container--destacada' : ''}`}>
       <div className='opiniones-header'>
         <div className='opiniones-header-left'>
           {imagenPerfil ? (

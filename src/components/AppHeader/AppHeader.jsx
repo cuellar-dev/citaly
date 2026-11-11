@@ -1,27 +1,52 @@
 import { useEffect, useRef, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAppHeader } from '../../hooks/useAppHeader.js'
 import { Ellipsis, Plus, ClipboardClock, Bell } from 'lucide-react'
 import MenuTablas from './MenuTablas.jsx'
 import TalyPosado from '../Taly/TalyPosado.jsx'
+import { contarSinLeer } from '../../services/notificaciones.js'
 import './AppHeader.css'
 
-/* Iconos propios de cada pestaña. Los tres puntos no van aquí: son el botón
-   del menú y se pintan siempre, al final de la fila. */
+/* Iconos propios de cada pestaña. La campana va en todas: Notificaciones
+   junta tus avisos y los de tu local, así que no es cosa de una sola pestaña.
+   Los tres puntos no van aquí: son el botón del menú y se pintan siempre, al
+   final de la fila. */
+const CAMPANA = { name: 'notification', content: <Bell size={24} color="currentColor" /> }
+
 function getHeaderIcons(title) {
   switch (title) {
     case 'Mis Citas':
       return [
         { name: 'plus', content: <Plus size={24} color="currentColor" /> },
         { name: 'clipboard-clock', content: <ClipboardClock size={24} color="currentColor" /> },
+        CAMPANA,
       ]
 
-    case 'Mi Negocio':
-      return [{ name: 'notification', content: <Bell size={24} color="currentColor" /> }]
-
     default:
-      return []
+      return [CAMPANA]
   }
+}
+
+/* La campana lleva a la página de notificaciones. El contador se lee en cada
+   render del header, que ya se repinta al cambiar de ruta: al volver de
+   Notificaciones baja solo. */
+function CampanaNotis({ children }) {
+  const sinLeer = contarSinLeer()
+  const texto = sinLeer > 9 ? '9+' : String(sinLeer)
+  return (
+    <Link
+      to="/notificaciones"
+      className="app-header-boton app-header-campana"
+      aria-label={sinLeer ? `Notificaciones, ${sinLeer} sin leer` : 'Notificaciones'}
+    >
+      {children}
+      {sinLeer > 0 && (
+        <span className="app-header-contador" aria-hidden="true">
+          {texto}
+        </span>
+      )}
+    </Link>
+  )
 }
 
 function AppHeader() {
@@ -47,11 +72,15 @@ function AppHeader() {
       </div>
 
       <div className="app-header-icons">
-        {icons.map((icon) => (
-          <span className="app-header-icon" key={icon.name}>
-            {icon.content}
-          </span>
-        ))}
+        {icons.map((icon) =>
+          icon.name === 'notification' ? (
+            <CampanaNotis key={icon.name}>{icon.content}</CampanaNotis>
+          ) : (
+            <span className="app-header-icon" key={icon.name}>
+              {icon.content}
+            </span>
+          ),
+        )}
         <button
           ref={botonRef}
           type="button"

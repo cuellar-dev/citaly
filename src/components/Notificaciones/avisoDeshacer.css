@@ -1,0 +1,121 @@
+/* Flota sobre la barra de abajo, del mismo ancho que el contenido. */
+.aviso-deshacer {
+  position: fixed;
+  left: 50%;
+  bottom: calc(92px + env(safe-area-inset-bottom));
+  z-index: 100000;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(528px, calc(100vw - 32px));
+  padding: 12px 8px 14px 16px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--background-color-another, #252926);
+  box-shadow:
+    0 1px 0 rgba(240, 240, 240, 0.06) inset,
+    0 12px 28px -8px rgba(0, 0, 0, 0.7);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  transform: translateX(-50%);
+  animation: aviso-deshacer-entra 0.24s var(--ease-out, ease-out);
+}
+
+@keyframes aviso-deshacer-entra {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 14px);
+  }
+}
+
+.aviso-deshacer-texto {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.aviso-deshacer-texto strong {
+  font-weight: 700;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.aviso-deshacer-boton {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--primary-color, #00c2ad);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .aviso-deshacer-boton:hover {
+    background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent);
+  }
+}
+
+.aviso-deshacer-boton:active {
+  transform: scale(0.96);
+}
+
+.aviso-deshacer-boton:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+/* La línea de tiempo: se come de derecha a izquierda, a ritmo constante. */
+.aviso-deshacer-tiempo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--primary-color, #00c2ad);
+  transform-origin: left center;
+  animation-name: aviso-deshacer-tiempo;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes aviso-deshacer-tiempo {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+/* Sin movimiento: entra con un fundido. La línea sí se queda, porque cuenta
+   el tiempo, no decora. */
+@media (prefers-reduced-motion: reduce) {
+  .aviso-deshacer {
+    animation-name: aviso-deshacer-funde;
+  }
+
+  .aviso-deshacer-boton:active {
+    transform: none;
+  }
+}
+
+@keyframes aviso-deshacer-funde {
+  from {
+    opacity: 0;
+  }
+}

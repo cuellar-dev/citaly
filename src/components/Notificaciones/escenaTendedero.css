@@ -1,0 +1,59 @@
+.escena-tendedero {
+  display: block;
+  width: 100%;
+  aspect-ratio: 400 / 170;
+  max-height: 200px;
+  overflow: visible;
+}
+
+.escena-cable {
+  fill: none;
+  stroke: var(--ink-light, #2aa795);
+  stroke-opacity: 0.6;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.escena-cable--repaso {
+  stroke-opacity: 0.2;
+  stroke-width: 1;
+}
+
+/* Madera, como las tablas del menú de los tres puntos. */
+.escena-pinza {
+  fill: #6b5b49;
+}
+
+.escena-sobre {
+  transition:
+    opacity 0.24s var(--ease-out, ease-out),
+    transform 0.32s var(--ease-out, ease-out);
+}
+
+/* Se descuelga: baja un poco y se va. Nunca desde escala 0. */
+.escena-sobre--fuera {
+  opacity: 0;
+  transform: translateY(10px) rotate(8deg);
+}
+
+.escena-sobre-papel {
+  fill: #f2ebdd;
+}
+
+.escena-sobre-solapa {
+  fill: none;
+  stroke: #b9ad97;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .escena-sobre {
+    transition: opacity 0.2s ease;
+  }
+
+  .escena-sobre--fuera {
+    transform: none;
+  }
+}

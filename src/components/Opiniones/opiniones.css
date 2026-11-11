@@ -148,3 +148,20 @@
   right: 15px;
   transition: transform 0.2s ease-out;
 }
+/* Llegaste aquí desde una notificación: el comentario se marca con un borde
+   verde que se va apagando solo, lo justo para encontrarlo al bajar. */
+.opiniones-container--destacada {
+  scroll-margin: 96px;
+  animation: opinion-destacada 2.8s var(--ease-out, ease-out) 0.4s backwards;
+}
+
+@keyframes opinion-destacada {
+  0%,
+  35% {
+    box-shadow: 0 0 0 2px var(--primary-color, #00c2ad);
+    background-color: color-mix(in srgb, var(--primary-color, #00c2ad) 10%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 2px transparent;
+  }
+}
