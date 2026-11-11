@@ -1059,3 +1059,162 @@
     transition: none;
   }
 }
+
+/* ---------- Galería: añadir y quitar ---------- */
+
+.galeria-foto--anadir {
+  display: grid;
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+.galeria-anadir {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  border: 1.5px dashed color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 6%, transparent);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background-color 0.2s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .galeria-anadir:not(:disabled):hover {
+    background: color-mix(in srgb, var(--primary-color, #00c2ad) 12%, transparent);
+  }
+}
+
+.galeria-anadir:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.galeria-anadir:disabled {
+  border-color: rgba(240, 240, 240, 0.12);
+  background: transparent;
+  cursor: default;
+}
+
+.galeria-anadir:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+.galeria-anadir-icono {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.galeria-anadir:disabled .galeria-anadir-icono {
+  background: rgba(240, 240, 240, 0.08);
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.galeria-anadir-texto {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.galeria-anadir-sub {
+  max-width: 24ch;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+/* Quitar: redondo sobre la foto. Al primer toque se estira en rojo y
+   pregunta; al segundo, quita. */
+.galeria-quitar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 11px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(8, 10, 9, 0.72);
+  color: #fff;
+  font-family: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+.galeria-quitar--confirmar {
+  background: #d65454;
+}
+
+.galeria-quitar:not(:disabled):active {
+  transform: scale(0.94);
+}
+
+.galeria-quitar:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.galeria-quitar:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+.galeria-miniatura--anadir {
+  display: grid;
+  place-items: center;
+  border: 1.5px dashed color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent);
+  background: transparent;
+  color: var(--primary-color, #00c2ad);
+  opacity: 1;
+}
+
+.galeria-estado {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.galeria-estado--error {
+  color: #e06a6a;
+}
+
+.galeria-estado--aviso {
+  color: var(--yellow-color, #ffd166);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .galeria-anadir,
+  .galeria-quitar {
+    transition-duration: 0.01ms;
+  }
+
+  .galeria-anadir:not(:disabled):active,
+  .galeria-quitar:not(:disabled):active {
+    transform: none;
+  }
+}

@@ -42,6 +42,8 @@ export const CAMPOS_EDITABLES = [
   'iconos',
   'servicios',
   'profesionales',
+  /* { desde, hasta, motivo }: la agenda no recibe reservas hasta `hasta`. */
+  'pausa',
 ]
 
 export function codigoDia(fecha) {

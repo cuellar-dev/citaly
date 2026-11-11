@@ -15,6 +15,7 @@ function ResumenNegocio({
   onEstimado,
   onPausarAgenda,
   onClienteExpress,
+  pausa = null,
 }) {
   return (
     <section className="resumen-negocio" aria-label="Resumen del día">
@@ -26,14 +27,23 @@ function ResumenNegocio({
       </div>
 
       <div className="resumen-negocio-acciones">
+        {/* En pausa el botón cambia de cara: lleno de mostaza y diciendo hasta
+            cuándo. Tocarlo abre la misma hoja, pero para reanudar. */}
         <button
           type="button"
-          className="resumen-negocio-accion resumen-negocio-accion--pausa"
+          className={`resumen-negocio-accion resumen-negocio-accion--pausa${pausa ? ' resumen-negocio-accion--pausada' : ''}`}
           onClick={onPausarAgenda}
-          title="Se fue la luz, algún lío"
+          aria-label={pausa ? `Agenda en pausa hasta ${pausa.hasta}. Toca para reanudar` : 'Pausar la agenda'}
         >
           <ZapOff size={17} strokeWidth={2} aria-hidden="true" />
-          <span>Una pausa</span>
+          {pausa ? (
+            <span className="resumen-negocio-accion-pausa">
+              En pausa
+              <small>hasta {pausa.hasta}</small>
+            </span>
+          ) : (
+            <span>Una pausa</span>
+          )}
         </button>
         <button
           type="button"

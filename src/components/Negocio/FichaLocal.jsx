@@ -3,13 +3,10 @@ import {
   ChevronRight,
   Clock3,
   Info,
-  MapPin,
   MessageSquareQuote,
   Phone,
   Scissors,
-  Sparkles,
   Star,
-  Timer,
   Users,
 } from 'lucide-react'
 import {
@@ -33,7 +30,7 @@ import './fichaLocal.css'
  * La ficha pública del local, resumida en tres grupos de filas.
  * Cada fila enseña un dato y abre la hoja de la ficha en la pestaña que le toca.
  */
-function FichaLocal({ local, onAbrir, onCatalogo }) {
+function FichaLocal({ local, onEditar, onOpiniones, onCatalogo }) {
   const servicios = local.servicios ?? []
   const profesionales = local.profesionales ?? []
   const activos = profesionalesActivos(local).length
@@ -88,15 +85,20 @@ function FichaLocal({ local, onAbrir, onCatalogo }) {
         ],
       ]
 
+  /* Antes había siete filas y tres parejas abrían lo mismo (Horario y Turnos,
+     Contacto y Dirección, Comodidades y Sobre el local), pasando además por
+     una vista de solo lectura que repetía lo que ya enseña "Ver como
+     cliente". Ahora cada fila resume un bloque y abre el editor justo en
+     esa sección: ver y cambiar es un solo paso. */
   const grupos = [
     ...catalogo,
     [
       {
         id: 'horario',
-        pestana: 'horario',
+        alAbrir: () => onEditar('horario'),
         Icono: Clock3,
-        titulo: 'Horario',
-        valor: `${horaAmPm(ini)} – ${horaAmPm(fin)}`,
+        titulo: 'Horario y turnos',
+        valor: `${horaAmPm(ini)} – ${horaAmPm(fin)} · ${turnos.length} turnos de ${duracionTexto(local.intervaloMinutos)}`,
         extra: (
           <span className="ficha-local-semana" aria-label={`Abre ${local.dias.length} días a la semana`}>
             {DIAS.map((d) => (
@@ -106,48 +108,34 @@ function FichaLocal({ local, onAbrir, onCatalogo }) {
         ),
       },
       {
-        id: 'turnos',
-        pestana: 'horario',
-        Icono: Timer,
-        titulo: 'Turnos',
-        valor: `Cada ${duracionTexto(local.intervaloMinutos)} · ${turnos.length} al día`,
-      },
-    ],
-    [
-      {
         id: 'contacto',
-        pestana: 'contacto',
+        alAbrir: () => onEditar('contacto'),
         Icono: Phone,
-        titulo: 'Contacto',
-        valor: local.telefono || 'Sin teléfono',
+        titulo: 'Contacto y dirección',
+        valor: [local.telefono, local.direccion].filter(Boolean).join(' · ') || 'Sin rellenar',
         extra: local.whatsapp && <span className="ficha-local-pastilla">WhatsApp</span>,
       },
       {
-        id: 'direccion',
-        pestana: 'contacto',
-        Icono: MapPin,
-        titulo: 'Dirección',
-        valor: local.direccion || 'Sin dirección',
-      },
-    ],
-    [
-      {
-        id: 'comodidades',
-        pestana: 'local',
-        Icono: Sparkles,
-        titulo: 'Comodidades',
-        valor: comodidades.length ? `${comodidades.length} marcadas` : 'Ninguna marcada',
+        id: 'sobre',
+        alAbrir: () => onEditar('local'),
+        Icono: Info,
+        titulo: 'Sobre el local',
+        valor: [local.categoria, tipoLocalTexto(local.lugar), comodidades.length && `${comodidades.length} comodidades`]
+          .filter(Boolean)
+          .join(' · '),
         extra: comodidades.length > 0 && (
           <span className="ficha-local-iconos" aria-hidden="true">
-            {comodidades.slice(0, 4).map(({ id, Icono }) => (
+            {comodidades.slice(0, 3).map(({ id, Icono }) => (
               <Icono key={id} size={15} strokeWidth={2} />
             ))}
           </span>
         ),
       },
+    ],
+    [
       {
         id: 'opiniones',
-        pestana: 'opiniones',
+        alAbrir: onOpiniones,
         Icono: MessageSquareQuote,
         titulo: 'Opiniones',
         valor: `${opiniones} opiniones`,
@@ -157,13 +145,6 @@ function FichaLocal({ local, onAbrir, onCatalogo }) {
             {nota}
           </span>
         ),
-      },
-      {
-        id: 'sobre',
-        pestana: 'local',
-        Icono: Info,
-        titulo: 'Sobre el local',
-        valor: [local.categoria, tipoLocalTexto(local.lugar)].filter(Boolean).join(' · '),
       },
     ],
   ]
@@ -185,9 +166,9 @@ function FichaLocal({ local, onAbrir, onCatalogo }) {
 
       {grupos.map((filas) => (
         <ul key={filas[0].id} className="ficha-local-grupo">
-          {filas.map(({ id, pestana, alAbrir, Icono, titulo, valor, extra }) => (
+          {filas.map(({ id, alAbrir, Icono, titulo, valor, extra }) => (
             <li key={id}>
-              <button type="button" className="ficha-local-fila" onClick={alAbrir ?? (() => onAbrir(pestana))}>
+              <button type="button" className="ficha-local-fila" onClick={alAbrir}>
                 <span className="ficha-local-icono" aria-hidden="true">
                   <Icono size={17} strokeWidth={2} />
                 </span>

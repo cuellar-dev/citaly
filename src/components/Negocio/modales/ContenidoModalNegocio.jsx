@@ -5,6 +5,9 @@ import { Clock, MessageCircle, Phone, Scissors, UtensilsCrossed } from 'lucide-r
 import { minutosHastaCita, textoEnCita } from '../../../utils/citasVista.js'
 import { CANCELADA, claveEstadoReserva, textoEstadoReserva } from '../../../utils/estadosCita.js'
 import { Dato, FilaDato, Seccion } from './piezas.jsx'
+import { profesionalesActivos } from '../../../services/usuarios.js'
+import { digitos as soloDigitos, duracionAMinutos, horaAmPm, turnosDelDia } from '../../../utils/fichaLocal.js'
+import { pausaActiva, proximaApertura, textoHasta, textoQueda } from '../../../utils/pausaAgenda.js'
 
 gsap.registerPlugin(useGSAP)
 
@@ -393,17 +396,79 @@ function ModalEstimado({ estimado }) {
 /* ---------- Pausa ---------- */
 
 const MOTIVOS_PAUSA = ['Corte de luz', 'Brecha entre citas', 'Emergencia', 'Otro']
-const DURACIONES_PAUSA = [15, 30, 60, 90]
+/* Atajos rápidos. Lo demás se escribe en "Otro" o se elige "Hasta mañana". */
+const ATAJOS_PAUSA = [
+  { id: '15', label: '15 min', minutos: 15 },
+  { id: '30', label: '30 min', minutos: 30 },
+  { id: '60', label: '1 h', minutos: 60 },
+  { id: '120', label: '2 h', minutos: 120 },
+]
+/* Más de un día seguido ya no es una pausa: es cerrar el local, y eso va en
+   el horario. */
+const MAX_PAUSA_MIN = 24 * 60
 
-function ModalPausa({ citas, ahora }) {
+function ModalPausa({ local, citas, pausa, reloj, onPausar, onReanudar }) {
   const [motivo, setMotivo] = useState(null)
-  const [duracion, setDuracion] = useState(30)
+  const [eleccion, setEleccion] = useState('30')
+  const [cantidad, setCantidad] = useState('')
+  const [unidad, setUnidad] = useState('min')
 
-  const afectadas = citas.filter((c) => {
-    if (c.estadoReserva === CANCELADA) return false
-    const min = minutosHastaCita(c, ahora)
-    return min >= 0 && min <= duracion
-  })
+  /* ---- Ya está en pausa: decirlo y dejar quitarla ---- */
+  if (pausaActiva(pausa, reloj)) {
+    const hasta = new Date(pausa.hasta)
+    return (
+      <div className="modal-negocio-stack">
+        <div className="modal-negocio-hueco modal-negocio-hueco--pausa" data-entra>
+          <span className="modal-negocio-hueco-etiqueta">Tu agenda está en pausa</span>
+          <span className="modal-negocio-numero">Hasta {textoHasta(hasta)}</span>
+          <span className="modal-negocio-hueco-sub">
+            Quedan {textoQueda(hasta, reloj)}
+            {pausa.motivo ? ` · ${pausa.motivo}` : ''}
+          </span>
+        </div>
+        <p className="modal-negocio-lead" data-entra>
+          Nadie puede reservar mientras tanto. Las citas que ya tenías siguen en pie. Cuando llegue la hora se
+          reanuda sola.
+        </p>
+        <button type="button" className="modal-negocio-accion-principal" onClick={onReanudar} data-entra>
+          Reanudar ahora
+        </button>
+      </div>
+    )
+  }
+
+  /* ---- Elegir cuánto ---- */
+  const otro = eleccion === 'otro'
+  const hastaManana = eleccion === 'manana'
+  const numero = Number(String(cantidad).replace(',', '.'))
+  const minutosOtro = unidad === 'h' ? Math.round(numero * 60) : Math.round(numero)
+
+  let hasta = null
+  let error = null
+  if (hastaManana) hasta = proximaApertura(local, reloj)
+  else if (otro) {
+    if (!cantidad) error = 'Escribe cuánto tiempo.'
+    else if (!(minutosOtro > 0)) error = 'Pon un número mayor que cero.'
+    else if (minutosOtro > MAX_PAUSA_MIN) error = 'Como mucho 24 horas. Para más, cambia tu horario.'
+    else hasta = new Date(reloj.getTime() + minutosOtro * 60000)
+  } else {
+    const atajo = ATAJOS_PAUSA.find((a) => a.id === eleccion)
+    hasta = new Date(reloj.getTime() + atajo.minutos * 60000)
+  }
+
+  const afectadas = hasta
+    ? citas.filter((c) => {
+        if (c.estadoReserva === CANCELADA) return false
+        const min = minutosHastaCita(c, reloj)
+        return min >= 0 && min <= (hasta - reloj) / 60000
+      })
+    : []
+
+  const textoBoton = !motivo
+    ? 'Elige un motivo'
+    : !hasta
+      ? 'Elige cuánto tiempo'
+      : `Pausar hasta ${textoHasta(hasta)}`
 
   return (
     <div className="modal-negocio-stack">
@@ -430,37 +495,90 @@ function ModalPausa({ citas, ahora }) {
 
       <Seccion titulo="Cuánto tiempo">
         <div className="modal-negocio-segmentado" role="group" aria-label="Duración de la pausa">
-          {DURACIONES_PAUSA.map((d) => (
-            <button
-              key={d}
-              type="button"
-              aria-pressed={duracion === d}
-              onClick={() => setDuracion(d)}
-            >
-              {d} min
+          {ATAJOS_PAUSA.map((a) => (
+            <button key={a.id} type="button" aria-pressed={eleccion === a.id} onClick={() => setEleccion(a.id)}>
+              {a.label}
             </button>
           ))}
         </div>
+        <div className="modal-negocio-opciones pausa-mas" role="group" aria-label="Otras duraciones">
+          <button
+            type="button"
+            className="modal-negocio-chip"
+            aria-pressed={otro}
+            onClick={() => setEleccion('otro')}
+          >
+            Otro tiempo
+          </button>
+          <button
+            type="button"
+            className="modal-negocio-chip"
+            aria-pressed={hastaManana}
+            onClick={() => setEleccion('manana')}
+          >
+            Hasta que vuelva a abrir
+          </button>
+        </div>
+
+        {otro && (
+          <div className="pausa-otro">
+            <input
+              type="number"
+              inputMode="decimal"
+              min="0"
+              step={unidad === 'h' ? 0.5 : 5}
+              className="modal-negocio-input"
+              placeholder={unidad === 'h' ? 'Ej. 3' : 'Ej. 45'}
+              aria-label="Cantidad"
+              value={cantidad}
+              onChange={(e) => setCantidad(e.target.value)}
+              autoFocus
+            />
+            <div className="modal-negocio-segmentado" role="group" aria-label="Unidad">
+              <button type="button" aria-pressed={unidad === 'min'} onClick={() => setUnidad('min')}>
+                minutos
+              </button>
+              <button type="button" aria-pressed={unidad === 'h'} onClick={() => setUnidad('h')}>
+                horas
+              </button>
+            </div>
+          </div>
+        )}
+        {error && otro && cantidad !== '' && <p className="modal-negocio-nota pausa-error">{error}</p>}
+        {hastaManana && (
+          <p className="modal-negocio-nota">
+            Se reanuda sola {textoHasta(hasta)}, cuando vuelves a abrir.
+          </p>
+        )}
       </Seccion>
 
       <Seccion titulo="Citas que caen en la pausa" extra={afectadas.length || 'Ninguna'}>
         {afectadas.length ? (
-          <ul className="modal-negocio-afectadas">
-            {afectadas.map((c) => (
-              <li key={c.id}>
-                <strong>{c.horaTexto ?? c.horario}</strong>
-                <span>{c.cliente}</span>
-                <em>{textoEnCita(c, ahora)}</em>
-              </li>
-            ))}
-          </ul>
+          <>
+            <ul className="modal-negocio-afectadas">
+              {afectadas.map((c) => (
+                <li key={c.id}>
+                  <strong>{c.horaTexto ?? c.horario}</strong>
+                  <span>{c.cliente}</span>
+                  <em>{textoEnCita(c, reloj)}</em>
+                </li>
+              ))}
+            </ul>
+            <p className="modal-negocio-nota">Siguen en pie. Si no vas a poder atenderlas, avísales tú.</p>
+          </>
         ) : (
-          <p className="modal-negocio-nota">Nadie tiene cita en los próximos {duracion} minutos.</p>
+          <p className="modal-negocio-nota">Nadie tiene cita mientras dure la pausa.</p>
         )}
       </Seccion>
 
-      <button type="button" className="modal-negocio-accion-principal" disabled={!motivo} data-entra>
-        {motivo ? `Pausar ${duracion} min` : 'Elige un motivo'}
+      <button
+        type="button"
+        className="modal-negocio-accion-principal"
+        disabled={!motivo || !hasta}
+        onClick={() => onPausar({ motivo, desde: reloj.toISOString(), hasta: hasta.toISOString() })}
+        data-entra
+      >
+        {textoBoton}
       </button>
     </div>
   )
@@ -468,70 +586,164 @@ function ModalPausa({ citas, ahora }) {
 
 /* ---------- Cliente express ---------- */
 
-function ModalExpress({ hueco, profesionales }) {
+function hhmm(minutos) {
+  return `${String(Math.floor(minutos / 60) % 24).padStart(2, '0')}:${String(minutos % 60).padStart(2, '0')}`
+}
+
+/* Turnos de hoy que aún sirven: los que no han terminado y tienen sitio. Un
+   turno ya empezado pero libre cuenta como "ahora": el cliente está en la
+   puerta. */
+function turnosLibres(local, citas, ahora) {
+  const intervalo = Number(local.intervaloMinutos) || 60
+  const capacidad = Math.max(1, profesionalesActivos(local).length)
+  const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes()
+  return turnosDelDia(local.horarioApertura, local.horarioCierre, local.intervaloMinutos)
+    .filter((t) => t + intervalo > ahoraMin)
+    .filter((t) => {
+      const ocupados = citas.filter((c) => c.estadoReserva !== CANCELADA && c.horario === hhmm(t)).length
+      return ocupados < capacidad
+    })
+    .map((t) => ({ minutos: t, ahora: t <= ahoraMin, texto: horaAmPm(t) }))
+}
+
+function ModalExpress({ local, citas, ahora, onAgregar }) {
+  const libres = turnosLibres(local, citas, ahora)
+  const servicios = local.servicios ?? []
+  const [turno, setTurno] = useState(libres[0]?.minutos ?? null)
+  const [servicioId, setServicioId] = useState(null)
   const [nombre, setNombre] = useState('')
-  const [profesional, setProfesional] = useState(profesionales[0] ?? null)
+  const [telefono, setTelefono] = useState('')
+  const [intento, setIntento] = useState(false)
+
+  const elegido = libres.find((t) => t.minutos === turno)
+  const sugerido = libres[0]
+  const servicio = servicios.find((s) => s.id === servicioId)
+
+  const errorNombre = nombre.trim().length < 2 ? 'Escribe su nombre.' : null
+  const errorTel = soloDigitos(telefono).length < 8 ? 'Pon un teléfono válido, con al menos 8 números.' : null
+  const valido = elegido && !errorNombre && !errorTel
+
+  const agregar = (e) => {
+    e.preventDefault()
+    setIntento(true)
+    if (!valido) return
+    onAgregar({
+      horario: hhmm(elegido.minutos),
+      cliente: nombre.trim(),
+      telefono: telefono.trim(),
+      linea: servicio?.nombre ?? 'Sin servicio',
+      duracion: duracionAMinutos(servicio?.duracion) || Number(local.intervaloMinutos) || 30,
+      precio: Number(servicio?.precio) || 0,
+    })
+  }
+
+  if (!libres.length) {
+    return (
+      <div className="modal-negocio-stack">
+        <div className="modal-negocio-hueco" data-entra>
+          <span className="modal-negocio-hueco-etiqueta">Sin turnos libres</span>
+          <span className="modal-negocio-numero">Hoy está completo</span>
+          <span className="modal-negocio-hueco-sub">No te queda ningún turno libre hasta el cierre.</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <div className="modal-negocio-stack">
+    <form className="modal-negocio-stack" onSubmit={agregar} noValidate>
       <div className="modal-negocio-hueco" data-entra>
         <span className="modal-negocio-hueco-etiqueta">Próximo hueco libre</span>
-        <span className="modal-negocio-numero">{hueco ?? 'Sin huecos'}</span>
-        <span className="modal-negocio-hueco-sub">Cliente en puerta sin reserva: anótalo y encájalo ahí.</span>
+        <span className="modal-negocio-numero">{sugerido.ahora ? 'Ahora mismo' : sugerido.texto}</span>
+        <span className="modal-negocio-hueco-sub">
+          Cliente en la puerta sin reserva: te sugerimos este, pero puedes elegir otro.
+        </span>
       </div>
+
+      <Seccion titulo="Turno" extra={`${libres.length} libres hoy`}>
+        <div className="express-turnos" role="radiogroup" aria-label="Turno libre">
+          {libres.map((t) => (
+            <button
+              key={t.minutos}
+              type="button"
+              role="radio"
+              aria-checked={turno === t.minutos}
+              className={`express-turno${t === sugerido ? ' express-turno--sugerido' : ''}`}
+              onClick={() => setTurno(t.minutos)}
+            >
+              {t.ahora ? 'Ahora' : t.texto}
+            </button>
+          ))}
+        </div>
+      </Seccion>
 
       <Seccion titulo="Cliente">
         <label className="modal-negocio-campo">
           <span>Nombre</span>
           <input
             type="text"
-            placeholder="Ej. Luis"
+            placeholder="Ej. Luis Pérez"
             className="modal-negocio-input"
+            autoComplete="off"
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
+            aria-invalid={intento && Boolean(errorNombre)}
           />
+          {intento && errorNombre && <em className="express-error">{errorNombre}</em>}
         </label>
         <label className="modal-negocio-campo">
-          <span>Servicio</span>
-          <input type="text" placeholder="Corte, mesa, etc." className="modal-negocio-input" />
-        </label>
-        <label className="modal-negocio-campo">
-          <span>Teléfono (opcional)</span>
-          <input type="tel" placeholder="+53 …" className="modal-negocio-input" />
+          <span>Teléfono</span>
+          <input
+            type="tel"
+            inputMode="tel"
+            placeholder="+53 5…"
+            className="modal-negocio-input"
+            autoComplete="off"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+            aria-invalid={intento && Boolean(errorTel)}
+          />
+          {intento && errorTel && <em className="express-error">{errorTel}</em>}
         </label>
       </Seccion>
 
-      {profesionales.length > 0 && (
-        <Seccion titulo="Quién lo atiende">
-          <div className="modal-negocio-opciones" role="group" aria-label="Profesional">
-            {profesionales.map((p) => (
+      {servicios.length > 0 && (
+        <Seccion titulo="Servicio" extra="Opcional">
+          <div className="modal-negocio-opciones" role="group" aria-label="Servicio">
+            {servicios.map((s) => (
               <button
-                key={p}
+                key={s.id}
                 type="button"
                 className="modal-negocio-chip modal-negocio-chip--verde"
-                aria-pressed={profesional === p}
-                onClick={() => setProfesional(p)}
+                aria-pressed={servicioId === s.id}
+                onClick={() => setServicioId((v) => (v === s.id ? null : s.id))}
               >
-                {p}
+                {s.nombre}
               </button>
             ))}
           </div>
         </Seccion>
       )}
 
-      <button
-        type="button"
-        className="modal-negocio-accion-principal"
-        disabled={!nombre.trim() || !hueco}
-        data-entra
-      >
-        Agregar a la fila
+      <button type="submit" className="modal-negocio-accion-principal" data-entra>
+        {elegido ? `Anotar ${elegido.ahora ? 'ahora' : `a las ${elegido.texto}`}` : 'Elige un turno'}
       </button>
-    </div>
+    </form>
   )
 }
 
-export default function ContenidoModalNegocio({ modal, resumen, citas, citaSiguiente, ahora }) {
+export default function ContenidoModalNegocio({
+  modal,
+  resumen,
+  citas,
+  citaSiguiente,
+  ahora,
+  local,
+  pausa,
+  reloj,
+  onPausar,
+  onReanudar,
+  onAgregarCita,
+}) {
   if (!modal) return null
 
   switch (modal.tipo) {
@@ -542,9 +754,18 @@ export default function ContenidoModalNegocio({ modal, resumen, citas, citaSigui
     case 'estimado':
       return <ModalEstimado estimado={resumen.estimado} />
     case 'pausa':
-      return <ModalPausa citas={citas} ahora={ahora} />
+      return (
+        <ModalPausa
+          local={local}
+          citas={citas}
+          pausa={pausa}
+          reloj={reloj}
+          onPausar={onPausar}
+          onReanudar={onReanudar}
+        />
+      )
     case 'express':
-      return <ModalExpress hueco={resumen.hueco} profesionales={resumen.profesionales} />
+      return <ModalExpress local={local} citas={citas} ahora={reloj} onAgregar={onAgregarCita} />
     default:
       return null
   }

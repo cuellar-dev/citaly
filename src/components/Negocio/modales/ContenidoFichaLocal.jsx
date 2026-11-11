@@ -1,36 +1,24 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { format, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { MapPin, Megaphone, MessageCircle, Pencil, Phone, Star } from 'lucide-react'
+import { Megaphone, Plus, Star, Trash2 } from 'lucide-react'
+import { comprimirFoto, errorDeFoto } from '../../../utils/imagenes.js'
 import {
   COMODIDADES,
   DIAS,
   DURACIONES_TURNO,
   aMinutos,
-  codigoDia,
-  diasTexto,
-  digitos,
   duracionTexto,
   fotoAncho,
   fotosDe,
-  horaAmPm,
   horarioTexto,
-  estaAbierto,
   minutosAbierto,
   notaDeComentarios,
-  tipoLocalTexto,
   turnosDelDia,
 } from '../../../utils/fichaLocal.js'
-import { Dato, Seccion } from './piezas.jsx'
+import { Seccion } from './piezas.jsx'
 import '../modalFicha.css'
-
-const PESTANAS = [
-  { id: 'horario', label: 'Horario' },
-  { id: 'contacto', label: 'Contacto' },
-  { id: 'local', label: 'Local' },
-  { id: 'opiniones', label: 'Opiniones' },
-]
 
 const MOTIVOS_REPORTE = [
   { id: 'obsceno', titulo: 'Lenguaje obsceno', texto: 'Insultos, sexo o palabras que no deberían estar a la vista.' },
@@ -82,184 +70,7 @@ function Estrellas({ valor, tamano = 14 }) {
   )
 }
 
-/* ---------- Ficha: cuatro pestañas ---------- */
-
-function PanelHorario({ local, ahora }) {
-  const ini = aMinutos(local.horarioApertura)
-  const total = minutosAbierto(local.horarioApertura, local.horarioCierre)
-  const turnos = turnosDelDia(local.horarioApertura, local.horarioCierre, local.intervaloMinutos)
-  const hoy = codigoDia(ahora)
-
-  return (
-    <>
-      <div className="ficha-horas">
-        <span className="ficha-horas-valor">
-          {horaAmPm(ini)}
-          <i aria-hidden="true">–</i>
-          {horaAmPm(ini + total)}
-        </span>
-        <span className="modal-negocio-hero-sub">
-          {duracionTexto(total)} abierto · {diasTexto(local.dias)}
-        </span>
-      </div>
-
-      <Seccion titulo="La semana" extra={`${local.dias.length} de 7 días`}>
-        <ol className="ficha-semana">
-          {DIAS.map((d) => {
-            const abre = local.dias.includes(d.id)
-            const esHoy = d.id === hoy
-            return (
-              <li
-                key={d.id}
-                className={`ficha-dia${abre ? ' ficha-dia--abre' : ''}${esHoy ? ' ficha-dia--hoy' : ''}`}
-                aria-label={`${d.corto}: ${abre ? 'abre' : 'cerrado'}${esHoy ? ', hoy' : ''}`}
-              >
-                <span className="ficha-dia-circulo">{d.letra}</span>
-                <span className="ficha-dia-hoy">{esHoy ? 'Hoy' : ''}</span>
-              </li>
-            )
-          })}
-        </ol>
-      </Seccion>
-
-      <Seccion titulo="Turnos">
-        <div className="modal-negocio-datos">
-          <Dato etiqueta="Duración" valor={duracionTexto(local.intervaloMinutos)} tono="amarillo" />
-          <Dato etiqueta="Al día" valor={turnos.length} />
-          <Dato etiqueta="A la semana" valor={turnos.length * local.dias.length} tono="verde" />
-        </div>
-        {turnos.length > 0 && (
-          <ul className="ficha-turnos" aria-label="Hora a la que empieza cada turno">
-            {turnos.map((t) => {
-              const [hora, sufijo] = horaAmPm(t).split(' ')
-              return (
-                <li key={t}>
-                  {hora}
-                  <small>{sufijo.toLowerCase()}</small>
-                </li>
-              )
-            })}
-          </ul>
-        )}
-      </Seccion>
-    </>
-  )
-}
-
-function PanelContacto({ local }) {
-  const tel = digitos(local.telefono)
-  const wa = digitos(local.whatsapp ?? local.telefono)
-  const filas = [
-    { id: 'tel', Icono: Phone, etiqueta: 'Teléfono', valor: local.telefono, href: tel && `tel:+${tel}`, accion: 'Llamar' },
-    {
-      id: 'wa',
-      Icono: MessageCircle,
-      etiqueta: 'WhatsApp',
-      valor: local.whatsapp ?? local.telefono,
-      href: wa && `https://wa.me/${wa}`,
-      accion: 'Abrir',
-      externo: true,
-    },
-    {
-      id: 'dir',
-      Icono: MapPin,
-      etiqueta: 'Dirección',
-      valor: local.direccion,
-      href: local.direccion && `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(local.direccion)}`,
-      accion: 'Mapa',
-      externo: true,
-    },
-  ]
-
-  return (
-    <>
-      <ul className="ficha-contacto">
-        {filas.map(({ id, Icono, etiqueta, valor, href, accion, externo }) => (
-          <li key={id}>
-            <span className="ficha-contacto-icono" aria-hidden="true">
-              <Icono size={17} strokeWidth={2} />
-            </span>
-            <span className="ficha-contacto-textos">
-              <span className="ficha-contacto-etiqueta">{etiqueta}</span>
-              <span className="ficha-contacto-valor">{valor || 'Sin rellenar'}</span>
-            </span>
-            {href && (
-              <a
-                className="ficha-contacto-accion"
-                href={href}
-                {...(externo ? { target: '_blank', rel: 'noreferrer' } : {})}
-              >
-                {accion}
-              </a>
-            )}
-          </li>
-        ))}
-      </ul>
-      <p className="modal-negocio-nota">Así aparecen en tu página pública: tus clientes llaman y escriben desde ahí.</p>
-    </>
-  )
-}
-
-function PanelLocal({ local, onGaleria }) {
-  const fotos = fotosDe(local)
-  const comodidades = COMODIDADES.filter((c) => local.iconos?.some((i) => i.id === c.id))
-  const extra = fotos.length - 4
-
-  return (
-    <>
-      <div className="ficha-identidad">
-        <img src={fotoAncho(local.url, 160)} alt="" className="ficha-identidad-foto" decoding="async" />
-        <div className="ficha-identidad-textos">
-          <p className="ficha-identidad-nombre">{local.localName}</p>
-          <p className="ficha-identidad-sub">{local.categoria}</p>
-        </div>
-        <span className="ficha-etiqueta">{tipoLocalTexto(local.lugar)}</span>
-      </div>
-
-      <Seccion titulo="Descripción">
-        <p className="ficha-descripcion">{local.descripcion || 'Todavía no has escrito una descripción.'}</p>
-      </Seccion>
-
-      <Seccion titulo="Comodidades" extra={comodidades.length || 'Ninguna'}>
-        {comodidades.length ? (
-          <ul className="ficha-comodidades">
-            {comodidades.map(({ id, label, Icono }) => (
-              <li key={id}>
-                <Icono size={15} strokeWidth={2} aria-hidden="true" />
-                {label}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="modal-negocio-nota">No has marcado ninguna. Se añaden desde Editar.</p>
-        )}
-      </Seccion>
-
-      <Seccion titulo="Galería" extra={`${fotos.length} fotos`}>
-        <button
-          type="button"
-          className="ficha-galeria-atajo"
-          onClick={onGaleria}
-          aria-label={`Ver la galería, ${fotos.length} fotos`}
-        >
-          {fotos.slice(0, 4).map((foto, i) => (
-            <span key={foto} className="ficha-galeria-celda">
-              <img src={fotoAncho(foto, 200)} alt="" loading="lazy" decoding="async" />
-              {i === 3 && extra > 0 && <span className="ficha-galeria-mas">+{extra}</span>}
-            </span>
-          ))}
-        </button>
-      </Seccion>
-
-      <Seccion titulo="Visibilidad">
-        <p className={`ficha-visibilidad${estaAbierto(local) ? '' : ' ficha-visibilidad--cerrado'}`}>
-          <span aria-hidden="true" />
-          {estaAbierto(local) ? 'Ahora mismo está abierto, según su horario' : 'Ahora mismo está cerrado, según su horario'}
-        </p>
-      </Seccion>
-    </>
-  )
-}
+/* ---------- Opiniones ---------- */
 
 function PanelOpiniones({ local, onGuardar }) {
   const [abierto, setAbierto] = useState(null)
@@ -510,63 +321,29 @@ function PanelOpiniones({ local, onGuardar }) {
   )
 }
 
-function ModalFicha({ local, pestanaInicial = 'horario', ahora, onEditar, onGaleria, onGuardar }) {
-  const [pestana, setPestana] = useState(pestanaInicial)
-
-  return (
-    <div className="modal-negocio-stack">
-      <div
-        className="modal-negocio-segmentado modal-negocio-segmentado--tono"
-        role="tablist"
-        aria-label="Secciones de la ficha"
-        data-entra
-      >
-        {PESTANAS.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            role="tab"
-            id={`ficha-pestana-${p.id}`}
-            aria-selected={pestana === p.id}
-            aria-controls="ficha-panel"
-            onClick={() => setPestana(p.id)}
-          >
-            {p.label}
-          </button>
-        ))}
-      </div>
-
-      <div
-        key={pestana}
-        id="ficha-panel"
-        className="ficha-panel"
-        role="tabpanel"
-        aria-labelledby={`ficha-pestana-${pestana}`}
-      >
-        {pestana === 'horario' && <PanelHorario local={local} ahora={ahora} />}
-        {pestana === 'contacto' && <PanelContacto local={local} />}
-        {pestana === 'local' && <PanelLocal local={local} onGaleria={onGaleria} />}
-        {pestana === 'opiniones' && <PanelOpiniones local={local} onGuardar={onGuardar} />}
-      </div>
-
-      {pestana !== 'opiniones' && (
-        <button type="button" className="ficha-editar" onClick={onEditar} data-entra>
-          <Pencil size={15} strokeWidth={2.25} aria-hidden="true" />
-          Editar estos datos
-        </button>
-      )}
-    </div>
-  )
-}
-
 /* ---------- Galería ---------- */
 
-function ModalGaleria({ local, onPortada }) {
+/* Un tope para no llenar el almacenamiento del navegador: cada foto reducida
+   pesa unos 200 KB y el navegador da unos 5 MB para toda la app. */
+const MAX_FOTOS = 12
+/* Quitar una foto no se puede deshacer: el primer toque pregunta, el segundo
+   quita. Si no hay segundo toque en este tiempo, se olvida la pregunta. */
+const ESPERA_CONFIRMAR = 3000
+
+function ModalGaleria({ local, onPortada, onAgregarFotos, onQuitarFoto }) {
   const fotos = fotosDe(local)
   const [indice, setIndice] = useState(0)
+  const [confirmar, setConfirmar] = useState(null)
+  const [estado, setEstado] = useState(null)
   const pistaRef = useRef(null)
-  const actual = fotos[Math.min(indice, fotos.length - 1)]
+  const archivoRef = useRef(null)
+  const temporizador = useRef(null)
+
+  const enAnadir = indice >= fotos.length
+  const actual = enAnadir ? null : fotos[indice]
   const esPortada = actual === local.url
+  const caben = MAX_FOTOS - fotos.length
+  const unaSola = fotos.length <= 1
 
   const ir = (i) => {
     const pista = pistaRef.current
@@ -576,15 +353,72 @@ function ModalGaleria({ local, onPortada }) {
 
   const alDesplazar = (e) => {
     const pista = e.currentTarget
-    setIndice(Math.round(pista.scrollLeft / pista.clientWidth))
+    const nuevo = Math.round(pista.scrollLeft / pista.clientWidth)
+    if (nuevo !== indice) {
+      setIndice(nuevo)
+      setConfirmar(null)
+    }
   }
 
-  if (!fotos.length) {
-    return <p className="modal-negocio-lead">Tu local todavía no tiene fotos.</p>
+  const pedirArchivos = () => {
+    setEstado(null)
+    archivoRef.current?.click()
+  }
+
+  const alElegir = async (e) => {
+    const archivos = [...(e.target.files ?? [])]
+    e.target.value = ''
+    if (!archivos.length) return
+    const malo = archivos.map(errorDeFoto).find(Boolean)
+    if (malo) {
+      setEstado({ tipo: 'error', texto: malo })
+      return
+    }
+    const tomadas = archivos.slice(0, caben)
+    setEstado({ tipo: 'cargando', texto: tomadas.length === 1 ? 'Preparando la foto…' : `Preparando ${tomadas.length} fotos…` })
+    try {
+      const nuevas = await Promise.all(tomadas.map(comprimirFoto))
+      const guardado = onAgregarFotos(nuevas)
+      if (!guardado) {
+        setEstado({ tipo: 'error', texto: 'No queda espacio en este dispositivo. Quita alguna foto e inténtalo de nuevo.' })
+        return
+      }
+      setEstado(
+        archivos.length > tomadas.length
+          ? { tipo: 'aviso', texto: `Solo cabían ${tomadas.length}: el máximo son ${MAX_FOTOS} fotos.` }
+          : null,
+      )
+      /* Lleva a la primera foto nueva, que es lo que quieres ver. */
+      requestAnimationFrame(() => ir(fotos.length))
+    } catch {
+      setEstado({ tipo: 'error', texto: 'No se pudo leer alguna foto. Prueba con otra.' })
+    }
+  }
+
+  const quitar = () => {
+    if (!actual || unaSola) return
+    clearTimeout(temporizador.current)
+    if (confirmar !== actual) {
+      setConfirmar(actual)
+      temporizador.current = setTimeout(() => setConfirmar(null), ESPERA_CONFIRMAR)
+      return
+    }
+    setConfirmar(null)
+    onQuitarFoto(actual)
+    setIndice((i) => Math.max(0, Math.min(i, fotos.length - 2)))
   }
 
   return (
     <div className="modal-negocio-stack">
+      <input
+        ref={archivoRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        multiple
+        hidden
+        onChange={alElegir}
+      />
+
       <div className="galeria" data-entra>
         <div
           className="galeria-pista"
@@ -605,10 +439,40 @@ function ModalGaleria({ local, onPortada }) {
               {foto === local.url && <figcaption className="galeria-portada">Portada</figcaption>}
             </figure>
           ))}
+
+          {/* La última "foto" es el sitio para añadir más. */}
+          <figure className="galeria-foto galeria-foto--anadir">
+            <button type="button" className="galeria-anadir" onClick={pedirArchivos} disabled={caben <= 0}>
+              <span className="galeria-anadir-icono" aria-hidden="true">
+                <Plus size={26} strokeWidth={2.2} />
+              </span>
+              <span className="galeria-anadir-texto">{caben > 0 ? 'Añadir fotos' : 'Galería llena'}</span>
+              <span className="galeria-anadir-sub">
+                {caben > 0 ? `Te caben ${caben} más` : `El máximo son ${MAX_FOTOS}. Quita alguna para subir otra.`}
+              </span>
+            </button>
+          </figure>
         </div>
-        <span className="galeria-contador" aria-live="polite">
-          {indice + 1} / {fotos.length}
-        </span>
+
+        {actual && (
+          <button
+            type="button"
+            className={`galeria-quitar${confirmar === actual ? ' galeria-quitar--confirmar' : ''}`}
+            onClick={quitar}
+            disabled={unaSola}
+            title={unaSola ? 'Tu local necesita al menos una foto' : undefined}
+            aria-label={confirmar === actual ? 'Toca otra vez para quitar esta foto' : 'Quitar esta foto'}
+          >
+            <Trash2 size={16} strokeWidth={2.2} aria-hidden="true" />
+            {confirmar === actual && <span>¿Quitar?</span>}
+          </button>
+        )}
+
+        {actual && (
+          <span className="galeria-contador" aria-live="polite">
+            {indice + 1} / {fotos.length}
+          </span>
+        )}
       </div>
 
       <div className="galeria-miniaturas" data-entra>
@@ -624,20 +488,39 @@ function ModalGaleria({ local, onPortada }) {
             <img src={fotoAncho(foto, 160)} alt="" loading="lazy" decoding="async" />
           </button>
         ))}
+        <button
+          type="button"
+          className="galeria-miniatura galeria-miniatura--anadir"
+          aria-current={enAnadir ? 'true' : undefined}
+          aria-label="Añadir fotos"
+          onClick={caben > 0 ? pedirArchivos : () => ir(fotos.length)}
+        >
+          <Plus size={20} strokeWidth={2.2} aria-hidden="true" />
+        </button>
       </div>
 
-      <button
-        type="button"
-        className="modal-negocio-accion-principal"
-        disabled={esPortada}
-        onClick={() => onPortada(actual)}
-        data-entra
-      >
-        {esPortada ? 'Esta es tu portada' : 'Usar como portada'}
-      </button>
-      <p className="modal-negocio-nota" data-entra>
-        La portada es la foto que ven tus clientes en Descubre y arriba de tu página.
-      </p>
+      {estado && (
+        <p className={`galeria-estado galeria-estado--${estado.tipo}`} role={estado.tipo === 'error' ? 'alert' : 'status'}>
+          {estado.texto}
+        </p>
+      )}
+
+      {actual && (
+        <>
+          <button
+            type="button"
+            className="modal-negocio-accion-principal"
+            disabled={esPortada}
+            onClick={() => onPortada(actual)}
+            data-entra
+          >
+            {esPortada ? 'Esta es tu portada' : 'Usar como portada'}
+          </button>
+          <p className="modal-negocio-nota" data-entra>
+            La portada es la foto que ven tus clientes en Descubre y arriba de tu página.
+          </p>
+        </>
+      )}
     </div>
   )
 }
@@ -660,9 +543,20 @@ function formularioDesde(local) {
   }
 }
 
-function ModalEditarLocal({ local, onGuardar }) {
+function ModalEditarLocal({ local, seccion, onGuardar }) {
   const [form, setForm] = useState(() => formularioDesde(local))
   const [original] = useState(() => formularioDesde(local))
+  const formRef = useRef(null)
+
+  /* Desde una fila de "Tu local" se llega con la sección ya a la vista.
+     Un frame de espera para que la hoja haya terminado de montarse. */
+  useEffect(() => {
+    if (!seccion) return undefined
+    const frame = requestAnimationFrame(() => {
+      formRef.current?.querySelector(`[data-seccion="${seccion}"]`)?.scrollIntoView({ block: 'start' })
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [seccion])
 
   const cambiar = (campo, valor) => setForm((f) => ({ ...f, [campo]: valor }))
   const alternar = (campo, id) =>
@@ -700,8 +594,8 @@ function ModalEditarLocal({ local, onGuardar }) {
   }
 
   return (
-    <form className="modal-negocio-stack" onSubmit={guardar} noValidate>
-      <Seccion titulo="Tu local">
+    <form className="modal-negocio-stack" onSubmit={guardar} noValidate ref={formRef}>
+      <Seccion titulo="Tu local" seccion="local">
         <label className="modal-negocio-campo">
           <span>Nombre</span>
           <input
@@ -743,7 +637,7 @@ function ModalEditarLocal({ local, onGuardar }) {
         </label>
       </Seccion>
 
-      <Seccion titulo="Horario" extra={`${duracionTexto(abierto)} abierto`}>
+      <Seccion titulo="Horario" seccion="horario" extra={`${duracionTexto(abierto)} abierto`}>
         <div className="ficha-horas-campos">
           <label className="modal-negocio-campo">
             <span>Abre</span>
@@ -801,7 +695,7 @@ function ModalEditarLocal({ local, onGuardar }) {
         </div>
       </Seccion>
 
-      <Seccion titulo="Contacto">
+      <Seccion titulo="Contacto" seccion="contacto">
         <label className="modal-negocio-campo">
           <span>Teléfono</span>
           <input
@@ -870,24 +764,27 @@ function ModalEditarLocal({ local, onGuardar }) {
   )
 }
 
-export default function ContenidoFichaLocal({ modal, local, ahora, onEditar, onGaleria, onPortada, onGuardar }) {
+export default function ContenidoFichaLocal({
+  modal,
+  local,
+  onPortada,
+  onAgregarFotos,
+  onQuitarFoto,
+  onGuardar,
+}) {
   switch (modal?.tipo) {
-    case 'ficha':
+    case 'opiniones':
       return (
-        <ModalFicha
-          key={modal.pestana}
-          local={local}
-          pestanaInicial={modal.pestana}
-          ahora={ahora}
-          onEditar={onEditar}
-          onGaleria={onGaleria}
-          onGuardar={onGuardar}
-        />
+        <div className="modal-negocio-stack">
+          <PanelOpiniones local={local} onGuardar={onGuardar} />
+        </div>
       )
     case 'galeria':
-      return <ModalGaleria local={local} onPortada={onPortada} />
+      return (
+        <ModalGaleria local={local} onPortada={onPortada} onAgregarFotos={onAgregarFotos} onQuitarFoto={onQuitarFoto} />
+      )
     case 'editar':
-      return <ModalEditarLocal local={local} onGuardar={onGuardar} />
+      return <ModalEditarLocal key={modal.seccion ?? 'todo'} local={local} seccion={modal.seccion} onGuardar={onGuardar} />
     default:
       return null
   }

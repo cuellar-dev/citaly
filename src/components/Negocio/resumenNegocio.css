@@ -344,3 +344,31 @@
     animation: none;
   }
 }
+
+/* Pausa activa: el botón se llena de mostaza y dice hasta cuándo. Es lo
+   primero que tiene que ver el dueño al entrar: su agenda no recibe. */
+.resumen-negocio-accion--pausada {
+  border-color: var(--yellow-color, #ffd166);
+  background: var(--yellow-color, #ffd166);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.resumen-negocio-accion--pausada svg {
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.resumen-negocio-accion-pausa {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.resumen-negocio-accion-pausa small {
+  overflow: hidden;
+  font-size: 11px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.8;
+}

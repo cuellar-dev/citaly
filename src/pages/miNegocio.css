@@ -250,3 +250,47 @@
     padding-inline: 0;
   }
 }
+
+/* Mirando otro día: un atajo de vuelta a hoy junto a la fecha. */
+.negocio-citas-fecha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+
+.negocio-citas-hoy {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent);
+  color: var(--primary-color, #00c2ad);
+  font-family: inherit;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .negocio-citas-hoy:hover {
+    background: color-mix(in srgb, var(--primary-color, #00c2ad) 22%, transparent);
+  }
+}
+
+.negocio-citas-hoy:active {
+  transform: scale(0.96);
+}
+
+.negocio-citas-hoy:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}

@@ -949,3 +949,116 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+/* ---------- Pausa: activa, otro tiempo ---------- */
+
+.modal-negocio-hueco--pausa {
+  border-color: color-mix(in srgb, var(--yellow-color, #ffd166) 32%, transparent);
+  background: radial-gradient(
+    120% 90% at 50% 0%,
+    color-mix(in srgb, var(--yellow-color, #ffd166) 14%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+.modal-negocio-hueco--pausa .modal-negocio-hueco-etiqueta {
+  color: var(--yellow-color, #ffd166);
+}
+
+.pausa-mas {
+  margin-top: 10px;
+}
+
+/* Cantidad y unidad en una fila: el número manda, la unidad al lado. */
+.pausa-otro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.pausa-otro .modal-negocio-input {
+  font-variant-numeric: tabular-nums;
+}
+
+.pausa-otro .modal-negocio-segmentado {
+  min-width: 170px;
+}
+
+.pausa-error,
+.express-error {
+  color: #e06a6a;
+}
+
+.express-error {
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* ---------- Express: turnos libres ---------- */
+
+.express-turnos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 8px;
+}
+
+.express-turno {
+  position: relative;
+  min-height: 44px;
+  padding: 0 8px;
+  border: 1px solid rgba(240, 240, 240, 0.1);
+  border-radius: 13px;
+  background: rgba(240, 240, 240, 0.04);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    border-color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+/* El sugerido lleva su marca aunque elijas otro, para saber cuál era. */
+.express-turno--sugerido::after {
+  content: 'Próximo';
+  position: absolute;
+  top: -7px;
+  right: 8px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--background-color-another, #252926);
+  color: var(--primary-color, #00c2ad);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.express-turno[aria-checked='true'] {
+  border-color: var(--primary-color, #00c2ad);
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.express-turno:active {
+  transform: scale(0.96);
+}
+
+.express-turno:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .express-turno {
+    transition-duration: 0.01ms;
+  }
+
+  .express-turno:active {
+    transform: none;
+  }
+}

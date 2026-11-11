@@ -345,3 +345,16 @@
     animation: none;
   }
 }
+
+/* Agenda en pausa: mostaza, como el botón del resumen. Sin pulso de luz:
+   no está recibiendo nada. */
+.cabecera-negocio-recibiendo--pausa {
+  border-color: color-mix(in srgb, var(--yellow-color, #ffd166) 45%, transparent);
+  color: var(--yellow-color, #ffd166);
+  animation: none;
+}
+
+.cabecera-negocio-recibiendo--pausa .cabecera-negocio-recibiendo-luz {
+  background: var(--yellow-color, #ffd166);
+  box-shadow: none;
+}

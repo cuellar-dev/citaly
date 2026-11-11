@@ -1,0 +1,141 @@
+.tira-dias {
+  display: flex;
+  gap: 2px;
+  margin: 0 -14px 2px;
+  padding: 2px 10px 4px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: 14px;
+  scrollbar-width: none;
+}
+
+.tira-dias::-webkit-scrollbar {
+  display: none;
+}
+
+/* Sin caja: el botón es una columna estrecha con aire. El área táctil es
+   todo el botón, aunque solo se vea el círculo. */
+.tira-dia {
+  flex: 0 0 46px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0 2px;
+  border: 0;
+  background: none;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  cursor: pointer;
+  scroll-snap-align: center;
+}
+
+.tira-dia:focus-visible {
+  outline: none;
+}
+
+.tira-dia:focus-visible .tira-dia-numero {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+.tira-dia-nombre {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 80%, transparent);
+}
+
+.tira-dia-numero {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color 0.2s var(--ease-out, ease-out),
+    color 0.2s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tira-dia:not(.tira-dia--elegida):hover .tira-dia-numero {
+    background: rgba(240, 240, 240, 0.07);
+  }
+}
+
+.tira-dia:active .tira-dia-numero {
+  transform: scale(0.92);
+}
+
+/* Hay citas ese día. El sitio del punto existe siempre, para que todos los
+   días midan lo mismo. */
+.tira-dia-punto {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+}
+
+.tira-dia-punto--hay {
+  background: var(--primary-color, #00c2ad);
+}
+
+/* Hoy, sin elegir: el número en teal. */
+.tira-dia--hoy .tira-dia-nombre,
+.tira-dia--hoy .tira-dia-numero {
+  color: var(--primary-color, #00c2ad);
+}
+
+.tira-dia--hoy .tira-dia-numero {
+  font-weight: 700;
+}
+
+/* Lo pasado, más quieto. */
+.tira-dia--pasada .tira-dia-numero {
+  color: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 55%, transparent);
+}
+
+.tira-dia--pasada .tira-dia-punto--hay {
+  background: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 55%, transparent);
+}
+
+/* Días que no abre: apagados del todo. */
+.tira-dia--cerrada .tira-dia-numero,
+.tira-dia--cerrada .tira-dia-nombre {
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 35%, transparent);
+}
+
+/* El elegido: círculo relleno. Va al final para ganarle a hoy y a pasado. */
+.tira-dia--elegida .tira-dia-numero {
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font-weight: 700;
+}
+
+.tira-dia--elegida .tira-dia-nombre {
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.tira-dia--elegida.tira-dia--hoy .tira-dia-nombre {
+  color: var(--primary-color, #00c2ad);
+}
+
+.tira-dia--elegida.tira-dia--cerrada .tira-dia-numero {
+  background: rgba(240, 240, 240, 0.12);
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tira-dia-numero {
+    transition-duration: 0.01ms;
+  }
+
+  .tira-dia:active .tira-dia-numero {
+    transform: none;
+  }
+}

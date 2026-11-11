@@ -1,8 +1,8 @@
 /* Bloques comunes de las hojas del panel del dueño. */
 
-export function Seccion({ titulo, extra, children }) {
+export function Seccion({ titulo, extra, seccion, children }) {
   return (
-    <section className="modal-negocio-seccion" data-entra>
+    <section className="modal-negocio-seccion" data-entra data-seccion={seccion}>
       {(titulo || extra) && (
         <header className="modal-negocio-seccion-cabecera">
           {titulo && <h3 className="modal-negocio-seccion-titulo">{titulo}</h3>}

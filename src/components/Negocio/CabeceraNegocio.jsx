@@ -16,6 +16,7 @@ function CabeceraNegocio({
   fotos = [],
   abreHoy = true,
   recibiendo = false,
+  pausada = false,
   apertura,
   cierre,
   ahora = new Date(),
@@ -86,7 +87,13 @@ function CabeceraNegocio({
             {turno.estado}
           </p>
         </div>
-        {recibiendo && turno.enCurso && (
+        {pausada && (
+          <p className="cabecera-negocio-recibiendo cabecera-negocio-recibiendo--pausa">
+            <span className="cabecera-negocio-recibiendo-luz" aria-hidden="true" />
+            Agenda en pausa
+          </p>
+        )}
+        {!pausada && recibiendo && turno.enCurso && (
           <p className="cabecera-negocio-recibiendo">
             <span className="cabecera-negocio-recibiendo-luz" aria-hidden="true" />
             Recibiendo reservas

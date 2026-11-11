@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { format, parse } from 'date-fns'
+import { addDays, format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { Banknote, FileDown, Images, Pencil, Scissors, Store, Timer, UserPlus, UserRound, Users, ZapOff } from 'lucide-react'
+import { Banknote, CalendarDays, FileDown, Images, MessageSquareQuote, Pencil, Scissors, Timer, UserPlus, UserRound, Users, ZapOff } from 'lucide-react'
 import CabeceraNegocio from '../components/Negocio/CabeceraNegocio.jsx'
 import CitaDueno from '../components/Negocio/CitaDueno.jsx'
 import FichaLocal from '../components/Negocio/FichaLocal.jsx'
@@ -13,123 +13,25 @@ import ContenidoFichaLocal from '../components/Negocio/modales/ContenidoFichaLoc
 import ContenidoModalNegocio from '../components/Negocio/modales/ContenidoModalNegocio.jsx'
 import ModalNegocioShell from '../components/Negocio/ModalNegocioShell.jsx'
 import ResumenNegocio from '../components/Negocio/ResumenNegocio.jsx'
+import TiraDias from '../components/Negocio/TiraDias.jsx'
+import { DIAS_ADELANTE, DIAS_ATRAS, citasNegocioDemo } from '../data/citasNegocioDemo.js'
 import { getLocalById } from '../services/locales.js'
 import { saveFicha } from '../services/storage.js'
 import { conPerfiles, profesionalesActivos } from '../services/usuarios.js'
 import { minutosHastaCita, textoEnCita } from '../utils/citasVista.js'
 import { CANCELADA, CONFIRMADA, PENDIENTE, POR_TI, caducarPendientes, textoEstadoReserva } from '../utils/estadosCita.js'
+import { pausaActiva, textoHasta } from '../utils/pausaAgenda.js'
 import { notaDeComentarios } from '../utils/fichaLocal.js'
 import { descargarPdfCitas } from '../utils/pdfCitasNegocio.js'
-import { codigoDia, fotosDe, horaAmPm as horaDeMinutos, minutosAbierto, turnosDelDia } from '../utils/fichaLocal.js'
+import { codigoDia, fotosDe, horaAmPm as horaDeMinutos, minutosAbierto, nuevoId, turnosDelDia } from '../utils/fichaLocal.js'
 import './miNegocio.css'
 
 gsap.registerPlugin(useGSAP)
 
-/* Local del dueño mientras no hay sesión. Sara abre 9:00–18:00 cada 90 min. */
+/* Local del dueño mientras no hay sesión. Sara abre 9:00–18:00 cada 90 min.
+   Sus citas (las de hoy y las de los días de alrededor) salen de
+   data/citasNegocioDemo.js. */
 const ID_LOCAL = 'sara'
-const FECHA_DEMO = format(new Date(), 'yyyy-MM-dd')
-const CREADA_DEMO = new Date().toISOString()
-
-/* Citas de hoy en los turnos reales del local (09:00, 10:30, 12:00, 13:30, 15:00, 16:30). */
-const CITAS_HOY = [
-  {
-    id: '1',
-    fecha: FECHA_DEMO,
-    horario: '09:00',
-    cliente: 'Lisandra Pérez',
-    telefono: '+53 5412 9083',
-    esLugar: false,
-    linea: 'Manicura',
-    detalle: 'Con Sofía',
-    duracion: 40,
-    precio: 250,
-    estadoReserva: PENDIENTE,
-    creadaEn: CREADA_DEMO,
-  },
-  {
-    id: '2',
-    fecha: FECHA_DEMO,
-    horario: '10:30',
-    cliente: 'Yosvany Morales',
-    telefono: '+53 5284 1802',
-    esLugar: false,
-    linea: 'Corte caballero',
-    detalle: 'Con Carlos',
-    duracion: 30,
-    precio: 300,
-    estadoReserva: CONFIRMADA,
-    creadaEn: CREADA_DEMO,
-  },
-  {
-    id: '3',
-    fecha: FECHA_DEMO,
-    horario: '10:30',
-    cliente: 'Dayana Ruiz',
-    telefono: '+53 5367 2241',
-    esLugar: false,
-    linea: 'Tinte completo',
-    detalle: 'Con Laura',
-    duracion: 120,
-    precio: 1200,
-    estadoReserva: POR_TI,
-    creadaEn: CREADA_DEMO,
-  },
-  {
-    id: '4',
-    fecha: FECHA_DEMO,
-    horario: '12:00',
-    cliente: 'Gretel Rodríguez',
-    telefono: '+53 5340 7711',
-    esLugar: false,
-    linea: 'Corte dama',
-    detalle: 'Con Sofía',
-    duracion: 45,
-    precio: 450,
-    estadoReserva: PENDIENTE,
-    creadaEn: CREADA_DEMO,
-  },
-  {
-    id: '5',
-    fecha: FECHA_DEMO,
-    horario: '13:30',
-    cliente: 'Ernesto Báez',
-    telefono: '+53 5590 1276',
-    esLugar: false,
-    linea: 'Corte caballero',
-    detalle: 'Con Miguel',
-    duracion: 30,
-    precio: 300,
-    estadoReserva: CANCELADA,
-    creadaEn: CREADA_DEMO,
-  },
-  {
-    id: '6',
-    fecha: FECHA_DEMO,
-    horario: '15:00',
-    cliente: 'Dr. Carlos V.',
-    esLugar: false,
-    linea: 'Corte caballero',
-    detalle: 'Con Carlos',
-    duracion: 30,
-    precio: 300,
-    estadoReserva: CONFIRMADA,
-    creadaEn: CREADA_DEMO,
-  },
-  {
-    id: '7',
-    fecha: FECHA_DEMO,
-    horario: '16:30',
-    cliente: 'Mairelys Soto',
-    telefono: '+53 5221 6604',
-    esLugar: false,
-    linea: 'Corte dama',
-    detalle: 'Con Laura',
-    duracion: 45,
-    precio: 450,
-    estadoReserva: POR_TI,
-    creadaEn: CREADA_DEMO,
-  },
-]
 
 /* Reloj fijo del mock, para ver el timeline a mitad de turno mientras se estila. */
 const AHORA_DEMO = new Date()
@@ -140,7 +42,7 @@ const MODALES = {
   estimado: { titulo: 'Estimado', subtitulo: 'Dinero del día', tono: 'verde', Icono: Banknote },
   pausa: { titulo: 'Pausar agenda', subtitulo: 'Cerrar reservas un rato', tono: 'amarillo', Icono: ZapOff },
   express: { titulo: 'Cliente express', subtitulo: 'Llega sin reserva', tono: 'verde', Icono: UserPlus },
-  ficha: { titulo: 'Ficha del local', subtitulo: 'Lo que ven tus clientes', tono: 'verde', Icono: Store },
+  opiniones: { titulo: 'Opiniones', subtitulo: 'Lo que dicen de tu local', tono: 'verde', Icono: MessageSquareQuote },
   galeria: { titulo: 'Galería', subtitulo: 'Fotos del local', tono: 'verde', Icono: Images },
   editar: { titulo: 'Editar local', subtitulo: 'Datos de tu ficha', tono: 'verde', Icono: Pencil },
   servicios: { titulo: 'Servicios', subtitulo: 'Lo que ofreces', tono: 'verde', Icono: Scissors },
@@ -150,7 +52,7 @@ const MODALES = {
   profesional: { titulo: 'Profesional', subtitulo: 'Servicios que hace en tu local', tono: 'verde', Icono: UserRound },
 }
 
-const MODALES_FICHA = new Set(['ficha', 'galeria', 'editar'])
+const MODALES_FICHA = new Set(['opiniones', 'galeria', 'editar'])
 const MODALES_CATALOGO = new Set(['servicios', 'servicio', 'equipo', 'buscar', 'profesional'])
 
 const FILTROS = [
@@ -160,6 +62,18 @@ const FILTROS = [
   { id: 'atendidas', label: 'Atendidas' },
   { id: 'canceladas', label: 'Canceladas' },
 ]
+
+function conMayuscula(texto) {
+  return texto.charAt(0).toUpperCase() + texto.slice(1)
+}
+
+/* Cómo se llama el día elegido en el título de la lista. */
+function nombreDelDia(desplazamiento, fecha) {
+  if (desplazamiento === 0) return 'de hoy'
+  if (desplazamiento === -1) return 'de ayer'
+  if (desplazamiento === 1) return 'de mañana'
+  return `del ${format(fecha, 'EEEE d', { locale: es })}`
+}
 
 const VACIO_FILTRO = {
   todas: 'No hay citas en la agenda de hoy.',
@@ -231,19 +145,6 @@ function relativoCita(cita, ahora) {
   if (cita.estadoReserva === CANCELADA) return 'cancelada'
   if (enCurso(cita, ahora)) return 'en curso'
   return textoEnCita(cita, ahora)
-}
-
-function proximoHueco(citas, ahora, cierreMin) {
-  const activas = citas.filter((c) => c.estadoReserva !== CANCELADA)
-  const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes()
-  for (let inicio = Math.ceil(ahoraMin / 15) * 15; inicio + 30 <= cierreMin; inicio += 15) {
-    const choca = activas.some((c) => {
-      const ini = aMinutos(c.horario)
-      return inicio < ini + (c.duracion ?? 30) && ini < inicio + 30
-    })
-    if (!choca) return format(new Date(2000, 0, 1, Math.floor(inicio / 60), inicio % 60), 'h:mm a')
-  }
-  return null
 }
 
 function detalleOcupacion(porcentaje) {
@@ -346,31 +247,75 @@ function resumenDelDia(citas, ahora, local) {
         },
       ],
     },
-    hueco: proximoHueco(citas, ahora, cierre),
-    profesionales,
   }
 }
 
 function MiNegocio() {
   const [local, setLocal] = useState(() => getLocalById(ID_LOCAL))
-  const [citas, setCitas] = useState(CITAS_HOY)
+  const [citas, setCitas] = useState(() => citasNegocioDemo(getLocalById(ID_LOCAL), AHORA_DEMO))
   const [filtro, setFiltro] = useState('todas')
+  /* El día que se está mirando. Solo uno a la vez: la tira de arriba deja
+     moverse por la semana sin juntar todas las citas en un bulto. */
+  const hoyClave = format(AHORA_DEMO, 'yyyy-MM-dd')
+  const [diaElegido, setDiaElegido] = useState(hoyClave)
+  /* El reloj de verdad, para lo que caduca solo (la pausa). */
+  const [reloj, setReloj] = useState(() => new Date())
   const [modal, setModal] = useState(null)
   const [modalAbierto, setModalAbierto] = useState(false)
   const listaRef = useRef(null)
 
   useEffect(() => {
-    const tick = () => setCitas((prev) => caducarPendientes(prev))
+    const tick = () => {
+      setCitas((prev) => caducarPendientes(prev))
+      setReloj(new Date())
+    }
     const id = setInterval(tick, 30000)
     return () => clearInterval(id)
   }, [])
 
-  const resumen = useMemo(() => resumenDelDia(citas, AHORA_DEMO, local), [citas, local])
+  /* El resumen de arriba (siguiente, ocupación, estimado) es siempre de hoy.
+     La lista de abajo es del día elegido. */
+  const citasHoy = useMemo(() => citas.filter((c) => c.fecha === hoyClave), [citas, hoyClave])
+  const citasDelDia = useMemo(() => citas.filter((c) => c.fecha === diaElegido), [citas, diaElegido])
+  const resumen = useMemo(() => resumenDelDia(citasHoy, AHORA_DEMO, local), [citasHoy, local])
+
+  const dias = useMemo(() => {
+    const lista = []
+    for (let d = -DIAS_ATRAS; d <= DIAS_ADELANTE; d++) {
+      const fecha = addDays(AHORA_DEMO, d)
+      const clave = format(fecha, 'yyyy-MM-dd')
+      lista.push({
+        clave,
+        fecha,
+        desplazamiento: d,
+        abre: local.dias.includes(codigoDia(fecha)),
+        cantidad: citas.filter((c) => c.fecha === clave && c.estadoReserva !== CANCELADA).length,
+      })
+    }
+    return lista
+  }, [citas, local.dias])
+  const diaActual = dias.find((d) => d.clave === diaElegido) ?? dias.find((d) => d.desplazamiento === 0)
+  const esHoy = diaActual.desplazamiento === 0
+  const esPasado = diaActual.desplazamiento < 0
+
+  const elegirDia = (clave) => {
+    setDiaElegido(clave)
+    setFiltro('todas')
+  }
+
+  const enPausa = pausaActiva(local.pausa, reloj)
   const notaLocal = useMemo(() => notaDeComentarios(local), [local])
   const fotos = useMemo(() => fotosDe(local), [local])
-  const conHora = useMemo(() => citas.map((c) => ({ ...c, horaTexto: horaAmPm(c.fecha, c.horario) })), [citas])
-  const citaSiguiente = conHora.find((c) => c.id === resumen.siguiente?.citaId)
-  const despues = resumen.despues ? conHora.find((c) => c.id === resumen.despues.id) : null
+  const conHora = useMemo(
+    () => citasDelDia.map((c) => ({ ...c, horaTexto: horaAmPm(c.fecha, c.horario) })),
+    [citasDelDia],
+  )
+  const hoyConHora = useMemo(
+    () => citasHoy.map((c) => ({ ...c, horaTexto: horaAmPm(c.fecha, c.horario) })),
+    [citasHoy],
+  )
+  const citaSiguiente = hoyConHora.find((c) => c.id === resumen.siguiente?.citaId)
+  const despues = resumen.despues ? hoyConHora.find((c) => c.id === resumen.despues.id) : null
 
   const cantidades = useMemo(
     () =>
@@ -401,9 +346,51 @@ function MiNegocio() {
   const cambiarEstado = (id, estadoReserva) =>
     setCitas((prev) => prev.map((c) => (c.id === id ? { ...c, estadoReserva } : c)))
 
+  /* Devuelve false si el navegador no tiene sitio (pasa con muchas fotos). */
   const guardarFicha = (cambios) => {
-    setLocal((prev) => conPerfiles({ ...prev, ...cambios }))
-    saveFicha(ID_LOCAL, cambios)
+    const guardado = saveFicha(ID_LOCAL, cambios)
+    if (guardado) setLocal((prev) => conPerfiles({ ...prev, ...cambios }))
+    return guardado
+  }
+
+  const agregarFotos = (nuevas) => {
+    const urls = [...fotos, ...nuevas]
+    return guardarFicha({ urls, url: local.url || urls[0] })
+  }
+
+  /* Si se quita la portada, la siguiente foto pasa a serlo. */
+  const quitarFoto = (foto) => {
+    const urls = fotos.filter((f) => f !== foto)
+    return guardarFicha({ urls, url: foto === local.url ? urls[0] : local.url })
+  }
+
+  const pausar = (pausa) => {
+    guardarFicha({ pausa })
+    cerrarModal()
+  }
+
+  const reanudar = () => {
+    guardarFicha({ pausa: null })
+    cerrarModal()
+  }
+
+  /* El cliente express entra en la agenda de hoy ya confirmado: está en la
+     puerta. Se vuelve a hoy para verlo en su sitio. */
+  const agregarCitaExpress = (datos) => {
+    setCitas((prev) => [
+      ...prev,
+      {
+        ...datos,
+        id: nuevoId('express'),
+        fecha: hoyClave,
+        esLugar: false,
+        express: true,
+        estadoReserva: CONFIRMADA,
+        creadaEn: new Date().toISOString(),
+      },
+    ])
+    elegirDia(hoyClave)
+    cerrarModal()
   }
 
   const exportarPdf = () => {
@@ -411,7 +398,7 @@ function MiNegocio() {
     const ordenadas = [...visibles].sort((a, b) => aMinutos(a.horario) - aMinutos(b.horario))
     descargarPdfCitas({
       localNombre: local.localName,
-      fechaTexto: format(AHORA_DEMO, "EEEE d 'de' MMMM yyyy", { locale: es }),
+      fechaTexto: format(diaActual.fecha, "EEEE d 'de' MMMM yyyy", { locale: es }),
       filtroLabel: FILTROS.find((f) => f.id === filtro)?.label ?? 'Todas',
       citas: ordenadas.map((cita) => ({
         ...cita,
@@ -438,7 +425,7 @@ function MiNegocio() {
         clearProps: 'transform,opacity,visibility',
       })
     },
-    { scope: listaRef, dependencies: [filtro] }
+    { scope: listaRef, dependencies: [filtro, diaElegido] }
   )
 
   return (
@@ -453,6 +440,7 @@ function MiNegocio() {
         fotos={fotos}
         abreHoy={local.dias.includes(codigoDia(AHORA_DEMO))}
         recibiendo
+        pausada={enPausa}
         apertura={local.horarioApertura}
         cierre={local.horarioCierre}
         ahora={AHORA_DEMO}
@@ -469,16 +457,25 @@ function MiNegocio() {
         onEstimado={() => abrirModal('estimado')}
         onPausarAgenda={() => abrirModal('pausa')}
         onClienteExpress={() => abrirModal('express')}
+        pausa={enPausa ? { hasta: textoHasta(new Date(local.pausa.hasta)) } : null}
       />
       <div className="negocio-citas">
         <header className="negocio-citas-encabezado">
           <div>
-            <h2 className="negocio-citas-titulo">Citas de hoy</h2>
-            <p className="negocio-citas-fecha">{format(AHORA_DEMO, "EEEE d 'de' MMMM", { locale: es })}</p>
+            <h2 className="negocio-citas-titulo">Citas {nombreDelDia(diaActual.desplazamiento, diaActual.fecha)}</h2>
+            <p className="negocio-citas-fecha">
+              <span>{conMayuscula(format(diaActual.fecha, "EEEE d 'de' MMMM", { locale: es }))}</span>
+              {!esHoy && (
+                <button type="button" className="negocio-citas-hoy" onClick={() => elegirDia(hoyClave)}>
+                  <CalendarDays size={13} strokeWidth={2.25} aria-hidden="true" />
+                  Volver a hoy
+                </button>
+              )}
+            </p>
           </div>
           <div className="negocio-citas-acciones">
             <p className="negocio-citas-contador">
-              <strong>{citas.length - cantidades.canceladas}</strong> en agenda
+              <strong>{conHora.length - cantidades.canceladas}</strong> en agenda
             </p>
             <button
               type="button"
@@ -492,13 +489,27 @@ function MiNegocio() {
           </div>
         </header>
 
-        <FiltroCitas opciones={opcionesFiltro} activo={filtro} onCambiar={setFiltro} />
+        <TiraDias dias={dias} seleccionada={diaElegido} onElegir={elegirDia} />
+
+        {diaActual.abre && conHora.length > 0 && (
+          <FiltroCitas opciones={opcionesFiltro} activo={filtro} onCambiar={setFiltro} />
+        )}
 
         <div className="negocio-citas-lista" ref={listaRef}>
           {visibles.length === 0 && (
             <div className="negocio-citas-vacio negocio-citas-item">
               <span className="negocio-citas-vacio-luna" aria-hidden="true" />
-              <p>{VACIO_FILTRO[filtro]}</p>
+              <p>
+                {!diaActual.abre
+                  ? 'Ese día no abres.'
+                  : conHora.length === 0
+                    ? esPasado
+                      ? 'Ese día no tuviste citas.'
+                      : 'Todavía no hay citas para ese día.'
+                    : esHoy
+                      ? VACIO_FILTRO[filtro]
+                      : 'Ninguna cita con ese filtro ese día.'}
+              </p>
             </div>
           )}
           {franjas.map((franja) => (
@@ -520,8 +531,12 @@ function MiNegocio() {
                         relativo={relativoCita(cita, AHORA_DEMO)}
                         destacada={ahoraEnCurso}
                         atendida={!ahoraEnCurso && grupoCita(cita, AHORA_DEMO) === 'atendidas'}
-                        onConfirmar={cita.estadoReserva === PENDIENTE ? () => cambiarEstado(cita.id, POR_TI) : undefined}
-                        onRechazar={cita.estadoReserva === PENDIENTE ? () => cambiarEstado(cita.id, CANCELADA) : undefined}
+                        onConfirmar={
+                          cita.estadoReserva === PENDIENTE && !esPasado ? () => cambiarEstado(cita.id, POR_TI) : undefined
+                        }
+                        onRechazar={
+                          cita.estadoReserva === PENDIENTE && !esPasado ? () => cambiarEstado(cita.id, CANCELADA) : undefined
+                        }
                       />
                     </div>
                   )
@@ -534,7 +549,8 @@ function MiNegocio() {
 
       <FichaLocal
         local={local}
-        onAbrir={(pestana) => abrirModal('ficha', { pestana })}
+        onEditar={(seccion) => abrirModal('editar', { seccion })}
+        onOpiniones={() => abrirModal('opiniones')}
         onCatalogo={(tipo) => abrirModal(tipo)}
       />
       </div>
@@ -545,7 +561,7 @@ function MiNegocio() {
         subtitulo={configModal.subtitulo}
         tono={configModal.tono}
         Icono={configModal.Icono}
-        vista={`${modal?.tipo}-${modal?.id ?? modal?.usuarioId ?? ''}`}
+        vista={`${modal?.tipo}-${modal?.id ?? modal?.usuarioId ?? modal?.seccion ?? ''}`}
         onCerrar={cerrarModal}
       >
         {MODALES_CATALOGO.has(modal?.tipo) ? (
@@ -562,10 +578,9 @@ function MiNegocio() {
           <ContenidoFichaLocal
             modal={modal}
             local={local}
-            ahora={AHORA_DEMO}
-            onEditar={() => setModal({ tipo: 'editar' })}
-            onGaleria={() => setModal({ tipo: 'galeria' })}
             onPortada={(foto) => guardarFicha({ url: foto, urls: fotos })}
+            onAgregarFotos={agregarFotos}
+            onQuitarFoto={quitarFoto}
             onGuardar={(cambios) => {
               guardarFicha(cambios)
               cerrarModal()
@@ -575,9 +590,15 @@ function MiNegocio() {
           <ContenidoModalNegocio
             modal={modal}
             resumen={{ ...resumen, despues }}
-            citas={conHora}
+            citas={hoyConHora}
             citaSiguiente={citaSiguiente}
             ahora={AHORA_DEMO}
+            local={local}
+            pausa={local.pausa}
+            reloj={reloj}
+            onPausar={pausar}
+            onReanudar={reanudar}
+            onAgregarCita={agregarCitaExpress}
           />
         )}
       </ModalNegocioShell>
