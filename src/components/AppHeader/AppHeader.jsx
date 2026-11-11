@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAppHeader } from '../../hooks/useAppHeader.js'
 import { Ellipsis, Plus, ClipboardClock, Bell } from 'lucide-react'
@@ -53,25 +53,52 @@ function AppHeader() {
   const { visible, title } = useAppHeader()
   const { pathname } = useLocation()
   const [menuAbierto, setMenuAbierto] = useState(false)
+  const [rutaDelMenu, setRutaDelMenu] = useState(pathname)
   const botonRef = useRef(null)
+  const headerRef = useRef(null)
+  const textosRef = useRef(null)
+  const iconosRef = useRef(null)
 
-  /* Si se cambia de pantalla con el cartel desplegado, se recoge solo. */
-  useEffect(() => {
+  /* Si se cambia de pantalla con el cartel desplegado, se recoge solo.
+     Ajuste durante el render, no en un efecto: así no hay un frame con el
+     cartel abierto en la pantalla nueva. */
+  if (rutaDelMenu !== pathname) {
+    setRutaDelMenu(pathname)
     setMenuAbierto(false)
-  }, [pathname])
+  }
+
+  /* El rincón de Taly va pegado a los iconos y llega hasta donde acaba el
+     título. Cada pestaña tiene distintos iconos, así que se mide en vez de
+     fijar un número. */
+  useLayoutEffect(() => {
+    const header = headerRef.current
+    const textos = textosRef.current
+    const iconos = iconosRef.current
+    if (!header || !textos || !iconos) return undefined
+    const medir = () => {
+      const libre = iconos.getBoundingClientRect().left - textos.getBoundingClientRect().right - 12
+      header.style.setProperty('--iconos-ancho', `${iconos.offsetWidth}px`)
+      header.style.setProperty('--rincon-ancho', `${Math.round(Math.min(Math.max(libre, 80), 150))}px`)
+    }
+    medir()
+    const ro = new ResizeObserver(medir)
+    ro.observe(header)
+    ro.observe(iconos)
+    return () => ro.disconnect()
+  }, [title, visible])
 
   if (!visible) return null
 
   const icons = getHeaderIcons(title)
 
   return (
-    <header className="app-header">
-      <div className="app-header-inner">
+    <header className="app-header" ref={headerRef}>
+      <div className="app-header-inner" ref={textosRef}>
         <span className="app-header-brand">Citaly</span>
         <h1 className="app-header-title">{title}</h1>
       </div>
 
-      <div className="app-header-icons">
+      <div className="app-header-icons" ref={iconosRef}>
         {icons.map((icon) =>
           icon.name === 'notification' ? (
             <CampanaNotis key={icon.name}>{icon.content}</CampanaNotis>
@@ -84,7 +111,7 @@ function AppHeader() {
         <button
           ref={botonRef}
           type="button"
-          className="app-header-boton"
+          className="app-header-boton app-header-boton--menu"
           aria-label="Más opciones"
           aria-haspopup="menu"
           aria-expanded={menuAbierto}

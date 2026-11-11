@@ -59,7 +59,19 @@ function sinMovimiento() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function FilaNoti({ noti, ahora, grupo, onAbrir, onBorrar, vuelve = false }) {
+/* La papelera tachada: "esta no se puede tirar". */
+function PapeleraTachada() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <path d="M4 6.5h16" />
+      <path d="M9.5 6.5V4.8c0-.7.5-1.2 1.2-1.2h2.6c.7 0 1.2.5 1.2 1.2v1.7" />
+      <path d="M6.2 6.5l.9 12.6c.1 1 .9 1.8 1.9 1.8h6c1 0 1.8-.8 1.9-1.8l.9-12.6" />
+      <path d="M3.2 21 20.8 3.4" />
+    </svg>
+  )
+}
+
+function FilaNoti({ noti, ahora, grupo, nueva, fijada = false, onAbrir, onBorrar, vuelve = false }) {
   const filaRef = useRef(null)
   const cartaRef = useRef(null)
   const gesto = useRef(null)
@@ -70,17 +82,26 @@ function FilaNoti({ noti, ahora, grupo, onAbrir, onBorrar, vuelve = false }) {
   const clases = [
     'fila-noti',
     `fila-noti--${TONOS[noti.tipo] ?? 'menta'}`,
-    noti.leida ? 'fila-noti--leida' : 'fila-noti--nueva',
+    nueva ? 'fila-noti--nueva' : 'fila-noti--vista',
+    fijada && 'fila-noti--fijada',
     vuelve && 'fila-noti--vuelve',
   ]
     .filter(Boolean)
     .join(' ')
 
+  /* La línea de tiempo de las fijadas es una animación CSS con retraso
+     negativo: arranca ya consumida lo que lleva de plazo y llega a cero justo
+     cuando vence, sin depender del refresco de la página. */
+  const transcurrido = (ahora - new Date(noti.creadaEn)) / 1000
+  const estiloTiempo = fijada
+    ? { animationDuration: `${noti.plazo * 60}s`, animationDelay: `-${Math.max(transcurrido, 0)}s` }
+    : undefined
+
   const volverASitio = () => {
     const carta = cartaRef.current
     filaRef.current?.classList.remove('fila-noti--arrastrando', 'fila-noti--listo')
     if (!carta) return
-    carta.style.transition = 'transform 0.22s var(--ease-out)'
+    carta.style.transition = 'transform 0.24s var(--ease-out)'
     carta.style.transform = ''
   }
 
@@ -89,7 +110,7 @@ function FilaNoti({ noti, ahora, grupo, onAbrir, onBorrar, vuelve = false }) {
   const borrar = () => {
     const fila = filaRef.current
     const carta = cartaRef.current
-    if (!fila || !carta) return
+    if (!fila || !carta || fijada) return
     const suave = sinMovimiento()
     fila.classList.add('fila-noti--yendo')
     if (!suave) {
@@ -140,17 +161,19 @@ function FilaNoti({ noti, ahora, grupo, onAbrir, onBorrar, vuelve = false }) {
     }
 
     g.dx = dx
-    /* Hacia la derecha no hay nada: se deja ir un poco con freno, en vez de
-       chocar con una pared. */
-    const x = dx < 0 ? dx : Math.sqrt(dx) * 3
+    /* Hacia la derecha no hay nada: se deja ir un poco con freno. Una fijada
+       frena en las dos direcciones, para que se note que no cede. */
+    const freno = (v) => Math.sign(v) * Math.sqrt(Math.abs(v)) * (fijada ? 4 : 3)
+    const x = dx < 0 && !fijada ? dx : freno(dx)
     carta.style.transform = `translateX(${x}px)`
-    filaRef.current?.classList.toggle('fila-noti--listo', -dx > carta.offsetWidth * UMBRAL)
+    if (!fijada) filaRef.current?.classList.toggle('fila-noti--listo', -dx > carta.offsetWidth * UMBRAL)
   }
 
   const alSoltar = () => {
     const g = gesto.current
     gesto.current = null
     if (!g || g.eje !== 'x') return
+    if (fijada) return volverASitio()
     const ancho = cartaRef.current?.offsetWidth ?? 1
     const tiempo = Math.max(performance.now() - g.t, 1)
     const rapido = -g.dx > MIN_RAPIDO && -g.dx / tiempo > VELOCIDAD
@@ -166,13 +189,14 @@ function FilaNoti({ noti, ahora, grupo, onAbrir, onBorrar, vuelve = false }) {
   return (
     <li className={clases} ref={filaRef}>
       <div className="fila-noti-fondo" aria-hidden="true">
-        <Trash2 size={18} strokeWidth={2.2} />
-        <span>Borrar</span>
+        {fijada ? <PapeleraTachada /> : <Trash2 size={18} strokeWidth={2.2} />}
+        <span>{fijada ? 'Primero respóndela' : 'Borrar'}</span>
       </div>
 
       <div
         className="fila-noti-carta"
         ref={cartaRef}
+        data-sin-swipe
         onPointerDown={alPulsar}
         onPointerMove={alMover}
         onPointerUp={alSoltar}
@@ -195,12 +219,12 @@ function FilaNoti({ noti, ahora, grupo, onAbrir, onBorrar, vuelve = false }) {
         >
           <span className="fila-noti-cabeza">
             <span className="fila-noti-titulo">{noti.titulo}</span>
-            <time dateTime={noti.creadaEn}>{cuando(noti.creadaEn, ahora, grupo)}</time>
+            <time dateTime={noti.creadaEn}>{fijada ? `Quedan ${quedan} min` : cuando(noti.creadaEn, ahora, grupo)}</time>
           </span>
           <span className="fila-noti-texto">{noti.texto}</span>
-          {(quedan != null || caducada || noti.accion) && (
+          {(quedan != null && !fijada) || caducada || noti.accion ? (
             <span className="fila-noti-pie">
-              {quedan != null && <span className="fila-noti-plazo">Quedan {quedan} min</span>}
+              {quedan != null && !fijada && <span className="fila-noti-plazo">Quedan {quedan} min</span>}
               {caducada && <span className="fila-noti-vencio">Se acabó el plazo</span>}
               {noti.accion && !caducada && (
                 <span className="fila-noti-accion">
@@ -209,15 +233,20 @@ function FilaNoti({ noti, ahora, grupo, onAbrir, onBorrar, vuelve = false }) {
                 </span>
               )}
             </span>
-          )}
-          {!noti.leida && <span className="sr-solo">, sin leer</span>}
+          ) : null}
+          {nueva && <span className="sr-solo">, nueva</span>}
         </Link>
+
+        {fijada && <span className="fila-noti-tiempo" style={estiloTiempo} aria-hidden="true" />}
       </div>
 
-      {/* Con ratón o teclado no hay dedo que deslice: el mismo borrar, a mano. */}
-      <button type="button" className="fila-noti-quitar" onClick={borrar} aria-label={`Borrar: ${noti.titulo}`}>
-        <X size={15} strokeWidth={2.4} aria-hidden="true" />
-      </button>
+      {/* Con ratón o teclado no hay dedo que deslice: el mismo borrar, a mano.
+          Las fijadas no lo llevan. */}
+      {!fijada && (
+        <button type="button" className="fila-noti-quitar" onClick={borrar} aria-label={`Borrar: ${noti.titulo}`}>
+          <X size={15} strokeWidth={2.4} aria-hidden="true" />
+        </button>
+      )}
     </li>
   )
 }

@@ -1,10 +1,19 @@
 /* Cartel de tablas colgado del botón de los tres puntos.
 
-   La madera es apagada y fría a propósito (#4a3f33): un marrón de taberna
-   saturado se pelearía con el teal de la app. El calor lo ponen las cuerdas y
-   los clavos en mostaza, que ya es el color del copete de Taly. */
+   Paleta: antes era madera parda con letra teal y clavos y cuerdas teal. El
+   teal sobre marrón vibraba (dos colores saturados de temperatura opuesta
+   peleándose) y las cuerdas a rayas teal parecían de plástico.
+
+   Ahora la madera es un nogal apagado, cerca del gris verdoso de la app,
+   para que el cartel pertenezca al header y no parezca pegado encima. Encima
+   va lo cálido del mundo de Taly: letra crema (el papel de los sobres de
+   Notificaciones), iconos y clavos mostaza (su copete) y cuerda de bramante
+   de verdad. El teal se queda para el foco, que es su trabajo. */
 
 .menu-tablas {
+  --madera: #3d352c;
+  --madera-filo: #51473b;
+  --madera-veta: #2f2922;
   position: absolute;
   top: calc(100% + 2px);
   right: 14px;
@@ -20,12 +29,9 @@
   bottom: 10px;
   width: 3px;
   border-radius: 2px;
-  background: repeating-linear-gradient(
-    180deg,
-    var(--primary-color, #00c2ad) 0 4px,
-    #07796d 4px 8px
-  );
-  opacity: 0.85;
+  /* Bramante: hebras torcidas en diagonal, no rayas de caramelo. */
+  background: repeating-linear-gradient(160deg, #a8936f 0 2px, #7d6b50 2px 4px);
+  opacity: 0.9;
 }
 
 .menu-tablas-cuerda--izq {
@@ -63,7 +69,7 @@
   padding: 0 22px 0 30px;
   border: 0;
   background: none;
-  color: var(--primary-color-strong, #06dfc9);
+  color: #f2ebdd;
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
   font-size: 13.5px;
   font-weight: 700;
@@ -92,7 +98,7 @@
 
 .menu-tabla-icono {
   flex-shrink: 0;
-  color: var(--primary-color, #00c2ad);
+  color: var(--yellow-color, #ffd166);
 }
 
 .menu-tabla-texto {
@@ -129,4 +135,17 @@
   .menu-tablas {
     right: 10px;
   }
+}
+
+
+/* El velo: tinta oscura de Taly, no negro puro. Fijo a la pantalla; su
+   forma (el círculo que crece) la pone GSAP con clip-path. */
+.menu-velo {
+  position: fixed;
+  inset: 0;
+  z-index: 115;
+  background: rgba(9, 15, 14, 0.66);
+  clip-path: circle(0px at 100% 0%);
+  visibility: hidden;
+  will-change: clip-path;
 }

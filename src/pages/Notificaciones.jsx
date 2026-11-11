@@ -7,7 +7,7 @@ import CaraGiratoria from '../components/Notificaciones/CaraGiratoria.jsx'
 import EscenaTendedero from '../components/Notificaciones/EscenaTendedero.jsx'
 import FilaNoti from '../components/Notificaciones/FilaNoti.jsx'
 import { getLocalById } from '../services/locales.js'
-import { borrarNoti, getNotificaciones, marcarLeidas, minutosRestantes, restaurarNoti } from '../services/notificaciones.js'
+import { borrarNoti, getNotificaciones, marcarLeidas, minutosRestantes, requiereAccion, restaurarNoti } from '../services/notificaciones.js'
 import { getPerfiles } from '../services/storage.js'
 import { getUsuarioById } from '../services/usuarios.js'
 import './notificaciones.css'
@@ -38,20 +38,17 @@ function grupoDe(noti, ahora) {
   return 'antes'
 }
 
-/* Dentro de Hoy, lo que tiene cuenta atrás va primero, lo que antes vence
-   más arriba. El resto, por hora. */
-function ordenarHoy(lista, ahora) {
-  const urgentes = lista
-    .filter((n) => minutosRestantes(n, ahora) != null)
-    .sort((x, y) => minutosRestantes(x, ahora) - minutosRestantes(y, ahora))
-  return [...urgentes, ...lista.filter((n) => !urgentes.includes(n))]
+function agrupar(lista, ahora) {
+  return GRUPOS.map((g) => ({ ...g, notis: lista.filter((n) => grupoDe(n, ahora) === g.id) })).filter(
+    (g) => g.notis.length,
+  )
 }
 
-function agrupar(lista, ahora) {
-  return GRUPOS.map((g) => {
-    const del = lista.filter((n) => grupoDe(n, ahora) === g.id)
-    return { ...g, notis: g.id === 'hoy' ? ordenarHoy(del, ahora) : del }
-  }).filter((g) => g.notis.length)
+/* Las que piden una acción con plazo, la que antes vence primero. */
+function fijadasDe(lista, ahora) {
+  return lista
+    .filter((n) => requiereAccion(n, ahora))
+    .sort((x, y) => minutosRestantes(x, ahora) - minutosRestantes(y, ahora))
 }
 
 function Notificaciones() {
@@ -61,6 +58,14 @@ function Notificaciones() {
   const [ahora, setAhora] = useState(() => new Date())
   /* El último aviso borrado, mientras dura su deshacer. */
   const [borrada, setBorrada] = useState(null)
+
+  /* Como Instagram: abrir la página ya cuenta como haberlas visto, y se marcan
+     al momento (la campana baja al volver). Pero durante esta visita las que
+     eran nuevas siguen señaladas, para que sepas cuáles son. */
+  const [nuevasVisita] = useState(() => new Set(notis.filter((n) => !n.leida).map((n) => n.id)))
+  useEffect(() => {
+    marcarLeidas([...nuevasVisita])
+  }, [nuevasVisita])
 
   useEffect(() => {
     const id = setInterval(() => setAhora(new Date()), REFRESCO_MS)
@@ -84,16 +89,19 @@ function Notificaciones() {
   }
   const quien = lado === 'personal' ? persona : local
 
-  const delLado = notis.filter((n) => n.ambito === lado)
-  const nuevas = delLado.filter((n) => !n.leida)
-  const grupos = agrupar(delLado, ahora)
-  const nuevasOtroLado = notis.filter((n) => n.ambito !== lado && !n.leida).length
+  /* Lo que "pide atención" en cada lado: lo nuevo de esta visita y lo que
+     tiene un plazo corriendo. Es lo que cuentan los sobres y el numerito del
+     botón de girar. */
+  const pideAtencion = (n) => nuevasVisita.has(n.id) || requiereAccion(n, ahora)
 
-  const marcar = (ids) => {
-    if (!ids.length) return
-    marcarLeidas(ids)
-    setNotis(getNotificaciones())
-  }
+  const delLado = notis.filter((n) => n.ambito === lado)
+  const fijadas = fijadasDe(delLado, ahora)
+  const grupos = agrupar(
+    delLado.filter((n) => !fijadas.includes(n)),
+    ahora,
+  )
+  const atencionLado = delLado.filter(pideAtencion).length
+  const atencionOtroLado = notis.filter((n) => n.ambito !== lado && pideAtencion(n)).length
 
   /* Borrar es inmediato y se guarda ya; el aviso de abajo solo da la opción
      de arrepentirse. Si se borra otra con el aviso abierto, el aviso pasa a
@@ -140,14 +148,14 @@ function Notificaciones() {
           </h1>
         </div>
 
-        <EscenaTendedero sobres={nuevas.length} />
+        <EscenaTendedero sobres={atencionLado} />
 
         <div className="notis-quien">
           <CaraGiratoria
             lado={lado}
             persona={persona}
             local={local}
-            nuevasOtroLado={nuevasOtroLado}
+            nuevasOtroLado={atencionOtroLado}
             onGirar={() => setLado((l) => (l === 'personal' ? 'negocio' : 'personal'))}
           />
           {/* La key reinicia el fundido al girar. aria-live para que el
@@ -167,14 +175,15 @@ function Notificaciones() {
           </p>
         ) : (
           <>
-            <div className="notis-estado">
-              <p>{nuevas.length ? `${nuevas.length} sin leer` : 'Estás al día'}</p>
-              {nuevas.length > 0 && (
-                <button type="button" className="notis-marcar" onClick={() => marcar(nuevas.map((n) => n.id))}>
-                  Marcar todo como leído
-                </button>
-              )}
-            </div>
+            {fijadas.length > 0 && (
+              <section className="notis-fijadas" aria-label="Pendientes de responder">
+                <ul className="notis-fijadas-lista">
+                  {fijadas.map((n) => (
+                    <FilaNoti key={n.id} noti={n} ahora={ahora} nueva fijada onAbrir={() => {}} onBorrar={borrar} />
+                  ))}
+                </ul>
+              </section>
+            )}
             {grupos.map((g) => (
               <section className="notis-grupo" key={g.id} aria-labelledby={`notis-grupo-${g.id}`}>
                 <h3 className="notis-grupo-titulo" id={`notis-grupo-${g.id}`}>
@@ -187,8 +196,9 @@ function Notificaciones() {
                       noti={n}
                       grupo={g.id}
                       ahora={ahora}
+                      nueva={nuevasVisita.has(n.id)}
                       vuelve={borrada?.deshecha && borrada.noti.id === n.id}
-                      onAbrir={(id) => marcar([id])}
+                      onAbrir={() => {}}
                       onBorrar={borrar}
                     />
                   ))}

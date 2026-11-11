@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { CircleHelp, Info, LogOut, Settings, Share2 } from 'lucide-react'
@@ -9,17 +9,19 @@ gsap.registerPlugin(useGSAP)
 /* Cartel de tablas de madera colgado del botón de los tres puntos.
 
    Las opciones son las que le faltan a la app y no están en la barra de
-   abajo. Notificaciones no entra: va a tener su propio botón fuera.
+   abajo. Notificaciones no entra: tiene su campana fuera.
 
-   Cada tabla lleva su chispa de mostaza, y arriba, en el borde del header,
-   está Taly posado: la idea es que el cartel cuelga de donde él está. */
+   Al abrirse, un velo oscuro crece en círculo desde los tres puntos y tapa
+   la pantalla: deja claro que el cartel es ahora lo único con lo que se
+   habla, y que nace de ese botón. Al cerrar, el círculo vuelve a meterse en
+   él. Taly salta desde su rincón a la primera tabla. */
 
 const OPCIONES = [
-  { id: 'compartir', label: 'Compartir Citaly', Icono: Share2, giro: '-1.2deg', chispa: [168, 17, 1] },
-  { id: 'ajustes', label: 'Ajustes', Icono: Settings, giro: '0.8deg', chispa: [186, 39, 0.78] },
-  { id: 'ayuda', label: 'Ayuda', Icono: CircleHelp, giro: '-0.6deg', chispa: [174, 20, 0.9] },
-  { id: 'sobre', label: 'Sobre Citaly', Icono: Info, giro: '1.1deg', chispa: [190, 36, 0.72] },
-  { id: 'salir', label: 'Cerrar sesión', Icono: LogOut, giro: '-0.9deg', chispa: [166, 18, 0.85] },
+  { id: 'compartir', label: 'Compartir Citaly', Icono: Share2, giro: '-1.2deg' },
+  { id: 'ajustes', label: 'Ajustes', Icono: Settings, giro: '0.8deg' },
+  { id: 'ayuda', label: 'Ayuda', Icono: CircleHelp, giro: '-0.6deg' },
+  { id: 'sobre', label: 'Sobre Citaly', Icono: Info, giro: '1.1deg' },
+  { id: 'salir', label: 'Cerrar sesión', Icono: LogOut, giro: '-0.9deg' },
 ]
 
 /* Tabla recortada a mano. El contorno es el mismo para todas; lo que cambia
@@ -30,11 +32,7 @@ const MADERA =
 const VETA_A = 'M20 19 C72 17 152 21 204 18'
 const VETA_B = 'M22 39 C82 41 142 37 202 40'
 
-function chispaPath(x, y, s) {
-  return `M${x} ${y - 9 * s} C${x + 1.5 * s} ${y - 2.5 * s} ${x + 2.5 * s} ${y - 1.5 * s} ${x + 9 * s} ${y} C${x + 2.5 * s} ${y + 1.5 * s} ${x + 1.5 * s} ${y + 2.5 * s} ${x} ${y + 9 * s} C${x - 1.5 * s} ${y + 2.5 * s} ${x - 2.5 * s} ${y + 1.5 * s} ${x - 9 * s} ${y} C${x - 2.5 * s} ${y - 1.5 * s} ${x - 1.5 * s} ${y - 2.5 * s} ${x} ${y - 9 * s} Z`
-}
-
-function TablaFondo({ semilla, chispa }) {
+function TablaFondo({ semilla }) {
   const id = `menu-tabla-pulso-${semilla}`
   return (
     <svg className="menu-tabla-fondo" viewBox="0 0 224 56" aria-hidden="true" focusable="false">
@@ -46,18 +44,18 @@ function TablaFondo({ semilla, chispa }) {
       </defs>
 
       <g filter={`url(#${id})`}>
-        <path d={MADERA} fill="#4a3f33" />
-        <path d={MADERA} fill="none" stroke="#5d5042" strokeWidth="1.4" />
-        <path d={VETA_A} fill="none" stroke="#3b3128" strokeWidth="1.6" strokeLinecap="round" opacity="0.8" />
-        <path d={VETA_B} fill="none" stroke="#3b3128" strokeWidth="1.3" strokeLinecap="round" opacity="0.6" />
+        <path d={MADERA} fill="var(--madera)" />
+        <path d={MADERA} fill="none" stroke="var(--madera-filo)" strokeWidth="1.4" />
+        <path d={VETA_A} fill="none" stroke="var(--madera-veta)" strokeWidth="1.6" strokeLinecap="round" opacity="0.8" />
+        <path d={VETA_B} fill="none" stroke="var(--madera-veta)" strokeWidth="1.3" strokeLinecap="round" opacity="0.6" />
       </g>
 
       {/* Los clavos van fuera del filtro: son de metal, no de madera, y si
           tiemblan dejan de parecer clavos. */}
-      <circle cx="15" cy="28" r="3.4" fill="#00c2ad" />
-      <circle cx="15" cy="28" r="1.3" fill="#06463d" />
-      <circle cx="209" cy="28" r="3.4" fill="#00c2ad" />
-      <circle cx="209" cy="28" r="1.3" fill="#06463d" />
+      <circle cx="15" cy="28" r="3.2" fill="var(--yellow-color, #ffd166)" />
+      <circle cx="15" cy="28" r="1.2" fill="#8a6a22" />
+      <circle cx="209" cy="28" r="3.2" fill="var(--yellow-color, #ffd166)" />
+      <circle cx="209" cy="28" r="1.2" fill="#8a6a22" />
     </svg>
   )
 }
@@ -65,7 +63,17 @@ function TablaFondo({ semilla, chispa }) {
 function MenuTablas({ abierto, onCerrar, anclaRef }) {
   const [montado, setMontado] = useState(abierto)
   const cajaRef = useRef(null)
+  const veloRef = useRef(null)
   if (abierto && !montado) setMontado(true)
+
+  /* Mientras el cartel exista (también durante su cierre) el header va por
+     encima de todo, para que el velo cubra la barra de abajo. */
+  useLayoutEffect(() => {
+    const header = cajaRef.current?.closest('.app-header')
+    if (!montado || !header) return undefined
+    header.classList.add('app-header--menu')
+    return () => header.classList.remove('app-header--menu')
+  }, [montado])
 
   useGSAP(
     () => {
@@ -73,7 +81,30 @@ function MenuTablas({ abierto, onCerrar, anclaRef }) {
       if (!montado || !caja) return
       const tablas = gsap.utils.toArray('[data-tabla]', caja)
       const cuerdas = gsap.utils.toArray('[data-cuerda]', caja)
+      const velo = veloRef.current
       const suave = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      /* El círculo del velo: centro en los tres puntos y radio hasta la
+         esquina más lejana de la pantalla, ni un píxel de más. */
+      const boton = anclaRef?.current?.getBoundingClientRect()
+      const cx = boton ? boton.left + boton.width / 2 : window.innerWidth
+      const cy = boton ? boton.top + boton.height / 2 : 0
+      const radio = Math.hypot(Math.max(cx, window.innerWidth - cx), Math.max(cy, window.innerHeight - cy))
+      const circulo = (r) => `circle(${r}px at ${cx}px ${cy}px)`
+
+      if (velo) {
+        if (suave) {
+          gsap.set(velo, { clipPath: 'none' })
+          gsap.to(velo, { autoAlpha: abierto ? 1 : 0, duration: 0.18, ease: 'power1.out' })
+        } else if (abierto) {
+          gsap.set(velo, { autoAlpha: 1 })
+          gsap.fromTo(velo, { clipPath: circulo(0) }, { clipPath: circulo(radio), duration: 0.46, ease: 'power3.out' })
+        } else {
+          /* Cerrar es más rápido que abrir: la respuesta va antes que el
+             adorno. */
+          gsap.to(velo, { clipPath: circulo(0), duration: 0.3, ease: 'power2.in' })
+        }
+      }
 
       if (abierto) {
         /* Movimiento reducido: se queda solo el fundido, sin caída ni
@@ -152,6 +183,8 @@ function MenuTablas({ abierto, onCerrar, anclaRef }) {
   if (!montado) return null
 
   return (
+    <>
+    <div className="menu-velo" ref={veloRef} aria-hidden="true" />
     <div className="menu-tablas" ref={cajaRef} role="menu" aria-label="Más opciones">
       <span className="menu-tablas-cuerda menu-tablas-cuerda--izq" data-cuerda aria-hidden="true" />
       <span className="menu-tablas-cuerda menu-tablas-cuerda--der" data-cuerda aria-hidden="true" />
@@ -166,7 +199,7 @@ function MenuTablas({ abierto, onCerrar, anclaRef }) {
               style={{ '--giro': op.giro }}
               onClick={onCerrar}
             >
-              <TablaFondo semilla={i} chispa={op.chispa} />
+              <TablaFondo semilla={i} />
               <op.Icono className="menu-tabla-icono" size={17} strokeWidth={2.2} aria-hidden="true" />
               <span className="menu-tabla-texto">{op.label}</span>
             </button>
@@ -174,6 +207,7 @@ function MenuTablas({ abierto, onCerrar, anclaRef }) {
         ))}
       </ul>
     </div>
+    </>
   )
 }
 

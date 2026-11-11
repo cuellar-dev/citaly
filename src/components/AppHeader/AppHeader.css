@@ -166,3 +166,17 @@
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
+
+
+/* Mientras el cartel está desplegado (MenuTablas pone la clase), el header
+   sube por encima de la barra de abajo: así el velo que crece desde los tres
+   puntos tapa la pantalla entera, barra incluida. */
+.app-header--menu {
+  z-index: 100001;
+}
+
+/* Los tres puntos quedan por encima del velo: el círculo nace de ellos. */
+.app-header-boton--menu {
+  position: relative;
+  z-index: 125;
+}

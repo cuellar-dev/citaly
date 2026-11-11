@@ -1,23 +1,31 @@
-/* El rincón de Taly: las yerbitas y el pájaro, abajo a la izquierda de los
-   iconos del header. Taly queda parado justo sobre el borde del header. */
+/* El rincón de Taly: su lomita y el pájaro, justo a la izquierda de los
+   iconos del header y con los pies en el borde de abajo.
+
+   AppHeader mide los iconos de cada pestaña y deja dos variables:
+   --iconos-ancho (para colocarse pegado a ellos) y --rincon-ancho (el hueco
+   libre hasta el título, para no pisarlo). */
 
 .taly-rincon {
   position: absolute;
-  right: 112px;
+  right: calc(20px + var(--iconos-ancho, 92px) + 4px);
   bottom: 0;
   z-index: 130;
-  width: 106px;
+  width: var(--rincon-ancho, 130px);
   height: 46px;
   pointer-events: none;
 }
 
-/* Las yerbas se quedan pegadas al borde de abajo, detrás del pájaro. */
-.taly-yerba {
+.rincon-taly {
   position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 106px;
-  height: 20px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* La yerba de delante va por encima del pájaro. */
+.rincon-taly--delante {
+  z-index: 1;
   overflow: visible;
 }
 
@@ -25,7 +33,7 @@
    pelee por la misma propiedad transform. */
 .taly-posado {
   position: absolute;
-  left: 10px;
+  right: 36px;
   bottom: 0;
   display: block;
   width: 37px;
@@ -38,11 +46,6 @@
   will-change: transform;
 }
 
-.copete {
-  transform: translateX(-2.4px);
-
-}
-
 .taly-posado-cuerpo svg {
   display: block;
   width: 100%;
@@ -51,15 +54,6 @@
 }
 
 @media (max-width: 420px) {
-  .taly-rincon {
-    right: 96px;
-    width: 92px;
-  }
-
-  .taly-yerba {
-    width: 92px;
-  }
-
   .taly-posado {
     width: 33px;
   }

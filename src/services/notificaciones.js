@@ -53,8 +53,11 @@ export function restaurarNoti(id) {
   guardar(BORRADAS_KEY, borradas)
 }
 
-export function contarSinLeer() {
-  return getNotificaciones().filter((n) => !n.leida).length
+/* La campana cuenta lo no leído y, además, lo que sigue pidiendo una acción
+   aunque ya lo hayas visto: una reserva por aceptar no deja de ser urgente
+   porque abrieras la página. */
+export function contarSinLeer(ahora = new Date()) {
+  return getNotificaciones().filter((n) => !n.leida || requiereAccion(n, ahora)).length
 }
 
 /** Minutos que quedan para actuar, o null si no tiene plazo o ya venció. */
@@ -68,4 +71,10 @@ export function minutosRestantes(noti, ahora = new Date()) {
 /** El plazo existía y ya pasó. */
 export function vencida(noti, ahora = new Date()) {
   return Boolean(noti.plazo) && minutosRestantes(noti, ahora) == null
+}
+
+/* Tiene cuenta atrás y aún no venció: hay que hacer algo. Estas no se pueden
+   borrar y se quedan arriba del todo hasta que se acabe su plazo. */
+export function requiereAccion(noti, ahora = new Date()) {
+  return minutosRestantes(noti, ahora) != null
 }

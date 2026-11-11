@@ -128,21 +128,14 @@
   animation: notis-entrar 0.26s var(--ease-out, ease-out);
 }
 
-/* Una línea de estado encima de todo: cuántas faltan y limpiar de golpe. */
-.notis-estado {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  min-height: 36px;
-  margin-bottom: 8px;
+/* Las que piden respuesta: arriba de todo, fuera del hilo. */
+.notis-fijadas {
+  margin-bottom: 24px;
 }
 
-.notis-estado p {
+.notis-fijadas-lista {
   margin: 0;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--fonts-color-primary-weak, #bdbaba);
+  padding: 0;
 }
 
 .notis-grupo + .notis-grupo {
@@ -156,38 +149,6 @@
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--fonts-color-primary, #f0f0f0);
-}
-
-.notis-marcar {
-  min-height: 36px;
-  margin-right: -10px;
-  padding: 0 10px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--primary-color, #00c2ad);
-  font: inherit;
-  font-size: 12.5px;
-  font-weight: 700;
-  cursor: pointer;
-  transition:
-    background-color 0.18s var(--ease-out, ease-out),
-    transform 0.14s var(--ease-out, ease-out);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .notis-marcar:hover {
-    background: color-mix(in srgb, var(--primary-color, #00c2ad) 12%, transparent);
-  }
-}
-
-.notis-marcar:active {
-  transform: scale(0.96);
-}
-
-.notis-marcar:focus-visible {
-  outline: 2px solid var(--primary-color, #00c2ad);
-  outline-offset: 2px;
 }
 
 /* El hilo que ensarta las cuentas de cada aviso. */
