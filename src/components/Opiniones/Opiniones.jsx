@@ -28,12 +28,19 @@ function Opiniones({ id, destacada = false, nombre, fecha, calificacion, comenta
         </div>
       </div>
       <div className='opiniones-body'>
-        <ChevronDown size={17} 
-        color='var(--primary-color)' 
-        className='opiniones-arrow-down' 
-        onClick={onToggle}
-        style={{transform: `rotate(${expandido ? 180 : 0}deg)`,}}
-        />
+        <button
+          type="button"
+          className='opiniones-arrow-down'
+          onClick={onToggle}
+          aria-expanded={Boolean(expandido)}
+          aria-label={expandido ? 'Ver menos' : 'Leer la opinión entera'}
+        >
+          <ChevronDown
+            size={17}
+            color='var(--primary-color)'
+            style={{ transform: `rotate(${expandido ? 180 : 0}deg)` }}
+          />
+        </button>
       <p className='opiniones-comentario' style={{lineClamp: expandido ? 999 : 2 ,WebkitLineClamp: expandido ? 999 : 2}}>{comentario}</p>
     </div>
     {respuesta?.texto && (

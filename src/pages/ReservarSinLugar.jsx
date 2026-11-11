@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { CalendarDays, Scissors, UserRound, UsersRound } from 'lucide-react'
@@ -41,7 +41,13 @@ function ReservarSinLugar() {
 
   /* Todos los hooks antes de cualquier return: useReserva aguanta local nulo. */
   const reserva = useReserva(local, citas)
-  const [serviciosSeleccionados, setServiciosSeleccionados] = useState([])
+  /* ?servicio=<id> llega desde el "+" de la ficha del local: ese servicio
+     sale ya marcado. Si no existe en este local, se ignora. */
+  const [searchParams] = useSearchParams()
+  const [serviciosSeleccionados, setServiciosSeleccionados] = useState(() => {
+    const pedido = searchParams.get('servicio')
+    return pedido && (local?.servicios ?? []).some((s) => s.id === pedido) ? [pedido] : []
+  })
   const [profesionalSeleccionado, setProfesionalSeleccionado] = useState(null)
   const [confirmada, setConfirmada] = useState(false)
   const refServicios = useRef(null)

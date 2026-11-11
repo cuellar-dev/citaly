@@ -2,6 +2,17 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import RinconTaly, { YerbaDelante } from './RinconTaly.jsx'
+import {
+  ALA,
+  BARRIGA,
+  COPETE,
+  COPETE_AJUSTE,
+  CUERPO,
+  PATA_DER,
+  PATA_IZQ,
+  PICO,
+  TALY_VIEWBOX,
+} from './talyPluma.js'
 import './talyPosado.css'
 
 gsap.registerPlugin(useGSAP)
@@ -24,19 +35,7 @@ gsap.registerPlugin(useGSAP)
    - la de dentro lleva el PASEO (avanzar y girarse).
    Si compartieran elemento se pisarían las transformaciones. */
 
-const CUERPO =
-  'M27 9 C34 9 38 14 39 20 C42 24 43 30 41 35 C38 40 32 43 27 43 C22 43 16 40 13 35 C11 30 12 24 15 20 C16 14 20 9 27 9 Z'
-const BARRIGA = 'M27 24 C33 24 37 29 37 34 C37 39 32 42 27 42 C22 42 17 39 17 34 C17 29 21 24 27 24 Z'
-const ALA = 'M19 24 C24 23 28 27 28 32 C28 36 25 39 21 38 C17 37 15 32 16 28 C17 26 18 24 19 24 Z'
-const COPETE = 'M20 11 C21 5 23 1 26 0 C27 3 28 6 30 9 C31 4 33 -2 37 -3 C39 1 39 6 38 11 C33 13 25 13 20 11 Z'
-const PICO = 'M39 19 C43 19 46 21 46 22 C46 23 43 25 39 25 Z'
-const PATA_IZQ = 'M22 42 L22 48 M22 48 L19 50 M22 48 L25 50'
-const PATA_DER = 'M32 42 L32 48 M32 48 L29 50 M32 48 L35 50'
-
-/* El copete se salía por la derecha de la cabeza: la base iba de 20 a 38 y
-   la cabeza a esa altura solo llega a 35. Más pequeño y corrido a la
-   izquierda, nace dentro de la cabeza. */
-const COPETE_AJUSTE = 'translate(-1.5 0) translate(28 12) scale(0.74) translate(-28 -12)'
+/* El dibujo (piezas y paleta) vive en talyPluma.js, compartido con TalyPluma. */
 
 /* Puntos de giro, en coordenadas del dibujo (svgOrigin). */
 const CADERA_IZQ = '22 42'
@@ -269,7 +268,7 @@ function TalyPosado({ menuAbierto = false }) {
 
       <span className="taly-posado" ref={saltoRef}>
         <span className="taly-posado-cuerpo" ref={cuerpoRef}>
-          <svg viewBox="-2 -6 52 58" focusable="false">
+          <svg viewBox={TALY_VIEWBOX} focusable="false">
             <defs>
               <filter id="taly-posado-pulso" x="-15%" y="-15%" width="130%" height="130%">
                 <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="23" result="r" />

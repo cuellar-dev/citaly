@@ -1,0 +1,243 @@
+.local-info {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.local-info-bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.local-info-subtitulo {
+  margin: 0;
+  padding-left: 2px;
+  font-family: var(--font-familyPrincipal);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fonts-color-primary-weak);
+}
+
+/* Grupo de filas: el mismo patrón de tarjeta que usa Mi Negocio. */
+.local-info-grupo {
+  display: block;
+  border-radius: 20px;
+  border: 1px solid rgba(240, 240, 240, 0.06);
+  background: linear-gradient(165deg, #1d2221 0%, #181c1b 100%);
+  overflow: hidden;
+  color: inherit;
+  text-decoration: none;
+}
+
+.local-info-fila {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 62px;
+  padding: 11px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  text-align: left;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.local-info-fila + .local-info-fila::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 62px;
+  right: 0;
+  height: 1px;
+  background: rgba(240, 240, 240, 0.06);
+}
+
+.local-info-fila--link {
+  cursor: pointer;
+}
+
+.local-info-fila--link:active,
+.local-info-mapa:active .local-info-fila {
+  background-color: rgba(240, 240, 240, 0.04);
+}
+
+.local-info-fila--link:focus-visible,
+.local-info-mapa:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: -2px;
+}
+
+.local-info-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-color);
+}
+
+.local-info-icono--whatsapp {
+  background: color-mix(in srgb, #25d366 14%, transparent);
+  color: #25d366;
+}
+
+.local-info-textos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.local-info-titulo {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.local-info-valor {
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--fonts-color-primary-weak);
+  overflow-wrap: anywhere;
+}
+
+.local-info-flecha {
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--fonts-color-primary-weak) 55%, transparent);
+}
+
+/* ---------- Horario ---------- */
+
+.local-horario-abierto {
+  color: var(--primary-color);
+}
+
+.local-horario-cerrado {
+  color: #ff8d8d;
+}
+
+.local-horario-taly {
+  width: 46px;
+  height: 34px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.local-horario-chevron {
+  transition: transform 0.25s var(--ease-out, ease-out);
+}
+
+.local-horario-chevron--abierto {
+  transform: rotate(180deg);
+}
+
+.local-horario-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s var(--ease-out, ease-out);
+}
+
+.local-horario-panel--abierto {
+  grid-template-rows: 1fr;
+}
+
+.local-horario-semana {
+  min-height: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0 14px;
+  list-style: none;
+}
+
+.local-horario-panel--abierto .local-horario-semana {
+  padding-bottom: 10px;
+}
+
+.local-horario-dia {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 0 9px 48px;
+  border-top: 1px solid rgba(240, 240, 240, 0.05);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak);
+}
+
+.local-horario-dia--hoy {
+  color: var(--fonts-color-primary);
+  font-weight: 700;
+}
+
+.local-horario-hoy {
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color) 16%, transparent);
+  color: var(--primary-color);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.local-horario-libre {
+  color: color-mix(in srgb, var(--fonts-color-primary-weak) 55%, transparent);
+}
+
+/* ---------- Cómo llegar ---------- */
+
+.local-info-mapa .tinta-mapa {
+  border-bottom: 1px solid rgba(240, 240, 240, 0.06);
+  background: color-mix(in srgb, #0e2e2a 55%, transparent);
+}
+
+/* ---------- Comodidades ---------- */
+
+.local-comodidades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.local-comodidad {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 18%, transparent);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.local-comodidad svg {
+  color: var(--primary-color);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .local-horario-panel,
+  .local-horario-chevron {
+    transition: none;
+  }
+}

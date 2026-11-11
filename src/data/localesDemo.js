@@ -69,6 +69,20 @@ const serviciosPorCategoria = {
   ],
 }
 
+/* Mismo formato que locales.json: [{ id }] con ids de COMODIDADES (utils/fichaLocal.js). */
+const comodidadesPorCategoria = {
+  'Cafetería': ['wifi', 'transfer', 'no-cigarrete'],
+  'Restaurante': ['parking', 'snow', 'transfer'],
+  'Barbería': ['snow', 'wifi', 'transfer'],
+  'Gimnasio': ['parking', 'snow', 'no-cigarrete'],
+  'Uñas': ['snow', 'wifi', 'transfer'],
+  'Comida saludable': ['wifi', 'transfer', 'no-cigarrete'],
+  'Ocio': ['parking', 'snow', 'no-cigarrete'],
+  'Terraza': ['cigarrete', 'wifi', 'transfer'],
+  'Spa': ['snow', 'parking', 'no-cigarrete'],
+  'Arte y talleres': ['wifi', 'snow', 'transfer'],
+}
+
 const comentariosPorLocal = {
   'brisa-cafe': [
     { usuario: 'María Rodríguez', texto: 'Excelente café y ambiente acogedor', puntuacion: 5 },
@@ -132,7 +146,7 @@ const base = {
   telefono: '+53 41 000000',
   whatsapp: '+53 5 8000000',
   descripcion: 'Un lugar preparado para recibirte con atención cercana y una experiencia sencilla.',
-  iconos: ['★', '✓', '👍'],
+  iconos: [{ id: 'wifi' }, { id: 'transfer' }],
   opiniones: 0,
   servicios: [],
   comentarios: [],
@@ -162,6 +176,7 @@ export const localesDemo = [
   url: fotos[index % fotos.length],
   urls: [fotos[index % fotos.length], fotos[(index + 1) % fotos.length], fotos[(index + 2) % fotos.length]],
   servicios: serviciosPorCategoria[categoria] || [],
+  iconos: (comodidadesPorCategoria[categoria] ?? ['wifi', 'transfer']).map((id) => ({ id })),
   comentarios: (comentariosPorLocal[id] || []).map((c, i) => ({
     id: `${id}-${i + 1}`,
     nombre: c.usuario,

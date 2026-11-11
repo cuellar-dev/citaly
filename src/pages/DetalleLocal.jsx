@@ -1,45 +1,44 @@
-import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom'
-import { useEffect, useState, useRef } from 'react'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
-import { ArrowLeft, MapPin, Phone, Star, Share2, Send, Clock, ChevronRight, Images } from 'lucide-react'
-import BotonFavorito from '../components/Favorito/BotonFavorito.jsx'
-import CaraRating from '../components/CaraRating/CaraRating.jsx'
+import { ArrowLeft } from 'lucide-react'
 import { getLocalById } from '../services/locales.js'
 import { saveFicha } from '../services/storage.js'
-import { estaAbierto, horarioDeLocal, notaDeComentarios } from '../utils/fichaLocal.js'
-import Icons from '../components/Icons/Icons.jsx'
-import ImagenLocal from '../components/imagenLocal/ImagenLocal.jsx'
+import { useCitas } from '../hooks/useCitas.js'
+import { fotosDe, notaDeComentarios } from '../utils/fichaLocal.js'
+import { estadoApertura } from '../utils/descubre.js'
+import { CONFIRMADA } from '../utils/estadosCita.js'
+import HeroLocal from '../components/DetalleLocal/HeroLocal.jsx'
+import PestanasLocal from '../components/DetalleLocal/PestanasLocal.jsx'
+import ServiciosLocal from '../components/DetalleLocal/ServiciosLocal.jsx'
+import OpinionesLocal from '../components/DetalleLocal/OpinionesLocal.jsx'
+import InfoLocal from '../components/DetalleLocal/InfoLocal.jsx'
+import BarraReservaLocal from '../components/DetalleLocal/BarraReservaLocal.jsx'
+import AvisoBreve from '../components/DetalleLocal/AvisoBreve.jsx'
+import { TrazoCosido } from '../components/DetalleLocal/Tinta.jsx'
+import { useCompartir } from '../components/DetalleLocal/useCompartir.js'
 import VisorImagen from '../components/VisorImagen/VisorImagen.jsx'
-import './DetalleLocal.css'
-import Opiniones from '../components/Opiniones/Opiniones.jsx'
-import IconoWhatsApp from '../components/IconoWhatsApp/IconoWhatsApp.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import taly404 from '../components/Taly/taly-404-animado.svg'
+import './DetalleLocal.css'
 
-const DIAS = [
-  { id: 'l', letra: 'L' },
-  { id: 'm', letra: 'M' },
-  { id: 'x', letra: 'X' },
-  { id: 'j', letra: 'J' },
-  { id: 'v', letra: 'V' },
-  { id: 's', letra: 'S' },
-  { id: 'd', letra: 'D' },
-]
-
+/* La ficha del local es su escaparate: está ordenada como un embudo.
+   Primero lo que convence (fotos, nota, qué ofrece y a qué precio, qué dice
+   la gente) y al final lo práctico (horario, cómo llegar, contacto). El botón
+   de reservar va siempre a mano, en la barra de abajo. */
 function DetalleLocal() {
   const { id } = useParams()
-  const [local, setLocal] = useState(() => getLocalById(id))
   const navigate = useNavigate()
+  const [local, setLocal] = useState(() => getLocalById(id))
   const [imagenActiva, setImagenActiva] = useState(null)
-  const [errorComentario, setErrorComentario] = useState('')
   const [comentarioNuevoId, setComentarioNuevoId] = useState(null)
+  const { citas } = useCitas()
+  const { compartir, aviso } = useCompartir(local)
 
-  const textareaRef = useRef(null)
   /* ?opinion=<id> llega desde Notificaciones ("respondió a tu opinión"): ese
      comentario sale abierto y resaltado, y la página baja hasta él. */
   const [searchParams] = useSearchParams()
   const opinionPedida = searchParams.get('opinion')
-  const [comentarioAbierto, setComentarioAbierto] = useState(opinionPedida)
 
   useEffect(() => {
     if (!opinionPedida) return undefined
@@ -53,50 +52,28 @@ function DetalleLocal() {
     })
     return () => cancelAnimationFrame(frame)
   }, [opinionPedida])
-  const [textoComentario, setTextoComentario] = useState('')
-  const [emojiSeleccionado, setEmojiSeleccionado] = useState(0)
-  const [animarSubmit, setAnimarSubmit] = useState(false)
-  const [animarLimpiar, setAnimarLimpiar] = useState(false)
 
-  function handleTextoComentario(e) {
-    e.preventDefault()
-    const comentario = textoComentario.trim()
-    if(!comentario){
-      setErrorComentario('Escribe el comentario antes de enviarlo.')
-      return
+  /* Cada local con su título en la pestaña (y en el historial). */
+  const nombre = local?.localName
+  useEffect(() => {
+    if (!nombre) return undefined
+    const previo = document.title
+    document.title = `${nombre} · Citaly`
+    return () => {
+      document.title = previo
     }
-    if(!emojiSeleccionado){
-      setErrorComentario('Elige de 1 a 5 estrellas.')
-      return
-    }
-    const nuevo = {
-      id: crypto.randomUUID(),
-      nombre: 'Tú',
-      fecha: format(new Date(), 'yyyy-MM-dd'),
-      calificacion: emojiSeleccionado,
-      comentario,
-    }
-    const comentarios = [nuevo, ...(local.comentarios ?? [])]
-    const { nota, cantidad } = notaDeComentarios({ comentarios })
-    const cambios = { comentarios, points: String(nota), opiniones: cantidad }
-    saveFicha(id, cambios)
-    setLocal((prev) => ({ ...prev, ...cambios }))
-    setComentarioNuevoId(nuevo.id)
-    setErrorComentario('')
-    setAnimarLimpiar(true)
-    setAnimarSubmit(true)
-    setTimeout(() => {
-      setTextoComentario('')
-      setEmojiSeleccionado(0)
-      setAnimarLimpiar(false)
-      if (textareaRef.current) {
-        textareaRef.current.style.height = '20px'
-      }
-    }, 1000)
-    setTimeout(() => {
-      setAnimarSubmit(false)
-    }, 3000)
-  }
+  }, [nombre])
+
+  const servicios = useMemo(() => local?.servicios ?? [], [local])
+  const secciones = useMemo(
+    () => [
+      { id: 'local-servicios', label: local?.lugar ? 'Reservas' : 'Servicios' },
+      { id: 'local-opiniones', label: 'Opiniones', cuenta: local?.comentarios?.length || null },
+      { id: 'local-info', label: 'Info' },
+    ],
+    [local],
+  )
+
   if (!local) {
     return (
       <section className="detalle-local detalle-local--error">
@@ -106,303 +83,154 @@ function DetalleLocal() {
         </Link>
         <TalyMomento
           ilustracion={<img src={taly404} alt="Taly buscando un local" />}
-          titulo='Local no encontrado'
+          titulo="Local no encontrado"
           texto={`No existe un local con el id “${id}”. Revisa el enlace e inténtalo de nuevo.`}
-          accion='Volver a Descubre'
+          accion="Volver a Descubre"
           onAccion={() => navigate('/')}
         />
       </section>
     )
   }
-  function handleReservar() {
+
+  const estado = estadoApertura(local)
+  const { nota, cantidad } = notaDeComentarios(local)
+  const fotos = fotosDe(local)
+
+  const precios = servicios.map((s) => Number(s.precio) || 0).filter((p) => p > 0)
+  const desde = precios.length ? `${Math.min(...precios)} CUP` : null
+
+  /* Cifras que no repiten lo que ya dice la cabecera (la nota va arriba). */
+  const cifras = [
+    servicios.length ? { valor: desde ?? 'Gratis', label: desde ? 'Desde' : 'Reserva' } : null,
+    servicios.length
+      ? { valor: servicios.length, label: local.lugar ? 'Opciones' : servicios.length === 1 ? 'Servicio' : 'Servicios' }
+      : null,
+    { valor: `${local.metros} m`, label: 'Distancia' },
+  ].filter(Boolean)
+
+  /* Solo opina quien ya tuvo una cita confirmada aquí (hoy o antes). */
+  const hoy = format(new Date(), 'yyyy-MM-dd')
+  const puedeOpinar = citas.some(
+    (c) => c.localId === id && c.estadoReserva === CONFIRMADA && c.fecha && c.fecha <= hoy,
+  )
+
+  function reservar(servicioId) {
     if (local.lugar) {
       navigate(`/local/${id}/reservar`)
       return
     }
-    navigate(`/local/${id}/reservar-cita`)
+    const sufijo = servicioId ? `?servicio=${encodeURIComponent(servicioId)}` : ''
+    navigate(`/local/${id}/reservar-cita${sufijo}`)
   }
-  const abiertoAhora = estaAbierto(local)
-  const horarioTextoVisible = horarioDeLocal(local)
-  const { nota, cantidad } = notaDeComentarios(local)
-  const horarioClassName = abiertoAhora ? 'detalle-horario-abierto' : 'detalle-horario-cerrado'
-  const textHorario = abiertoAhora ? 'Abierto' : 'Cerrado'
-  const rating = Math.min(5, Math.max(0, Number(nota) || 0))
-  let fillPercent = (rating / 5) * 100
-  if (rating >= 3.8 && rating <= 5) {
-    fillPercent = 75
-  }
-  if(rating <= 3.5) {
-    fillPercent += 10
-  }
-  const iconos = local.iconos.map((icono) => {
-    return (
-      <Icons key={icono.id} id={icono.id} />
-    )
-  })
 
-  const handleShare = async () => {
-    const url = `${window.location.origin}/local/${id}`
-    const shareData = {
-      title: `${local.localName} · Citaly`,
-      text: `Mira ${local.localName} en Citaly`,
-      url,
+  function publicarOpinion({ comentario, calificacion }) {
+    const nuevo = {
+      id: crypto.randomUUID(),
+      nombre: 'Tú',
+      fecha: hoy,
+      calificacion,
+      comentario,
     }
+    const comentarios = [nuevo, ...(local.comentarios ?? [])]
+    const resumen = notaDeComentarios({ comentarios })
+    const cambios = { comentarios, points: String(resumen.nota), opiniones: resumen.cantidad }
+    saveFicha(id, cambios)
+    setLocal((prev) => ({ ...prev, ...cambios }))
+    setComentarioNuevoId(nuevo.id)
+  }
 
-    try {
-      if (navigator.share) {
-        await navigator.share(shareData)
-      } else {
-        await navigator.clipboard.writeText(url)
-        alert('Enlace copiado al portapapeles')
-      }
-    } catch (error) {
-      if (error.name === 'AbortError') return
-      try {
-        await navigator.clipboard.writeText(url)
-        alert('Enlace copiado al portapapeles')
-      } catch {
-        prompt('Copia este enlace:', url)
-      }
-    }
-  }  
-  function ajustarAltura() {
-  const el = textareaRef.current
-  if (!el) return 
+  const notaBarra = [cantidad ? `★ ${nota}` : null, estado.texto].filter(Boolean).join(' · ')
 
-  el.style.height = 'auto' 
-  el.style.height = `${Math.min(el.scrollHeight, 80)}px` 
-}
+  return (
+    <article className="detalle-local">
+      <HeroLocal
+        local={local}
+        fotos={fotos}
+        estado={estado}
+        nota={nota}
+        cantidad={cantidad}
+        onCompartir={compartir}
+        onAbrirFoto={setImagenActiva}
+      />
 
-function handleMostrarComentario(id) {
-  setComentarioAbierto((prev) => 
-    (prev === id ? null : id))
-}
-function handleEmoji(id) {
-  setEmojiSeleccionado((prev) => (prev === id ? 0 : id))
-}
+      <PestanasLocal secciones={secciones} />
 
-const urlGoogleMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(local.direccion)}`
-const urlLlamar = `tel:${local.telefono.replace(/\s/g, '')}`
-const numeroWhatsApp = (local.whatsapp ?? local.telefono).replace(/\D/g, '')
-const mensajeWhatsApp = encodeURIComponent(
-  `Hola, vi ${local.localName} en Citaly y me gustaría consultar.`
-)
-const urlWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${mensajeWhatsApp}`
-
-return (
-    <section className="detalle-local">
-      <div
-        className="detalle-local-hero"
-        style={{
-          backgroundImage: `
-            linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.72) 30%, rgba(0, 0, 0, 0.17) 70%),
-            url(${local.url})
-          `,
-        }}
-      >
-        <div className='detalle-local-links-container'>
-        <Link to="/" className="detalle-local-volver">
-          <ArrowLeft size={20} />
-          Descubre
-        </Link>
-        <div className="detalle-local-hero-acciones">
-          <BotonFavorito id={id} className="boton-favorito--hero" tamano={22} />
-          <button
-            type="button"
-            className="detalle-local-share-container"
-            onClick={handleShare}
-            aria-label="Compartir local"
-          >
-            <Share2 width={24} className="detalle-local-share" color="currentColor" />
-          </button>
-        </div>
-        </div>
-        <div className="detalle-local-hero-content">
-          <span className={`${horarioClassName} detalle-horario`}>{textHorario}</span>
-          <h1 className="detalle-local-nombre">{local.localName}</h1>
-          <div className="detalle-local-rating">
-            <div className="star-rating">
-              <div className="star-fill" style={{ width: `${fillPercent}%` }}>
-                <Star size={20} strokeWidth={1} className="icono-estrella-rellena" />
+      <div className="detalle-local-body">
+        <div className="detalle-local-entra" style={{ '--i': 0 }}>
+          <dl className="detalle-local-cifras">
+            {cifras.map((c) => (
+              <div key={c.label} className="detalle-local-cifra">
+                <dt>{c.label}</dt>
+                <dd>{c.valor}</dd>
               </div>
-              <Star size={20} strokeWidth={1} className="icono-estrella-vacia" />
+            ))}
+          </dl>
+
+          {local.descripcion ? (
+            <div className="detalle-local-descripcion">
+              <h2 className="detalle-local-titulo">{local.localName} es…</h2>
+              <p>{local.descripcion}</p>
             </div>
-            <span>{nota} ({cantidad} opiniones)</span>
-            <span className="detalle-local-distancia">· A {local.metros} m</span>
-          </div>
-          
+          ) : null}
         </div>
+
+        <section
+          id="local-servicios"
+          className="detalle-local-seccion detalle-local-entra"
+          style={{ '--i': 1 }}
+          aria-labelledby="local-servicios-titulo"
+        >
+          <h2 id="local-servicios-titulo" className="detalle-local-titulo">
+            {local.lugar ? 'Qué puedes reservar' : 'Servicios'}
+          </h2>
+          <ServiciosLocal servicios={servicios} lugar={local.lugar} onReservar={reservar} />
+        </section>
+
+        <TrazoCosido />
+
+        <section
+          id="local-opiniones"
+          className="detalle-local-seccion detalle-local-entra"
+          style={{ '--i': 2 }}
+          aria-labelledby="local-opiniones-titulo"
+        >
+          <h2 id="local-opiniones-titulo" className="detalle-local-titulo">
+            Opiniones
+          </h2>
+          <OpinionesLocal
+            comentarios={local.comentarios ?? []}
+            nota={nota}
+            cantidad={cantidad}
+            opinionPedida={opinionPedida}
+            comentarioNuevoId={comentarioNuevoId}
+            puedeOpinar={puedeOpinar}
+            onPublicar={publicarOpinion}
+          />
+        </section>
+
+        <TrazoCosido pluma={false} />
+
+        <section
+          id="local-info"
+          className="detalle-local-seccion detalle-local-entra"
+          style={{ '--i': 3 }}
+          aria-labelledby="local-info-titulo"
+        >
+          <h2 id="local-info-titulo" className="detalle-local-titulo">
+            Info práctica
+          </h2>
+          <InfoLocal local={local} estado={estado} />
+        </section>
       </div>
 
-      <div className="detalle-local-body"> 
-        <div className="detalle-local-stats">
-          <div className="detalle-local-stat">
-            <span className="detalle-local-stat-valor">{nota}</span>
-            <span className="detalle-local-stat-label">Valoración</span>
-          </div>
-          <div className="detalle-local-stat">
-            <span className="detalle-local-stat-valor">{cantidad}</span>
-            <span className="detalle-local-stat-label">Opiniones</span>
-          </div>
-          <div className="detalle-local-stat">
-            <span className="detalle-local-stat-valor">{local.metros} m</span>
-            <span className="detalle-local-stat-label">Distancia</span>
-          </div>
-        </div>
+      <BarraReservaLocal precio={desde} nota={notaBarra} lugar={local.lugar} onReservar={() => reservar()} />
 
-        <section className="detalle-local-seccion">
-          <h2 className="detalle-local-seccion-titulo">{local.localName} es...</h2>
-          <div className='detalle-local-descripcion-container'>
-            <p className="detalle-local-descripcion">{local.descripcion}</p>
-            <div className='detalle-local-icons-container'>
-              {iconos}
-            </div>
-          </div>
-        </section>
+      {imagenActiva ? (
+        <VisorImagen url={imagenActiva} alt={`Foto de ${local.localName}`} onClose={() => setImagenActiva(null)} />
+      ) : null}
 
-        <section className="detalle-local-seccion">
-          <h2 className="detalle-local-seccion-titulo">
-            Horario
-            <span className={`detalle-local-pastilla ${abiertoAhora ? '' : 'detalle-local-pastilla--cerrado'}`}>
-              {textHorario}
-            </span>
-          </h2>
-          <div className="detalle-local-grupo">
-            <div className="detalle-local-fila detalle-local-fila--semana">
-              {DIAS.map(({ id, letra }) => {
-                const abre = local.dias.includes(id)
-                return (
-                  <div key={id} className='dia-div-container'>
-                    <span className='dia-div-span'>{letra}</span>
-                    <div className={`dia-div ${abre ? 'abierto' : 'cerrado'}`}>{abre ? '•' : '-'}</div>
-                  </div>
-                )
-              })}
-            </div>
-            <div className="detalle-local-fila">
-              <span className="detalle-local-fila-icono"><Clock size={19} /></span>
-              <span className="detalle-local-fila-textos">
-                <span className="detalle-local-fila-titulo">Abierto de</span>
-                <span className="detalle-local-fila-valor">{horarioTextoVisible}</span>
-              </span>
-            </div>
-          </div>
-        </section>
-
-        <section className="detalle-local-seccion">
-          <h2 className="detalle-local-seccion-titulo">Contacto</h2>
-          <div className="detalle-local-grupo">
-            <a
-              className="detalle-local-fila detalle-local-fila--link"
-              href={urlGoogleMaps}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Cómo llegar a ${local.localName}`}
-            >
-              <span className="detalle-local-fila-icono"><MapPin size={19} /></span>
-              <span className="detalle-local-fila-textos">
-                <span className="detalle-local-fila-titulo">Cómo llegar</span>
-                <span className="detalle-local-fila-valor">{local.direccion}</span>
-              </span>
-              <ChevronRight size={18} className="detalle-local-fila-flecha" />
-            </a>
-            <a
-              className="detalle-local-fila detalle-local-fila--link"
-              href={urlLlamar}
-              aria-label={`Llamar a ${local.localName}`}
-            >
-              <span className="detalle-local-fila-icono"><Phone size={19} /></span>
-              <span className="detalle-local-fila-textos">
-                <span className="detalle-local-fila-titulo">Llamar</span>
-                <span className="detalle-local-fila-valor">{local.telefono}</span>
-              </span>
-              <ChevronRight size={18} className="detalle-local-fila-flecha" />
-            </a>
-            <a
-              className="detalle-local-fila detalle-local-fila--link"
-              href={urlWhatsApp}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Escribir por WhatsApp a ${local.localName}`}
-            >
-              <span className="detalle-local-fila-icono detalle-local-fila-icono--whatsapp">
-                <IconoWhatsApp size={19} />
-              </span>
-              <span className="detalle-local-fila-textos">
-                <span className="detalle-local-fila-titulo">WhatsApp</span>
-                <span className="detalle-local-fila-valor">{local.whatsapp ?? local.telefono}</span>
-              </span>
-              <ChevronRight size={18} className="detalle-local-fila-flecha" />
-            </a>
-          </div>
-        </section>
-
-        <section className="detalle-local-seccion">
-          <h2 className="detalle-local-seccion-titulo">
-            <Images size={18} className="detalle-local-seccion-icono" />
-            Fotos
-            <span className="detalle-local-pastilla">{local.urls.length}</span>
-          </h2>
-          <div className='detalle-local-imagenes-container'>
-            {local.urls.map((url) => (
-              <ImagenLocal key={url} url={url} nombreLugar={local.localName} onClick={() => setImagenActiva(url)}/>
-            ))}
-          </div>
-        </section>
-
-        <button type="button" className="detalle-local-reservar" onClick={handleReservar}>
-          Elegir horario y reservar
-        </button>
-          {imagenActiva && 
-          <VisorImagen url={imagenActiva} alt={`Imagen de ${local.localName}`} onClose={() => setImagenActiva(null)} />}
-          <div className='detalle-local-opiniones-container'>
-            <h2 className='detalle-local-seccion-titulo'>
-              Comentarios
-              <span className="detalle-local-pastilla">{local.comentarios.length}</span>
-            </h2>
-            <div className='detalle-local-opiniones-tu-comentario-container'>
-              <form className='detalle-local-opiniones-tu-comentario-form' onSubmit={handleTextoComentario}>
-                <textarea className={`detalle-local-opiniones-tu-comentario-textarea ${animarLimpiar ? 'limpiando' : ''}`} 
-                value={textoComentario}                  onChange={(e) => {
-                  setTextoComentario(e.target.value)
-                  setErrorComentario('')
-                  ajustarAltura()
-                }}
-                rows={1} 
-                placeholder='Escribe tu comentario...' 
-                ref={textareaRef}
-                onInput={ajustarAltura}
-                spellCheck={false}
-                autoCorrect="off"
-                />
-                <button className='detalle-local-opiniones-tu-comentario-boton' type="submit" aria-label='Enviar comentario'><Send size={20} className='detalle-local-opiniones-tu-comentario-boton-icono' style={{animation: animarSubmit ? 'icono-rotar 2s ease-in 1' : 'none',animationFillMode: 'forwards'}} /></button>
-              </form>
-              <div className='detalle-local-opiniones-dar-estrellas-container'>
-                <p className='detalle-local-opiniones-dar-estrellas-titulo'>Puntúa el lugar :</p>
-                <div className='detalle-local-opiniones-dar-estrellas-estrellas-container'>
-                  <Star size={20} className={`detalle-local-opiniones-dar-estrellas-estrella-icono ${emojiSeleccionado >= 1 ? 'rellena' : ''}`} onClick={() => handleEmoji(1)}/>
-                  <Star size={20} className={`detalle-local-opiniones-dar-estrellas-estrella-icono ${emojiSeleccionado >= 2 ? 'rellena' : ''}`} onClick={() => handleEmoji(2)}/>
-                  <Star size={20} className={`detalle-local-opiniones-dar-estrellas-estrella-icono ${emojiSeleccionado >= 3 ? 'rellena' : ''}`} onClick={() => handleEmoji(3)}/>
-                  <Star size={20} className={`detalle-local-opiniones-dar-estrellas-estrella-icono ${emojiSeleccionado >= 4 ? 'rellena' : ''}`} onClick={() => handleEmoji(4)}/>
-                  <Star size={20} className={`detalle-local-opiniones-dar-estrellas-estrella-icono ${emojiSeleccionado >= 5 ? 'rellena' : ''}`} onClick={() => handleEmoji(5)}/>
-                  <CaraRating
-                    nivel={emojiSeleccionado}
-                    size={22}
-                    className="detalle-local-opiniones-dar-estrellas-cara"
-                  />
-              </div>
-            </div>
-            {errorComentario && <p className="detalle-local-comentario-error">{errorComentario}</p>}
-            </div>
-            <div className='detalle-local-opiniones-list'>
-              {(local.comentarios ?? []).map((comentario) => (
-                <Opiniones key={comentario.id} id={`opinion-${comentario.id}`} destacada={comentario.id === opinionPedida} nombre={comentario.nombre} fecha={comentario.fecha} calificacion={comentario.calificacion} comentario={comentario.comentario} imagenPerfil={comentario.imagenPerfil} respuesta={comentario.respuesta} reciente={comentario.id === comentarioNuevoId} expandido = {comentarioAbierto ===comentario.id} onToggle={() => handleMostrarComentario(comentario.id)}/>
-              ))}
-            </div>    
-          </div>
-        </div>
-
-    </section>
+      <AvisoBreve texto={aviso} />
+    </article>
   )
 }
 

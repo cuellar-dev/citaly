@@ -1,0 +1,38 @@
+/* Colores de la tinta de la ficha: la paleta de Taly (arte.js) rebajada
+   para que acompañe sobre el fondo oscuro sin pelearse con el contenido. */
+:root {
+  --tinta-trazo: color-mix(in srgb, #2aa795 55%, transparent);
+  --tinta-pluma: color-mix(in srgb, #bdf4e8 70%, transparent);
+  --tinta-pluma-raquis: color-mix(in srgb, #2aa795 80%, transparent);
+  --tinta-oscura: #0e2e2a;
+  --tinta-manzana: color-mix(in srgb, #f2ebdd 7%, transparent);
+  --tinta-parque: color-mix(in srgb, #4fd8c4 14%, transparent);
+  --tinta-arbol: color-mix(in srgb, #2aa795 45%, transparent);
+  --tinta-calle: color-mix(in srgb, #f2ebdd 16%, transparent);
+}
+
+.tinta-trazo {
+  display: block;
+  width: 100%;
+  height: 18px;
+  color: var(--tinta-trazo);
+  overflow: visible;
+}
+
+.tinta-nube {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 30px;
+  pointer-events: none;
+}
+
+.tinta-mapa {
+  display: block;
+  width: 100%;
+  height: 112px;
+}
