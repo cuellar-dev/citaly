@@ -1,0 +1,121 @@
+.nos-equipo {
+  position: relative;
+  width: min(100% - 32px, 1180px);
+  margin: 0 auto;
+  padding: clamp(80px, 14vh, 160px) 0 clamp(120px, 20vh, 220px);
+}
+
+.nos-equipo-cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: clamp(40px, 8vh, 80px);
+}
+
+.nos-equipo-titulo {
+  max-width: 14ch;
+  margin: 0;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: clamp(2.4rem, 6.6vw, 5.6rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.nos-equipo-titulo em {
+  color: var(--primary-color, #00c2ad);
+  font-style: normal;
+}
+
+.nos-equipo-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: clamp(32px, 4vw, 48px) clamp(20px, 3vw, 36px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nos-miembro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.nos-retrato {
+  position: relative;
+  width: min(100%, 200px);
+  aspect-ratio: 1;
+  margin-bottom: 18px;
+  rotate: var(--giro, 0deg);
+  transition: rotate 0.35s var(--ease-out, cubic-bezier(0.22, 1, 0.36, 1));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nos-miembro:hover .nos-retrato {
+    rotate: calc(var(--giro, 0deg) * -2);
+  }
+}
+
+.nos-retrato-cara {
+  position: absolute;
+  inset: 9%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--c) 70%, #fff), transparent 60%),
+    color-mix(in srgb, var(--c) 30%, #1e2221);
+  overflow: hidden;
+}
+
+.nos-retrato-cara span {
+  color: #0e2e2a;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: clamp(2.6rem, 5vw, 3.4rem);
+  font-weight: 800;
+  opacity: 0.85;
+}
+
+.nos-retrato-marco {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.nos-retrato-taly {
+  position: absolute;
+  top: -30px;
+  right: 6%;
+  rotate: calc(var(--giro, 0deg) * -1);
+}
+
+.nos-miembro h3 {
+  margin: 0;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.nos-miembro-rol {
+  margin: 4px 0 10px;
+  color: var(--yellow-color, #ffd166);
+  font-family: var(--font-familyMerchant, 'Merchant', monospace);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.nos-miembro-frase {
+  max-width: 24ch;
+  margin: 0;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-family: var(--font-familyPrincipal, sans-serif);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}

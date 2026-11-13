@@ -1,0 +1,124 @@
+/* Dos franjas que no se pisan: arriba el texto, abajo el dibujo, que se
+   queda con todo el alto que sobre. */
+.nos-historia {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100svh;
+  min-height: 560px;
+  overflow: hidden;
+}
+
+.nos-historia-texto {
+  grid-row: 1;
+}
+
+.nos-historia-dibujo {
+  position: relative;
+  grid-row: 2;
+  min-height: 0;
+  margin-bottom: clamp(8px, 3vh, 32px);
+}
+
+/* Un velo oscuro arriba a la izquierda, donde va el texto, para que se lea
+   aunque pasen plumas por detrás. */
+.nos-historia::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 25% 28%, rgba(18, 20, 19, 0.85), rgba(18, 20, 19, 0) 70%);
+  pointer-events: none;
+}
+
+.nos-historia-lienzo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.nos-historia-nota {
+  fill: var(--yellow-color, #ffd166);
+  font-family: var(--font-familyMerchant, 'Merchant', monospace);
+  font-size: 34px;
+  letter-spacing: 0.04em;
+}
+
+.nos-historia-texto {
+  position: relative;
+  z-index: 1;
+  width: min(100% - 32px, 1100px);
+  margin: 0 auto;
+  padding-top: clamp(80px, 11vh, 130px);
+}
+
+.nos-historia-titulo {
+  margin: 10px 0 18px;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: clamp(2rem, 5vw, 4.2rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.nos-historia-parrafo {
+  max-width: 44ch;
+  margin: 0;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: clamp(1.1rem, 2vw, 1.75rem);
+  font-weight: 500;
+  line-height: 1.22;
+}
+
+.nos-historia-parrafo .es-destacada {
+  color: var(--yellow-color, #ffd166);
+}
+
+/* En móvil: texto más compacto para dejarle alto al dibujo, y notas más
+   grandes porque el lienzo se ve a menos escala. */
+@media (max-width: 700px) {
+  .nos-historia-texto {
+    padding-top: 76px;
+  }
+  .nos-historia-titulo {
+    margin: 8px 0 10px;
+    font-size: 1.85rem;
+  }
+  .nos-historia-parrafo {
+    font-size: 1.02rem;
+    line-height: 1.3;
+  }
+  .nos-historia-dibujo {
+    min-height: 34svh;
+  }
+  .nos-historia-nota {
+    font-size: 25px;
+  }
+}
+
+/* ---------- compartido por todos los capítulos ---------- */
+
+.nos-etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--ink-pale, #bdf4e8);
+  font-family: var(--font-familyMerchant, 'Merchant', monospace);
+  font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.nos-etiqueta span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 2.4em;
+  height: 2.4em;
+  border: 2px solid var(--yellow-color, #ffd166);
+  border-radius: 50% 46% 52% 48%;
+  color: var(--yellow-color, #ffd166);
+}

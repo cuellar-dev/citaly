@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react'
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
 import Layout from './layout/Layout.jsx'
 import Auth from './pages/Auth.jsx'
@@ -12,6 +13,8 @@ import ReservarSinLugar from './pages/ReservarSinLugar.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Busqueda from './pages/Busqueda.jsx'
 import Notificaciones from './pages/Notificaciones.jsx'
+/* Sobre nosotros arrastra Three.js y varios plugins: se carga solo al entrar. */
+const Nosotros = lazy(() => import('./pages/Nosotros.jsx'))
 
 function ReservarConLugarPage() {
   const { id } = useParams()
@@ -29,6 +32,15 @@ function App() {
       <Routes>
         {/* Auth fuera del Layout: sin navbar ni header, pantalla a foco. */}
         <Route path="/auth" element={<Auth />} />
+        {/* Sobre nosotros también va a pantalla completa: es un viaje, no una tabla. */}
+        <Route
+          path="/nosotros"
+          element={
+            <Suspense fallback={<div style={{ minHeight: '100dvh', background: '#121413' }} />}>
+              <Nosotros />
+            </Suspense>
+          }
+        />
         <Route path="/" element={<Layout />}>
           <Route index element={<Descubre />} />
           <Route path="buscar" element={<Busqueda />} />

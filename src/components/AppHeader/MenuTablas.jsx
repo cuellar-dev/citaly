@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { CircleHelp, Info, LogOut, Settings, Share2 } from 'lucide-react'
@@ -20,7 +21,7 @@ const OPCIONES = [
   { id: 'compartir', label: 'Compartir Citaly', Icono: Share2, giro: '-1.2deg' },
   { id: 'ajustes', label: 'Ajustes', Icono: Settings, giro: '0.8deg' },
   { id: 'ayuda', label: 'Ayuda', Icono: CircleHelp, giro: '-0.6deg' },
-  { id: 'sobre', label: 'Sobre Citaly', Icono: Info, giro: '1.1deg' },
+  { id: 'sobre', label: 'Sobre Citaly', Icono: Info, giro: '1.1deg', ruta: '/nosotros' },
   { id: 'salir', label: 'Cerrar sesión', Icono: LogOut, giro: '-0.9deg' },
 ]
 
@@ -61,6 +62,7 @@ function TablaFondo({ semilla }) {
 }
 
 function MenuTablas({ abierto, onCerrar, anclaRef }) {
+  const navigate = useNavigate()
   const [montado, setMontado] = useState(abierto)
   const cajaRef = useRef(null)
   const veloRef = useRef(null)
@@ -197,7 +199,10 @@ function MenuTablas({ abierto, onCerrar, anclaRef }) {
               role="menuitem"
               className="menu-tabla"
               style={{ '--giro': op.giro }}
-              onClick={onCerrar}
+              onClick={() => {
+                onCerrar()
+                if (op.ruta) navigate(op.ruta)
+              }}
             >
               <TablaFondo semilla={i} />
               <op.Icono className="menu-tabla-icono" size={17} strokeWidth={2.2} aria-hidden="true" />

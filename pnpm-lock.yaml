@@ -16,7 +16,7 @@ importers:
         version: 0.1.2
       animejs:
         specifier: ^4.5.0
-        version: 4.5.0
+        version: 4.5.0(three@0.187.0)
       date-fns:
         specifier: ^4.3.0
         version: 4.4.0
@@ -44,6 +44,9 @@ importers:
       react-zoom-pan-pinch:
         specifier: ^4.0.3
         version: 4.0.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      three:
+        specifier: ^0.187.0
+        version: 0.187.0
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -1350,6 +1353,9 @@ packages:
   text-segmentation@1.0.3:
     resolution: {integrity: sha512-iOiPUo/BGnZ6+54OsWxZidGCsdU8YbE4PSpdPinp7DeMtUJNJBoJ/ouUSTJjHkh1KntHaltHl/gDs2FC4i5+Nw==}
 
+  three@0.187.0:
+    resolution: {integrity: sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==}
+
   tinyglobby@0.2.17:
     resolution: {integrity: sha512-wXR/dYpcqKmfWpEdZjiKJOwCNFndD0DMnrW/cYjVGttEkBfVgcLFHoNrlj47mjOVic9yyNu65alsgF4NQyTa2g==}
     engines: {node: '>=12.0.0'}
@@ -1797,7 +1803,9 @@ snapshots:
       request: 2.88.2
       xml2js: 0.4.23
 
-  animejs@4.5.0: {}
+  animejs@4.5.0(three@0.187.0):
+    optionalDependencies:
+      three: 0.187.0
 
   array-buffer-byte-length@1.0.2:
     dependencies:
@@ -2762,6 +2770,8 @@ snapshots:
     dependencies:
       utrie: 1.0.2
     optional: true
+
+  three@0.187.0: {}
 
   tinyglobby@0.2.17:
     dependencies:

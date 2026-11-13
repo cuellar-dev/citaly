@@ -1,0 +1,136 @@
+.nos-valores {
+  position: relative;
+  width: min(100% - 32px, 1180px);
+  margin: 0 auto;
+  padding: clamp(110px, 18vh, 200px) 0 clamp(80px, 12vh, 140px);
+}
+
+.nos-valores-cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: clamp(36px, 7vh, 72px);
+}
+
+.nos-valores-titulo {
+  max-width: 14ch;
+  margin: 0;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: clamp(2.4rem, 6.6vw, 5.6rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.nos-valores-titulo em {
+  color: var(--yellow-color, #ffd166);
+  font-style: normal;
+}
+
+.nos-valores-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: clamp(16px, 2.4vw, 28px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nos-valor {
+  will-change: transform;
+}
+
+.nos-valor-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 28px 24px 30px;
+  border-radius: 6px;
+  background: linear-gradient(160deg, rgba(37, 41, 38, 0.92), rgba(30, 34, 33, 0.92));
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.45);
+  transform-style: preserve-3d;
+}
+
+.nos-valor-borde {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.nos-valor-icono {
+  width: 72px;
+  aspect-ratio: 1;
+  margin-bottom: 6px;
+  transform: translateZ(40px);
+}
+
+.nos-valor-icono .icono-tinta {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.nos-valor-inner h3 {
+  margin: 0;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: clamp(1.4rem, 2.2vw, 1.75rem);
+  font-weight: 700;
+  transform: translateZ(26px);
+}
+
+.nos-valor-inner p {
+  margin: 0;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-family: var(--font-familyPrincipal, sans-serif);
+  font-size: 0.98rem;
+  line-height: 1.5;
+  transform: translateZ(14px);
+}
+
+/* ---------- cifras ---------- */
+
+.nos-cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: clamp(28px, 4vw, 56px);
+  margin-top: clamp(80px, 14vh, 150px);
+}
+
+.nos-cifra {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.nos-cifra-num {
+  color: var(--primary-color, #00c2ad);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: clamp(3.2rem, 8vw, 6.4rem);
+  font-weight: 800;
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.nos-cifra-linea {
+  width: min(100%, 240px);
+  height: 18px;
+  margin: 6px 0 10px;
+  overflow: visible;
+}
+
+.nos-cifra-etiqueta {
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-family: var(--font-familyMerchant, 'Merchant', monospace);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
