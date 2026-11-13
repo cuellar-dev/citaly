@@ -1,6 +1,7 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+import { useTema } from '../../hooks/useTema.js'
 import './timelineTurno.css'
 
 gsap.registerPlugin(useGSAP)
@@ -22,23 +23,46 @@ const AVES = [
   { y: 66, escala: 0.6, duracion: 31, inicio: 0.85 },
 ]
 
-/* Tinte del cielo según avanza el turno: mañana verde agua, mediodía cálido, tarde rosa, noche. */
-const CIELO = [
-  { p: 0, color: '#0d3d37' },
-  { p: 45, color: '#35311f' },
-  { p: 76, color: '#3b1828' },
-  { p: 100, color: '#0e171a' },
-]
-
 const SOL = '#ffd166'
-const LUNA = '#ece9df'
 const HALO_SOL = '#ffd166'
-const HALO_LUNA = '#7fd8ce'
 const ESTELA = [
   { p: 0, color: '#00c2ad' },
   { p: 50, color: '#ffd166' },
   { p: 100, color: '#ef476f' },
 ]
+
+/* Lo que cambia con el tema. El cielo es el tinte según avanza el turno:
+   mañana verde agua, mediodía cálido, tarde rosa, noche. En claro son los
+   mismos momentos pero en acuarela clara. El texto de la etiqueta sigue el
+   color de la estela; en claro, en su versión oscura para que se lea. */
+const PALETAS = {
+  oscuro: {
+    cielo: [
+      { p: 0, color: '#0d3d37' },
+      { p: 45, color: '#35311f' },
+      { p: 76, color: '#3b1828' },
+      { p: 100, color: '#0e171a' },
+    ],
+    luna: '#ece9df',
+    haloLuna: '#7fd8ce',
+    etiqueta: ESTELA,
+  },
+  claro: {
+    cielo: [
+      { p: 0, color: '#cdeee6' },
+      { p: 45, color: '#fbe9bd' },
+      { p: 76, color: '#f8d3db' },
+      { p: 100, color: '#cbd6dc' },
+    ],
+    luna: '#fffaf0',
+    haloLuna: '#ffffff',
+    etiqueta: [
+      { p: 0, color: '#00756a' },
+      { p: 50, color: '#8a5d00' },
+      { p: 100, color: '#b8264b' },
+    ],
+  },
+}
 
 const limitar = (v, min = 0, max = 1) => Math.min(Math.max(v, min), max)
 
@@ -80,6 +104,10 @@ function TimelineTurno({
   pausado = false,
 }) {
   const id = useId().replace(/:/g, '')
+  const tema = useTema()
+  const paletaRef = useRef(PALETAS[tema] || PALETAS.oscuro)
+  const pintarRef = useRef(null)
+  const ultimoRef = useRef(0)
   const [enVista, setEnVista] = useState(true)
   const [pestanaVisible, setPestanaVisible] = useState(() => !document.hidden)
   const buclesRef = useRef([])
@@ -122,28 +150,31 @@ function TimelineTurno({
       })
 
       const pintar = (p) => {
+        const paleta = paletaRef.current
+        ultimoRef.current = p
         const pt = ruta.getPointAtLength((largo * p) / 100)
         const luna = faseLuna(p)
         gsap.set(astroRef.current, { x: pt.x, y: pt.y })
         estelaRef.current.style.strokeDasharray = `${p} 100`
-        nucleoRef.current.setAttribute('fill', mezclar(SOL, LUNA, luna))
+        nucleoRef.current.setAttribute('fill', mezclar(SOL, paleta.luna, luna))
         sombraRef.current.setAttribute('cx', (24 - luna * 17).toFixed(2))
         gsap.set(rayosRef.current, { opacity: 1 - luna, scale: 1 - luna * 0.5, transformOrigin: '50% 50%' })
         craterRef.current.setAttribute('opacity', (luna * 0.55).toFixed(2))
-        haloColorRef.current.setAttribute('stop-color', mezclar(HALO_SOL, HALO_LUNA, luna))
-        cieloRef.current.setAttribute('stop-color', colorEn(CIELO, p))
+        haloColorRef.current.setAttribute('stop-color', mezclar(HALO_SOL, paleta.haloLuna, luna))
+        cieloRef.current.setAttribute('stop-color', colorEn(paleta.cielo, p))
         estrellasRef.current.setAttribute('opacity', faseNoche(p).toFixed(2))
         avesRef.current.setAttribute('opacity', faseDia(p).toFixed(2))
         nubesRef.current.setAttribute('opacity', (0.35 + faseDia(p) * 0.4).toFixed(2))
 
         const colorEstela = colorEn(ESTELA, p)
         etiquetaFondoRef.current.setAttribute('stroke', colorEstela)
-        gsap.set(etiquetaRef.current, { x: limitar(pt.x, 52, 308), y: pt.y - 30, color: colorEstela })
+        gsap.set(etiquetaRef.current, { x: limitar(pt.x, 52, 308), y: pt.y - 30, color: colorEn(paleta.etiqueta, p) })
         marcasRef.current.forEach((marca, i) => {
           marca?.classList.toggle('timeline-turno-marca--pasada', marcas[i] <= p)
         })
       }
 
+      pintarRef.current = pintar
       buclesRef.current = []
       if (reducir) {
         pintar(porcentaje)
@@ -200,6 +231,13 @@ function TimelineTurno({
     { scope: raizRef, dependencies: [porcentaje, inicioMin, finMin] }
   )
 
+  /* Al cambiar de tema no se repite la subida del astro: se repinta el
+     cielo, la luna y la etiqueta en el punto donde ya estaban. */
+  useLayoutEffect(() => {
+    paletaRef.current = PALETAS[tema] || PALETAS.oscuro
+    pintarRef.current?.(ultimoRef.current)
+  }, [tema])
+
   /* Un SVG en línea se repinta entero en cada frame: fuera de pantalla o tapado por una hoja no vale la pena. */
   useEffect(() => {
     const raiz = raizRef.current
@@ -230,8 +268,8 @@ function TimelineTurno({
       >
         <defs>
           <linearGradient id={`${id}-cielo`} x1="0" y1="0" x2="0" y2="1">
-            <stop ref={cieloRef} offset="0" stopColor={CIELO[0].color} />
-            <stop offset="0.85" stopColor="#121413" />
+            <stop ref={cieloRef} offset="0" stopColor={(PALETAS[tema] || PALETAS.oscuro).cielo[0].color} />
+            <stop offset="0.85" stopColor="var(--background-color)" />
           </linearGradient>
           <linearGradient id={`${id}-estela`} gradientUnits="userSpaceOnUse" x1="24" y1="0" x2="336" y2="0">
             <stop offset="0" stopColor="#00c2ad" />
@@ -239,8 +277,8 @@ function TimelineTurno({
             <stop offset="1" stopColor="#ef476f" />
           </linearGradient>
           <linearGradient id={`${id}-macizo`} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#1d2725" />
-            <stop offset="0.7" stopColor="#141817" />
+            <stop offset="0" stopColor="var(--tt-macizo-1, #1d2725)" />
+            <stop offset="0.7" stopColor="var(--tt-macizo-2, #141817)" />
           </linearGradient>
           <radialGradient id={`${id}-halo`}>
             <stop ref={haloColorRef} offset="0" stopColor={HALO_SOL} stopOpacity="0.5" />

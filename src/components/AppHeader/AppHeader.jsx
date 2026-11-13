@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useAppHeader } from '../../hooks/useAppHeader.js'
 import { Ellipsis, Plus, ClipboardClock, Bell } from 'lucide-react'
 import MenuTablas from './MenuTablas.jsx'
+import GraciasCompartir from './GraciasCompartir.jsx'
 import TalyPosado from '../Taly/TalyPosado.jsx'
 import { contarSinLeer } from '../../services/notificaciones.js'
 import './AppHeader.css'
@@ -49,10 +50,37 @@ function CampanaNotis({ children }) {
   )
 }
 
+/* Compartir la app. En el móvil abre el menú de compartir del sistema y, al
+   volver de él con algo compartido, salen las gracias. Si el usuario lo
+   cierra sin compartir (AbortError) no se le agradece nada. Donde no hay menú
+   de compartir (escritorio), se copia el enlace y se avisa de ello. */
+const DATOS_COMPARTIR = {
+  title: 'Citaly',
+  text: 'Reserva en tus sitios favoritos sin llamar ni esperar. Mira Citaly:',
+}
+
+function compartirCitaly(alTerminar) {
+  const url = window.location.origin
+  if (navigator.share) {
+    /* Se llama sin esperar nada antes: el navegador solo abre el menú si
+       viene directo del toque. */
+    navigator
+      .share({ ...DATOS_COMPARTIR, url })
+      .then(() => alTerminar({ copiado: false, vez: Date.now() }))
+      .catch(() => {})
+    return
+  }
+  navigator.clipboard
+    ?.writeText(`${DATOS_COMPARTIR.text} ${url}`)
+    .then(() => alTerminar({ copiado: true, vez: Date.now() }))
+    .catch(() => {})
+}
+
 function AppHeader() {
   const { visible, title } = useAppHeader()
   const { pathname } = useLocation()
   const [menuAbierto, setMenuAbierto] = useState(false)
+  const [gracias, setGracias] = useState(null)
   const [rutaDelMenu, setRutaDelMenu] = useState(pathname)
   const botonRef = useRef(null)
   const headerRef = useRef(null)
@@ -127,7 +155,14 @@ function AppHeader() {
         abierto={menuAbierto}
         onCerrar={() => setMenuAbierto(false)}
         anclaRef={botonRef}
+        onCompartir={() => compartirCitaly(setGracias)}
       />
+
+      {/* La key reinicia la nota (y sus 10 s) si se vuelve a compartir con
+          una todavía en pantalla. */}
+      {gracias && (
+        <GraciasCompartir key={gracias.vez} copiado={gracias.copiado} onFin={() => setGracias(null)} />
+      )}
     </header>
   )
 }

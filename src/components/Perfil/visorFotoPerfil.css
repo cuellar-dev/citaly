@@ -38,7 +38,7 @@
   padding: 0;
   border: 0;
   border-radius: 50%;
-  background: rgba(240, 240, 240, 0.12);
+  background: rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary, #f0f0f0);
   cursor: pointer;
 }

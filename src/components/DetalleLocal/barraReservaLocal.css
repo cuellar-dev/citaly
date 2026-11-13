@@ -28,10 +28,10 @@
   max-width: 480px;
   margin-inline: auto;
   padding: 10px 10px 10px 18px;
-  border: 1px solid rgba(240, 240, 240, 0.09);
+  border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   border-radius: 18px;
   background: var(--background-color-secondary);
-  box-shadow: 0 14px 32px -16px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 14px 32px -16px rgb(var(--sombra) / calc(0.95 * var(--sombra-alfa)));
   pointer-events: auto;
 }
 
@@ -65,7 +65,7 @@
   font-size: 19px;
   font-weight: 600;
   line-height: 1.05;
-  color: var(--yellow-color);
+  color: var(--yellow-texto);
   white-space: nowrap;
 }
 

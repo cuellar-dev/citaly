@@ -31,8 +31,8 @@
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(120% 70% at 50% 30%, rgba(18, 20, 19, 0.35) 0%, rgba(18, 20, 19, 0.78) 70%),
-    linear-gradient(180deg, rgba(18, 20, 19, 0.2) 0%, rgba(18, 20, 19, 0.7) 55%, #121413 100%);
+    radial-gradient(120% 70% at 50% 30%, rgb(var(--fondo-rgb) / 0.35) 0%, rgb(var(--fondo-rgb) / 0.78) 70%),
+    linear-gradient(180deg, rgb(var(--fondo-rgb) / 0.2) 0%, rgb(var(--fondo-rgb) / 0.7) 55%, var(--background-color) 100%);
 }
 
 .cabecera-negocio-identidad > * {
@@ -58,8 +58,8 @@
   margin: 0;
   padding: 5px 14px 5px 6px;
   border-radius: 999px;
-  border: 1px solid rgba(240, 240, 240, 0.14);
-  background: color-mix(in srgb, #121413 74%, transparent);
+  border: 1px solid rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
+  background: color-mix(in srgb, var(--background-color) 74%, transparent);
   color: var(--fonts-color-primary, #f0f0f0);
   font: inherit;
   font-size: 12.5px;
@@ -75,7 +75,7 @@
    nadie). Cambia el relleno, no el borde. */
 @media (hover: hover) and (pointer: fine) {
   .cabecera-negocio-boton:hover {
-    background: color-mix(in srgb, #121413 88%, #f0f0f0);
+    background: color-mix(in srgb, var(--background-color) 88%, #f0f0f0);
   }
 }
 
@@ -98,7 +98,7 @@
 .cabecera-negocio-editar {
   padding-left: 13px;
   border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .cabecera-negocio-compartir {
@@ -128,9 +128,9 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 2px solid #1a1e1d;
+  border: 2px solid var(--superficie-alta);
   object-fit: cover;
-  background: #252926;
+  background: var(--background-color-another);
 }
 
 .cabecera-negocio-miniaturas img + img {
@@ -151,7 +151,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
   font-weight: 700;
 }
 
@@ -178,7 +178,7 @@
   line-height: 1;
   letter-spacing: -0.01em;
   text-transform: none;
-  text-shadow: 0 6px 28px rgba(6, 10, 9, 0.65);
+  text-shadow: 0 6px 28px rgb(var(--fondo-rgb) / 0.65);
   overflow-wrap: anywhere;
   text-align: center;
 }
@@ -195,11 +195,11 @@
 }
 
 .cabecera-negocio-estado--abierto {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .cabecera-negocio-estado--cerrado {
-  color: #ef476f;
+  color: var(--rosa-texto);
 }
 
 .cabecera-negocio-pulso {
@@ -228,8 +228,8 @@
   padding: 7px 12px 7px 10px;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 35%, transparent);
-  background: color-mix(in srgb, #121413 80%, transparent);
-  color: var(--primary-color, #00c2ad);
+  background: color-mix(in srgb, var(--background-color) 80%, transparent);
+  color: var(--primary-texto, #00c2ad);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -238,12 +238,12 @@
 }
 
 .cabecera-negocio-recibiendo--cerrado {
-  border-color: color-mix(in srgb, #ef476f 40%, transparent);
-  color: #ef476f;
+  border-color: color-mix(in srgb, var(--rosa) 40%, transparent);
+  color: var(--rosa-texto);
 }
 
 .cabecera-negocio-recibiendo--cerrado .cabecera-negocio-recibiendo-luz {
-  background: #ef476f;
+  background: var(--rosa);
   box-shadow: none;
 }
 
@@ -305,15 +305,15 @@
 }
 
 .cabecera-negocio-tag--abierto {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent);
   border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 28%, transparent);
 }
 
 .cabecera-negocio-tag--cerrado {
-  color: #ef476f;
-  background: color-mix(in srgb, #ef476f 14%, transparent);
-  border: 1px solid color-mix(in srgb, #ef476f 28%, transparent);
+  color: var(--rosa-texto);
+  background: color-mix(in srgb, var(--rosa) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--rosa) 28%, transparent);
 }
 
 @keyframes cabecera-negocio-entra {
@@ -350,7 +350,7 @@
    no está recibiendo nada. */
 .cabecera-negocio-recibiendo--pausa {
   border-color: color-mix(in srgb, var(--yellow-color, #ffd166) 45%, transparent);
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
   animation: none;
 }
 

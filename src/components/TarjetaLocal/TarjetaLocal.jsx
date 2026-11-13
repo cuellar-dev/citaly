@@ -25,7 +25,7 @@ function TarjetaLocal(local) {
     <article className="tarjeta-wrap">
       <Link to={`/local/${id}`} className="tarjeta-link" aria-label={`Ver ${localName}`}>
         <div className="tarjeta">
-          <div className="tarjeta-foto">
+          <div className="tarjeta-foto tema-oscuro-fijo">
             <img src={url} alt="" loading="lazy" decoding="async" />
             <span className="tarjeta-velo" aria-hidden="true" />
 

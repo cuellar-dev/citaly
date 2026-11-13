@@ -29,7 +29,7 @@
 }
 
 .timeline-turno-sierra {
-  fill: color-mix(in srgb, var(--primary-color-weak-full, #06463d) 42%, #121413);
+  fill: color-mix(in srgb, var(--primary-color-weak-full, #06463d) 42%, var(--background-color));
   opacity: 0.75;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .timeline-turno-base {
-  stroke: #121413;
+  stroke: var(--background-color);
   stroke-width: 2;
 }
 
@@ -73,7 +73,7 @@
 }
 
 .timeline-turno-base--cierra {
-  fill: #ef476f;
+  fill: var(--rosa);
 }
 
 .timeline-turno-loma {
@@ -102,7 +102,7 @@
 }
 
 .timeline-turno-ahora rect {
-  fill: color-mix(in srgb, #121413 82%, transparent);
+  fill: color-mix(in srgb, var(--background-color) 82%, transparent);
   stroke-width: 1;
 }
 
@@ -140,7 +140,7 @@
 }
 
 .timeline-turno-hora--abre strong {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .timeline-turno-hora--cierra {
@@ -148,5 +148,26 @@
 }
 
 .timeline-turno-hora--cierra strong {
-  color: #ef476f;
+  color: var(--rosa-texto);
+}
+
+/* ---------- De día ----------
+   El paisaje del turno en acuarela clara: montañas de papel, nubes blancas
+   de verdad (en oscuro son un velo), palmas a tinta y estrellas blancas
+   para que se vean cuando el cielo se pone gris azulado de noche. */
+:root[data-tema='claro'] .timeline-turno {
+  --tt-macizo-1: #d6e5dd;
+  --tt-macizo-2: #e9ece3;
+}
+
+:root[data-tema='claro'] .timeline-turno-estrella {
+  fill: #ffffff;
+}
+
+:root[data-tema='claro'] .timeline-turno-nube ellipse {
+  fill: rgba(255, 255, 255, 0.75);
+}
+
+:root[data-tema='claro'] .timeline-turno-palma path {
+  stroke: #24433d;
 }

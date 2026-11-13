@@ -2,7 +2,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { CircleHelp, Info, LogOut, Settings, Share2 } from 'lucide-react'
+import { CircleHelp, Info, Moon, Share2, Sun } from 'lucide-react'
+import IconoFavoritos from './IconoFavoritos.jsx'
+import SwitchTema from './SwitchTema.jsx'
+import { useTema } from '../../hooks/useTema.js'
+import { alternarTema } from '../../services/tema.js'
 import './menuTablas.css'
 
 gsap.registerPlugin(useGSAP)
@@ -10,19 +14,23 @@ gsap.registerPlugin(useGSAP)
 /* Cartel de tablas de madera colgado del botón de los tres puntos.
 
    Las opciones son las que le faltan a la app y no están en la barra de
-   abajo. Notificaciones no entra: tiene su campana fuera.
+   abajo. Notificaciones no entra: tiene su campana fuera. Ajustes y Cerrar
+   sesión tampoco: ya viven en Mi Perfil.
 
    Al abrirse, un velo oscuro crece en círculo desde los tres puntos y tapa
    la pantalla: deja claro que el cartel es ahora lo único con lo que se
    habla, y que nace de ese botón. Al cerrar, el círculo vuelve a meterse en
-   él. Taly salta desde su rincón a la primera tabla. */
+   él. Taly salta desde su rincón a la primera tabla.
+
+   La tabla del tema es distinta a las demás: no navega ni cierra el cartel.
+   Se queda abierto para que veas cambiar la app por detrás del velo. */
 
 const OPCIONES = [
-  { id: 'compartir', label: 'Compartir Citaly', Icono: Share2, giro: '-1.2deg' },
-  { id: 'ajustes', label: 'Ajustes', Icono: Settings, giro: '0.8deg' },
-  { id: 'ayuda', label: 'Ayuda', Icono: CircleHelp, giro: '-0.6deg' },
+  { id: 'tema', tipo: 'tema', giro: '-1.2deg' },
+  { id: 'favoritos', label: 'Favoritos', Icono: IconoFavoritos, giro: '0.8deg', ruta: '/favoritos' },
+  { id: 'ayuda', label: 'Preguntas frecuentes', Icono: CircleHelp, giro: '-0.6deg', ruta: '/ayuda' },
   { id: 'sobre', label: 'Sobre Citaly', Icono: Info, giro: '1.1deg', ruta: '/nosotros' },
-  { id: 'salir', label: 'Cerrar sesión', Icono: LogOut, giro: '-0.9deg' },
+  { id: 'compartir', label: 'Compartir Citaly', Icono: Share2, giro: '-0.9deg', accion: 'compartir' },
 ]
 
 /* Tabla recortada a mano. El contorno es el mismo para todas; lo que cambia
@@ -61,8 +69,10 @@ function TablaFondo({ semilla }) {
   )
 }
 
-function MenuTablas({ abierto, onCerrar, anclaRef }) {
+function MenuTablas({ abierto, onCerrar, anclaRef, onCompartir }) {
   const navigate = useNavigate()
+  const tema = useTema()
+  const claro = tema === 'claro'
   const [montado, setMontado] = useState(abierto)
   const cajaRef = useRef(null)
   const veloRef = useRef(null)
@@ -192,24 +202,48 @@ function MenuTablas({ abierto, onCerrar, anclaRef }) {
       <span className="menu-tablas-cuerda menu-tablas-cuerda--der" data-cuerda aria-hidden="true" />
 
       <ul className="menu-tablas-lista">
-        {OPCIONES.map((op, i) => (
-          <li key={op.id} className="menu-tablas-item" data-tabla>
-            <button
-              type="button"
-              role="menuitem"
-              className="menu-tabla"
-              style={{ '--giro': op.giro }}
-              onClick={() => {
-                onCerrar()
-                if (op.ruta) navigate(op.ruta)
-              }}
-            >
-              <TablaFondo semilla={i} />
-              <op.Icono className="menu-tabla-icono" size={17} strokeWidth={2.2} aria-hidden="true" />
-              <span className="menu-tabla-texto">{op.label}</span>
-            </button>
-          </li>
-        ))}
+        {OPCIONES.map((op, i) =>
+          op.tipo === 'tema' ? (
+            <li key={op.id} className="menu-tablas-item" data-tabla>
+              <button
+                type="button"
+                role="menuitemcheckbox"
+                aria-checked={claro}
+                className="menu-tabla menu-tabla--tema"
+                style={{ '--giro': op.giro }}
+                onClick={alternarTema}
+              >
+                <TablaFondo semilla={i} />
+                {/* La key reinicia el giro del icono en cada cambio. */}
+                <span className="menu-tabla-icono menu-tabla-icono--tema" key={tema} aria-hidden="true">
+                  {claro ? <Sun size={17} strokeWidth={2.2} /> : <Moon size={17} strokeWidth={2.2} />}
+                </span>
+                <span className="menu-tabla-texto">{claro ? 'Modo claro' : 'Modo noche'}</span>
+                <SwitchTema claro={claro} />
+              </button>
+            </li>
+          ) : (
+            <li key={op.id} className="menu-tablas-item" data-tabla>
+              <button
+                type="button"
+                role="menuitem"
+                className={`menu-tabla menu-tabla--${op.id}`}
+                style={{ '--giro': op.giro }}
+                onClick={() => {
+                  /* Compartir llama al menú del sistema aquí mismo, dentro
+                     del toque: el navegador solo lo abre si viene de un gesto. */
+                  if (op.accion === 'compartir') onCompartir?.()
+                  onCerrar()
+                  if (op.ruta) navigate(op.ruta)
+                }}
+              >
+                <TablaFondo semilla={i} />
+                <op.Icono className="menu-tabla-icono" size={17} strokeWidth={2.2} aria-hidden="true" />
+                <span className="menu-tabla-texto">{op.label}</span>
+              </button>
+            </li>
+          ),
+        )}
       </ul>
     </div>
     </>

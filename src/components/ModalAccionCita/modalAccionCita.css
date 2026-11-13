@@ -11,7 +11,7 @@
   align-items: center;
   justify-content: center;
   padding: 20px 16px;
-  background-color: rgba(8, 10, 9, 0.68);
+  background-color: rgb(var(--velo-modal) / calc(0.68 * var(--velo-alfa)));
   animation: modal-accion-fondo 0.24s ease-out;
 }
 
@@ -21,7 +21,7 @@
   box-sizing: border-box;
   width: min(100%, 360px);
   padding: 22px 20px 18px;
-  border: 1px solid rgba(240, 240, 240, 0.09);
+  border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   border-radius: 22px;
   background:
     linear-gradient(
@@ -30,7 +30,7 @@
       transparent 42%
     ),
     var(--background-color-secondary, #1e2221);
-  box-shadow: 0 22px 46px -18px rgba(0, 0, 0, 0.85);
+  box-shadow: 0 22px 46px -18px rgb(var(--sombra) / calc(0.85 * var(--sombra-alfa)));
   color: var(--fonts-color-primary, #f0f0f0);
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
   animation: modal-accion-panel 0.28s ease-out;
@@ -62,7 +62,7 @@
 .modal-accion-aviso {
   margin: 12px 0 20px;
   padding-top: 14px;
-  border-top: 1px solid rgba(240, 240, 240, 0.07);
+  border-top: 1px solid rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
   font-size: 14px;
   font-weight: 600;
   line-height: 1.45;
@@ -108,7 +108,7 @@
 }
 
 .modal-accion-boton--no {
-  border: 1px solid rgba(240, 240, 240, 0.12);
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
   background: var(--background-color, #121413);
   color: var(--fonts-color-primary, #f0f0f0);
 }

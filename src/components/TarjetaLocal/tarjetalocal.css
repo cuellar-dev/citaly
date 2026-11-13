@@ -21,16 +21,16 @@
 
 .tarjeta {
   overflow: hidden;
-  border: 1px solid rgba(240, 240, 240, 0.08);
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
   border-radius: 22px;
   background: var(--background-color-secondary, #1e2221);
-  box-shadow: 0 16px 34px -20px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 16px 34px -20px rgb(var(--sombra) / calc(0.9 * var(--sombra-alfa)));
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .tarjeta-link:hover .tarjeta {
   border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 28%, transparent);
-  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 20px 40px -20px rgb(var(--sombra) / calc(0.95 * var(--sombra-alfa)));
 }
 
 /* ---------- Foto ---------- */
@@ -92,7 +92,7 @@
 }
 
 .tarjeta-puertas--abierto {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .tarjeta-puertas--abierto .tarjeta-puertas-punto {
@@ -175,7 +175,7 @@
 }
 
 .tarjeta-estrellas-fondo {
-  color: rgba(240, 240, 240, 0.18);
+  color: rgb(var(--tinte) / calc(0.18 * var(--tinte-fuerza)));
 }
 
 /* El relleno recorta por ancho, así un 4.2 y un 4.8 ya no se ven iguales. */
@@ -183,7 +183,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
 }
 
 .tarjeta-estrellas-relleno svg {
@@ -209,7 +209,7 @@
   flex-shrink: 0;
   font-size: 11.5px;
   font-weight: 700;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   white-space: nowrap;
 }
 
@@ -221,13 +221,13 @@
   padding: 10px 12px;
   border-left: 2px solid color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent);
   border-radius: 0 12px 12px 0;
-  background: rgba(240, 240, 240, 0.03);
+  background: rgb(var(--tinte) / calc(0.03 * var(--tinte-fuerza)));
 }
 
 .tarjeta-frase svg {
   flex-shrink: 0;
   margin-top: 2px;
-  color: color-mix(in srgb, var(--primary-color, #00c2ad) 70%, transparent);
+  color: color-mix(in srgb, var(--primary-texto, #00c2ad) 70%, transparent);
 }
 
 .tarjeta-frase p {
@@ -275,7 +275,7 @@
   gap: 5px;
   min-height: 24px;
   padding: 0 9px;
-  border: 1px solid rgba(240, 240, 240, 0.09);
+  border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   border-radius: 999px;
   color: var(--fonts-color-primary-weak, #bdbaba);
   font-size: 10.5px;
@@ -283,7 +283,7 @@
 }
 
 .tarjeta-comodidades svg {
-  color: color-mix(in srgb, var(--primary-color, #00c2ad) 80%, transparent);
+  color: color-mix(in srgb, var(--primary-texto, #00c2ad) 80%, transparent);
 }
 
 /* ---------- Favorito ---------- */

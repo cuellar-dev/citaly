@@ -17,7 +17,7 @@ function HeroeLocal({ local, etiqueta = 'El de hoy' }) {
   const frase = fraseDeLocal(local)
 
   return (
-    <article className="heroe-local">
+    <article className="heroe-local tema-oscuro-fijo">
       <Link to={`/local/${local.id}`} className="heroe-local-link" aria-label={`Ver ${local.localName}`}>
         <img src={local.url} alt="" className="heroe-local-foto" loading="eager" decoding="async" />
         <span className="heroe-local-velo" aria-hidden="true" />

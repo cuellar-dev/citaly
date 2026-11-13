@@ -1,0 +1,121 @@
+/* Interruptor sol / luna del cartel. Los colores viven en variables del
+   propio SVG y cambian juntos, así la pista y el mordisco de la luna (que
+   tiene que ser del mismo color que la pista) nunca se desfasan. */
+
+.switch-tema {
+  --sw-pista: #13302b;
+  --sw-filo: #2aa795;
+  --sw-astro: #f2ebdd;
+  --sw-borde-astro: #b9ad97;
+  --sw-viaje: cubic-bezier(0.34, 1.5, 0.64, 1);
+  --sw-t: 0.42s;
+  flex-shrink: 0;
+  width: 44px;
+  height: 25px;
+  overflow: visible;
+  margin-left: auto;
+  /* Durante el fundido del tema el interruptor no se funde con la página:
+     se queda vivo encima para que se vea su propio paso de luna a sol. */
+  view-transition-name: switch-tema;
+}
+
+.switch-tema--claro {
+  --sw-pista: #bdf4e8;
+  --sw-filo: #2aa795;
+  --sw-astro: #ffd166;
+  --sw-borde-astro: #c9952f;
+}
+
+.switch-tema-pista {
+  fill: var(--sw-pista);
+  stroke: var(--sw-filo);
+  stroke-width: 1.4;
+  transition:
+    fill var(--sw-t) var(--ease-out, ease-out),
+    stroke var(--sw-t) var(--ease-out, ease-out);
+}
+
+/* La nube solo sale de día: entra desde la izquierda, donde se fue la luna. */
+.switch-tema-nube {
+  fill: #fffdf6;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 0.24s var(--ease-out, ease-out),
+    transform var(--sw-t) var(--ease-out, ease-out);
+}
+
+.switch-tema--claro .switch-tema-nube {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.12s;
+}
+
+.switch-tema-astro {
+  transform: translateX(0);
+  transition: transform var(--sw-t) var(--sw-viaje);
+}
+
+.switch-tema--claro .switch-tema-astro {
+  transform: translateX(20px);
+}
+
+.switch-tema-disco {
+  fill: var(--sw-astro);
+  stroke: var(--sw-borde-astro);
+  stroke-width: 1.1;
+  transition:
+    fill var(--sw-t) var(--ease-out, ease-out),
+    stroke var(--sw-t) var(--ease-out, ease-out);
+}
+
+.switch-tema-crater {
+  fill: #d8ccb4;
+  transition: opacity 0.2s var(--ease-out, ease-out);
+}
+
+.switch-tema--claro .switch-tema-crater {
+  opacity: 0;
+}
+
+/* El mordisco: mismo color que la pista. Al hacerse de día se escapa por
+   arriba a la derecha y se encoge hasta desaparecer. */
+.switch-tema-mordisco {
+  fill: var(--sw-pista);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    transform var(--sw-t) var(--ease-out, ease-out),
+    fill var(--sw-t) var(--ease-out, ease-out);
+}
+
+.switch-tema--claro .switch-tema-mordisco {
+  transform: translate(7px, -7px) scale(0);
+}
+
+.switch-tema-rayos {
+  stroke: #e0a92f;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  transform-box: view-box;
+  transform-origin: 13px 13px;
+  transform: rotate(-60deg) scale(0.4);
+  opacity: 0;
+  transition:
+    transform 0.5s var(--sw-viaje),
+    opacity 0.2s var(--ease-out, ease-out);
+}
+
+.switch-tema--claro .switch-tema-rayos {
+  transform: rotate(0deg) scale(1);
+  opacity: 1;
+  transition-delay: 0.08s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch-tema,
+  .switch-tema * {
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+}

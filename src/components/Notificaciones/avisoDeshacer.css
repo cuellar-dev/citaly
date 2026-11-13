@@ -14,8 +14,8 @@
   border-radius: 16px;
   background: var(--background-color-another, #252926);
   box-shadow:
-    0 1px 0 rgba(240, 240, 240, 0.06) inset,
-    0 12px 28px -8px rgba(0, 0, 0, 0.7);
+    0 1px 0 rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza))) inset,
+    0 12px 28px -8px rgb(var(--sombra) / calc(0.7 * var(--sombra-alfa)));
   color: var(--fonts-color-primary, #f0f0f0);
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
   transform: translateX(-50%);
@@ -54,7 +54,7 @@
   border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font: inherit;
   font-size: 13px;
   font-weight: 700;

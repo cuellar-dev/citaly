@@ -29,7 +29,7 @@
 }
 
 .not-found-codigo {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: clamp(3.2rem, 11vw, 5.2rem);
   font-weight: 700;

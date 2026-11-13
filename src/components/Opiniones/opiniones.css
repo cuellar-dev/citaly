@@ -55,7 +55,7 @@
   height: 40px;
   border-radius: 50%;
   background: color-mix(in srgb, var(--primary-color) 18%, transparent);
-  color: var(--primary-color);
+  color: var(--primary-texto);
   font-size: 16px;
   font-weight: 700;
 }
@@ -141,7 +141,7 @@
   padding: 2px 8px;
   border-radius: 999px;
   background: var(--primary-color);
-  color: #121413;
+  color: var(--fonts-color-secondary);
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.04em;

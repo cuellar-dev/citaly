@@ -22,7 +22,7 @@
   overflow: hidden;
   color: var(--fonts-color-primary, #f0f0f0);
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
-  background: linear-gradient(168deg, #1b201f 0%, #151918 62%, var(--background-color, #121413) 100%);
+  background: linear-gradient(168deg, var(--superficie-alta) 0%, var(--superficie-honda) 62%, var(--background-color, #121413) 100%);
 }
 
 /* La foto va con un linear encima que la baja de luz de forma pareja. Sin él,
@@ -38,9 +38,9 @@
   background-image:
     linear-gradient(
       180deg,
-      rgba(10, 13, 12, 0.62) 0%,
-      rgba(10, 13, 12, 0.5) 45%,
-      rgba(10, 13, 12, 0.58) 100%
+      rgb(var(--fondo-rgb) / 0.62) 0%,
+      rgb(var(--fondo-rgb) / 0.5) 45%,
+      rgb(var(--fondo-rgb) / 0.58) 100%
     ),
     var(--perfil-fondo);
   background-size: cover;
@@ -58,10 +58,10 @@
   pointer-events: none;
   background: linear-gradient(
     180deg,
-    rgba(18, 20, 19, 0) 0%,
-    rgba(18, 20, 19, 0.1) 32%,
-    rgba(18, 20, 19, 0.72) 62%,
-    rgba(18, 20, 19, 0.93) 86%
+    rgb(var(--fondo-rgb) / 0) 0%,
+    rgb(var(--fondo-rgb) / 0.1) 32%,
+    rgb(var(--fondo-rgb) / 0.72) 62%,
+    rgb(var(--fondo-rgb) / 0.93) 86%
   );
 }
 
@@ -88,8 +88,8 @@
   padding: 5px 14px 5px 10px;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent);
-  background: color-mix(in srgb, #121413 74%, transparent);
-  color: var(--primary-color, #00c2ad);
+  background: color-mix(in srgb, var(--background-color) 74%, transparent);
+  color: var(--primary-texto, #00c2ad);
   font: inherit;
   font-size: 12.5px;
   font-weight: 700;
@@ -108,7 +108,7 @@
    encima es justo el tic que delata una interfaz hecha en piloto automático. */
 @media (hover: hover) and (pointer: fine) {
   .cabecera-perfil-editar:not(:disabled):hover {
-    background: color-mix(in srgb, var(--primary-color, #00c2ad) 16%, #121413);
+    background: color-mix(in srgb, var(--primary-color, #00c2ad) 16%, var(--background-color));
   }
 }
 
@@ -188,8 +188,8 @@ button.cabecera-perfil-foto:active {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #252926;
-  color: var(--primary-color, #00c2ad);
+  background: var(--background-color-another);
+  color: var(--primary-texto, #00c2ad);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 30px;
   font-weight: 600;
@@ -221,7 +221,7 @@ button.cabecera-perfil-foto:active {
   margin: 0;
   font-size: 14px;
   font-weight: 700;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .cabecera-perfil-meta {
@@ -249,8 +249,8 @@ button.cabecera-perfil-foto:active {
   min-height: 32px;
   padding: 0 10px;
   border-radius: 999px;
-  border: 1px solid rgba(240, 240, 240, 0.1);
-  background: color-mix(in srgb, #121413 70%, transparent);
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  background: color-mix(in srgb, var(--background-color) 70%, transparent);
   color: var(--fonts-color-primary, #f0f0f0);
   font-size: 12px;
   font-weight: 700;
@@ -263,13 +263,13 @@ button.cabecera-perfil-foto:active {
 
 @media (hover: hover) and (pointer: fine) {
   .cabecera-perfil-datos a:hover {
-    background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, #121413);
+    background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, var(--background-color));
   }
 }
 
 .cabecera-perfil-datos svg {
   flex-shrink: 0;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .cabecera-perfil-datos a:focus-visible {

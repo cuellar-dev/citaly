@@ -121,7 +121,7 @@
   padding: 12px 14px;
   border-radius: 10px;
   background-color: var(--background-color-another);
-  box-shadow: 0 6px 18px #00000059;
+  box-shadow: 0 6px 18px rgb(var(--sombra) / calc(0.35 * var(--sombra-alfa)));
   opacity: 1;
   transition: opacity 0.4s ease;
   pointer-events: auto;

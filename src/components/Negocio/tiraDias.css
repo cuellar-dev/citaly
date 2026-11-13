@@ -65,7 +65,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .tira-dia:not(.tira-dia--elegida):hover .tira-dia-numero {
-    background: rgba(240, 240, 240, 0.07);
+    background: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
   }
 }
 
@@ -88,7 +88,7 @@
 /* Hoy, sin elegir: el número en teal. */
 .tira-dia--hoy .tira-dia-nombre,
 .tira-dia--hoy .tira-dia-numero {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .tira-dia--hoy .tira-dia-numero {
@@ -122,11 +122,11 @@
 }
 
 .tira-dia--elegida.tira-dia--hoy .tira-dia-nombre {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .tira-dia--elegida.tira-dia--cerrada .tira-dia-numero {
-  background: rgba(240, 240, 240, 0.12);
+  background: rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary, #f0f0f0);
 }
 

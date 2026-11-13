@@ -16,7 +16,7 @@ function TarjetaLocalCompacta({ local }) {
       className="local-compacto"
       aria-label={`Ver ${local.localName}`}
     >
-      <span className="local-compacto-foto">
+      <span className="local-compacto-foto tema-oscuro-fijo">
         <img src={local.url} alt="" loading="lazy" decoding="async" />
         <span className="local-compacto-velo" aria-hidden="true" />
         {puertas.abierto ? <span className="local-compacto-abierto">Abierto</span> : null}

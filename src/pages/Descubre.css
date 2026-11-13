@@ -40,11 +40,11 @@
   gap: 9px;
   min-height: 52px;
   padding: 0 10px 0 15px;
-  border: 1px solid rgba(240, 240, 240, 0.1);
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   border-radius: 16px;
   background: var(--background-color-secondary, #1e2221);
-  color: var(--primary-color, #00c2ad);
-  box-shadow: 0 10px 26px -14px rgba(0, 0, 0, 0.9);
+  color: var(--primary-texto, #00c2ad);
+  box-shadow: 0 10px 26px -14px rgb(var(--sombra) / calc(0.9 * var(--sombra-alfa)));
 }
 
 .descubre-search input {
@@ -81,7 +81,7 @@
 
 .search-filter {
   padding-left: 12px;
-  border-left: 1px solid rgba(240, 240, 240, 0.12);
+  border-left: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
 }
 
 .search-clear {
@@ -107,7 +107,7 @@
   border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 25%, transparent);
   border-radius: 16px;
   background: var(--background-color-secondary, #1e2221);
-  box-shadow: 0 20px 34px -14px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 20px 34px -14px rgb(var(--sombra) / calc(0.9 * var(--sombra-alfa)));
 }
 
 .sugerencia,
@@ -118,7 +118,7 @@
   width: 100%;
   padding: 13px 15px;
   border: 0;
-  border-bottom: 1px solid rgba(240, 240, 240, 0.07);
+  border-bottom: 1px solid rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
   background: none;
   color: var(--fonts-color-primary, #f0f0f0);
   text-align: left;
@@ -138,7 +138,7 @@
 @media (hover: hover) and (pointer: fine) {
   .sugerencia:hover,
   .ver-todo:hover {
-    background: rgba(240, 240, 240, 0.05);
+    background: rgb(var(--tinte) / calc(0.05 * var(--tinte-fuerza)));
   }
 
   .sugerencia:hover svg {
@@ -148,7 +148,7 @@
 
 .sugerencia:active,
 .ver-todo:active {
-  background: rgba(240, 240, 240, 0.085);
+  background: rgb(var(--tinte) / calc(0.085 * var(--tinte-fuerza)));
 }
 
 .sugerencia:focus-visible,
@@ -174,14 +174,14 @@
 
 .sugerencia svg,
 .ver-todo svg {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .ver-todo {
   justify-content: center;
   gap: 8px;
   border-bottom: 0;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-weight: 700;
 }
 
@@ -200,7 +200,7 @@
 
 .eyebrow {
   display: block;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font: 700 11px var(--font-familyPrincipal, 'Quicksand', sans-serif);
   letter-spacing: 0.13em;
   text-transform: uppercase;

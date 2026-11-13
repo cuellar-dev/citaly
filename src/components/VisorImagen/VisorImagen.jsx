@@ -4,7 +4,7 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 
 function VisorImagen({ url, alt, onClose }) {
   return (
-    <div className="visor-imagen-back" onClick={onClose}>
+    <div className="visor-imagen-back tema-oscuro-fijo" onClick={onClose}>
       <button
         type="button"
         className="visor-imagen-close"

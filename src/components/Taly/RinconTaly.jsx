@@ -101,8 +101,8 @@ function RinconTaly() {
           strokeLinecap="round"
         />
 
-        <ellipse cx="65" cy="39.4" rx="2.3" ry="1.3" fill="#2b3230" />
-        <ellipse cx="69.4" cy="40.8" rx="1.4" ry="0.9" fill="#323a37" />
+        <ellipse cx="65" cy="39.4" rx="2.3" ry="1.3" fill="var(--rincon-piedra, #2b3230)" />
+        <ellipse cx="69.4" cy="40.8" rx="1.4" ry="0.9" fill="var(--rincon-piedra-2, #323a37)" />
 
         {MATAS.map(([x, y, e, t]) => (
           <g key={x} fill={TINTAS[t]} fillOpacity={t === 'clara' ? 0.75 : 0.85}>

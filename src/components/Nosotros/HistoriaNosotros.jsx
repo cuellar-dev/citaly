@@ -85,7 +85,7 @@ function HistoriaNosotros() {
         tl.from('[data-etiqueta]', { autoAlpha: 0, x: -30, duration: 0.06, ease: 'power2.out' }, 0)
           .from(titulo.chars, { yPercent: 110, duration: 0.12, ease: 'power3.out', stagger: 0.006 }, 0)
           .fromTo(palabras, { opacity: 0.12 }, { opacity: 1, duration: 0.05, stagger: 0.5 / palabras.length }, 0.12)
-          .fromTo(destacadas, { color: '#f0f0f0' }, { color: T.mostaza, duration: 0.04, stagger: 0.12 }, 0.3)
+          .fromTo(destacadas, { '--marca': '0%' }, { '--marca': '100%', duration: 0.05, stagger: 0.12 }, 0.3)
           .fromTo([rutaRef.current, '[data-ruta-sombra]'], { drawSVG: '0%' }, { drawSVG: '100%', duration: 1 }, 0)
           .to(
             viajeroRef.current,

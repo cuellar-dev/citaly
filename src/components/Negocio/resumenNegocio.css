@@ -60,7 +60,7 @@
   display: block;
   height: 4px;
   border-radius: 999px;
-  background: rgba(240, 240, 240, 0.07);
+  background: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
   overflow: hidden;
 }
 
@@ -87,12 +87,12 @@
   border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 28%, transparent);
   background:
     radial-gradient(90% 120% at 100% 0%, color-mix(in srgb, var(--primary-color, #00c2ad) 18%, transparent) 0%, transparent 62%),
-    linear-gradient(160deg, #172b28 0%, #151a19 100%);
+    linear-gradient(160deg, color-mix(in srgb, var(--primary-color) 10%, var(--superficie-honda)) 0%, var(--superficie-honda) 100%);
   box-shadow: 0 14px 30px -20px rgba(0, 194, 173, 0.35);
 }
 
 .resumen-negocio-siguiente .resumen-negocio-etiqueta {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .resumen-negocio-siguiente-cuerpo {
@@ -142,7 +142,7 @@
 .resumen-negocio-siguiente-hora {
   font-size: 13px;
   font-weight: 700;
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
   font-variant-numeric: tabular-nums;
 }
 
@@ -154,12 +154,12 @@
 .resumen-negocio-siguiente-flecha {
   flex-shrink: 0;
   margin-right: -4px;
-  color: color-mix(in srgb, var(--primary-color, #00c2ad) 70%, transparent);
+  color: color-mix(in srgb, var(--primary-texto, #00c2ad) 70%, transparent);
 }
 
 .resumen-negocio-siguiente--vacia {
-  border-color: rgba(240, 240, 240, 0.07);
-  background: linear-gradient(160deg, #1d2221 0%, #171a19 100%);
+  border-color: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+  background: linear-gradient(160deg, var(--background-color-secondary) 0%, var(--superficie-honda) 100%);
   box-shadow: none;
 }
 
@@ -183,8 +183,8 @@
   min-width: 0;
   padding: 16px 16px 18px;
   border-radius: 20px;
-  border: 1px solid rgba(240, 240, 240, 0.06);
-  background: linear-gradient(165deg, #1e2322 0%, #181c1b 100%);
+  border: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  background: linear-gradient(165deg, var(--background-color-secondary) 0%, var(--superficie-honda) 100%);
   animation-delay: 0.08s;
 }
 
@@ -220,7 +220,7 @@
 
 .resumen-negocio-pie b {
   font-weight: 700;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .resumen-negocio-tarjeta .resumen-negocio-barra,
@@ -260,7 +260,7 @@
   padding: 8px 14px;
   border-radius: 16px;
   border: 1px solid color-mix(in srgb, var(--tono) 20%, transparent);
-  background: color-mix(in srgb, var(--tono) 7%, #171a19);
+  background: color-mix(in srgb, var(--tono) 7%, var(--superficie-honda));
   font-size: 13.5px;
   font-weight: 700;
   line-height: 1.2;
@@ -283,11 +283,11 @@
 
 @media (hover: hover) {
   .resumen-negocio-tarjeta:not(:disabled):hover {
-    border-color: rgba(240, 240, 240, 0.12);
+    border-color: rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
   }
 
   .resumen-negocio-accion:hover {
-    background-color: color-mix(in srgb, var(--tono) 12%, #171a19);
+    background-color: color-mix(in srgb, var(--tono) 12%, var(--superficie-honda));
   }
 }
 

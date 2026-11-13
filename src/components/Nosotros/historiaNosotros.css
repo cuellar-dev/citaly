@@ -122,3 +122,9 @@
   border-radius: 50% 46% 52% 48%;
   color: var(--yellow-color, #ffd166);
 }
+
+/* Subrayado a rotulador que se pasa por debajo de las palabras clave. */
+.nos-historia-parrafo .es-destacada {
+  --marca: 100%;
+  background: linear-gradient(var(--nos-marca, rgba(255, 209, 102, 0.28)), var(--nos-marca, rgba(255, 209, 102, 0.28))) no-repeat 0 88% / var(--marca) 0.32em;
+}

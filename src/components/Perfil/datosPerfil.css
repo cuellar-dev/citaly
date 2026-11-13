@@ -53,7 +53,7 @@
   padding: 0;
   list-style: none;
   border-radius: 18px;
-  background: #1a1f1e;
+  background: var(--superficie-alta);
   overflow: hidden;
 }
 
@@ -64,7 +64,7 @@
   left: 44px;
   right: 0;
   height: 1px;
-  background: rgba(240, 240, 240, 0.06);
+  background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
 }
 
 .perfil-fila {
@@ -111,25 +111,25 @@
 
 @media (hover: hover) and (pointer: fine) {
   .perfil-fila:not(.perfil-fila--quieta):not(:disabled):hover {
-    background: rgba(240, 240, 240, 0.045);
+    background: rgb(var(--tinte) / calc(0.045 * var(--tinte-fuerza)));
   }
 
   .perfil-fila:not(.perfil-fila--quieta):not(:disabled):hover .perfil-fila-flecha {
     transform: translateX(2px);
-    color: var(--primary-color, #00c2ad);
+    color: var(--primary-texto, #00c2ad);
   }
 
   .perfil-fila--rojo:hover .perfil-fila-flecha {
-    color: #ff8d8d !important;
+    color: var(--peligro-texto) !important;
   }
 }
 
 .perfil-fila:not(.perfil-fila--quieta):not(:disabled):active {
-  background: rgba(240, 240, 240, 0.075);
+  background: rgb(var(--tinte) / calc(0.075 * var(--tinte-fuerza)));
 }
 
 .perfil-fila--rojo .perfil-fila-titulo {
-  color: #ff8d8d;
+  color: var(--peligro-texto);
 }
 
 .perfil-fila:focus-visible {
@@ -188,7 +188,7 @@
 
 .perfil-fila-flecha--abierta {
   transform: rotate(90deg);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -267,7 +267,7 @@
 .perfil-despliegue--citas p i {
   flex: 1;
   height: 0;
-  border-bottom: 1.5px dotted rgba(240, 240, 240, 0.22);
+  border-bottom: 1.5px dotted rgb(var(--tinte) / calc(0.22 * var(--tinte-fuerza)));
   transform: translateY(-3px);
 }
 
@@ -285,7 +285,7 @@
 }
 
 .perfil-despliegue--citas strong.perfil-cifra {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .perfil-despliegue-vacio {
@@ -317,17 +317,17 @@
 
 @media (hover: hover) and (pointer: fine) {
   .perfil-fav:hover {
-    background: rgba(240, 240, 240, 0.05);
+    background: rgb(var(--tinte) / calc(0.05 * var(--tinte-fuerza)));
   }
 
   .perfil-fav:hover .perfil-fila-flecha {
     transform: translateX(2px);
-    color: var(--primary-color, #00c2ad);
+    color: var(--primary-texto, #00c2ad);
   }
 }
 
 .perfil-fav:active {
-  background: rgba(240, 240, 240, 0.08);
+  background: rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
 }
 
 .perfil-fav:focus-visible {
@@ -339,10 +339,10 @@
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background: #252926 center / cover no-repeat;
+  background: var(--background-color-another) center / cover no-repeat;
   flex-shrink: 0;
   /* Filo interior para que la foto no se derrame en la superficie. */
-  box-shadow: inset 0 0 0 1px rgba(240, 240, 240, 0.1);
+  box-shadow: inset 0 0 0 1px rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
 }
 
 /* ---------- Acciones de la hoja de sesión ----------
@@ -362,7 +362,7 @@
   box-sizing: border-box;
   border: 0;
   border-radius: 14px;
-  background: rgba(240, 240, 240, 0.04);
+  background: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary, #f0f0f0);
   font: inherit;
   text-align: left;
@@ -377,7 +377,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .perfil-sesion-accion:not(:disabled):hover {
-    background: rgba(240, 240, 240, 0.08);
+    background: rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
   }
 
   .perfil-sesion-accion--peligro:not(:disabled):hover {
@@ -386,7 +386,7 @@
 }
 
 .perfil-sesion-accion:not(:disabled):active {
-  background: rgba(240, 240, 240, 0.11);
+  background: rgb(var(--tinte) / calc(0.11 * var(--tinte-fuerza)));
 }
 
 .perfil-sesion-accion:focus-visible {
@@ -399,18 +399,18 @@
 }
 
 .perfil-sesion-accion--peligro .perfil-fila-titulo {
-  color: #ff8d8d;
+  color: var(--peligro-texto);
 }
 
 .perfil-sesion-accion--peligro:focus-visible {
-  outline-color: #ff8d8d;
+  outline-color: var(--peligro-texto);
 }
 
 .perfil-pastilla {
   flex-shrink: 0;
   padding: 4px 9px;
   border-radius: 999px;
-  background: rgba(240, 240, 240, 0.08);
+  background: rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary-weak, #bdbaba);
   font-size: 10.5px;
   font-weight: 700;
@@ -418,12 +418,12 @@
 
 .perfil-pastilla--si {
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 16%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .perfil-pastilla--espera {
   background: color-mix(in srgb, var(--yellow-color, #ffd166) 16%, transparent);
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
 }
 
 .perfil-switch {
@@ -434,7 +434,7 @@
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: rgba(240, 240, 240, 0.14);
+  background: rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
   cursor: pointer;
   transition: background-color 0.2s var(--ease-out, ease-out);
 }
@@ -460,7 +460,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .perfil-switch:not(:disabled):not(.perfil-switch--on):hover {
-    background: rgba(240, 240, 240, 0.22);
+    background: rgb(var(--tinte) / calc(0.22 * var(--tinte-fuerza)));
   }
 
   .perfil-switch--on:not(:disabled):hover {
@@ -488,7 +488,7 @@
   flex: 1;
   min-height: 34px;
   padding: 0 6px;
-  border: 1px solid rgba(240, 240, 240, 0.08);
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
   border-radius: 999px;
   background: transparent;
   color: var(--fonts-color-primary-weak, #bdbaba);
@@ -504,7 +504,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .perfil-segmento button:not(.perfil-segmento--activo):hover {
-    background: rgba(240, 240, 240, 0.06);
+    background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
     color: var(--fonts-color-primary, #f0f0f0);
   }
 }
@@ -521,7 +521,7 @@
 .perfil-segmento--activo {
   border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent) !important;
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent) !important;
-  color: var(--primary-color, #00c2ad) !important;
+  color: var(--primary-texto, #00c2ad) !important;
 }
 
 /* ---------- Tu lugar ---------- */
@@ -556,7 +556,7 @@
 .perfil-local-velo {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(18, 20, 19, 0.05) 42%, rgba(18, 20, 19, 0.86) 100%);
+  background: linear-gradient(180deg, rgb(var(--fondo-rgb) / 0.05) 42%, rgb(var(--fondo-rgb) / 0.86) 100%);
   pointer-events: none;
 }
 

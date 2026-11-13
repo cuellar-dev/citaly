@@ -17,11 +17,11 @@
   aspect-ratio: 4 / 5;
 
   overflow: hidden;
-  border: 1px solid rgba(240, 240, 240, 0.09);
+  border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   border-radius: 26px;
   color: inherit;
   text-decoration: none;
-  box-shadow: 0 22px 46px -22px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 22px 46px -22px rgb(var(--sombra) / calc(0.95 * var(--sombra-alfa)));
 }
 
 .heroe-local-link:focus-visible {
@@ -99,7 +99,7 @@
 }
 
 .heroe-local-puertas--abierto {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .heroe-local-puertas--abierto .heroe-local-punto {
@@ -140,7 +140,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
 }
 
 .heroe-local-nota svg {
@@ -188,7 +188,7 @@
   gap: 5px;
   min-height: 24px;
   padding: 0 9px;
-  border: 1px solid rgba(240, 240, 240, 0.14);
+  border: 1px solid rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
   border-radius: 999px;
   background: rgba(8, 10, 9, 0.4);
   color: var(--fonts-color-primary-weak, #bdbaba);
@@ -209,7 +209,7 @@
   height: 40px;
   border-radius: 50%;
   background: rgba(8, 10, 9, 0.5);
-  border: 1px solid rgba(240, 240, 240, 0.14);
+  border: 1px solid rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   color: var(--fonts-color-primary, #f0f0f0);

@@ -66,7 +66,9 @@
   gap: 10px;
   width: 224px;
   height: 56px;
-  padding: 0 22px 0 30px;
+  /* Lo justo para no pisar los clavos (x 15 y x 209, radio 3): así cabe
+     "Preguntas frecuentes" sin cortarse. */
+  padding: 0 20px 0 27px;
   border: 0;
   background: none;
   color: #f2ebdd;
@@ -106,6 +108,73 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.menu-tabla--ayuda .menu-tabla-texto {
+  letter-spacing: -0.012em;
+}
+
+/* ---------- Tabla del tema ---------- */
+
+.menu-tabla--tema {
+  gap: 9px;
+}
+
+.menu-tabla--tema .switch-tema {
+  position: relative;
+  z-index: 1;
+}
+
+/* El icono da media vuelta cada vez que cambia: la luna se va girando y
+   el sol llega girando. Va en un span porque el svg de lucide se cambia
+   entero y la key del span es la que reinicia la animación. */
+.menu-tabla-icono--tema {
+  display: inline-grid;
+  place-items: center;
+  animation: menu-tema-icono 0.45s var(--ease-out, ease-out);
+}
+
+@keyframes menu-tema-icono {
+  from {
+    opacity: 0;
+    transform: rotate(-110deg) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+/* ---------- Tabla de favoritos ---------- */
+
+/* Las rayitas de la estrella parpadean una vez, cuando la tabla ya ha
+   caído y se queda quieta: un guiño, no un adorno que no para. */
+.menu-tabla--favoritos .icono-favoritos-rayas {
+  transform-box: view-box;
+  transform-origin: 12px 12.6px;
+  animation: menu-favoritos-rayas 0.6s var(--ease-out, ease-out) 0.45s both;
+}
+
+@keyframes menu-favoritos-rayas {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.18);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-tabla-icono--tema,
+  .menu-tabla--favoritos .icono-favoritos-rayas {
+    animation: none;
+  }
 }
 
 /* El hover aclara la madera entera con un filtro, no recolorea bordes. */
@@ -148,4 +217,10 @@
   clip-path: circle(0px at 100% 0%);
   visibility: hidden;
   will-change: clip-path;
+}
+
+/* De día el velo es tinta más clara: oscurece la app lo justo para que el
+   cartel mande, sin apagar la pantalla como de noche. */
+:root[data-tema='claro'] .menu-velo {
+  background: rgba(27, 34, 32, 0.38);
 }

@@ -1,8 +1,9 @@
-import { useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { Store } from 'lucide-react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
+import { useTema } from '../../hooks/useTema.js'
 import './navbar.css'
 
 gsap.registerPlugin(useGSAP)
@@ -156,6 +157,18 @@ function NavBar() {
     },
     { scope: raizRef, dependencies: [indiceActivo, hayActivo] }
   )
+
+  /* GSAP deja el color activo escrito en línea (resuelto a hex para poder
+     interpolarlo). Al cambiar de tema hay que volver a leerlo, o la píldora
+     se quedaría con el color del tema anterior. */
+  const tema = useTema()
+  useLayoutEffect(() => {
+    const raiz = raizRef.current
+    if (!raiz || primeraVezRef.current) return
+    const item = navItems[indicePrevioRef.current] ?? navItems[0]
+    const color = getComputedStyle(raiz).getPropertyValue(item.colorVar).trim()
+    gsap.set(raiz, { '--nav-color-activo': color })
+  }, [tema])
 
   const gestoAlPulsar = contextSafe((enlace, anim) => {
     const svg = enlace.querySelector('svg')

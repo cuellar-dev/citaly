@@ -2,7 +2,7 @@
   position: fixed;
   inset: 0;
   z-index: 100000;
-  background-color: rgba(8, 10, 9, 0.6);
+  background-color: rgb(var(--velo-modal) / calc(0.6 * var(--velo-alfa)));
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,7 +15,7 @@
 .modal-velo {
   position: absolute;
   inset: 0;
-  background-color: rgba(8, 10, 9, 0.8);
+  background-color: rgb(var(--velo-modal) / calc(0.8 * var(--velo-alfa)));
   opacity: 0;
 }
 

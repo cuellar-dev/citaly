@@ -27,25 +27,60 @@
   font-display: swap;
 }
 
-:root {
+/* ===================================================================
+   Temas. El oscuro es el de siempre y va por defecto; el claro es papel
+   crema con tinta de Taly. Lo elige <html data-tema="claro|oscuro">.
+
+   .tema-oscuro-fijo vuelve a declarar el oscuro en un trozo concreto: lo
+   llevan las zonas que van SOBRE UNA FOTO (el texto encima de una foto es
+   blanco en los dos temas). "Sobre nosotros" (.nosotros) también se queda
+   como está: es su propio mundo, noche arriba y papel abajo.
+
+   Reglas de uso:
+   - Texto en teal o mostaza:   --primary-texto / --yellow-texto
+     (el teal y la mostaza de relleno no se leen como letra sobre crema).
+   - Velos y bordes finos:      rgb(var(--tinte) / calc(α * var(--tinte-fuerza)))
+   - Sombras:                   rgb(var(--sombra) / calc(α * var(--sombra-alfa)))
+   - Fondo detrás de un modal:  rgb(var(--velo-modal) / calc(α * var(--velo-alfa)))
+   =================================================================== */
+:root,
+.tema-oscuro-fijo,
+.nosotros {
+  color-scheme: dark;
+
   --primary-color: #00C2AD;
   --primary-color-strong: #06dfc9;
   --primary-color-weak: #077a6f;
   --primary-color-weak-full: #06463d;
+  --primary-texto: #00C2AD;
   --fonts-color-primary: #f0f0f0;
   --fonts-color-primary-weak: #bdbaba;
   --fonts-color-primary-alternative: #00C2AD;
   --fonts-color-secondary: #121413;
   --fonts-color-secondary-weak: #212524;
-  --background-color: #121413;  
-  --background-color-secondary:#1E2221;
+  --background-color: #121413;
+  --background-color-secondary: #1E2221;
   --background-color-another: #252926;
-  --yellow-color:#FFD166;
+  /* Superficies intermedias que antes iban sueltas en hex por cada archivo. */
+  --superficie-alta: #1b201f;
+  --superficie-honda: #151918;
+  --tarjeta-fondo: linear-gradient(165deg, #1d2221 0%, #181c1b 100%);
+  --yellow-color: #FFD166;
   --yellow-color-black: #90856b;
-  --close-color:rgb(197, 63, 63);
-  --font-familyPrincipal: 'Quicksand', sans-serif;
-  --font-familyDrink: 'drink', sans-serif;
-  --font-familyMerchant: 'Merchant', sans-serif;
+  --yellow-texto: #FFD166;
+  --close-color: rgb(197, 63, 63);
+  --peligro-texto: #ff8d8d;
+  --rosa: #ef476f;
+  --rosa-texto: #ff8fa8;
+
+  /* Canales sueltos (r g b) para poder ponerles alfa. */
+  --tinte: 240 240 240;
+  --tinte-fuerza: 1;
+  --velo-modal: 8 10 9;
+  --velo-alfa: 1;
+  /* El fondo de la página en canales: para los velos que funden una foto
+     con la página (cabeceras de Perfil y Negocio). */
+  --fondo-rgb: 18 20 19;
 
   /* Tinta de Taly: la misma paleta del fondo dibujado a mano de Descubre.
      Vive aquí para que cualquier pantalla pueda usar el mundo de Taly sin
@@ -53,12 +88,110 @@
   --ink-pale: #bdf4e8;
   --ink-dark: #090f0e;
   --ink-light: #2aa795;
+  /* Detalles de dibujo sueltos: la luna de los estados vacíos y lo que se
+     pinta "apagado" (huecos libres de la agenda). */
+  --luna: #ece9df;
+  --neutro-apagado: #3a403e;
+}
+
+:root[data-tema='claro'] {
+  color-scheme: light;
+
+  --primary-color-strong: #00b3a0;
+  --primary-color-weak-full: #bfede6;
+  --primary-texto: #00756a;
+  --fonts-color-primary: #1b2220;
+  --fonts-color-primary-weak: #5c6662;
+  --fonts-color-primary-alternative: #00756a;
+  --background-color: #f6f2ea;
+  --background-color-secondary: #fffdf8;
+  --background-color-another: #ede7db;
+  --superficie-alta: #fbf8f2;
+  --superficie-honda: #efe9de;
+  --tarjeta-fondo: linear-gradient(165deg, #fffdf8 0%, #faf6ee 100%);
+  --yellow-color-black: #cfc4a6;
+  --yellow-texto: #8a5d00;
+  --close-color: #c0392b;
+  --peligro-texto: #c2304f;
+  --rosa: #e0446a;
+  --rosa-texto: #b8264b;
+
+  /* Sobre crema, la tinta de los velos es más visible que el blanco sobre
+     negro: con el mismo alfa los bordes saldrían duros. Y las sombras son
+     de papel, marrones y cortas, no negras. */
+  --tinte: 27 34 32;
+  --tinte-fuerza: 1.15;
+  --sombra: 74 58 36;
+  --sombra-alfa: 0.3;
+  --velo-modal: 27 34 32;
+  --velo-alfa: 0.55;
+  --fondo-rgb: 246 242 234;
+
+  --ink-pale: #1f8a7c;
+  --luna: #d4a73c;
+  --neutro-apagado: #d9d2c4;
+  /* Las piedras del rincón de Taly en el header. */
+  --rincon-piedra: #cfc5b2;
+  --rincon-piedra-2: #ddd4c2;
+}
+
+/* La sombra cae sobre la PÁGINA, no sobre la foto: por eso va aparte y las
+   zonas .tema-oscuro-fijo no la reinician. Una tarjeta con foto sobre crema
+   tiene que dar sombra de papel, no una mancha negra. */
+:root {
+  --sombra: 0 0 0;
+  --sombra-alfa: 1;
+}
+
+:root {
+  --font-familyPrincipal: 'Quicksand', sans-serif;
+  --font-familyDrink: 'drink', sans-serif;
+  --font-familyMerchant: 'Merchant', sans-serif;
 
   /* La curva que ya usaba medio proyecto suelta. Tokenizada para no tener
      once copias del mismo cubic-bezier. */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   box-sizing: border-box;
+}
+
+/* ---------- El cambio de tema ----------
+
+   Con View Transitions (Chrome, Edge, Safari 18): el navegador hace una foto
+   de la app en el tema viejo y la funde despacio sobre la nueva. Es lo más
+   suave posible porque TODO cambia a la vez y en el mismo instante: fondos,
+   textos, SVG, fotos, canvas. Con transiciones CSS cada elemento llegaría a
+   su ritmo y se verían parpadeos sueltos.
+
+   Sin View Transitions (Firefox), la clase .tema-cambiando da a todo una
+   transición de color corta durante el cambio. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.7s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* El interruptor no se funde: se queda vivo encima para que se vea su
+   propia animación de luna a sol. */
+::view-transition-old(switch-tema) {
+  display: none;
+}
+
+::view-transition-new(switch-tema) {
+  animation: none;
+}
+
+.tema-cambiando,
+.tema-cambiando *:not(.switch-tema, .switch-tema *),
+.tema-cambiando *:not(.switch-tema, .switch-tema *)::before,
+.tema-cambiando *:not(.switch-tema, .switch-tema *)::after {
+  transition:
+    background-color 0.5s var(--ease-out),
+    border-color 0.5s var(--ease-out),
+    color 0.5s var(--ease-out),
+    fill 0.5s var(--ease-out),
+    stroke 0.5s var(--ease-out),
+    box-shadow 0.5s var(--ease-out) !important;
 }
 body{
   margin: 0;

@@ -13,8 +13,8 @@
   gap: 18px;
   padding: 16px;
   border-radius: 20px;
-  border: 1px solid rgba(240, 240, 240, 0.06);
-  background: linear-gradient(165deg, #1d2221 0%, #181c1b 100%);
+  border: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  background: var(--tarjeta-fondo);
 }
 
 .local-opiniones-media {
@@ -40,7 +40,7 @@
 }
 
 .local-opiniones-estrella--on {
-  color: var(--yellow-color);
+  color: var(--yellow-texto);
   fill: var(--yellow-color);
 }
 
@@ -82,7 +82,7 @@
 
 .local-opiniones-barra:not(:disabled):active,
 .local-opiniones-barra--activa {
-  background: rgba(240, 240, 240, 0.06);
+  background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
 }
 
 .local-opiniones-barra:focus-visible {
@@ -91,14 +91,14 @@
 }
 
 .local-opiniones-barra-estrella {
-  color: var(--yellow-color);
+  color: var(--yellow-texto);
   fill: var(--yellow-color);
 }
 
 .local-opiniones-barra-pista {
   height: 7px;
   border-radius: 999px;
-  background: rgba(240, 240, 240, 0.07);
+  background: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
   overflow: hidden;
 }
 
@@ -135,7 +135,7 @@
 .local-opiniones-mas {
   border: 0;
   background: none;
-  color: var(--primary-color);
+  color: var(--primary-texto);
   font-family: var(--font-familyPrincipal);
   font-weight: 700;
   cursor: pointer;
@@ -183,7 +183,7 @@
   margin: 0;
   padding: 12px 14px;
   border-radius: 16px;
-  border: 1px dashed rgba(240, 240, 240, 0.12);
+  border: 1px dashed rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
   font-family: var(--font-familyPrincipal);
   font-size: 13.5px;
   font-weight: 600;
@@ -203,8 +203,8 @@
   gap: 10px;
   padding: 16px;
   border-radius: 20px;
-  border: 1px solid rgba(240, 240, 240, 0.06);
-  background: linear-gradient(165deg, #1d2221 0%, #181c1b 100%);
+  border: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  background: var(--tarjeta-fondo);
 }
 
 .local-opinar-titulo {
@@ -238,7 +238,7 @@
 }
 
 .local-opinar-estrella--on {
-  color: var(--yellow-color);
+  color: var(--yellow-texto);
 }
 
 .local-opinar-estrella--on svg {
@@ -282,8 +282,8 @@
   gap: 6px;
   padding: 8px 8px 8px 12px;
   border-radius: 14px;
-  background-color: rgba(240, 240, 240, 0.04);
-  border: 1px solid rgba(240, 240, 240, 0.08);
+  background-color: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
   transition: border-color 0.2s ease;
 }
 
@@ -347,11 +347,11 @@
 }
 
 .local-opinar-error {
-  color: #ff8d8d;
+  color: var(--peligro-texto);
 }
 
 .local-opinar-gracias {
-  color: var(--primary-color);
+  color: var(--primary-texto);
 }
 
 @media (prefers-reduced-motion: reduce) {

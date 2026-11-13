@@ -24,7 +24,7 @@ function HeroLocal({ local, fotos, estado, nota, cantidad, onCompartir, onAbrirF
   }
 
   return (
-    <header className="local-hero">
+    <header className="local-hero tema-oscuro-fijo">
       <div
         className="local-hero-pista"
         ref={pistaRef}

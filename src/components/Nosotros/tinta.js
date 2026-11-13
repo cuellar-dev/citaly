@@ -1,4 +1,4 @@
-import { useEffect, useId } from 'react'
+import { createContext, useContext, useEffect, useId } from 'react'
 
 /* Piezas compartidas del mundo a tinta de Sobre nosotros: la paleta de Taly,
    el filtro de pulso (el temblor de mano de taly-a-mano.svg) y el "hervor",
@@ -22,13 +22,19 @@ export function useIdSvg(prefijo) {
   return `${prefijo}-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
 }
 
+/* Modo ligero de Sobre nosotros: papel en vez de 3D y sin temblor vivo. */
+export const ModoLigero = createContext(false)
+
 /* Hervor de línea: rota la semilla del feTurbulence entre tres valores.
    Solo mientras el dibujo está en pantalla y nunca con movimiento reducido;
    un SVG con filtro repintándose fuera de vista es gasto puro. */
 export function useHervor(svgRef, activo = true, ms = 125) {
+  /* En modo ligero no hierve nada: decenas de filtros repintándose a 8 fps
+     es justo lo que ese modo quiere ahorrarse. */
+  const ligero = useContext(ModoLigero)
   useEffect(() => {
     const svg = svgRef.current
-    if (!svg || !activo) return undefined
+    if (!svg || !activo || ligero) return undefined
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
     const turbs = svg.querySelectorAll('feTurbulence')
     if (!turbs.length) return undefined
@@ -51,6 +57,6 @@ export function useHervor(svgRef, activo = true, ms = 125) {
       io.disconnect()
       if (intervalo) clearInterval(intervalo)
     }
-  }, [svgRef, activo, ms])
+  }, [svgRef, activo, ms, ligero])
 }
 

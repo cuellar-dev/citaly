@@ -41,8 +41,8 @@
 .solicitar-elegido {
   padding: 10px 12px;
   border-radius: 16px;
-  border: 1px solid rgba(240, 240, 240, 0.08);
-  background: rgba(240, 240, 240, 0.03);
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
+  background: rgb(var(--tinte) / calc(0.03 * var(--tinte-fuerza)));
 }
 
 .solicitar-foto {
@@ -50,10 +50,10 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: #252926 center / cover no-repeat;
+  background: var(--background-color-another) center / cover no-repeat;
   display: grid;
   place-items: center;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .solicitar-fila-textos {
@@ -83,7 +83,7 @@
 .solicitar-chip {
   min-height: 36px;
   padding: 0 12px;
-  border: 1px solid rgba(240, 240, 240, 0.1);
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   border-radius: 999px;
   background: transparent;
   color: var(--fonts-color-primary, #f0f0f0);
@@ -101,13 +101,13 @@
   margin: 0;
   font-size: 13px;
   font-weight: 700;
-  color: #ff8d8d;
+  color: var(--peligro-texto);
 }
 
 .solicitar-chip--on {
   border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 50%, transparent);
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 16%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 /* Estados. Nada de esto existía: la lista de locales y los chips de rol se
@@ -127,16 +127,16 @@
 
 @media (hover: hover) and (pointer: fine) {
   .solicitar-fila:hover {
-    background: rgba(240, 240, 240, 0.05);
+    background: rgb(var(--tinte) / calc(0.05 * var(--tinte-fuerza)));
   }
 
   .solicitar-chip:not(.solicitar-chip--on):hover {
-    background: rgba(240, 240, 240, 0.07);
+    background: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
   }
 }
 
 .solicitar-fila:active {
-  background: rgba(240, 240, 240, 0.085);
+  background: rgb(var(--tinte) / calc(0.085 * var(--tinte-fuerza)));
 }
 
 .solicitar-chip:active {

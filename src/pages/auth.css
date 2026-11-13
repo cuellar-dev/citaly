@@ -94,7 +94,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(240, 240, 240, 0.1);
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   background: color-mix(in srgb, var(--background-color-secondary, #1e2221) 80%, transparent);
   color: var(--fonts-color-primary, #f0f0f0);
   text-decoration: none;
@@ -112,7 +112,7 @@
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .auth-titulo {
@@ -155,7 +155,7 @@
   box-sizing: border-box;
   padding: 12px 14px;
   border-radius: 14px;
-  border: 1px solid rgba(240, 240, 240, 0.1);
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   background: var(--background-color-secondary, #1e2221);
   color: var(--fonts-color-primary, #f0f0f0);
   font: inherit;
@@ -198,7 +198,7 @@
   margin: 0;
   font-size: 13px;
   font-weight: 700;
-  color: #ff8d8d;
+  color: var(--peligro-texto);
 }
 
 .auth-enviar {
@@ -232,7 +232,7 @@
   border: 0;
   padding: 0;
   background: none;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font: inherit;
   font-weight: 700;
   cursor: pointer;

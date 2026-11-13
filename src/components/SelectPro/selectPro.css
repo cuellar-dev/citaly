@@ -9,7 +9,7 @@
   padding: 16px 10px 14px;
   border-radius: 14px;
   background-color: var(--background-color-secondary);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgb(var(--sombra) / calc(0.2 * var(--sombra-alfa)));
   cursor: pointer;
   transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
 }
@@ -39,8 +39,8 @@
   height: 20px;
   border-radius: 50%;
   background-color: var(--primary-color);
-  color: var(--background-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  color: var(--fonts-color-secondary);
+  box-shadow: 0 2px 6px rgb(var(--sombra) / calc(0.35 * var(--sombra-alfa)));
 }
 
 .tarjeta-pro-img-container {
@@ -74,8 +74,8 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  background: #252926;
-  color: var(--primary-color);
+  background: var(--background-color-another);
+  color: var(--primary-texto);
   font-family: var(--font-familyDrink);
   font-size: 20px;
   font-weight: 600;

@@ -15,6 +15,7 @@
   background-image: radial-gradient(rgba(14, 46, 42, 0.07) 1px, transparent 1.2px);
   background-size: 14px 14px;
   overflow: hidden;
+  height: 100dvh;
 }
 
 .nos-cierre-contenido {
@@ -85,6 +86,7 @@
     transform: translate(-2px, -2px);
     box-shadow: 7px 7px 0 var(--primary-color, #00c2ad);
   }
+
   .nos-cta:hover svg {
     transform: translateX(4px);
   }
@@ -105,9 +107,11 @@
     grid-template-columns: 1fr;
     text-align: center;
   }
+
   .nos-cierre-taly {
     width: min(64vw, 260px);
   }
+
   .nos-cierre-texto p {
     margin-inline: auto;
   }

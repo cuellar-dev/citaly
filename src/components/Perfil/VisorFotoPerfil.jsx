@@ -72,7 +72,7 @@ function VisorFotoPerfil({ url, alt, onClose }) {
 
   return createPortal(
     <div
-      className={`visor-foto${abierto ? ' visor-foto--abierto' : ''}${arrastrando ? ' visor-foto--arrastrando' : ''}`}
+      className={`visor-foto tema-oscuro-fijo${abierto ? ' visor-foto--abierto' : ''}${arrastrando ? ' visor-foto--arrastrando' : ''}`}
       style={{ '--dy': `${dy}px`, '--velo': abierto ? velo : 0 }}
       role="dialog"
       aria-modal="true"

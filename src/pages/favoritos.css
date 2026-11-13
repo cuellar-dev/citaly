@@ -1,0 +1,231 @@
+/* Favoritos: tablero de polaroids sobre el fondo de la app. */
+
+.favs {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 520px;
+  min-height: calc(100dvh - 90px);
+  margin-inline: auto;
+  padding: 0 18px 40px;
+  background: var(--background-color, #121413);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+/* ---------- Barra ---------- */
+
+.favs-barra {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-inline: -18px;
+  padding: max(14px, env(safe-area-inset-top)) 18px 12px;
+  background: linear-gradient(to bottom, var(--background-color, #121413) 70%, transparent);
+}
+
+.favs-volver {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  color: var(--fonts-color-primary, #f0f0f0);
+  cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .favs-volver:hover {
+    background: rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  }
+}
+
+.favs-volver:active {
+  transform: scale(0.94);
+}
+
+.favs-volver:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+.favs-barra-titulo {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Cabecera ---------- */
+
+.favs-cabecera {
+  padding: 4px 0 22px;
+}
+
+.favs-titulo {
+  margin: 6px 0 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.9rem;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-align: left;
+  text-wrap: balance;
+}
+
+.favs-resumen {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.favs-resumen-punto {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.favs-resumen-abiertos {
+  color: var(--primary-texto, #00c2ad);
+}
+
+.favs-filtros {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.favs-filtro {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font: 700 13px var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  cursor: pointer;
+  transition:
+    background-color 0.2s var(--ease-out, ease-out),
+    color 0.2s var(--ease-out, ease-out),
+    border-color 0.2s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+.favs-filtro:active {
+  transform: scale(0.96);
+}
+
+.favs-filtro--activo {
+  border-color: transparent;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.favs-filtro:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+/* ---------- Tablero ---------- */
+
+/* Más hueco que en Descubre: las fotos van giradas y con cinta por encima,
+   necesitan aire para no pisarse. */
+.favs-tablero {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  padding-top: 12px;
+}
+
+.favs-nada {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+/* ---------- Vacío ---------- */
+
+.favs-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 56px 12px 0;
+  text-align: center;
+}
+
+.favs-vacio .taly {
+  max-width: 120px !important;
+  margin-bottom: 8px;
+}
+
+.favs-vacio h2 {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+.favs-vacio p {
+  max-width: 32ch;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.favs-vacio-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 12px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font: 700 14px var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  cursor: pointer;
+  transition: transform 0.14s var(--ease-out, ease-out);
+}
+
+.favs-vacio-boton:active {
+  transform: scale(0.96);
+}
+
+.favs-vacio-boton:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+}
+
+@media (max-width: 380px) {
+  .favs {
+    padding-inline: 12px;
+  }
+
+  .favs-barra {
+    margin-inline: -12px;
+    padding-inline: 12px;
+  }
+}

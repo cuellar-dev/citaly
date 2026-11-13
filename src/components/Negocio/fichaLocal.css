@@ -42,7 +42,7 @@
   padding: 0 4px;
   font-size: 12.5px;
   font-weight: 700;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -58,8 +58,8 @@
   padding: 0;
   list-style: none;
   border-radius: 20px;
-  border: 1px solid rgba(240, 240, 240, 0.06);
-  background: linear-gradient(165deg, #1d2221 0%, #181c1b 100%);
+  border: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  background: var(--tarjeta-fondo);
   overflow: hidden;
 }
 
@@ -70,7 +70,7 @@
   left: 62px;
   right: 0;
   height: 1px;
-  background: rgba(240, 240, 240, 0.06);
+  background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
 }
 
 .ficha-local-fila {
@@ -93,7 +93,7 @@
 }
 
 .ficha-local-fila:active {
-  background-color: rgba(240, 240, 240, 0.04);
+  background-color: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
 }
 
 .ficha-local-fila:focus-visible {
@@ -110,7 +110,7 @@
   height: 36px;
   border-radius: 12px;
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 12%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .ficha-local-textos {
@@ -157,7 +157,7 @@
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: rgba(240, 240, 240, 0.14);
+  background: rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
 }
 
 .ficha-local-semana i.abre {
@@ -168,7 +168,7 @@
   padding: 4px 9px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 12%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-size: 10.5px;
   font-weight: 700;
 }
@@ -191,9 +191,9 @@
   height: 26px;
   border-radius: 50%;
   object-fit: cover;
-  background: #252926;
-  box-shadow: 0 0 0 2px #1b1f1e;
-  color: var(--primary-color, #00c2ad);
+  background: var(--background-color-another);
+  box-shadow: 0 0 0 2px var(--superficie-alta);
+  color: var(--primary-texto, #00c2ad);
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
@@ -210,7 +210,7 @@
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 15px;
   font-weight: 600;
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
 }
 
 @media (max-width: 360px) {

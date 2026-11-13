@@ -32,7 +32,7 @@
   min-height: 34px;
   margin-bottom: 14px;
   padding: 0 13px 0 10px;
-  border: 1px solid rgba(240, 240, 240, 0.09);
+  border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   border-radius: 999px;
   background: var(--background-color-secondary, #1e2221);
   color: var(--fonts-color-primary, #f0f0f0);
@@ -78,7 +78,7 @@
 .reserva-bloque {
   position: relative;
   padding: 16px;
-  border: 1px solid rgba(240, 240, 240, 0.08);
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
   border-radius: 18px;
   background: var(--background-color-secondary, #1e2221);
   /* La guía pegada arriba mide ~104px; sin esto el salto a un paso lo deja debajo. */
@@ -96,7 +96,7 @@
       transparent 62%
     ),
     var(--background-color-secondary, #1e2221);
-  box-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 12px 28px -18px rgb(var(--sombra) / calc(0.9 * var(--sombra-alfa)));
 }
 
 .reserva-bloque-cabecera {
@@ -113,7 +113,7 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  box-shadow: inset 0 0 0 2px rgba(240, 240, 240, 0.14);
+  box-shadow: inset 0 0 0 2px rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary-weak, #bdbaba);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 13px;
@@ -123,7 +123,7 @@
 
 .reserva-bloque--activo .reserva-bloque-numero {
   box-shadow: inset 0 0 0 2px var(--primary-color, #00c2ad);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .reserva-bloque--hecho .reserva-bloque-numero {
@@ -150,7 +150,7 @@
 
 .reserva-bloque-titulo svg {
   flex-shrink: 0;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .reserva-bloque-descripcion {
@@ -169,7 +169,7 @@
   align-items: center;
   gap: 7px;
   padding: 24px 18px;
-  border: 1px dashed rgba(240, 240, 240, 0.1);
+  border: 1px dashed rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   border-radius: 14px;
   text-align: center;
 }
@@ -186,7 +186,7 @@
   height: 42px;
   border-radius: 50%;
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 10%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .reserva-vacio-titulo {
@@ -246,7 +246,7 @@
 }
 
 .reserva-horas-titulo svg {
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
 }
 
 .reserva-horas-leyenda {
@@ -266,7 +266,7 @@
 
 .reserva-persona {
   min-height: 46px;
-  border: 1px solid rgba(240, 240, 240, 0.09);
+  border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   border-radius: 14px;
   background: var(--background-color, #121413);
   color: var(--fonts-color-primary, #f0f0f0);
@@ -292,7 +292,7 @@
 .reserva-persona--grupo {
   border-style: dashed;
   border-color: color-mix(in srgb, var(--yellow-color, #ffd166) 40%, transparent);
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
 }
 
 .reserva-persona--grupo.reserva-persona--activa {
@@ -374,11 +374,11 @@
 
 .reserva-resumen-fila--fuerte {
   padding-top: 11px;
-  border-top: 1px solid rgba(240, 240, 240, 0.07);
+  border-top: 1px solid rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
 }
 
 .reserva-resumen-fila--fuerte dd {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 18px;
   line-height: 1;
@@ -420,13 +420,13 @@
   max-width: calc(var(--reserva-ancho) - 32px);
   margin-inline: auto;
   padding: 10px 10px 10px 18px;
-  border: 1px solid rgba(240, 240, 240, 0.09);
+  border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   /* 18 como las tarjetas y no una píldora: con el radio redondo del todo, el
      bloque del total quedaba mordido por la curva y la barra no casaba con el
      borde izquierdo de las tarjetas de arriba. */
   border-radius: 18px;
   background: var(--background-color-secondary, #1e2221);
-  box-shadow: 0 14px 32px -16px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 14px 32px -16px rgb(var(--sombra) / calc(0.95 * var(--sombra-alfa)));
   pointer-events: auto;
 }
 
@@ -446,7 +446,7 @@
 }
 
 .reserva-barra-cifra strong {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 19px;
   font-weight: 600;
@@ -488,7 +488,7 @@
 /* Bloqueado se nota: sin relleno, solo contorno y el cursor cambia. */
 .reserva-barra-boton:disabled {
   background: transparent;
-  box-shadow: inset 0 0 0 1px rgba(240, 240, 240, 0.14);
+  box-shadow: inset 0 0 0 1px rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
   color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 75%, transparent);
   cursor: not-allowed;
   transform: none;

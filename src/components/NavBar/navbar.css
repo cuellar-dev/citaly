@@ -2,7 +2,7 @@
   /* Un color por seccion. Cambia solo estos cuatro para repintar toda la barra. */
   --nav-color-descubre: var(--primary-color);
   --nav-color-citas: var(--yellow-color);
-  --nav-color-negocio: #ef476f;
+  --nav-color-negocio: var(--rosa);
   --nav-color-perfil: var(--fonts-color-primary);
   /* GSAP interpola esta variable entre los cuatro colores de arriba. */
   --nav-color-activo: var(--nav-color-descubre);
@@ -113,4 +113,14 @@
   font-family: var(--font-familyPrincipal);
   color: inherit;
   letter-spacing: 0.01em;
+}
+
+/* De día los colores de sección se leen como letra sobre papel: van en su
+   versión oscura. La píldora y la línea de luz los toman igual, solo que
+   más suaves. */
+:root[data-tema='claro'] .navbar {
+  --nav-color-descubre: var(--primary-texto);
+  --nav-color-citas: var(--yellow-texto);
+  --nav-color-negocio: var(--rosa-texto);
+  box-shadow: 0 -6px 20px rgb(var(--sombra) / 0.08);
 }

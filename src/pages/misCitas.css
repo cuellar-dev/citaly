@@ -7,7 +7,7 @@
   --citas-pill-bg: #00463f;
   --citas-pill-shadow: #00463f;
   --citas-tab-active: #00c2ad;
-  --citas-tab-inactive: rgba(189, 186, 186, 0.55);
+  --citas-tab-inactive: color-mix(in srgb, var(--fonts-color-primary-weak) 55%, transparent);
   --citas-track: linear-gradient(
     100deg,
     #182522 0%,
@@ -64,7 +64,7 @@
   --citas-pill-bg: #563b00;
   --citas-pill-shadow: #563b00;
   --citas-tab-active: #ffd166;
-  --citas-tab-inactive: rgba(189, 186, 186, 0.55);
+  --citas-tab-inactive: color-mix(in srgb, var(--fonts-color-primary-weak) 55%, transparent);
   --citas-track: linear-gradient(
     100deg,
     #1f1c18 0%,
@@ -90,7 +90,7 @@
   padding: 5px;
   background: var(--citas-track);
   border: 1px solid var(--citas-track-border);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 14px rgb(var(--sombra) / calc(0.4 * var(--sombra-alfa)));
   z-index: 40;
 }
 
@@ -154,4 +154,22 @@
 
 .citas--pasadas .switch-color-button-text-proximas {
   color: var(--citas-tab-inactive);
+}
+
+/* ---------- De día ----------
+   El interruptor Próximas / Pasadas: pista de papel teñida (menta o mostaza)
+   y una píldora blanca que se desliza, con el texto activo en la versión
+   oscura del color para que se lea sobre crema. */
+:root[data-tema='claro'] .citas {
+  --citas-pill-bg: #ffffff;
+  --citas-pill-shadow: rgba(74, 58, 36, 0.16);
+  --citas-tab-active: #00756a;
+  --citas-track: linear-gradient(100deg, #e4f4ef 0%, #d9f0e9 50%, #d2ede5 100%);
+  --citas-track-border: #bfe3da;
+}
+
+:root[data-tema='claro'] .citas--pasadas {
+  --citas-tab-active: #8a5d00;
+  --citas-track: linear-gradient(100deg, #f8eed7 0%, #f4e6c6 50%, #f0dfb8 100%);
+  --citas-track-border: #e6d3a6;
 }

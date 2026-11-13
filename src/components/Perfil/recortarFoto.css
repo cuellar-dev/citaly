@@ -36,7 +36,7 @@
 }
 
 .recorte-listo {
-  color: var(--primary-color, #00c2ad) !important;
+  color: var(--primary-texto, #00c2ad) !important;
 }
 
 .recorte-escena {
@@ -82,8 +82,8 @@
   height: 280px;
   margin: -140px 0 0 -140px;
   border-radius: 4px;
-  border: 2px solid rgba(240, 240, 240, 0.9);
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.62);
+  border: 2px solid rgb(var(--tinte) / calc(0.9 * var(--tinte-fuerza)));
+  box-shadow: 0 0 0 9999px rgb(var(--sombra) / calc(0.62 * var(--sombra-alfa)));
   pointer-events: none;
   z-index: 1;
 }
@@ -100,7 +100,7 @@
   height: 44px;
   border: 0;
   border-radius: 50%;
-  background: rgba(240, 240, 240, 0.12);
+  background: rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary, #f0f0f0);
   font-size: 22px;
   font-weight: 700;

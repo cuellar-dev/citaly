@@ -18,7 +18,7 @@
 }
 
 .guia-reserva--pegada {
-  border-bottom-color: rgba(240, 240, 240, 0.08);
+  border-bottom-color: rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
 }
 
 /* El difuminado de abajo: del fondo opaco a transparente, para que lo que pasa
@@ -70,7 +70,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: rgba(240, 240, 240, 0.1);
+  background: rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
 }
 
 .guia-reserva-paso:first-child::before {
@@ -115,7 +115,7 @@
   border-radius: 50%;
   /* El fondo es el de la barra: así el raíl pasa por detrás y queda cortado. */
   background: var(--background-color, #121413);
-  box-shadow: inset 0 0 0 2px rgba(240, 240, 240, 0.14);
+  box-shadow: inset 0 0 0 2px rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary-weak, #bdbaba);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 14px;
@@ -135,7 +135,7 @@
   box-shadow:
     inset 0 0 0 2px var(--primary-color, #00c2ad),
     0 0 0 4px color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .guia-reserva-label {
@@ -151,7 +151,7 @@
 }
 
 .guia-reserva-paso--ahora .guia-reserva-label {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .guia-reserva-paso--hecho .guia-reserva-label {
@@ -199,7 +199,7 @@
   border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 28%, transparent);
   border-radius: 999px;
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 10%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-size: 11px;
   font-weight: 700;
   white-space: nowrap;
@@ -211,7 +211,7 @@
   height: 2px;
   margin-top: 10px;
   border-radius: 2px;
-  background: rgba(240, 240, 240, 0.07);
+  background: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
   overflow: hidden;
 }
 

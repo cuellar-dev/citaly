@@ -15,7 +15,7 @@
 }
 
 .page-placeholder h1 {
-  color: var(--primary-color);
+  color: var(--primary-texto);
   font-family: var(--font-familyPrincipal);
   font-weight: bold;
   margin-top: 0;

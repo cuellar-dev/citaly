@@ -16,9 +16,9 @@
   gap: 8px;
   padding: 10px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(240, 240, 240, 0.1);
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   background: var(--background-color-another, #252926);
-  box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 12px 28px -12px rgb(var(--sombra) / calc(0.9 * var(--sombra-alfa)));
   color: var(--fonts-color-primary);
   font-family: var(--font-familyPrincipal);
   font-size: 14px;
@@ -27,7 +27,7 @@
 }
 
 .aviso-breve svg {
-  color: var(--primary-color);
+  color: var(--primary-texto);
 }
 
 @keyframes aviso-breve-entra {

@@ -30,7 +30,7 @@
      línea finísima. Nada de aros dibujados. */
   box-shadow:
     0 0 0 4px var(--background-color, #121413),
-    0 0 0 5px rgba(240, 240, 240, 0.1);
+    0 0 0 5px rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   background: var(--background-color-another, #252926);
 }
 
@@ -55,7 +55,7 @@
   place-items: center;
   width: 100%;
   height: 100%;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 30px;
   font-weight: 600;

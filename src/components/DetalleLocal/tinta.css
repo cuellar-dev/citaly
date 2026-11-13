@@ -36,3 +36,16 @@
   width: 100%;
   height: 112px;
 }
+
+/* De día la tinta es la misma, pero sobre papel: los trazos claros pasan a
+   menta oscura y las manzanas y calles, que de noche son luz, son sombra. */
+:root[data-tema='claro'] {
+  --tinta-trazo: color-mix(in srgb, #2aa795 70%, transparent);
+  --tinta-pluma: color-mix(in srgb, #2aa795 45%, transparent);
+  --tinta-pluma-raquis: color-mix(in srgb, #1d8576 85%, transparent);
+  --tinta-manzana: color-mix(in srgb, #0e2e2a 6%, transparent);
+  --tinta-parque: color-mix(in srgb, #2aa795 18%, transparent);
+  --tinta-arbol: color-mix(in srgb, #2aa795 55%, transparent);
+  --tinta-calle: color-mix(in srgb, #0e2e2a 14%, transparent);
+  --tinta-mapa-fondo: #eaf1ea;
+}

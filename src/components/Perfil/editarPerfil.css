@@ -20,8 +20,8 @@
   border-radius: 50%;
   object-fit: cover;
   object-position: center;
-  background: #252926;
-  color: var(--primary-color, #00c2ad);
+  background: var(--background-color-another);
+  color: var(--primary-texto, #00c2ad);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 28px;
   font-weight: 600;
@@ -37,7 +37,7 @@
   height: 28px;
   border-radius: 50%;
   background: var(--primary-color, #00c2ad);
-  color: #121413;
+  color: var(--fonts-color-secondary);
 }
 
 .editar-perfil-foto:focus-visible {
@@ -49,5 +49,5 @@
   margin: 0;
   font-size: 13px;
   font-weight: 700;
-  color: #ff8d8d;
+  color: var(--peligro-texto);
 }

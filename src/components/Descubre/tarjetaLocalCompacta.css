@@ -22,7 +22,7 @@
   display: block;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  border: 1px solid rgba(240, 240, 240, 0.08);
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
   border-radius: 18px;
 }
 
@@ -93,7 +93,7 @@
   align-items: center;
   gap: 3px;
   flex-shrink: 0;
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
   font-weight: 700;
 }
 

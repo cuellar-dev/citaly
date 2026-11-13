@@ -20,3 +20,16 @@
   width: 100%;
   height: 100%;
 }
+/* De día: el cielo de noche pasa a papel crema con un velo menta muy suave
+   arriba, las nubes y las motas se dibujan en tinta menta y el árbol deja de
+   ser una sombra negra para ser un trazo de tinta verde oscura. Los colores
+   oscuros son los respaldos que lleva el propio SVG. */
+:root[data-tema='claro'] .fondo-descubre {
+  --fd-cielo-1: #e3efe9;
+  --fd-cielo-2: #eef1e9;
+  --fd-halo: #bfe6dc;
+  --fd-estrella: #2aa795;
+  --fd-nube: #2aa795;
+  --fd-arbol: #24433d;
+  opacity: 0.9;
+}

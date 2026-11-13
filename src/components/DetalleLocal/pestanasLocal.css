@@ -9,7 +9,7 @@
   background: color-mix(in srgb, var(--background-color) 88%, transparent);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(240, 240, 240, 0.06);
+  border-bottom: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
 }
 
 .local-pestana {
@@ -58,7 +58,7 @@
 .local-pestana-cuenta {
   padding: 1px 7px;
   border-radius: 999px;
-  background: rgba(240, 240, 240, 0.07);
+  background: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
   font-size: 11px;
   color: var(--fonts-color-primary-weak);
 }

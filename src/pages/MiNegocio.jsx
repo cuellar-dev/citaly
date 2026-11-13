@@ -218,7 +218,7 @@ function resumenDelDia(citas, ahora, local) {
         { id: 'atendidas', label: 'Atendidas', cantidad: atendidas.length, color: 'var(--primary-color-weak)' },
         { id: 'confirmadas', label: 'Confirmadas', cantidad: confirmadas.length, color: 'var(--primary-color)' },
         { id: 'pendientes', label: 'Pendientes', cantidad: pendientes.length, color: 'var(--yellow-color)' },
-        { id: 'libres', label: 'Libres', cantidad: libres, color: '#3a403e' },
+        { id: 'libres', label: 'Libres', cantidad: libres, color: 'var(--neutro-apagado, #3a403e)' },
       ],
       porHora,
       horaPico: pico ? horaDeMinutos(pico.hora * 60) : null,

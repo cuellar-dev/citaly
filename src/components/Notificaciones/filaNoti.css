@@ -15,7 +15,7 @@
 }
 
 .fila-noti--rojo {
-  --tono: #e06a6a;
+  --tono: var(--peligro-texto);
 }
 
 .fila-noti--mostaza {
@@ -52,8 +52,8 @@
   gap: 8px;
   padding-right: 20px;
   border-radius: 14px;
-  background: color-mix(in srgb, #e06a6a 14%, var(--background-color, #121413));
-  color: #e06a6a;
+  background: color-mix(in srgb, var(--peligro-texto) 14%, var(--background-color, #121413));
+  color: var(--peligro-texto);
   font-size: 13px;
   font-weight: 700;
   opacity: 0;
@@ -71,7 +71,7 @@
 
 /* Pasado el umbral la papelera crece un poco: "si sueltas, se borra". */
 .fila-noti--listo .fila-noti-fondo {
-  background: color-mix(in srgb, #e06a6a 24%, var(--background-color, #121413));
+  background: color-mix(in srgb, var(--peligro-texto) 24%, var(--background-color, #121413));
 }
 
 .fila-noti--listo .fila-noti-fondo svg {
@@ -139,7 +139,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .fila-noti-enlace:hover {
-    background: rgba(240, 240, 240, 0.04);
+    background: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
   }
 }
 
@@ -213,7 +213,7 @@
 
 .fila-noti-plazo {
   font-variant-numeric: tabular-nums;
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
 }
 
 /* Lo único que sí se apaga: lo que ya no tiene arreglo. */
@@ -225,7 +225,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 /* ---------- Borrar con ratón o teclado ---------- */
@@ -266,8 +266,8 @@
   }
 
   .fila-noti-quitar:hover {
-    background: color-mix(in srgb, #e06a6a 20%, var(--background-color-another, #252926));
-    color: #e06a6a;
+    background: color-mix(in srgb, var(--peligro-texto) 20%, var(--background-color-another, #252926));
+    color: var(--peligro-texto);
   }
 }
 
@@ -352,7 +352,7 @@
 .fila-noti--fijada .fila-noti-cabeza time {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
 }
 
 /* La acción, aquí sí, como botón lleno: es lo que hay que hacer. */

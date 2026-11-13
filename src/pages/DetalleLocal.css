@@ -46,8 +46,8 @@
   grid-auto-flow: column;
   margin: 0;
   border-radius: 18px;
-  border: 1px solid rgba(240, 240, 240, 0.06);
-  background: linear-gradient(165deg, #1d2221 0%, #181c1b 100%);
+  border: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  background: var(--tarjeta-fondo);
   overflow: hidden;
 }
 
@@ -60,7 +60,7 @@
 }
 
 .detalle-local-cifra + .detalle-local-cifra {
-  border-left: 1px solid rgba(240, 240, 240, 0.06);
+  border-left: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
 }
 
 .detalle-local-cifra dd {
@@ -68,7 +68,7 @@
   font-family: var(--font-familyDrink);
   font-size: 19px;
   font-weight: 700;
-  color: var(--yellow-color);
+  color: var(--yellow-texto);
   white-space: nowrap;
 }
 
@@ -137,8 +137,8 @@
   min-height: 44px;
   padding: 0 14px;
   border-radius: 999px;
-  background-color: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(240, 240, 240, 0.12);
+  background-color: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary);
   font-family: var(--font-familyPrincipal);
   font-size: 14px;

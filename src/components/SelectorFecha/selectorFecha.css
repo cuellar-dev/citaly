@@ -25,7 +25,7 @@
   min-height: 86px;
   justify-content: center;
   padding: 13px 4px 12px;
-  border: 1px solid rgba(240, 240, 240, 0.09);
+  border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   border-radius: 16px;
   background: var(--background-color, #121413);
   color: var(--fonts-color-primary, #f0f0f0);

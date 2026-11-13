@@ -55,8 +55,8 @@
 }
 
 .perfil-auth-registro {
-  border: 1px solid rgba(240, 240, 240, 0.12);
-  background: #121413;
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  background: var(--background-color);
   color: var(--fonts-color-primary, #f0f0f0);
   transition:
     background-color 0.2s var(--ease-out, ease-out),
@@ -70,7 +70,7 @@
   }
 
   .perfil-auth-registro:hover {
-    background: #1a1f1e;
+    background: var(--superficie-alta);
   }
 }
 

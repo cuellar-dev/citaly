@@ -32,7 +32,7 @@ const ORBITA = [
   { n: 'ticket', x: 34, y: 88, s: 0.78, r: -12, d: 0.9 },
 ]
 
-function HeroNosotros() {
+function HeroNosotros({ ligero = false, onCambiarModo }) {
   const raizRef = useRef(null)
   const palabraRef = useRef(null)
   const letraTRef = useRef(null)
@@ -226,6 +226,23 @@ function HeroNosotros() {
 
   return (
     <section className="nos-hero" ref={raizRef} aria-labelledby="nos-hero-titulo">
+      {/* El interruptor de modo: arriba, al empezar, y se va con la portada. */}
+      <div className="nos-modo" data-hero-pie>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={ligero}
+          className="nos-modo-boton"
+          onClick={() => onCambiarModo?.(!ligero)}
+        >
+          <span className="nos-modo-pista" aria-hidden="true">
+            <span className="nos-modo-bola" />
+          </span>
+          Modo ligero
+        </button>
+        {ligero && <p className="nos-modo-nota">Para la experiencia completa en 3D, apágalo.</p>}
+      </div>
+
       <div className="nos-hero-orbita" aria-hidden="true">
         {ORBITA.map((o, i) => (
           <div

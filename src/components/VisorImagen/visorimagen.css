@@ -23,7 +23,7 @@
   border-radius: 50%;
   width: 40px;
   aspect-ratio: 1/1;
-  color: var(--primary-color);
+  color: var(--primary-texto);
 }
 
 .visor-imagen-zoom {

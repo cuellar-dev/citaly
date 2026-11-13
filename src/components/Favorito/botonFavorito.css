@@ -22,7 +22,7 @@
   height: 44px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(240, 240, 240, 0.12);
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary, #f0f0f0);
 }
 
@@ -39,5 +39,15 @@
   height: 40px;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgba(240, 240, 240, 0.12);
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+}
+
+/* Estas variantes flotan sobre una foto: van en cristal oscuro y en blanco
+   en los dos temas, así que recuperan los tokens de noche. */
+.boton-favorito--hero,
+.boton-favorito--tarjeta,
+.boton-favorito--polaroid {
+  --fonts-color-primary: #f0f0f0;
+  --tinte: 240 240 240;
+  --tinte-fuerza: 1;
 }

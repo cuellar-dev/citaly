@@ -1,0 +1,323 @@
+/* Formulario de contacto con tres ánimos.
+
+   Todo el color sale de tres variables que cambia el estado:
+   --estado       el color del ánimo (mostaza, menta, coral)
+   --estado-tinta el texto que va encima de ese color
+   --estado-texto el mismo color, pero legible como texto sobre el fondo
+   Así el marco, el foco, el pomo del interruptor y el botón cambian juntos y
+   con la misma transición. */
+
+.contacto {
+  --estado: #ffd166;
+  --estado-tinta: #2b2008;
+  --estado-texto: #ffd166;
+  position: relative;
+  margin-top: 56px;
+  padding: 26px 18px 20px;
+  /* Borde de papel recortado a mano: radios distintos en cada esquina. */
+  border: 2px solid color-mix(in srgb, var(--estado) 60%, transparent);
+  border-radius: 22px 14px 24px 12px / 14px 24px 12px 22px;
+  background: color-mix(in srgb, var(--estado) 7%, var(--background-color-secondary, #1e2221));
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  transition:
+    border-color 0.35s var(--ease-out, ease-out),
+    background-color 0.35s var(--ease-out, ease-out);
+}
+
+.contacto--bien {
+  --estado: #4fd8c4;
+  --estado-tinta: #0e2e2a;
+  --estado-texto: #4fd8c4;
+}
+
+.contacto--queja {
+  --estado: #ff7a6b;
+  --estado-tinta: #2e0d08;
+  --estado-texto: #ff8f82;
+}
+
+/* Taly asoma por la esquina de arriba a la izquierda, con los pies sobre
+   el borde del marco. */
+.contacto-taly {
+  position: absolute;
+  top: -58px;
+  left: 12px;
+  pointer-events: none;
+}
+
+.contacto-taly .taly-pixel {
+  width: 68px;
+}
+
+/* ---------- Interruptor de tres posiciones ---------- */
+
+/* Lo primero dentro del marco, justo debajo de Taly: se lee como "esto es
+   lo que le cambia la cara". */
+.contacto-switch {
+  --ancho-op: calc((100% - 8px) / 3);
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0 0 20px;
+  padding: 4px;
+  border: 1.5px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.contacto-switch-pomo {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: var(--ancho-op);
+  border-radius: 999px;
+  background: var(--estado);
+  box-shadow: 0 6px 14px -6px color-mix(in srgb, var(--estado) 70%, transparent);
+  transform: translateX(calc(var(--indice, 0) * 100%));
+  transition:
+    transform 0.42s cubic-bezier(0.34, 1.35, 0.64, 1),
+    background-color 0.3s var(--ease-out, ease-out),
+    box-shadow 0.3s var(--ease-out, ease-out);
+}
+
+.contacto-switch-op {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 40px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font: 700 13px var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    color 0.25s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+.contacto-switch-op svg {
+  flex-shrink: 0;
+}
+
+.contacto-switch-op--activa {
+  color: var(--estado-tinta);
+}
+
+.contacto-switch-op:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.contacto-switch-op:disabled {
+  cursor: default;
+}
+
+.contacto-switch-op:focus-visible {
+  outline: 2px solid var(--estado);
+  outline-offset: 2px;
+}
+
+/* ---------- Cabeza ---------- */
+
+.contacto-cabeza {
+  animation: contacto-texto 0.3s var(--ease-out, ease-out);
+}
+
+@keyframes contacto-texto {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.contacto-titulo {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--estado-texto);
+  transition: color 0.3s var(--ease-out, ease-out);
+}
+
+.contacto-ayuda {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+/* ---------- Campos ---------- */
+
+.contacto-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.contacto-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contacto-campo--entra {
+  animation: contacto-texto 0.3s var(--ease-out, ease-out);
+}
+
+.contacto-etiqueta {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.contacto-campo input,
+.contacto-campo textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--fonts-color-primary, #f0f0f0);
+  /* 16px: por debajo, Safari en iPhone hace zoom al enfocar. */
+  font: 600 16px var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  line-height: 1.45;
+  outline: none;
+  transition:
+    border-color 0.2s var(--ease-out, ease-out),
+    box-shadow 0.2s var(--ease-out, ease-out);
+}
+
+.contacto-campo textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.contacto-campo input::placeholder,
+.contacto-campo textarea::placeholder {
+  color: rgb(var(--tinte) / calc(0.32 * var(--tinte-fuerza)));
+}
+
+.contacto-campo input:focus-visible,
+.contacto-campo textarea:focus-visible {
+  border-color: var(--estado);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--estado) 22%, transparent);
+}
+
+.contacto-campo textarea[aria-invalid='true'] {
+  border-color: var(--peligro-texto);
+}
+
+.contacto-error {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--peligro-texto);
+}
+
+/* ---------- Botón ---------- */
+
+.contacto-enviar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  margin-top: 4px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--estado);
+  color: var(--estado-tinta);
+  font: 700 15px var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  cursor: pointer;
+  transition:
+    background-color 0.3s var(--ease-out, ease-out),
+    color 0.3s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out),
+    filter 0.18s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .contacto-enviar:hover {
+    filter: brightness(1.06);
+  }
+}
+
+.contacto-enviar:active {
+  transform: scale(0.97);
+}
+
+.contacto-enviar:focus-visible {
+  outline: 2px solid var(--estado);
+  outline-offset: 3px;
+}
+
+.contacto-enviar--suave {
+  align-self: flex-start;
+  margin-top: 14px;
+  border: 1.5px solid color-mix(in srgb, var(--estado) 60%, transparent);
+  background: transparent;
+  color: var(--estado-texto);
+}
+
+/* ---------- Enviado ---------- */
+
+.contacto-enviado {
+  display: flex;
+  flex-direction: column;
+  animation: contacto-texto 0.35s var(--ease-out, ease-out);
+}
+
+@media (max-width: 360px) {
+  .contacto {
+    padding-inline: 14px;
+  }
+
+  .contacto-switch-op {
+    gap: 4px;
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .contacto,
+  .contacto *,
+  .contacto-switch-pomo {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+/* ---------- De día ----------
+   Los rellenos (marco, pomo, botón) siguen siendo mostaza, menta y coral;
+   lo que cambia es el color como LETRA (el título), que necesita su versión
+   oscura para leerse sobre crema, y los huecos hundidos, que de día son un
+   velo de tinta y no de negro. */
+:root[data-tema='claro'] .contacto {
+  --estado-texto: #8a5d00;
+}
+
+:root[data-tema='claro'] .contacto--bien {
+  --estado-texto: #00756a;
+}
+
+:root[data-tema='claro'] .contacto--queja {
+  --estado-texto: #b93a2b;
+}
+
+:root[data-tema='claro'] .contacto-switch,
+:root[data-tema='claro'] .contacto-campo input,
+:root[data-tema='claro'] .contacto-campo textarea {
+  background: rgb(var(--tinte) / 0.045);
+}

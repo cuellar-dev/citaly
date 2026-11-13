@@ -8,12 +8,12 @@
      antes y muere exactamente en el fondo de la app, así el header deja de
      tener un corte y se funde con la página. Por eso ya no hay border-bottom:
      el degradado hace ese trabajo sin dibujar una raya. */
-  background: linear-gradient(180deg, #161918 0%, #141716 58%, #121413 100%);
+  background: linear-gradient(180deg, var(--superficie-honda) 0%, var(--superficie-honda) 58%, var(--background-color) 100%);
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 5px 3px #121413;
+  box-shadow: 0 5px 3px var(--background-color);
 }
 
 .app-header-inner {
@@ -76,7 +76,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .app-header-boton:hover {
-    background: rgba(240, 240, 240, 0.08);
+    background: rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
   }
 }
 
@@ -86,7 +86,7 @@
 
 .app-header-boton[aria-expanded='true'] {
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 18%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .app-header-boton:focus-visible {
@@ -125,7 +125,7 @@
   padding: 0 5px;
   box-sizing: border-box;
   border-radius: 999px;
-  box-shadow: 0 0 0 2px #151817;
+  box-shadow: 0 0 0 2px var(--superficie-honda);
   background: var(--yellow-color, #ffd166);
   color: var(--fonts-color-secondary, #121413);
   font-family: var(--font-familyPrincipal);
@@ -157,7 +157,7 @@
   padding: 0 5px;
   box-sizing: border-box;
   border-radius: 999px;
-  box-shadow: 0 0 0 2px #151817;
+  box-shadow: 0 0 0 2px var(--superficie-honda);
   background: var(--yellow-color, #ffd166);
   color: var(--fonts-color-secondary, #121413);
   font-family: var(--font-familyPrincipal);

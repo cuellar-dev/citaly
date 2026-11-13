@@ -1,0 +1,277 @@
+/* Ayuda: preguntas frecuentes y formulario de contacto. */
+
+.ayuda {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 560px;
+  min-height: calc(100dvh - 90px);
+  margin-inline: auto;
+  padding: 0 18px 48px;
+  background: var(--background-color, #121413);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+/* ---------- Barra ---------- */
+
+.ayuda-barra {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-inline: -18px;
+  padding: max(14px, env(safe-area-inset-top)) 18px 12px;
+  background: linear-gradient(to bottom, var(--background-color, #121413) 70%, transparent);
+}
+
+.ayuda-volver {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  color: var(--fonts-color-primary, #f0f0f0);
+  cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ayuda-volver:hover {
+    background: rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  }
+}
+
+.ayuda-volver:active {
+  transform: scale(0.94);
+}
+
+.ayuda-volver:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+.ayuda-barra-titulo {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Héroe ---------- */
+
+.ayuda-heroe {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 6px 0 24px;
+}
+
+.ayuda-taly {
+  flex-shrink: 0;
+  width: 108px;
+  /* Ladea la cabeza a un lado y al otro, despacio: el gesto de pensar. El
+     eje está en las patas para que se balancee y no flote. */
+  transform-origin: 50% 85%;
+  animation: ayuda-ladeo 3.6s var(--ease-in-out, ease-in-out) infinite;
+}
+
+.ayuda-taly .taly {
+  max-width: 108px !important;
+}
+
+@keyframes ayuda-ladeo {
+
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-6deg);
+  }
+
+  55% {
+    transform: rotate(4deg);
+  }
+
+  75% {
+    transform: rotate(0deg);
+  }
+}
+
+.ayuda-titulo {
+  margin: 6px 0 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.65rem;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+/* ---------- Preguntas ---------- */
+
+.faq {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.faq-item {
+  border: 1px solid rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+  border-radius: 16px;
+  background: var(--background-color-secondary, #1e2221);
+  transition:
+    border-color 0.25s var(--ease-out, ease-out),
+    background-color 0.25s var(--ease-out, ease-out);
+}
+
+.faq-item--abierta {
+  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 35%, transparent);
+}
+
+.faq-pregunta-titulo {
+  margin: 0;
+  font: inherit;
+}
+
+.faq-pregunta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  min-height: 56px;
+  padding: 14px 14px 14px 16px;
+  border: 0;
+  border-radius: 16px;
+  background: none;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font: 700 14.5px var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+.faq-pregunta:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: -2px;
+}
+
+.faq-mas {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  color: var(--primary-texto, #00c2ad);
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1),
+    background-color 0.25s var(--ease-out, ease-out),
+    color 0.25s var(--ease-out, ease-out);
+}
+
+/* El + gira hasta ser una ×: la misma pieza dice "abrir" y "cerrar". */
+.faq-item--abierta .faq-mas {
+  transform: rotate(135deg);
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.faq-respuesta {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.32s var(--ease-out, ease-out);
+}
+
+.faq-item--abierta .faq-respuesta {
+  grid-template-rows: 1fr;
+}
+
+.faq-respuesta-dentro {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.faq-respuesta p {
+  margin: 0;
+  padding: 0 16px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.2s var(--ease-out, ease-out),
+    transform 0.25s var(--ease-out, ease-out);
+}
+
+.faq-item--abierta .faq-respuesta p {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.08s;
+}
+
+/* ---------- Contacto ---------- */
+
+.ayuda-contacto {
+  margin-top: 40px;
+}
+
+.ayuda-contacto-titulo {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.ayuda-contacto-texto {
+  margin: 6px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+@media (max-width: 380px) {
+  .ayuda {
+    padding-inline: 12px;
+  }
+
+  .ayuda-barra {
+    margin-inline: -12px;
+    padding-inline: 12px;
+  }
+
+  .ayuda-taly {
+    width: 88px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ayuda-taly {
+    animation: none;
+  }
+
+  .faq-respuesta,
+  .faq-respuesta p,
+  .faq-mas {
+    transition-duration: 0.01ms;
+    transition-delay: 0s;
+  }
+}

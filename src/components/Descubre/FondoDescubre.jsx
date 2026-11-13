@@ -92,14 +92,14 @@ function FondoDescubre() {
           {/* El cielo: apenas más claro arriba y se funde con el fondo de la
               app, para que las ramas negras se lean sin encender la pantalla. */}
           <linearGradient id="fondo-descubre-cielo" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#17241f" />
-            <stop offset="0.34" stopColor="#141b19" />
-            <stop offset="0.52" stopColor="#121413" />
-            <stop offset="1" stopColor="#121413" />
+            <stop offset="0" stopColor="var(--fd-cielo-1, #17241f)" />
+            <stop offset="0.34" stopColor="var(--fd-cielo-2, #141b19)" />
+            <stop offset="0.52" stopColor="var(--background-color)" />
+            <stop offset="1" stopColor="var(--background-color)" />
           </linearGradient>
           <radialGradient id="fondo-descubre-halo" cx="0.42" cy="0.2" r="0.55">
-            <stop offset="0" stopColor="#1f4942" stopOpacity="0.4" />
-            <stop offset="1" stopColor="#1f4942" stopOpacity="0" />
+            <stop offset="0" stopColor="var(--fd-halo, #1f4942)" stopOpacity="0.4" />
+            <stop offset="1" stopColor="var(--fd-halo, #1f4942)" stopOpacity="0" />
           </radialGradient>
         </defs>
 
@@ -107,7 +107,7 @@ function FondoDescubre() {
         <rect width="400" height="820" fill="url(#fondo-descubre-halo)" />
 
         {/* Estrellitas: puntitos en el cielo. */}
-        <g fill="#BDF4E8" fillOpacity="0.55">
+        <g fill="var(--fd-estrella, #BDF4E8)" fillOpacity="0.55">
           {ESTRELLAS.map(([x, y, r]) => (
             <circle key={`${x}-${y}`} cx={x} cy={y} r={r} />
           ))}
@@ -116,7 +116,7 @@ function FondoDescubre() {
         {/* Nubes de plumón, a tinta clara. */}
         <g filter="url(#fondo-descubre-pulso)" strokeLinejoin="round">
           {NUBES.map((d) => (
-            <path key={d} d={d} fill="#BDF4E8" fillOpacity="0.07" stroke="#BDF4E8" strokeOpacity="0.5" strokeWidth="2.4" />
+            <path key={d} d={d} fill="var(--fd-nube, #BDF4E8)" fillOpacity="0.07" stroke="var(--fd-nube, #BDF4E8)" strokeOpacity="0.5" strokeWidth="2.4" />
           ))}
         </g>
 
@@ -130,7 +130,7 @@ function FondoDescubre() {
         {/* El árbol, en primer plano. Silueta casi negra + un filo de luz. */}
         <g filter="url(#fondo-descubre-pulso)" fill="none" strokeLinecap="round" strokeLinejoin="round">
           {RAMAS.map((r) => (
-            <path key={r.d} d={r.d} stroke="#090f0e" strokeWidth={r.w} />
+            <path key={r.d} d={r.d} stroke="var(--fd-arbol, #090f0e)" strokeWidth={r.w} />
           ))}
           {RAMAS_LUZ.map((d) => (
             <path key={d} d={d} stroke="#2AA795" strokeOpacity="0.35" strokeWidth="1.6" transform="translate(-1.5 -1.5)" />

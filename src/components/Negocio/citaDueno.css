@@ -21,13 +21,13 @@
 }
 
 .cita-dueno--abierta {
-  background: rgba(240, 240, 240, 0.035);
+  background: rgb(var(--tinte) / calc(0.035 * var(--tinte-fuerza)));
 }
 
 .cita-dueno--destacada {
   background:
     radial-gradient(120% 120% at 0% 50%, color-mix(in srgb, var(--primary-color, #00c2ad) 13%, transparent) 0%, transparent 70%),
-    rgba(240, 240, 240, 0.02);
+    rgb(var(--tinte) / calc(0.02 * var(--tinte-fuerza)));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--primary-color, #00c2ad) 22%, transparent);
 }
 
@@ -178,7 +178,7 @@
 }
 
 .cita-dueno--atendida .cita-dueno-estado {
-  color: color-mix(in srgb, var(--primary-color, #00c2ad) 70%, transparent);
+  color: color-mix(in srgb, var(--primary-texto, #00c2ad) 70%, transparent);
 }
 
 .cita-dueno-flecha {
@@ -209,7 +209,7 @@
 .cita-dueno-rapida--no {
   border: 1px solid color-mix(in srgb, var(--close-color, #c53f3f) 40%, transparent);
   background: color-mix(in srgb, var(--close-color, #c53f3f) 10%, transparent);
-  color: #e06a6a;
+  color: var(--peligro-texto);
 }
 
 .cita-dueno-rapida--si {
@@ -261,7 +261,7 @@
 }
 
 .cita-dueno-precio {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 14px !important;
 }
@@ -280,7 +280,7 @@
   min-height: 36px;
   padding: 0 12px;
   border-radius: 999px;
-  border: 1px solid rgba(240, 240, 240, 0.1);
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary, #f0f0f0);
   font-size: 12.5px;
   font-weight: 700;

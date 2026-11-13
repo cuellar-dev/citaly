@@ -13,7 +13,7 @@
   overflow: hidden;
   border-radius: 26px;
   /* La misma sombra que llevaba .heroe-local-link, ahora en el viewport. */
-  box-shadow: 0 22px 46px -22px rgba(0, 0, 0, 0.95);
+  box-shadow: 0 22px 46px -22px rgb(var(--sombra) / calc(0.95 * var(--sombra-alfa)));
 }
 
 .carrusel-heroe-pista {
@@ -51,7 +51,7 @@
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: rgba(240, 240, 240, 0.28);
+  background: rgb(var(--tinte) / calc(0.28 * var(--tinte-fuerza)));
   cursor: pointer;
   transition: width 0.3s ease, background 0.3s ease;
 }

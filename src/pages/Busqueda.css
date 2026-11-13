@@ -16,7 +16,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -42,7 +42,7 @@
   place-items: center;
   width: 38px;
   height: 38px;
-  border: 1px solid rgba(240, 240, 240, 0.09);
+  border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   border-radius: 50%;
   background: var(--background-color-secondary, #1e2221);
   color: var(--fonts-color-primary, #f0f0f0);
@@ -88,10 +88,10 @@
   gap: 9px;
   min-height: 50px;
   padding: 0 8px 0 14px;
-  border: 1px solid rgba(240, 240, 240, 0.1);
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   border-radius: 16px;
   background: var(--background-color-secondary, #1e2221);
-  box-shadow: 0 10px 26px -16px rgba(0, 0, 0, 0.9);
+  box-shadow: 0 10px 26px -16px rgb(var(--sombra) / calc(0.9 * var(--sombra-alfa)));
 }
 
 .busqueda-barra:focus-within {
@@ -100,7 +100,7 @@
 
 .busqueda-barra-lupa {
   flex-shrink: 0;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .busqueda-barra input {
@@ -125,7 +125,7 @@
   height: 26px;
   border: 0;
   border-radius: 50%;
-  background: rgba(240, 240, 240, 0.08);
+  background: rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary-weak, #bdbaba);
   cursor: pointer;
 }
@@ -136,7 +136,7 @@
   place-items: center;
   width: 36px;
   height: 36px;
-  border: 1px solid rgba(240, 240, 240, 0.1);
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   border-radius: 12px;
   background: var(--background-color, #121413);
   color: var(--fonts-color-primary, #f0f0f0);
@@ -178,7 +178,7 @@
   border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 32%, transparent);
   border-radius: 999px;
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 11%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
   font-size: 11.5px;
   font-weight: 700;
@@ -187,7 +187,7 @@
 
 .busqueda-chip--limpiar {
   border-style: dashed;
-  border-color: rgba(240, 240, 240, 0.16);
+  border-color: rgb(var(--tinte) / calc(0.16 * var(--tinte-fuerza)));
   background: transparent;
   color: var(--fonts-color-primary-weak, #bdbaba);
 }
@@ -233,7 +233,7 @@
   padding: 0 9px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 13%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 14px;
   font-weight: 600;
@@ -282,7 +282,7 @@
 }
 
 .carrusel-locales-hint svg {
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .carrusel-locales-navigation {
@@ -307,7 +307,7 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: rgba(240, 240, 240, 0.18);
+  background: rgb(var(--tinte) / calc(0.18 * var(--tinte-fuerza)));
   transition: background-color 0.25s ease, width 0.25s ease;
 }
 
@@ -361,7 +361,7 @@
   gap: 11px;
   width: 268px;
   padding: 9px 11px 9px 9px;
-  border: 1px solid rgba(240, 240, 240, 0.08);
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
   border-radius: 16px;
   background: var(--background-color-secondary, #1e2221);
   color: var(--fonts-color-primary, #f0f0f0);
@@ -404,7 +404,7 @@
   height: 8px;
   border-radius: 50%;
   background: var(--primary-color, #00c2ad);
-  box-shadow: 0 0 0 2px rgba(10, 12, 11, 0.8);
+  box-shadow: 0 0 0 2px rgb(var(--sombra) / calc(0.8 * var(--sombra-alfa)));
 }
 
 .local-horizontal-info {
@@ -446,7 +446,7 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  color: var(--yellow-color, #ffd166);
+  color: var(--yellow-texto, #ffd166);
   font-weight: 700;
 }
 
@@ -502,7 +502,7 @@
 /* El contador de las filas de abajo pesa menos que el de los resultados:
    ahí es un dato de apoyo, no la respuesta a lo que buscaste. */
 .busqueda-cuenta--suave {
-  background: rgba(240, 240, 240, 0.06);
+  background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
   color: var(--fonts-color-primary-weak, #bdbaba);
 }
 

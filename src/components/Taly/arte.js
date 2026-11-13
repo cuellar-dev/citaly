@@ -227,6 +227,15 @@ export const OBJETOS = {
     { p: [7, 3], ch: '▖', c: 'm' },
     { p: [7, 12], ch: '▗', c: 'm' },
   ],
+  // Duda: una interrogacion en mostaza flotando delante de la cabeza. Hecha
+  // con cuartos de celda: arco arriba, palito y punto.
+  interrogacion: [
+    { p: [0, 13], ch: '▞', c: 'm' },
+    { p: [0, 14], ch: '▚', c: 'm' },
+    { p: [1, 13], ch: '▗', c: 'm' },
+    { p: [1, 14], ch: '▘', c: 'm' },
+    { p: [2, 13], ch: '▗', c: 'm' },
+  ],
   // Dormido: burbujitas de sueno.
   sueno: [
     { p: [2, 13], ch: '▖', c: 'l' },
@@ -291,6 +300,18 @@ export const ESCENAS = {
     { pose: 'reposo', bob: 0, ms: 240 },
     { pose: 'canto', bob: -4, ms: 320, objetos: ['notas'] },
     { pose: 'reposo', bob: 0, ms: 800 },
+  ],
+  // Duda: mira atras, mira abajo, se lo piensa. La interrogacion aparece y
+  // desaparece para que se lea como un pensamiento y no como un cartel fijo.
+  duda: [
+    { pose: 'reposo', bob: 0, ms: 700 },
+    { pose: 'mira-atras', bob: 0, ms: 520, objetos: ['interrogacion'] },
+    { pose: 'mira-atras', bob: -2, ms: 520, objetos: ['interrogacion'] },
+    { pose: 'parpadeo', bob: 0, ms: 130, objetos: ['interrogacion'] },
+    { pose: 'mira-abajo', bob: 0, ms: 760, objetos: ['interrogacion'] },
+    { pose: 'mira-abajo', bob: 1, ms: 420, objetos: ['interrogacion'] },
+    { pose: 'reposo', bob: 0, ms: 460 },
+    { pose: 'parpadeo', bob: 0, ms: 130 },
   ],
   // Mensajero: te trae la cita en el pico.
   mensajero: [

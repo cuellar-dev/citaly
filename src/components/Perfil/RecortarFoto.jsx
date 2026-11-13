@@ -112,7 +112,7 @@ function RecortarFoto({ src, onCancelar, onListo }) {
   }
 
   return createPortal(
-    <div className="recorte" role="dialog" aria-modal="true" aria-labelledby="recorte-titulo">
+    <div className="recorte tema-oscuro-fijo" role="dialog" aria-modal="true" aria-labelledby="recorte-titulo">
       <header className="recorte-barra">
         <button type="button" onClick={onCancelar}>
           Cancelar

@@ -87,6 +87,6 @@
 
 .taly-momento-boton--suave {
   background-color: transparent;
-  color: var(--primary-color);
+  color: var(--primary-texto);
   border: 1px solid var(--primary-color-weak);
 }

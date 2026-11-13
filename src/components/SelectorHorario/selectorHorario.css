@@ -9,7 +9,7 @@
 
 .selector-horario-item {
   min-height: 42px;
-  border: 1px solid rgba(240, 240, 240, 0.09);
+  border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   border-radius: 12px;
   background: var(--background-color, #121413);
   color: var(--fonts-color-primary, #f0f0f0);
@@ -53,7 +53,7 @@
 .selector-horario-item--ocupada {
   border-color: color-mix(in srgb, var(--yellow-color, #ffd166) 32%, transparent);
   background: color-mix(in srgb, var(--yellow-color, #ffd166) 8%, transparent);
-  color: color-mix(in srgb, var(--yellow-color, #ffd166) 75%, transparent);
+  color: color-mix(in srgb, var(--yellow-texto, #ffd166) 75%, transparent);
   cursor: not-allowed;
 }
 

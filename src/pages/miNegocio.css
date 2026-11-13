@@ -73,7 +73,7 @@
   border: 1px solid color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent);
   border-radius: 999px;
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
   font-size: 12px;
   font-weight: 700;
@@ -94,7 +94,7 @@
 .negocio-citas-contador strong {
   font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: 16px;
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
 }
 
 .negocio-citas-lista {
@@ -152,8 +152,8 @@
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(240, 240, 240, 0.12) 12%,
-    rgba(240, 240, 240, 0.12) 88%,
+    rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza))) 12%,
+    rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza))) 88%,
     transparent 100%
   );
 }
@@ -171,7 +171,7 @@
   gap: 12px;
   padding: 30px 20px;
   border-radius: 18px;
-  border: 1px dashed rgba(240, 240, 240, 0.1);
+  border: 1px dashed rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   text-align: center;
 }
 
@@ -186,7 +186,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  box-shadow: inset -9px -3px 0 0 #ece9df;
+  box-shadow: inset -9px -3px 0 0 var(--luna);
   filter: drop-shadow(0 0 10px rgba(127, 216, 206, 0.3));
 }
 
@@ -236,8 +236,8 @@
     overflow: auto;
     padding: 16px 16px 20px;
     border-radius: 24px;
-    border: 1px solid rgba(240, 240, 240, 0.06);
-    background: linear-gradient(165deg, #1a1f1e 0%, #151918 100%);
+    border: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+    background: linear-gradient(165deg, var(--superficie-alta) 0%, var(--superficie-honda) 100%);
   }
 
   .negocio-tablero > .ficha-local {
@@ -268,7 +268,7 @@
   border: 0;
   border-radius: 999px;
   background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, transparent);
-  color: var(--primary-color, #00c2ad);
+  color: var(--primary-texto, #00c2ad);
   font-family: inherit;
   font-size: 11.5px;
   font-weight: 700;
@@ -293,4 +293,8 @@
 .negocio-citas-hoy:focus-visible {
   outline: 2px solid var(--primary-color, #00c2ad);
   outline-offset: 2px;
+}
+
+:root[data-tema='claro'] .negocio-citas-vacio-luna {
+  filter: none;
 }

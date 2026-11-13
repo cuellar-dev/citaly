@@ -18,8 +18,8 @@
   align-items: stretch;
   min-height: 68px;
   border-radius: 16px;
-  background: linear-gradient(165deg, #1d2221 0%, #181c1b 100%);
-  border: 1px solid rgba(240, 240, 240, 0.06);
+  background: var(--tarjeta-fondo);
+  border: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
   -webkit-mask:
     radial-gradient(circle var(--muesca) at calc(100% - var(--talon)) 0, #0000 98%, #000) top / 100% 51% no-repeat,
     radial-gradient(circle var(--muesca) at calc(100% - var(--talon)) 100%, #0000 98%, #000) bottom / 100% 51% no-repeat;
@@ -61,7 +61,7 @@
   align-self: stretch;
   width: 0;
   margin: 10px 0;
-  border-left: 2px dashed rgba(240, 240, 240, 0.1);
+  border-left: 2px dashed rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
 }
 
 .local-servicio-talon {
@@ -78,7 +78,7 @@
   font-size: 15px;
   font-weight: 700;
   line-height: 1.1;
-  color: var(--yellow-color);
+  color: var(--yellow-texto);
 }
 
 .local-servicio-mas {
@@ -123,7 +123,7 @@
   margin: 0;
   padding: 16px;
   border-radius: 16px;
-  border: 1px dashed rgba(240, 240, 240, 0.12);
+  border: 1px dashed rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
   font-family: var(--font-familyPrincipal);
   font-size: 14px;
   line-height: 1.5;
