@@ -117,7 +117,7 @@ function TarjetaLocalDueno({ local }) {
   }
 
   return (
-    <Link className="perfil-local" to="/negocio" aria-label={`Abrir ${local.localName} en Mi Negocio`}>
+    <Link className="perfil-local tema-oscuro-fijo" to="/negocio" aria-label={`Abrir ${local.localName} en Mi Negocio`}>
       <span className="perfil-local-foto" style={{ backgroundImage: `url(${fotoAncho(local.url, 720)})` }} />
       <span className="perfil-local-velo" />
       <span className="perfil-local-cuerpo">

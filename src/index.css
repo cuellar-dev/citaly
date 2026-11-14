@@ -94,6 +94,17 @@
   --neutro-apagado: #3a403e;
 }
 
+/* El fondo de la página de verdad, aunque se esté dentro de una zona
+   .tema-oscuro-fijo: lo usan los bordes que funden una cabecera oscura con
+   la página (la nube de plumón), que deben ser del color de lo que viene
+   debajo y no del de la cabecera. */
+:root {
+  --fondo-pagina: #121413;
+}
+:root[data-tema='claro'] {
+  --fondo-pagina: #f6f2ea;
+}
+
 :root[data-tema='claro'] {
   color-scheme: light;
 
@@ -220,4 +231,12 @@ body{
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* Estrellas de valoración en claro: relleno mostaza de verdad con el filo
+   tostado. Con fill="currentColor" el relleno tomaba el color de TEXTO
+   mostaza (oscuro, para leerse) y salían estrellas marrones. Vale para todas
+   las estrellas rellenas de la app a la vez. */
+:root[data-tema='claro'] svg.lucide-star[fill='currentColor'] {
+  fill: var(--yellow-color);
 }

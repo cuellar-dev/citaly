@@ -304,3 +304,8 @@ button.cabecera-perfil-foto:active {
     font-size: 26px;
   }
 }
+
+.cabecera-perfil > .tinta-nube {
+  position: absolute;
+  z-index: 2;
+}

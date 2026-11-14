@@ -124,3 +124,17 @@
   --nav-color-negocio: var(--rosa-texto);
   box-shadow: 0 -6px 20px rgb(var(--sombra) / 0.08);
 }
+
+/* De día el brillo de la línea superior quedaba como un bloque oscuro
+   saliendo de la barra, y la píldora al 20 % se volvía gris sucio. */
+:root[data-tema='claro'] .navbar {
+  border-top: 1px solid rgb(var(--tinte) / 0.07);
+}
+:root[data-tema='claro'] .navbar-indicador-luz {
+  height: 2.5px;
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--nav-color-activo) 30%, transparent);
+}
+:root[data-tema='claro'] .navbar-indicador-pill {
+  background-color: color-mix(in srgb, var(--nav-color-activo) 13%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--nav-color-activo) 22%, transparent);
+}

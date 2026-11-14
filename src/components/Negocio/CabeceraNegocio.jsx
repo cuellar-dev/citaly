@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { Pencil, QrCode, Star } from 'lucide-react'
 import { fotoAncho, franjaTurno } from '../../utils/fichaLocal.js'
 import TimelineTurno from './TimelineTurno.jsx'
+import { NubeBorde } from '../DetalleLocal/Tinta.jsx'
 import './cabeceraNegocio.css'
 
 /* Bloque de arriba: el local y el timeline del turno de hoy. */
@@ -29,7 +30,7 @@ function CabeceraNegocio({
 
   return (
     <header className="cabecera-negocio">
-      <div className="cabecera-negocio-identidad" style={{ backgroundImage: `url(${url})` }}>
+      <div className="cabecera-negocio-identidad tema-oscuro-fijo" style={{ backgroundImage: `url(${url})` }}>
         <div className="cabecera-negocio-barra">
           {fotos.length > 0 && (
             <button
@@ -99,6 +100,7 @@ function CabeceraNegocio({
             Recibiendo reservas
           </p>
         )}
+        <NubeBorde />
       </div>
 
       <div className="cabecera-negocio-turno">

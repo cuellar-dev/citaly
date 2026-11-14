@@ -358,3 +358,19 @@
   background: var(--yellow-color, #ffd166);
   box-shadow: none;
 }
+
+/* La nube de plumón tapa el pie de la foto (ver NubeBorde). El "> *" de
+   arriba la volvería relativa: se devuelve a su sitio. */
+.cabecera-negocio-identidad > .tinta-nube {
+  position: absolute;
+  z-index: 2;
+}
+.cabecera-negocio-identidad {
+  padding-bottom: 34px;
+}
+
+/* .tema-oscuro-fijo cambia las variables, pero el color heredado ya venía
+   calculado desde .cabecera-negocio: se vuelve a pedir aquí dentro. */
+.cabecera-negocio-identidad {
+  color: var(--fonts-color-primary);
+}

@@ -60,7 +60,7 @@ export function NubeBorde() {
     <svg className="tinta-nube" viewBox="0 0 360 40" preserveAspectRatio="none" aria-hidden="true" focusable="false">
       {defs}
       <g filter={filtro}>
-        <path d={`${borde} L360 40 L0 40 Z`} fill="var(--background-color)" />
+        <path d={`${borde} L360 40 L0 40 Z`} fill="var(--fondo-pagina, var(--background-color))" />
         <path d={borde} fill="none" stroke="var(--tinta-trazo)" strokeWidth="1.2" strokeLinecap="round" />
       </g>
     </svg>

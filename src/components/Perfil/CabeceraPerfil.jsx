@@ -1,5 +1,6 @@
 import { Mail, Pencil, Phone } from 'lucide-react'
 import MarcoPerfil from './MarcoPerfil.jsx'
+import { NubeBorde } from '../DetalleLocal/Tinta.jsx'
 import { digitos, fotoCuadrada, iniciales } from '../../utils/fichaLocal.js'
 import './cabeceraPerfil.css'
 
@@ -76,7 +77,7 @@ function CabeceraPerfil({ nombre, usuario, foto, correo, telefono, ciudad, onEdi
 
   return (
     <header
-      className={`cabecera-perfil${foto ? ' cabecera-perfil--con-foto' : ''}`}
+      className={`cabecera-perfil${foto ? ' cabecera-perfil--con-foto tema-oscuro-fijo' : ''}`}
       style={fondo ? { '--perfil-fondo': `url("${fondo}")` } : undefined}
     >
       <MarcoPerfil />
@@ -140,6 +141,9 @@ function CabeceraPerfil({ nombre, usuario, foto, correo, telefono, ciudad, onEdi
           </li>
         )}
       </ul>
+      {/* Con foto la cabecera es de noche también en claro (texto blanco
+          sobre foto); la nube la deshace en el papel de la página. */}
+      {foto && <NubeBorde />}
     </header>
   )
 }

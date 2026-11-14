@@ -224,3 +224,26 @@
 :root[data-tema='claro'] .menu-velo {
   background: rgba(27, 34, 32, 0.38);
 }
+
+/* ---------- Modo claro: madera de día ----------
+   El mismo cartel, pero de roble claro en vez de nogal: de día la madera
+   recibe luz. Se mantiene en la familia cálida (no se va a beige ni a gris),
+   la letra pasa a marrón tinta para leerse y los iconos a un tostado. Una
+   sombra marrón corta lo separa del papel. */
+:root[data-tema='claro'] .menu-tablas {
+  --madera: #c99d69;
+  --madera-filo: #9b6d3e;
+  --madera-veta: #a87a4a;
+}
+
+:root[data-tema='claro'] .menu-tabla {
+  color: #34210f;
+}
+
+:root[data-tema='claro'] .menu-tabla-icono {
+  color: #6f4318;
+}
+
+:root[data-tema='claro'] .menu-tabla-fondo {
+  filter: drop-shadow(0 4px 5px rgb(74 52 26 / 0.28));
+}
