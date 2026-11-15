@@ -33,7 +33,8 @@ Documentos relacionados:
 17. [Cómo probarlo y depurarlo](#17-cómo-probarlo-y-depurarlo)
 18. [Orden de trabajo y fases](#18-orden-de-trabajo-y-fases)
 19. [Decisiones que siguen abiertas](#19-decisiones-que-siguen-abiertas)
-20. [Glosario](#glosario)
+20. [Correcciones: cómo llegan los datos del backend sin romper el orden](#20-correcciones-cómo-llegan-los-datos-del-backend-sin-romper-el-orden)
+21. [Glosario](#glosario)
 
 ---
 
@@ -1198,7 +1199,8 @@ Recordatorio: `rating_cache` y `opiniones_count` en `locales` (ya previstas) son
 
 | Método y ruta | Qué devuelve / hace | Notas |
 | --- | --- | --- |
-| `GET /locales?provincia=…` | Locales candidatos, ya filtrados por provincia y `en_feed`, con `rating_cache`, `opiniones_count`, `repetidores_cache`, `fecha_alta`, y su exposición | El front construye el ranking |
+| `GET /locales/resumen?provincia=…` | **Resumen ligero** de los locales candidatos, ya filtrados por provincia y `en_feed`. Qué campos lleva exactamente: ver **sección 20** | El front construye el ranking |
+| `GET /locales/:id` | La ficha completa de **un** local | Solo al abrir la ficha (sección 20) |
 | `GET /categorias` | Categorías con `modo` y `en_feed` | Se puede cachear mucho tiempo |
 | `GET /ranking-stats` | `media_global`, `c_bayes` | Cambia poco: cachear |
 | `POST /eventos` | Recibe un lote de impresiones | Idempotente por `id` |
@@ -1289,12 +1291,214 @@ Ninguna bloquea empezar, pero algunas bloquean pasos concretos.
 
 ---
 
+## 20. Correcciones: cómo llegan los datos del backend sin romper el orden
+
+Esta sección se añadió después, a raíz de una duda real al leer el resto del documento. **Corrige y concreta** la sección 16 (endpoints) y la sección 4 (reparto backend/frontend). Si algo de aquí contradice lo anterior, **manda esto**.
+
+### 20.1 La duda
+
+> "No parece óptimo que el backend nos mande todos los locales de golpe. Pero si nos los manda por partes, puede pasar que un local que llega en el segundo envío merezca, según nuestra lógica, estar por encima de uno del primero. Y entonces habría que recolocar cosas que el usuario ya está viendo."
+
+La duda es correcta: **si se ordena por trozos, el orden sale mal.** Si el servidor manda los locales 1-20 y luego los 21-40, y entre los segundos hay uno que merecía ser el 3º, ya es tarde: el usuario ya vio la primera pantalla. Habría que meterlo por en medio (las tarjetas saltan y el usuario pierde el sitio) o dejarlo donde no le toca (el orden miente).
+
+### 20.2 La regla que lo resuelve
+
+> **Primero se ordena TODO. Después se trocea. Nunca al revés.**
+
+Lo que se pagina **no son los datos en bruto, es el resultado ya ordenado**. Quien ordena tiene que tener delante a **todos** los candidatos a la vez. Lo que cambia según la fase es **quién** ordena:
+
+| Fase | Quién ordena | Qué viaja al móvil |
+| --- | --- | --- |
+| **Fase 1** (ahora) | El móvil | Un **resumen ligero** de todos los candidatos, de una vez |
+| **Fase 2** (cientos de locales o promociones pagadas) | El servidor | El resultado **ya ordenado**, por partes |
+
+> 📖 **Paginar**: entregar una lista larga por partes ("páginas") en vez de entera. Bien hecho, ahorra datos. Mal hecho (paginar antes de ordenar), rompe el orden.
+
+### 20.3 Fase 1: mandarlo todo, pero ligero
+
+**El error no es mandar todos los locales: es mandarlos completos.** Hoy cada local de `locales.json` lleva dentro todos sus comentarios, todos sus servicios, sus profesionales, la galería entera… Eso sí pesa. Pero para **ordenar** y **pintar una tarjeta** solo hace falta una pequeña parte.
+
+#### Qué campos SÍ van en el resumen
+
+Son de dos tipos: los que necesita el **ranking** para ordenar y los que necesita la **tarjeta** para pintarse.
+
+| Campo | Para qué | Viene de |
+| --- | --- | --- |
+| `id` | Identificar el local | `locales.id` |
+| `nombre` | Tarjeta | `locales.nombre` |
+| `categoria` | Modo de consumo, diversidad, afinidad | `locales.categoria` |
+| `foto` | La portada de la tarjeta, **en tamaño miniatura** (ver 20.5) | `local_imagenes` donde `es_portada` |
+| `nota` | Nota bayesiana (ranking) y la estrella de la tarjeta | `locales.rating_cache` |
+| `opiniones` | Nota bayesiana y el "(4)" de la tarjeta | `locales.opiniones_count` |
+| `repetidores` | Calidad | `locales.repetidores_cache` |
+| `abre` / `cierra` / `dias` | Factor contexto (abierto ahora, cierra pronto) y el "Abierto · cierra en 2 h" | `local_horarios` en forma compacta |
+| `fechaAlta` | Hueco protegido de locales nuevos | `locales.fecha_alta` |
+| `ultimaVezTop` | Factor novedad | `local_exposicion.ultima_vez_top` |
+| `comodidades` | Los 2-3 iconos de la tarjeta (wifi, parking…). Solo los ids, máximo 3 | `local_amenidades` |
+| `precioDesde` | El "desde 250 CUP" de la tarjeta | **Precalculado**: el precio mínimo de sus servicios |
+| `frase` | El comentario destacado de la tarjeta: `{ texto, autor, foto }` | **Precalculado**: el comentario más entusiasta y corto |
+| `metros` / `lat` / `lng` | "Cerca de ti" | `locales` |
+
+Los campos **precalculados** son importantes. Hoy el front saca el precio "desde" recorriendo **todos** los servicios, y la frase destacada recorriendo **todos** los comentarios (`desdeTexto()` y `fraseDeLocal()` en `src/utils/descubre.js`). Si el backend no los precalcula, habría que mandar todos los servicios y comentarios solo para sacar un número y una frase. Lo correcto es que el backend calcule ambos **una vez**, cuando cambian (al crear o editar un servicio, al entrar una opinión), y los guarde en columnas de `locales`:
+
+- `precio_desde` (int)
+- `frase_destacada_texto`, `frase_destacada_autor`, `frase_destacada_foto` (o un JSON en una columna)
+
+#### Qué campos NO van en el resumen
+
+Se piden **solo cuando el usuario abre la ficha** de ese local (`GET /locales/:id`):
+
+| Campo | Por qué no |
+| --- | --- |
+| Todos los comentarios | Es lo que más pesa. La tarjeta solo usa uno (la `frase`) |
+| Lista de servicios | La tarjeta solo usa el precio mínimo (`precioDesde`) |
+| Profesionales | Solo hacen falta al reservar |
+| Galería de fotos completa | La tarjeta usa una (la portada) |
+| Descripción larga | Solo se lee en la ficha |
+| Teléfono, WhatsApp, dirección | Solo en la ficha |
+| Mesas y mapa de mesas | Solo al reservar con lugar |
+| Horarios detallados día a día | Basta la forma compacta (`abre`, `cierra`, `dias`). Si un local abre distinto según el día, se manda la excepción de **hoy** |
+
+#### Cuánto pesa
+
+Cada local resumido ocupa unos **300-400 bytes**. Viajando comprimido (ver 20.5):
+
+| Locales en la provincia | Sin comprimir | Comprimido (aprox.) |
+| --- | --- | --- |
+| 33 | ~12 KB | ~3 KB |
+| 500 | ~180 KB | ~30 KB |
+| 1.000 | ~350 KB | ~55 KB |
+
+Mil locales comprimidos pesan **menos que una sola foto**. Y no son "todos los locales del país": el servidor ya filtró por provincia y quitó las categorías que no van al feed (dentista, veterinaria). Por eso mandar el resumen completo **es la opción óptima** en la fase 1: un solo viaje, el móvil tiene a todos los candidatos y el orden sale perfecto.
+
+**¿Cuándo deja de servir?** Cuando una provincia pase de unos **1.500-2.000 locales candidatos**, o cuando entren promociones pagadas. Entonces se pasa a la fase 2.
+
+### 20.4 Fase 2: el servidor ordena todo y pagina el resultado
+
+Cuando el orden lo calcula el servidor, el proceso es este:
+
+```
+ móvil: GET /descubre
+          │
+          ▼
+ servidor: ① coge TODOS los candidatos de la provincia
+           ② construye el perfil del usuario y la semilla del día
+           ③ ordena la lista ENTERA (pasos 1 a 9 de este documento)
+           ④ guarda el orden como foto fija: ["cafe-luna","sara","itaka",…]
+           ⑤ devuelve la primera parte + un cursor
+          │
+          ▼
+ móvil: pinta la primera parte. Cuando el usuario baja…
+          │
+          ▼
+ móvil: GET /descubre?cursor=abc123
+          │
+          ▼
+ servidor: NO vuelve a ordenar. Lee la foto fija y devuelve lo siguiente.
+```
+
+Hay dos conceptos nuevos aquí.
+
+> 📖 **Snapshot (foto fija)**: guardar el orden calculado en un momento dado, como una simple lista de ids, para que **todas** las partes salgan de ese mismo orden.
+
+**Por qué hace falta la foto fija, si el orden ya es estable gracias a la semilla:** la semilla hace estable el *azar*, pero **los datos sí cambian** mientras el usuario mira. Un local cierra, entra una opinión nueva, cambia la exposición… Si el servidor reordenara en cada petición, un local podría pasar de la parte 1 a la parte 2 entre una petición y otra: el usuario lo vería **dos veces**, y otro local **desaparecería** sin llegar a salir. Con la foto fija, las partes encajan siempre.
+
+> 📖 **Cursor**: una "marca de página" que el servidor le da al móvil para indicar por dónde va. El móvil se la devuelve al pedir más y el servidor sigue exactamente desde ahí.
+
+**Por qué cursor y no `?pagina=2` u `?offset=20`:** el *offset* ("sáltate los 20 primeros y dame los siguientes") vuelve a contar desde el principio en cada petición. Si algo cambió entre medias, todo se desplaza y salen duplicados o huecos. El cursor apunta a una posición **dentro de la foto fija**, que no se mueve.
+
+> 📖 **Offset**: "desplazamiento". Una forma de paginar diciendo cuántos elementos saltarse. Simple, pero frágil cuando la lista cambia entre una página y otra.
+
+#### Trocear por bloques, no por número de locales
+
+Descubre **no es un scroll infinito** como Instagram. Por el diseño del reparto (Paso 6) son unos 5 bloques y unas 40-45 tarjetas en total. Así que el troceo natural no es "de 20 en 20", sino **por bloques**:
+
+| Petición | Qué devuelve | Por qué |
+| --- | --- | --- |
+| 1ª (`GET /descubre`) | Héroe + los 2 primeros bloques, con su resumen completo | Es lo que se ve al abrir: tiene que llegar en un solo viaje |
+| 2ª (`GET /descubre?cursor=…`) | El resto de bloques | Se pide cuando el usuario se acerca al tercer bloque, **un poco antes de llegar**, para que no vea huecos vacíos |
+
+Ejemplo de respuesta:
+
+```json
+{
+  "semilla": 1849302,
+  "bloques": [
+    { "id": "heroe", "titulo": null, "locales": [ { "id": "cafe-luna", "nombre": "Café Luna", "...": "resumen" } ] },
+    { "id": "antojo-1", "titulo": "Para comer y tomar algo", "locales": [ "..." ] },
+    { "id": "mejores", "titulo": "Mejor valorados", "locales": [ "..." ] }
+  ],
+  "cursor": "c_9f2a71",
+  "hayMas": true
+}
+```
+
+Cada local dentro de `locales` lleva **el mismo resumen** de la tabla 20.3 (los campos de la tarjeta). Los campos que solo usaba el ranking (`repetidores`, `ultimaVezTop`…) ya no hace falta mandarlos, porque el orden viene hecho.
+
+#### Cómo guarda la foto fija el backend
+
+- **Qué se guarda:** `(usuario_id o anonimo_id, semilla, lista_de_ids_ordenada, creado_en, expira_en)`. Una lista de ids pesa muy poco: 45 ids son menos de 1 KB.
+- **Dónde:** en una tabla normal con caducidad, o en una caché en memoria tipo Redis si ya la usáis.
+
+> 📖 **Redis**: una base de datos en memoria, muy rápida, pensada para guardar cosas temporales con fecha de caducidad. No es obligatoria: una tabla con columna `expira_en` y una tarea que borre lo caducado funciona igual de bien a esta escala.
+
+- **Cuánto dura:** unos **30 minutos**, o hasta que cambie el día (la semilla). Si el usuario vuelve después, se calcula un orden nuevo. No hace falta antes, y durar más haría que se vieran locales cerrados como si siguieran abiertos.
+- **El cursor:** basta con que sea el id de la foto fija más la posición (`"snap_7f3a:2"`), codificado para que no se pueda manipular fácilmente.
+
+### 20.5 Cómo lo hace el backend para que todo vaya óptimo
+
+Lista de comprobación para quien hace el servidor:
+
+**1. Elegir solo las columnas necesarias.** La consulta del resumen pide **solo** los campos de la tabla 20.3 (`SELECT id, nombre, categoria, …`), nunca `SELECT *`. Pedir columnas que no se usan obliga a la base de datos a leer y mandar datos de más.
+
+**2. No calcular nada pesado en la petición.** La nota, los repetidores, el precio "desde", la frase destacada y la exposición se leen **de columnas ya calculadas** (los cachés de la sección 15). Se recalculan cuando cambian los datos o en las tareas nocturnas, nunca mientras el usuario espera.
+
+**3. Evitar el problema N+1.** Al juntar los datos de cada local (portada, comodidades, horario), **no** se hace una consulta por local. Se hace **una** consulta por tabla para todos a la vez (`WHERE local_id IN (…)`) o con `JOIN`, y se juntan en el servidor.
+
+> 📖 **Problema N+1**: el error de hacer 1 consulta para traer N locales y luego N consultas más (una por local) para traer sus detalles. Con 500 locales serían 501 consultas en vez de 2 o 3. Es la causa más típica de que un endpoint vaya lento sin que se note en pruebas con pocos datos.
+
+**4. Comprimir la respuesta.** Activar **gzip o brotli** en el servidor. El JSON se comprime muchísimo (5 o 6 veces menos), porque repite mucho los mismos nombres de campo. Normalmente es una línea de configuración.
+
+> 📖 **gzip / brotli**: formatos de compresión que el navegador entiende solo, sin hacer nada en el código del front. El servidor comprime, el navegador descomprime. Brotli comprime algo más que gzip.
+
+**5. Dejar que el móvil reutilice lo que ya tiene.** Dos mecanismos estándar de HTTP:
+
+- **`Cache-Control: max-age=300`** en el resumen: durante 5 minutos el navegador ni siquiera vuelve a preguntar.
+- **`ETag`**: una huella de la respuesta. Cuando el móvil vuelve a preguntar, manda la huella que tiene; si nada cambió, el servidor contesta **`304 Not Modified`**, sin cuerpo, casi gratis.
+
+> 📖 **ETag**: una etiqueta que identifica una versión concreta de una respuesta (por ejemplo, un hash de su contenido o la fecha del último cambio). Sirve para preguntar "¿ha cambiado algo desde la última vez?" sin volver a descargarlo todo.
+
+> 📖 **304 Not Modified**: la respuesta del servidor que significa "lo que ya tienes sigue valiendo, úsalo". No lleva datos, así que es casi instantánea.
+
+En la fase 2, `GET /descubre` es personal y cambia con la hora, así que **no** se cachea en el navegador. Lo que sí se cachea es la foto fija en el servidor.
+
+**6. Fotos en tamaño miniatura.** La `foto` del resumen tiene que ser una URL **de una versión pequeña** de la portada (unos 400-600 px de ancho), no la original de 4.000 px. Las fotos pesan mil veces más que el JSON: es donde más se gana. Lo ideal es que el servidor genere las miniaturas al subir la foto, o que use un servicio que las sirva redimensionadas por URL.
+
+**7. Índices para las consultas del resumen.** Como mínimo, un índice por `(provincia, categoria)` en `locales`, para que el filtro de candidatos no recorra la tabla entera.
+
+### 20.6 Resumen en una tabla
+
+| | Fase 1 (ahora) | Fase 2 (más adelante) |
+| --- | --- | --- |
+| **Quién ordena** | El móvil | El servidor |
+| **Endpoint de Descubre** | `GET /locales/resumen?provincia=…` | `GET /descubre` y `GET /descubre?cursor=…` |
+| **Qué viaja** | Resumen ligero de **todos** los candidatos, una vez | El resultado ordenado, **por bloques** |
+| **Cómo se evita la reposición** | El móvil tiene a todos los candidatos antes de ordenar | El servidor ordena todo, guarda la foto fija y pagina **eso** |
+| **Ficha de un local** | `GET /locales/:id`, al abrirla | Igual |
+| **Caché** | `Cache-Control` + `ETag` en el resumen | Foto fija en el servidor, unos 30 min |
+| **Cuándo pasar a la siguiente** | Más de ~1.500 candidatos por provincia, o promociones pagadas | — |
+
+> **La regla de oro, una vez más:** nunca ordenar por trozos. Siempre ordenar todo y después trocear.
+
+---
+
 ## Glosario
 
 Todos los términos técnicos del documento, en orden alfabético.
 
 | Término | Qué significa | Para qué nos sirve |
 | --- | --- | --- |
+| **304 Not Modified** | Respuesta del servidor que significa "lo que tienes sigue valiendo" | Repetir la petición del resumen casi gratis |
 | **Afinidad** | Cuánto le gusta a un usuario un tipo de local en comparación con otros | Reservarle una parte de los huecos (cuota) a lo que le gusta |
 | **Agregar / agregación** | Resumir muchas filas en pocas (contar, sumar, hacer medias) | Pasar millones de impresiones a una fila por local |
 | **Algoritmo voraz** (*greedy*) | Algoritmo que en cada paso coge la mejor opción disponible sin replantearse lo anterior | Aplicar la diversidad de forma simple y rápida |
@@ -1306,17 +1510,20 @@ Todos los términos técnicos del documento, en orden alfabético.
 | **Cola** (*queue*) | Lista donde entran cosas por un lado y salen por otro, en orden | Acumular impresiones antes de enviarlas |
 | **Cron / tarea programada** | Código que el servidor ejecuta solo a horas fijas | Recalcular estadísticas por la noche |
 | **CTR** | De las veces que se mostró algo, en cuántas se tocó | Medir qué funciona |
+| **Cursor** | Marca de página que el servidor da al móvil para seguir donde lo dejó | Pedir el resto de Descubre sin duplicados (fase 2) |
 | **Cuota** | Parte de los huecos reservada para algo | 10-30 % para la categoría preferida |
 | **cyrb53** | Un algoritmo concreto de hash, pequeño y rápido | Convertir "usuario + día" en una semilla |
 | **Dedupe** | Quitar repetidos | Que un local no salga en dos bloques |
 | **Determinista** | Que con la misma entrada da siempre la misma salida | Que el orden no se mueva al repintar |
 | **Endpoint** | Dirección del servidor a la que llama el front | `GET /locales`, `POST /eventos` |
+| **ETag** | Huella de una versión de una respuesta | Que el móvil no vuelva a descargar el resumen si no cambió |
 | **ε-greedy** (épsilon-greedy) | Con probabilidad ε elegir algo poco visto; si no, lo mejor | Exploración simple y controlable |
 | **Exploración / explotación** | Probar cosas nuevas vs. usar lo que ya sabes que funciona | Equilibrar variedad y acierto |
 | **Feed** | Lista de contenido por la que se hace scroll | Descubre |
 | **Filtrado colaborativo** | Recomendar lo que gustó a usuarios parecidos | Descartado por ahora: necesita miles de usuarios |
 | **Función pura** | Función que no lee ni toca nada de fuera y con la misma entrada da la misma salida | Poder probar el ranking sin la app y reutilizarlo en el servidor |
 | **Geolocalización** | Obtener la posición del usuario | "Cerca de ti" de verdad |
+| **gzip / brotli** | Formatos de compresión que el navegador descomprime solo | Que el resumen de locales viaje 5-6 veces más ligero |
 | **Hash** | Función que convierte un texto en un número, siempre el mismo para el mismo texto | Crear la semilla |
 | **Haversine** | Fórmula de distancia entre dos puntos de la Tierra | Calcular a cuántos metros está un local |
 | **Hook** | Función de React que empieza por `use` y encapsula lógica reutilizable | `useImpresion` |
@@ -1332,19 +1539,25 @@ Todos los términos técnicos del documento, en orden alfabético.
 | **Modo de consumo** | Grupo interno de categorías según cómo se usan (antojo, confianza, capricho, rutina) | Que solo compitan locales que se sustituyen entre sí |
 | **mulberry32** | Un algoritmo concreto de generador pseudoaleatorio | El generador con semilla |
 | **Normalizar** | Pasar un valor a una escala común (0 a 1) | Poder sumar nota, minutos y horas en un mismo score |
+| **Offset** | Paginar diciendo cuántos elementos saltarse | Descartado: duplica o pierde locales si la lista cambia |
 | **Opt-in** | Desactivado por defecto; el usuario lo activa | Privacidad de la función de amigos |
+| **Paginar** | Entregar una lista larga por partes | Solo después de ordenar, nunca antes |
 | **Peso** (*weight*) | Cuánto importa un factor en una suma ponderada | Ajustar el comportamiento de cada modo |
 | **Pipeline** | Cadena de etapas donde la salida de una es la entrada de la siguiente | Organizar todo el sistema |
 | **PRNG** | Generador de números que parecen aleatorios pero salen de una fórmula y una semilla | Aleatoriedad reproducible |
+| **Problema N+1** | Hacer una consulta por cada elemento en vez de una para todos | Lo que hay que evitar al montar el resumen |
 | **Prueba A/B** | Enseñar dos versiones a grupos distintos y comparar resultados | Afinar pesos con datos reales |
 | **Prueba unitaria** | Programa que comprueba automáticamente que una función hace lo esperado | Que los cambios no rompan el ranking |
 | **Ranking** | Orden según una puntuación | El orden de Descubre |
+| **Redis** | Base de datos en memoria para cosas temporales | Opcional para guardar la foto fija |
 | **Re-ranking** | Retocar un orden ya calculado aplicando reglas | Diversidad, exploración, locales nuevos |
+| **Resumen ligero** | Versión mínima de un local: lo justo para ordenar y pintar la tarjeta | Mandar todos los candidatos sin que pese |
 | **Retención** | Conseguir que el usuario vuelva | Atajo "reservar otra vez" en Mis Citas |
 | **Riesgo** (de un bloque) | Qué parte de sus huecos puede dedicarse a explorar | Exploración abajo, no arriba |
 | **`sendBeacon`** | Forma de enviar datos que funciona aunque se cierre la pestaña | Que no se pierdan impresiones |
 | **Score** | Puntuación numérica de un candidato (0 a 1) | Ordenar dentro de cada bloque |
 | **Semilla** (*seed*) | Número de partida de un generador: misma semilla, misma secuencia | Orden estable durante el día y distinto cada día |
+| **Snapshot (foto fija)** | Orden guardado en un momento dado como lista de ids | Que todas las partes de Descubre salgan del mismo orden |
 | **`Set`** | Estructura de JS que guarda valores sin repetir | Dedupe |
 | **Suma ponderada** | Sumar varias cosas dando a cada una su importancia | La fórmula del score |
 | **Thompson Sampling** | Método de exploración probabilístico más sofisticado | Considerado y descartado: explora de más |
