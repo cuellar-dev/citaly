@@ -1,0 +1,526 @@
+/* Pie de página de Descubre.
+
+   La escena (canvas) va pegada arriba y mide una pantalla. El texto empieza
+   por debajo de la hoguera: esas proporciones van de la mano de componer()
+   en escenaFogata.js (la hoguera apoya al 53,5 % en móvil y al 58,5 % en
+   PC). Si se toca una, se toca la otra.
+
+   El pie mide como mínimo una pantalla. Lo que no cabe en la escena sigue
+   sobre el color del suelo (--pie-suelo), el mismo con el que el canvas
+   pinta su parte de abajo: no hay costura. */
+
+.pie {
+  --pie-escena-alto: max(100svh, 620px);
+  --pie-texto-empieza: 0.585;
+
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: max(100dvh, 620px);
+  overflow: hidden;
+  background: var(--pie-suelo);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+}
+
+/* La entrada: la página se funde con la noche del bosque, como pasan las
+   demás secciones de una a otra. --fondo-pagina es el fondo real de la
+   página aunque estemos dentro de una zona oscura fija: en el tema claro
+   el degradado sale del papel crema. */
+.pie::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
+  height: 24svh;
+  background: linear-gradient(
+    to bottom,
+    var(--fondo-pagina) 0%,
+    color-mix(in srgb, var(--fondo-pagina) 55%, transparent) 40%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+/* En el tema claro el salto del papel a la noche es mayor: el fundido es
+   más largo para que no quede una franja turbia. */
+:root[data-tema='claro'] .pie::before {
+  height: 34svh;
+}
+
+/* ---------- Escena ---------- */
+
+.pie-escena {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 0;
+  height: var(--pie-escena-alto);
+  overflow: hidden;
+}
+
+/* El suelo del bosque se oscurece hacia abajo para que el texto se lea
+   sin tapar la hoguera. */
+.pie-escena::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 57%,
+    color-mix(in srgb, var(--pie-suelo) 62%, transparent) 70%,
+    color-mix(in srgb, var(--pie-suelo) 92%, transparent) 84%,
+    var(--pie-suelo) 100%
+  );
+  pointer-events: none;
+}
+
+.pie-lienzo {
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* ---------- Cuerpo ---------- */
+
+.pie-cuerpo {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding: calc(var(--pie-escena-alto) * var(--pie-texto-empieza)) 20px 28px;
+}
+
+/* La frase de la hoguera. Aparece cuando el fuego termina de prender, en
+   una franja oscura y con el brillo cálido de la lumbre. */
+.pie-hoguera {
+  position: relative;
+  margin: 0 -20px 34px;
+  padding: 14px 20px 16px;
+  text-align: center;
+  opacity: 0;
+  transform: scale(1.04);
+  transition:
+    opacity 1.4s var(--ease-out),
+    transform 1.8s var(--ease-out);
+}
+
+.pie-hoguera::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(var(--velo-modal) / 0.62) 22%,
+    rgb(var(--velo-modal) / 0.62) 78%,
+    transparent 100%
+  );
+}
+
+.pie-hoguera--encendida {
+  opacity: 1;
+  transform: none;
+}
+
+.pie-hoguera-frase {
+  margin: 0;
+  color: var(--yellow-texto);
+  font-family: var(--font-familyDrink);
+  font-size: clamp(1.05rem, 4.6vw, 1.7rem);
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--yellow-color) 45%, transparent),
+    0 0 34px color-mix(in srgb, var(--yellow-color) 22%, transparent);
+}
+
+.pie-hoguera-nota {
+  max-width: 34ch;
+  margin: 8px auto 0;
+  color: var(--fonts-color-primary-weak);
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+/* ---------- Rejilla de contenido ---------- */
+
+.pie-rejilla {
+  display: grid;
+  gap: 34px;
+  margin-bottom: 40px;
+}
+
+.pie-logo {
+  margin: 0;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyDrink);
+  font-size: 2.3rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.pie-logo-acento {
+  color: var(--primary-texto);
+}
+
+.pie-lema {
+  max-width: 36ch;
+  margin: 10px 0 18px;
+  color: var(--fonts-color-primary-weak);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.pie-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 46px;
+  padding: 0 16px 0 15px;
+  border: 1px solid color-mix(in srgb, var(--primary-color) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-texto);
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    background-color 0.18s var(--ease-out),
+    transform 0.14s var(--ease-out);
+}
+
+.pie-cta:active {
+  transform: scale(0.97);
+}
+
+/* Enlaces: Explora a lo ancho; Citaly y Contacto en dos columnas. */
+.pie-enlaces {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px 18px;
+}
+
+.pie-grupo:first-child {
+  grid-column: 1 / -1;
+}
+
+.pie-grupo ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pie-grupo-titulo {
+  margin: 0 0 6px;
+  color: var(--primary-texto);
+  font-family: var(--font-familyDrink);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.pie-enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--fonts-color-primary-weak);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.16s var(--ease-out);
+}
+
+.pie-enlace svg {
+  flex: none;
+  color: var(--primary-texto);
+}
+
+/* En el móvil las categorías son píldoras: caben seis en tres filas en
+   vez de en seis. */
+.pie-grupo:first-child ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pie-grupo:first-child .pie-enlace {
+  padding: 0 16px;
+  border: 1px solid rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
+  border-radius: 999px;
+  background: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
+  color: var(--fonts-color-primary);
+  transition:
+    background-color 0.16s var(--ease-out),
+    transform 0.14s var(--ease-out);
+}
+
+.pie-grupo:first-child .pie-enlace:active {
+  transform: scale(0.96);
+}
+
+.pie-ciudad {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 44px;
+  color: var(--fonts-color-primary-weak);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.pie-ciudad svg {
+  flex: none;
+  color: var(--primary-texto);
+}
+
+.pie-redes {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.pie-red {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
+  border-radius: 999px;
+  background: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
+  color: var(--fonts-color-primary);
+  transition:
+    background-color 0.16s var(--ease-out),
+    color 0.16s var(--ease-out),
+    transform 0.14s var(--ease-out);
+}
+
+.pie-red:active {
+  transform: scale(0.94);
+}
+
+/* ---------- Base ---------- */
+
+.pie-base {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 26px;
+  border-top: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  text-align: center;
+}
+
+.pie-copy {
+  order: 2;
+  margin: 0;
+  color: var(--fonts-color-primary-weak);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.pie-legales {
+  order: 1;
+  display: flex;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pie-legal {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--fonts-color-primary-weak);
+  font-size: 0.86rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: rgb(var(--tinte) / 0.25);
+  text-underline-offset: 4px;
+  transition: color 0.16s var(--ease-out);
+}
+
+.pie-subir {
+  order: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 10px;
+  padding: 0 18px;
+  border: 1px solid rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
+  border-radius: 999px;
+  background: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
+  color: var(--fonts-color-primary);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.16s var(--ease-out),
+    transform 0.14s var(--ease-out);
+}
+
+.pie-subir:active {
+  transform: scale(0.96);
+}
+
+/* ---------- Foco ---------- */
+
+.pie-cta:focus-visible,
+.pie-enlace:focus-visible,
+.pie-red:focus-visible,
+.pie-legal:focus-visible,
+.pie-subir:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+.pie-enlace:focus-visible,
+.pie-legal:focus-visible {
+  border-radius: 6px;
+}
+
+.pie-grupo:first-child .pie-enlace:focus-visible {
+  border-radius: 999px;
+}
+
+/* ---------- Hover (solo con ratón) ---------- */
+
+@media (hover: hover) and (pointer: fine) {
+  .pie-cta:hover {
+    background: color-mix(in srgb, var(--primary-color) 22%, transparent);
+  }
+
+  .pie-enlace:hover,
+  .pie-legal:hover {
+    color: var(--fonts-color-primary);
+  }
+
+  .pie-grupo:first-child .pie-enlace:hover,
+  .pie-red:hover,
+  .pie-subir:hover {
+    background: rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  }
+
+  .pie-red:hover {
+    color: var(--primary-texto);
+  }
+}
+
+/* ---------- PC: aquí se le mete alcohol ---------- */
+
+@media (min-width: 900px) {
+  .pie {
+    --pie-texto-empieza: 0.63;
+  }
+
+  .pie-cuerpo {
+    padding-inline: 48px;
+    padding-bottom: 26px;
+  }
+
+  .pie-hoguera {
+    margin: 0 auto 46px;
+    padding: 16px 120px 18px;
+  }
+
+  .pie-hoguera-frase {
+    letter-spacing: 0.32em;
+  }
+
+  .pie-rejilla {
+    grid-template-columns: minmax(260px, 1.15fr) 2.6fr;
+    gap: 56px;
+  }
+
+  .pie-enlaces {
+    grid-template-columns: 1fr 1fr 1.25fr;
+    gap: 36px;
+  }
+
+  .pie-grupo:first-child {
+    grid-column: auto;
+  }
+
+  /* En PC las categorías vuelven a ser una lista: hay sitio de sobra. */
+  .pie-grupo:first-child ul {
+    display: block;
+    margin-top: 0;
+  }
+
+  .pie-grupo:first-child .pie-enlace {
+    min-height: 36px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--fonts-color-primary-weak);
+  }
+
+  .pie-enlace,
+  .pie-ciudad {
+    min-height: 36px;
+  }
+
+  .pie-base {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 24px;
+    padding-top: 18px;
+    text-align: left;
+  }
+
+  .pie-copy {
+    order: 1;
+  }
+
+  .pie-legales {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .pie-subir {
+    order: 3;
+    margin-top: 0;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pie-grupo:first-child .pie-enlace:hover {
+      background: none;
+      color: var(--fonts-color-primary);
+    }
+  }
+}
+
+/* ---------- Movimiento reducido ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .pie-hoguera {
+    transform: none;
+    transition: opacity 0.3s linear;
+  }
+}

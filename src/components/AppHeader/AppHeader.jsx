@@ -6,6 +6,7 @@ import MenuTablas from './MenuTablas.jsx'
 import GraciasCompartir from './GraciasCompartir.jsx'
 import TalyPosado from '../Taly/TalyPosado.jsx'
 import { contarSinLeer } from '../../services/notificaciones.js'
+import { compartirCitaly } from '../../services/compartir.js'
 import './AppHeader.css'
 
 /* Iconos propios de cada pestaña. La campana va en todas: Notificaciones
@@ -50,31 +51,8 @@ function CampanaNotis({ children }) {
   )
 }
 
-/* Compartir la app. En el móvil abre el menú de compartir del sistema y, al
-   volver de él con algo compartido, salen las gracias. Si el usuario lo
-   cierra sin compartir (AbortError) no se le agradece nada. Donde no hay menú
-   de compartir (escritorio), se copia el enlace y se avisa de ello. */
-const DATOS_COMPARTIR = {
-  title: 'Citaly',
-  text: 'Reserva en tus sitios favoritos sin llamar ni esperar. Mira Citaly:',
-}
-
-function compartirCitaly(alTerminar) {
-  const url = window.location.origin
-  if (navigator.share) {
-    /* Se llama sin esperar nada antes: el navegador solo abre el menú si
-       viene directo del toque. */
-    navigator
-      .share({ ...DATOS_COMPARTIR, url })
-      .then(() => alTerminar({ copiado: false, vez: Date.now() }))
-      .catch(() => {})
-    return
-  }
-  navigator.clipboard
-    ?.writeText(`${DATOS_COMPARTIR.text} ${url}`)
-    .then(() => alTerminar({ copiado: true, vez: Date.now() }))
-    .catch(() => {})
-}
+/* Compartir la app: la función vive en services/compartir.js porque el pie
+   de página también la usa. Al volver con algo compartido salen las gracias. */
 
 function AppHeader() {
   const { visible, title } = useAppHeader()

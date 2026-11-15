@@ -10,6 +10,7 @@ import FondoDescubre from '../components/Descubre/FondoDescubre.jsx'
 import CarruselHeroe from '../components/Descubre/CarruselHeroe.jsx'
 import RailDescubre from '../components/Descubre/RailDescubre.jsx'
 import TarjetaLocalCompacta from '../components/Descubre/TarjetaLocalCompacta.jsx'
+import PieDePagina from '../components/Pie/PieDePagina.jsx'
 import { getAllLocales } from '../services/locales.js'
 import { getFavoritos, FAVORITOS_EVENTO } from '../services/favoritos.js'
 import { construirDescubre } from '../utils/descubre.js'
@@ -191,6 +192,9 @@ function Descubre() {
           )}
         </div>
       </div>
+
+      {/* Cuando se acaban los locales: Taly descansa en la hoguera. */}
+      <PieDePagina />
 
       {filtrosAbiertos && (
         <PanelFiltros

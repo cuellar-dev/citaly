@@ -94,6 +94,14 @@
   --neutro-apagado: #3a403e;
 }
 
+/* El suelo del bosque del pie de página (Taly en la hoguera). Es el mismo
+   en los dos temas, porque el pie es siempre de noche: la escena del canvas
+   lo lee de aquí para pintar su parte de abajo y el CSS lo usa para fundir
+   la escena con el texto. Así nunca hay costura entre los dos. */
+:root {
+  --pie-suelo: #0b1e1a;
+}
+
 /* El fondo de la página de verdad, aunque se esté dentro de una zona
    .tema-oscuro-fijo: lo usan los bordes que funden una cabecera oscura con
    la página (la nube de plumón), que deben ser del color de lo que viene
