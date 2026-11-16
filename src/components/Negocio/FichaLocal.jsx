@@ -32,6 +32,7 @@ import {
 import { profesionalesActivos } from '../../services/usuarios.js'
 import { mesasDeLocal, textoCobroMesa } from '../../utils/mesas.js'
 import { recargoDe } from '../../utils/socios.js'
+import { DURACIONES_TURNO, listaTurnos, turnosDe } from '../../utils/turnos.js'
 import './fichaLocal.css'
 
 /**
@@ -111,6 +112,18 @@ function FichaLocal({ local, onEditar, onOpiniones, onCatalogo }) {
                       .join(' · ')
                   : 'Sin recargo',
               },
+              {
+                id: 'turnos',
+                alAbrir: () => onCatalogo('turnos'),
+                Icono: Clock3,
+                titulo: 'Turnos',
+                valor: (() => {
+                  const config = turnosDe(local)
+                  if (!config.activo) return 'Horario libre, sin turnos'
+                  const duracion = DURACIONES_TURNO.find((d) => d.minutos === config.duracion)?.label ?? `${config.duracion} min`
+                  return `${listaTurnos(local, config).length} turnos de ${duracion} · ${config.cupo} personas cada uno`
+                })(),
+              },
             ],
           ]
         : [
@@ -165,8 +178,12 @@ function FichaLocal({ local, onEditar, onOpiniones, onCatalogo }) {
         id: 'horario',
         alAbrir: () => onEditar('horario'),
         Icono: Clock3,
-        titulo: 'Horario y turnos',
-        valor: `${horaAmPm(ini)} – ${horaAmPm(fin)} · ${turnos.length} turnos de ${duracionTexto(local.intervaloMinutos)}`,
+        /* En los de suscripción los turnos tienen su propia fila (arriba). */
+        titulo: tipo === 'suscripcion' ? 'Horario' : 'Horario y turnos',
+        valor:
+          tipo === 'suscripcion'
+            ? `${horaAmPm(ini)} – ${horaAmPm(fin)} · ${local.dias.length} días a la semana`
+            : `${horaAmPm(ini)} – ${horaAmPm(fin)} · ${turnos.length} turnos de ${duracionTexto(local.intervaloMinutos)}`,
         extra: (
           <span className="ficha-local-semana" aria-label={`Abre ${local.dias.length} días a la semana`}>
             {DIAS.map((d) => (

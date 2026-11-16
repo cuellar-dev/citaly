@@ -9,7 +9,7 @@ function ResumenSocios({ proximo, socios, mes, solicitudes, onProximo, onSocios,
   const cobradoPct = mes.esperado ? Math.round((mes.cobrado / mes.esperado) * 100) : 0
 
   return (
-    <section className="resumen-negocio" aria-label="Resumen de socios">
+    <section className="resumen-negocio" aria-label="Resumen de clientes">
       <button
         type="button"
         className={`resumen-negocio-siguiente${proximo ? '' : ' resumen-negocio-siguiente--vacia'}`}
@@ -65,7 +65,7 @@ function ResumenSocios({ proximo, socios, mes, solicitudes, onProximo, onSocios,
         <button type="button" className="resumen-negocio-tarjeta" onClick={onSocios}>
           <span className="resumen-negocio-etiqueta">
             <Users size={14} strokeWidth={2.25} aria-hidden="true" />
-            Socios
+            Clientes
           </span>
           <span className="resumen-negocio-valor">{socios.activos}</span>
           <span className="resumen-negocio-pie">
@@ -101,24 +101,31 @@ function ResumenSocios({ proximo, socios, mes, solicitudes, onProximo, onSocios,
       </div>
 
       <div className="resumen-negocio-acciones">
+        {/* Con gente esperando se llena de mostaza; sin nadie, se queda en
+            segundo plano (borde punteado, texto apagado). */}
         <button
           type="button"
-          className={`resumen-negocio-accion resumen-negocio-accion--pausa${solicitudes ? ' resumen-negocio-accion--pausada' : ''}`}
+          className={`resumen-negocio-accion resumen-negocio-accion--pausa${
+            solicitudes ? ' resumen-negocio-accion--pausada' : ' resumen-negocio-accion--vacia'
+          }`}
           onClick={onSolicitudes}
         >
           <Inbox size={17} strokeWidth={2} aria-hidden="true" />
           {solicitudes ? (
             <span className="resumen-negocio-accion-pausa">
-              {solicitudes} {solicitudes === 1 ? 'solicitud' : 'solicitudes'}
-              <small>quieren unirse</small>
+              {solicitudes} {solicitudes === 1 ? 'quiere' : 'quieren'} unirse
+              <small>Toca para responder</small>
             </span>
           ) : (
-            <span>Sin solicitudes</span>
+            <span className="resumen-negocio-accion-pausa">
+              Sin solicitudes
+              <small>Nadie pide entrar</small>
+            </span>
           )}
         </button>
         <button type="button" className="resumen-negocio-accion resumen-negocio-accion--express" onClick={onNuevoSocio}>
           <UserPlus size={17} strokeWidth={2} aria-hidden="true" />
-          <span>Nuevo socio</span>
+          <span>Nuevo cliente</span>
         </button>
       </div>
     </section>

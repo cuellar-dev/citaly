@@ -766,7 +766,7 @@
 
 .modal-negocio-segmentado {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 4px;
   padding: 4px;
   border-radius: 14px;
@@ -949,15 +949,14 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
 /* ---------- Pausa: activa, otro tiempo ---------- */
 
 .modal-negocio-hueco--pausa {
   border-color: color-mix(in srgb, var(--yellow-color, #ffd166) 32%, transparent);
-  background: radial-gradient(
-    120% 90% at 50% 0%,
-    color-mix(in srgb, var(--yellow-color, #ffd166) 14%, transparent) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(120% 90% at 50% 0%,
+      color-mix(in srgb, var(--yellow-color, #ffd166) 14%, transparent) 0%,
+      transparent 70%);
 }
 
 .modal-negocio-hueco--pausa .modal-negocio-hueco-etiqueta {

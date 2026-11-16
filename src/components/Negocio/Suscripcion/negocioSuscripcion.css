@@ -69,6 +69,24 @@
   color: var(--fonts-color-primary-weak);
 }
 
+/* Botón de solicitudes sin nadie esperando: se queda en segundo plano. */
+.resumen-negocio-accion.resumen-negocio-accion--vacia,
+:root[data-tema='claro'] .resumen-negocio-accion.resumen-negocio-accion--vacia {
+  border: 1px dashed rgb(var(--tinte) / calc(0.16 * var(--tinte-fuerza)));
+  background: transparent;
+  box-shadow: none;
+  color: var(--fonts-color-primary-weak);
+}
+
+.resumen-negocio-accion.resumen-negocio-accion--vacia svg {
+  color: var(--fonts-color-primary-weak);
+}
+
+:root[data-tema='claro'] .resumen-negocio-accion.resumen-negocio-accion--vacia:active {
+  transform: scale(0.98);
+  box-shadow: none;
+}
+
 .socios-lista {
   display: flex;
   flex-direction: column;

@@ -1,0 +1,225 @@
+/* Tarjeta de turnos del panel de socios. */
+
+.turnos-socios {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 22px;
+  border: 1px solid rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+  background: var(--superficie-honda);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+}
+
+.turnos-socios-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.turnos-socios-titulo {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.turnos-socios-sub {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak);
+}
+
+.turnos-socios-sub b {
+  color: var(--rosa-texto);
+}
+
+.turnos-socios-ajustes {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid color-mix(in srgb, var(--primary-color) 45%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-texto);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.turnos-socios-columnas {
+  display: flex;
+  gap: 1px;
+  overflow-x: auto;
+  margin: 0 -8px;
+  padding: 2px 0 4px;
+  scrollbar-width: none;
+}
+
+.turnos-socios-columnas::-webkit-scrollbar {
+  display: none;
+}
+
+.turnos-socios-columna {
+  --estado: var(--primary-color);
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  min-width: 26px;
+  padding: 6px 0 4px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s var(--ease-out, ease-out);
+}
+
+.turnos-socios-columna--casi {
+  --estado: var(--yellow-color);
+}
+
+.turnos-socios-columna--lleno {
+  --estado: var(--rosa);
+}
+
+.turnos-socios-columna:active {
+  transform: scale(0.94);
+}
+
+.turnos-socios-columna:focus-visible,
+.turnos-socios-ajustes:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.turnos-socios-cuenta {
+  font-family: var(--font-familyDrink);
+  font-size: 13px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.turnos-socios-cuenta small {
+  font-size: 9.5px;
+  color: var(--fonts-color-primary-weak);
+}
+
+.turnos-socios-pista {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  width: 16px;
+  height: 78px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+}
+
+.turnos-socios-relleno {
+  display: block;
+  width: 100%;
+  border-radius: 6px 6px 3px 3px;
+  background: var(--estado);
+  transform-origin: 50% 100%;
+  animation: turnos-socios-sube 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Hay alguien pidiendo este turno: un punto mostaza arriba de la columna. */
+.turnos-socios-pedido {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin-left: -3px;
+  border-radius: 50%;
+  background: var(--yellow-color);
+}
+
+.turnos-socios-hora {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 10px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.turnos-socios-hora small {
+  font-size: 9px;
+  color: var(--fonts-color-primary-weak);
+}
+
+.turnos-socios-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak);
+}
+
+.turnos-socios-leyenda span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.turnos-socios-muestra {
+  width: 8px;
+  height: 8px;
+  border-radius: 3px;
+  background: var(--primary-color);
+}
+
+.turnos-socios-muestra--casi {
+  background: var(--yellow-color);
+}
+
+.turnos-socios-muestra--lleno {
+  background: var(--rosa);
+}
+
+.turnos-socios-muestra--pedido {
+  border-radius: 50%;
+  background: var(--yellow-color);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .turnos-socios-columna:hover {
+    background: rgb(var(--tinte) / calc(0.05 * var(--tinte-fuerza)));
+  }
+}
+
+@keyframes turnos-socios-sube {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .turnos-socios-relleno {
+    animation: none;
+  }
+
+  .turnos-socios-columna {
+    transition: none;
+  }
+}

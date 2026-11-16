@@ -1,9 +1,9 @@
 import { textoEstadoReserva } from './estadosCita.js'
 
-const MARGEN = 8
-const ANCHO = 210
-const ALTO = 297
-const UTIL = ANCHO - MARGEN * 2
+export const MARGEN = 8
+export const ANCHO = 210
+export const ALTO = 297
+export const UTIL = ANCHO - MARGEN * 2
 
 const COLUMNAS = [
   { key: 'hora', titulo: 'Hora', w: 16 },
@@ -24,19 +24,19 @@ function duracionCorta(min) {
   return m ? `${h}h${m}` : `${h}h`
 }
 
-function telefonoCorto(tel) {
+export function telefonoCorto(tel) {
   const d = String(tel || '').replace(/\D/g, '')
   if (!d) return '—'
   if (d.length <= 8) return d
   return `${d.slice(-8, -4)} ${d.slice(-4)}`
 }
 
-function wrap(doc, texto, ancho, maxLineas = 2) {
+export function wrap(doc, texto, ancho, maxLineas = 2) {
   const lineas = doc.splitTextToSize(String(texto || '—'), ancho)
   return lineas.slice(0, maxLineas)
 }
 
-function dibujarFila(doc, y, celdas, { cabezera = false, zebra = false } = {}) {
+export function dibujarFila(doc, y, celdas, { cabezera = false, zebra = false } = {}) {
   const pad = 1.4
   const lineasPorCelda = celdas.map((c) => wrap(doc, c.texto, c.w - pad * 2))
   const n = Math.max(1, ...lineasPorCelda.map((l) => l.length))

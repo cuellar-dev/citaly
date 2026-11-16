@@ -35,7 +35,7 @@ function textoDuracion(min) {
 }
 
 /* Número que sube desde cero al abrir. React no pinta dentro: el texto lo pone GSAP. */
-function Contador({ valor, formato = String, retraso = 0.05, duracion = 0.55, className }) {
+export function Contador({ valor, formato = String, retraso = 0.05, duracion = 0.55, className }) {
   const ref = useRef(null)
   useGSAP(
     () => {
@@ -189,7 +189,7 @@ function ModalSiguiente({ cita, despues, ahora }) {
 
 /* ---------- Ocupación ---------- */
 
-function Dona({ segmentos, capacidad, porcentaje }) {
+export function Dona({ segmentos, capacidad, porcentaje, sub = 'ocupado' }) {
   const ref = useRef(null)
   const separacion = 1.2
   const arcos = segmentos
@@ -238,7 +238,7 @@ function Dona({ segmentos, capacidad, porcentaje }) {
           <Contador valor={porcentaje} />
           <small>%</small>
         </span>
-        <span className="modal-negocio-dona-sub">ocupado</span>
+        <span className="modal-negocio-dona-sub">{sub}</span>
       </p>
     </div>
   )
@@ -320,7 +320,7 @@ function ModalOcupacion({ ocupacion }) {
 
 /* ---------- Estimado ---------- */
 
-function BarraDinero({ partes, total }) {
+export function BarraDinero({ partes, total }) {
   const ref = useRef(null)
   useGSAP(
     () => {

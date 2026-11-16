@@ -1955,6 +1955,14 @@
       "diasGracia": 2,
       "tope": 600
     },
+    "turnos": {
+      "activo": true,
+      "duracion": 90,
+      "cupo": 12,
+      "cupos": {
+        "18:00": 4
+      }
+    },
     "servicios": [
       {
         "id": "pase-dia",

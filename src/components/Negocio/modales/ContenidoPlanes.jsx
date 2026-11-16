@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
+import { es } from 'date-fns/locale'
 import { ChevronRight, Plus, Star, X } from 'lucide-react'
 import PlanesPrecio from '../../PlanesPrecio/PlanesPrecio.jsx'
+import SelectorTurno from '../../Turnos/SelectorTurno.jsx'
 import { nuevoId, precioPlanTexto } from '../../../utils/fichaLocal.js'
 import { recargoDe, sumarPeriodo } from '../../../utils/socios.js'
 import { BotonEliminar } from './ContenidoCatalogo.jsx'
@@ -39,7 +41,7 @@ function ListaPlanes({ local, sociosPorPlan, onNavegar }) {
       <div className="modal-negocio-datos" data-entra>
         <Dato etiqueta="Planes" valor={planes.length} />
         <Dato etiqueta="Desde CUP" valor={planes.length ? Math.min(...precios) : '—'} tono="verde" />
-        <Dato etiqueta="Socios" valor={socios} tono="amarillo" />
+        <Dato etiqueta="Clientes" valor={socios} tono="amarillo" />
       </div>
 
       {planes.length ? (
@@ -60,7 +62,7 @@ function ListaPlanes({ local, sociosPorPlan, onNavegar }) {
                     {p.incluye?.length ? `${p.incluye.length} cosas incluidas` : 'Solo el precio'}
                   </span>
                   <span className="catalogo-quienes">
-                    {sociosPorPlan[p.id] ?? 0} {sociosPorPlan[p.id] === 1 ? 'socio' : 'socios'}
+                    {sociosPorPlan[p.id] ?? 0} {sociosPorPlan[p.id] === 1 ? 'cliente' : 'clientes'}
                   </span>
                 </span>
                 <span className="catalogo-precio">{precioPlanTexto(p)}</span>
@@ -265,7 +267,7 @@ function FormPlan({ local, id, sociosPorPlan, onGuardar, onNavegar }) {
       {actual &&
         (enUso ? (
           <p className="modal-negocio-nota">
-            {enUso} {enUso === 1 ? 'socio tiene' : 'socios tienen'} este plan. Pásalos a otro antes de quitarlo.
+            {enUso} {enUso === 1 ? 'cliente tiene' : 'clientes tienen'} este plan. Pásalos a otro antes de quitarlo.
           </p>
         ) : (
           <BotonEliminar
@@ -371,48 +373,56 @@ function FormRecargo({ local, onGuardar }) {
       <button type="submit" className="modal-negocio-accion-principal">
         Guardar recargo
       </button>
-      <p className="modal-negocio-nota">Se aplica solo: lo ves en cada socio atrasado al cobrarle.</p>
+      <p className="modal-negocio-nota">Se aplica solo: lo ves en cada cliente atrasado al cobrarle.</p>
     </form>
   )
 }
 
 /* ---------- Socio nuevo ---------- */
 
-function FormNuevoSocio({ local, hoy, onAgregarSocio }) {
+function FormNuevoSocio({ local, hoy, turnos = [], onAgregarSocio }) {
   const planes = local.planes ?? []
   const [nombre, setNombre] = useState('')
   const [telefono, setTelefono] = useState('')
   const [planId, setPlanId] = useState(planes.find((p) => p.destacado)?.id ?? planes[0]?.id ?? null)
+  const [turnoId, setTurnoId] = useState(null)
   const [pagado, setPagado] = useState(true)
+  /* La fecha de cobro sale sola (hoy, pero el periodo que viene) hasta que
+     el dueño la toca a mano. */
+  const [fechaManual, setFechaManual] = useState(null)
   const [intento, setIntento] = useState(false)
 
   const plan = planes.find((p) => p.id === planId)
+  const hoyIso = format(hoy, 'yyyy-MM-dd')
+  const siguienteIso = format(sumarPeriodo(hoy, plan?.periodo), 'yyyy-MM-dd')
+  const fechaCobro = fechaManual ?? (pagado ? siguienteIso : hoyIso)
   const errorNombre = nombre.trim().length < 2 ? 'Escribe su nombre.' : null
   const errorTel = telefono.replace(/\D/g, '').length < 8 ? 'Pon un teléfono con al menos 8 números.' : null
-  const valido = plan && !errorNombre && !errorTel
-  const proximo = pagado ? sumarPeriodo(hoy, plan?.periodo) : hoy
+  const errorTurno = turnos.length && !turnoId ? 'Elige a qué turno viene.' : null
+  const errorFecha = !fechaCobro ? 'Pon la fecha en que le toca pagar.' : null
+  const valido = plan && !errorNombre && !errorTel && !errorTurno && !errorFecha
 
   const agregar = (e) => {
     e.preventDefault()
     setIntento(true)
     if (!valido) return
-    const fecha = format(hoy, 'yyyy-MM-dd')
     onAgregarSocio({
       id: nuevoId('socio'),
       nombre: nombre.trim(),
       telefono: telefono.trim(),
       planId,
-      desde: fecha,
-      proximoPago: format(proximo, 'yyyy-MM-dd'),
+      turno: turnoId,
+      desde: hoyIso,
+      proximoPago: fechaCobro,
       estado: 'activo',
-      pagos: pagado ? [{ fecha, monto: Number(plan.precio) || 0, recargo: 0 }] : [],
+      pagos: pagado ? [{ fecha: hoyIso, monto: Number(plan.precio) || 0, recargo: 0 }] : [],
     })
   }
 
   if (!planes.length) {
     return (
       <div className="modal-negocio-stack">
-        <p className="modal-negocio-lead">Primero crea un plan en «Planes» para poder apuntar socios.</p>
+        <p className="modal-negocio-lead">Primero crea un plan en «Planes» para poder apuntar clientes.</p>
       </div>
     )
   }
@@ -464,30 +474,69 @@ function FormNuevoSocio({ local, hoy, onAgregarSocio }) {
         </div>
       </Seccion>
 
+      {turnos.length > 0 && (
+        <Seccion titulo="Turno" extra={turnoId ? turnos.find((t) => t.id === turnoId)?.texto : 'A qué hora viene'}>
+          <SelectorTurno turnos={turnos} elegido={turnoId} etiqueta="Turno del cliente" onElegir={setTurnoId} />
+          {intento && errorTurno && <em className="express-error">{errorTurno}</em>}
+        </Seccion>
+      )}
+
       <Seccion titulo="El primer pago">
         <div className="modal-negocio-segmentado modal-negocio-segmentado--tono mesas-segmentado--dos" role="group" aria-label="Si ya pagó">
           <button type="button" aria-pressed={pagado} onClick={() => setPagado(true)}>
-            Ya pagó
+            Ya pagó hoy
           </button>
           <button type="button" aria-pressed={!pagado} onClick={() => setPagado(false)}>
             Paga después
           </button>
         </div>
+      </Seccion>
+
+      <Seccion titulo="Le toca pagar el">
+        <input
+          type="date"
+          className="modal-negocio-input socio-fecha-input"
+          value={fechaCobro}
+          onChange={(e) => setFechaManual(e.target.value)}
+          aria-label="Fecha en que le toca pagar"
+          aria-invalid={intento && Boolean(errorFecha)}
+        />
+        <div className="modal-negocio-opciones" role="group" aria-label="Fechas rápidas">
+          <button
+            type="button"
+            className="modal-negocio-chip modal-negocio-chip--verde"
+            aria-pressed={fechaCobro === hoyIso}
+            onClick={() => setFechaManual(hoyIso)}
+          >
+            Hoy
+          </button>
+          <button
+            type="button"
+            className="modal-negocio-chip modal-negocio-chip--verde"
+            aria-pressed={fechaCobro === siguienteIso}
+            onClick={() => setFechaManual(siguienteIso)}
+          >
+            {format(parseISO(siguienteIso), "d 'de' MMMM", { locale: es })}
+          </button>
+        </div>
+        {intento && errorFecha && <em className="express-error">{errorFecha}</em>}
         <p className="modal-negocio-nota">
-          {pagado
-            ? `Le toca volver a pagar el ${format(proximo, 'd/M')}. Ese será su día de pago.`
-            : 'Queda apuntado con el pago para hoy.'}
+          {fechaCobro
+            ? `Ese día se le cobra${pagado ? ' la siguiente cuota' : ''} y, a partir de ahí, ${
+                plan?.periodo === 'semana' ? 'cada semana' : plan?.periodo === 'trimestre' ? 'cada tres meses' : plan?.periodo === 'anio' ? 'cada año' : 'el mismo día de cada mes'
+              }.`
+            : 'Elige una fecha.'}
         </p>
       </Seccion>
 
       <button type="submit" className="modal-negocio-accion-principal">
-        Apuntar socio
+        Apuntar cliente
       </button>
     </form>
   )
 }
 
-export default function ContenidoPlanes({ modal, local, hoy, sociosPorPlan, onNavegar, onGuardar, onAgregarSocio }) {
+export default function ContenidoPlanes({ modal, local, hoy, turnos, sociosPorPlan, onNavegar, onGuardar, onAgregarSocio }) {
   switch (modal?.tipo) {
     case 'planes':
       return <ListaPlanes local={local} sociosPorPlan={sociosPorPlan} onNavegar={onNavegar} />
@@ -505,7 +554,7 @@ export default function ContenidoPlanes({ modal, local, hoy, sociosPorPlan, onNa
     case 'recargo':
       return <FormRecargo local={local} onGuardar={onGuardar} />
     case 'nuevoSocio':
-      return <FormNuevoSocio local={local} hoy={hoy} onAgregarSocio={onAgregarSocio} />
+      return <FormNuevoSocio local={local} hoy={hoy} turnos={turnos} onAgregarSocio={onAgregarSocio} />
     default:
       return null
   }

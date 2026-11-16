@@ -1,7 +1,22 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { format, isSameMonth, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { AlertTriangle, BellRing, Images, MessageSquareQuote, Pencil, Percent, Ticket, UserPlus } from 'lucide-react'
+import {
+  AlertTriangle,
+  Banknote,
+  BellRing,
+  Clock,
+  FileDown,
+  Images,
+  Inbox,
+  MessageSquareQuote,
+  Pencil,
+  Percent,
+  Ticket,
+  Timer,
+  UserPlus,
+  Users,
+} from 'lucide-react'
 import CabeceraNegocio from '../CabeceraNegocio.jsx'
 import FichaLocal from '../FichaLocal.jsx'
 import FiltroCitas from '../FiltroCitas.jsx'
@@ -9,13 +24,17 @@ import ModalNegocioShell from '../ModalNegocioShell.jsx'
 import ContenidoFichaLocal from '../modales/ContenidoFichaLocal.jsx'
 import ContenidoPlanes from '../modales/ContenidoPlanes.jsx'
 import AvisoBreve from '../../DetalleLocal/AvisoBreve.jsx'
+import ContenidoSocios from './ContenidoSocios.jsx'
 import ResumenSocios from './ResumenSocios.jsx'
 import SocioDueno from './SocioDueno.jsx'
+import TurnosSocios from './TurnosSocios.jsx'
 import { sociosDemo } from '../../../data/sociosDemo.js'
 import { getLocalById } from '../../../services/locales.js'
 import { actualizarSuscripcion, saveFicha } from '../../../services/storage.js'
 import { codigoDia, fotosDe, notaDeComentarios } from '../../../utils/fichaLocal.js'
-import { situacionSocio, sumarPeriodo } from '../../../utils/socios.js'
+import { descargarPdfSocios } from '../../../utils/pdfSociosNegocio.js'
+import { ETIQUETA_SITUACION, fechaCorta, situacionSocio, sumarPeriodo, textoSituacion } from '../../../utils/socios.js'
+import { listaTurnos, ocupacionTurnos, turnoDeSocio, turnosDe } from '../../../utils/turnos.js'
 import './negocioSuscripcion.css'
 import '../../../pages/miNegocio.css'
 
@@ -30,16 +49,23 @@ const MODALES = {
   planes: { titulo: 'Planes', subtitulo: 'Lo que cobras y qué incluye', tono: 'verde', Icono: Ticket },
   plan: { titulo: 'Plan', subtitulo: 'Precio, periodo y qué incluye', tono: 'verde', Icono: Ticket },
   recargo: { titulo: 'Recargo por atraso', subtitulo: 'Para quien paga tarde', tono: 'amarillo', Icono: Percent },
-  nuevoSocio: { titulo: 'Nuevo socio', subtitulo: 'Se apunta en el local', tono: 'verde', Icono: UserPlus },
+  nuevoSocio: { titulo: 'Nuevo cliente', subtitulo: 'Se apunta en el local', tono: 'verde', Icono: UserPlus },
+  cobros: { titulo: 'Próximo cobro', subtitulo: 'Quién tiene que pagar', tono: 'amarillo', Icono: Timer },
+  socios: { titulo: 'Clientes', subtitulo: 'Cómo van con los pagos', tono: 'verde', Icono: Users },
+  mes: { titulo: 'Este mes', subtitulo: 'Lo cobrado y lo que falta', tono: 'verde', Icono: Banknote },
+  solicitudes: { titulo: 'Quieren unirse', subtitulo: 'Acepta o rechaza', tono: 'amarillo', Icono: Inbox },
+  turnos: { titulo: 'Turnos', subtitulo: 'Duración y personas por turno', tono: 'verde', Icono: Clock },
+  turno: { titulo: 'Turno', subtitulo: 'Quién viene y su cupo', tono: 'verde', Icono: Clock },
 }
 const MODALES_FICHA = new Set(['editar', 'galeria', 'opiniones'])
+const MODALES_SOCIOS = new Set(['cobros', 'socios', 'mes', 'solicitudes', 'turnos', 'turno'])
 
+/* Las solicitudes no van en la lista: tienen su propio botón arriba. */
 const FILTROS = [
   { id: 'todos', label: 'Todos' },
   { id: 'atrasados', label: 'Atrasados' },
   { id: 'por-vencer', label: 'Por vencer' },
   { id: 'al-dia', label: 'Al día' },
-  { id: 'solicitudes', label: 'Solicitudes' },
   { id: 'bajas', label: 'Bajas' },
 ]
 
@@ -50,7 +76,6 @@ const GRUPO = {
   gracia: 'por-vencer',
   'por-vencer': 'por-vencer',
   'al-dia': 'al-dia',
-  solicitud: 'solicitudes',
   baja: 'bajas',
 }
 
@@ -59,11 +84,10 @@ const GRUPO = {
 const ORDEN = { atrasado: 0, gracia: 1, 'por-vencer': 2, solicitud: 3, 'al-dia': 4, baja: 5 }
 
 const VACIO = {
-  todos: 'Todavía no tienes socios.',
+  todos: 'Todavía no tienes clientes.',
   atrasados: 'Nadie va atrasado. Todos al día.',
   'por-vencer': 'Nadie tiene que pagar en los próximos días.',
   'al-dia': 'Nadie está al día ahora mismo.',
-  solicitudes: 'No hay solicitudes nuevas.',
   bajas: 'Nadie se ha dado de baja.',
 }
 
@@ -132,12 +156,22 @@ function NegocioSuscripcion({ idLocal, ahora, cabeceraExtra }) {
 
   const opcionesFiltro = FILTROS.map((f) => ({
     ...f,
-    cantidad: f.id === 'todos' ? activos.length + solicitudes.length : conSituacion.filter((x) => GRUPO[x.situacion.clave] === f.id).length,
+    cantidad: f.id === 'todos' ? activos.length : conSituacion.filter((x) => GRUPO[x.situacion.clave] === f.id).length,
   })).filter((f) => f.id === 'todos' || f.cantidad > 0 || f.id === filtro)
   const visibles =
     filtro === 'todos'
-      ? conSituacion.filter((x) => x.situacion.clave !== 'baja')
+      ? conSituacion.filter((x) => x.socio.estado === 'activo')
       : conSituacion.filter((x) => GRUPO[x.situacion.clave] === filtro)
+
+  /* Turnos: los del día con cuánta gente tiene cada uno. */
+  const configTurnos = useMemo(() => turnosDe(local), [local])
+  const turnos = useMemo(() => {
+    if (!configTurnos.activo) return []
+    const lista = listaTurnos(local, configTurnos)
+    const { cuenta, pedidos } = ocupacionTurnos(lista, socios)
+    return lista.map((t) => ({ ...t, ocupados: cuenta[t.id], pedidos: pedidos[t.id] }))
+  }, [local, configTurnos, socios])
+  const conTurnos = turnos.length > 0
 
   const sociosPorPlan = activos.reduce((acc, x) => ({ ...acc, [x.socio.planId]: (acc[x.socio.planId] ?? 0) + 1 }), {})
 
@@ -169,11 +203,68 @@ function NegocioSuscripcion({ idLocal, ahora, cabeceraExtra }) {
     /* Entra con el pago para hoy: el primer mes se paga en el local. */
     actualizar(socio.id, { estado: 'activo', desde: hoyIso, proximoPago: hoyIso })
     actualizarSuscripcion(socio.id, { estado: 1 })
-    setAviso(`${socio.nombre.split(' ')[0]} ya es socio`)
+    setAviso(`${socio.nombre.split(' ')[0]} ya es cliente`)
   }
   const rechazar = ({ socio }) => {
     setSocios((prev) => prev.filter((s) => s.id !== socio.id))
     actualizarSuscripcion(socio.id, { estado: 3 })
+    setAviso(`Solicitud de ${socio.nombre.split(' ')[0]} rechazada`)
+  }
+  const mover = (socio, turnoId) => {
+    actualizar(socio.id, { turno: turnoId })
+    if (socio.estado === 'solicitud') actualizarSuscripcion(socio.id, { turno: turnoId })
+    const destino = turnos.find((t) => t.id === turnoId)
+    setAviso(`${socio.nombre.split(' ')[0]} pasa al turno de ${destino?.texto ?? turnoId}`)
+  }
+  const guardarTurnos = (cambios) => {
+    guardarFicha({ turnos: { ...configTurnos, ...cambios } })
+  }
+  const cupoTurno = (id, n) => {
+    const cupos = { ...configTurnos.cupos }
+    if (n === configTurnos.cupo) delete cupos[id]
+    else cupos[id] = n
+    guardarTurnos({ cupos })
+  }
+  const cambiarFecha = (socio, iso) => {
+    actualizar(socio.id, { proximoPago: iso })
+    setAviso(`${socio.nombre.split(' ')[0]} paga ahora el ${fechaCorta(iso)}`)
+  }
+
+  /* PDF con todos: los que pagan (lo urgente arriba), las solicitudes y las bajas. */
+  const exportarPdf = () => {
+    const filas = conSituacion.map(({ socio, situacion }) => {
+      const turno = turnoDeSocio(turnos, socio)
+      const activo = socio.estado === 'activo'
+      return {
+        nombre: socio.nombre,
+        telefono: socio.telefono,
+        plan: situacion.plan?.nombre ?? '—',
+        turno: turno?.texto ?? '—',
+        desde: activo || socio.estado === 'baja' ? fechaCorta(socio.desde) : 'Pendiente',
+        proximo: activo ? fechaCorta(socio.proximoPago) : '—',
+        estado: activo ? `${ETIQUETA_SITUACION[situacion.clave]} · ${textoSituacion(situacion)}` : ETIQUETA_SITUACION[situacion.clave],
+        /* Al día: nada que cobrar todavía. Por vencer o atrasado: lo que toca, con recargo. */
+        debe: activo && situacion.clave !== 'al-dia' ? `${situacion.total}` : '—',
+      }
+    })
+    const bajas = conSituacion.filter((x) => x.socio.estado === 'baja').length
+    descargarPdfSocios({
+      localNombre: local.localName,
+      fechaTexto: format(ahora, "EEEE d 'de' MMMM yyyy", { locale: es }),
+      conTurnos,
+      resumen: [
+        `${activos.length} pagando`,
+        `${alDia.length} al día`,
+        enGracia.length + porVencer.length && `${enGracia.length + porVencer.length} por vencer`,
+        atrasados.length && `${atrasados.length} atrasados (deben ${deudaAtrasados} CUP)`,
+        solicitudes.length && `${solicitudes.length} quieren unirse`,
+        bajas && `${bajas} de baja`,
+      ]
+        .filter(Boolean)
+        .join(' · '),
+      pie: `Cobrado este mes: ${cobrado} CUP · esperado: ${cobrado + pendienteMes} CUP`,
+      filas,
+    })
   }
 
   const ficha = (
@@ -220,24 +311,45 @@ function NegocioSuscripcion({ idLocal, ahora, cabeceraExtra }) {
           }}
           mes={{ cobrado, esperado: cobrado + pendienteMes }}
           solicitudes={solicitudes.length}
-          onProximo={() => setFiltro('por-vencer')}
-          onSocios={() => setFiltro('todos')}
-          onMes={() => setFiltro(atrasados.length ? 'atrasados' : 'por-vencer')}
+          onProximo={() => abrirModal('cobros')}
+          onSocios={() => abrirModal('socios')}
+          onMes={() => abrirModal('mes')}
           onNuevoSocio={() => abrirModal('nuevoSocio')}
-          onSolicitudes={() => setFiltro('solicitudes')}
+          onSolicitudes={() => abrirModal('solicitudes')}
         />
+
+        {conTurnos && (
+          <TurnosSocios
+            turnos={turnos}
+            duracion={configTurnos.duracion}
+            onTurno={(id) => abrirModal('turno', { id })}
+            onAjustes={() => abrirModal('turnos')}
+          />
+        )}
 
         <div className="negocio-citas">
           <header className="negocio-citas-encabezado">
             <div>
-              <h2 className="negocio-citas-titulo">Tus socios</h2>
+              <h2 className="negocio-citas-titulo">Tus clientes</h2>
               <p className="negocio-citas-fecha">
                 <span>{format(ahora, "EEEE d 'de' MMMM", { locale: es })}</span>
               </p>
             </div>
-            <p className="negocio-citas-contador">
-              <strong>{activos.length}</strong> pagando
-            </p>
+            <div className="negocio-citas-acciones">
+              <p className="negocio-citas-contador">
+                <strong>{activos.length}</strong> pagando
+              </p>
+              <button
+                type="button"
+                className="negocio-citas-pdf"
+                onClick={exportarPdf}
+                disabled={!socios.length}
+                aria-label="Descargar la lista de clientes en PDF"
+              >
+                <FileDown size={16} strokeWidth={2.25} aria-hidden="true" />
+                PDF
+              </button>
+            </div>
           </header>
 
           {(atrasados.length > 0 || enGracia.length + porVencer.length > 0) && (
@@ -300,10 +412,17 @@ function NegocioSuscripcion({ idLocal, ahora, cabeceraExtra }) {
                   socio={x.socio}
                   situacion={x.situacion}
                   local={local}
+                  turno={turnoDeSocio(turnos, x.socio)}
+                  conTurnos={conTurnos}
                   onCobrar={() => cobrar(x)}
                   onAceptar={() => aceptar(x)}
                   onRechazar={() => rechazar(x)}
                   onCambiarPlan={(planId) => actualizar(x.socio.id, { planId })}
+                  onCambiarTurno={() => {
+                    const actual = turnoDeSocio(turnos, x.socio) ?? turnos[0]
+                    abrirModal('turno', { id: actual.id, moviendo: x.socio.id })
+                  }}
+                  onCambiarFecha={(iso) => cambiarFecha(x.socio, iso)}
                   onBaja={() => actualizar(x.socio.id, { estado: 'baja' })}
                 />
               ))
@@ -338,11 +457,32 @@ function NegocioSuscripcion({ idLocal, ahora, cabeceraExtra }) {
               cerrarModal()
             }}
           />
+        ) : MODALES_SOCIOS.has(modal?.tipo) ? (
+          <ContenidoSocios
+            modal={modal}
+            local={local}
+            lista={conSituacion}
+            turnos={turnos}
+            configTurnos={configTurnos}
+            ahora={ahora}
+            onNavegar={setModal}
+            onCobrar={cobrar}
+            onAceptar={aceptar}
+            onRechazar={rechazar}
+            onMover={mover}
+            onCupoTurno={cupoTurno}
+            onGuardar={(cambios) => {
+              guardarFicha(cambios)
+              setAviso('Turnos guardados')
+              cerrarModal()
+            }}
+          />
         ) : (
           <ContenidoPlanes
             modal={modal}
             local={local}
             hoy={ahora}
+            turnos={turnos}
             sociosPorPlan={sociosPorPlan}
             onNavegar={setModal}
             onGuardar={(cambios, siguiente) => {

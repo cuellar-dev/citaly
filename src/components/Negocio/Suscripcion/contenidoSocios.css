@@ -1,0 +1,520 @@
+/* Hojas del panel de socios: listas de personas con sus acciones, pagos del
+   mes, ajustes de turnos y el detalle de un turno. */
+
+/* ---------- Personas ---------- */
+
+.hoja-personas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hoja-persona {
+  --tono: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 1px solid rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+  background: rgb(var(--tinte) / calc(0.03 * var(--tinte-fuerza)));
+}
+
+.hoja-persona--amarillo {
+  --tono: var(--yellow-color);
+}
+
+.hoja-persona--rosa {
+  --tono: var(--rosa);
+  background: color-mix(in srgb, var(--rosa) 6%, transparent);
+}
+
+.hoja-persona-fila {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.hoja-persona-avatar {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  box-shadow: inset 0 0 0 2px var(--tono);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.hoja-persona-textos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hoja-persona-nombre {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hoja-persona-meta {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--fonts-color-primary-weak);
+}
+
+.hoja-persona-lado {
+  flex-shrink: 0;
+}
+
+.hoja-persona-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hoja-monto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--font-familyDrink);
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.hoja-monto small {
+  font-family: var(--font-familyPrincipal);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak);
+}
+
+.hoja-monto em {
+  font-family: var(--font-familyPrincipal);
+  font-size: 10.5px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--rosa-texto);
+}
+
+.hoja-pct {
+  margin-left: 6px;
+  font-family: var(--font-familyPrincipal);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak);
+}
+
+/* ---------- Botones ---------- */
+
+.hoja-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--fonts-color-primary);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s var(--ease-out, ease-out);
+}
+
+.hoja-boton:active {
+  transform: scale(0.96);
+}
+
+.hoja-boton:focus-visible,
+.hoja-enlace:focus-visible,
+.hoja-pasos button:focus-visible,
+.hoja-turno-nav button:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.hoja-boton--principal {
+  background: var(--primary-color);
+  color: #062a26;
+}
+
+.hoja-boton--suave {
+  background: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+}
+
+.hoja-boton--suave svg {
+  color: var(--primary-texto);
+}
+
+.hoja-boton--icono {
+  width: 38px;
+  padding: 0;
+}
+
+.hoja-boton--peligro {
+  border: 1px solid color-mix(in srgb, var(--close-color) 40%, transparent);
+  background: color-mix(in srgb, var(--close-color) 10%, transparent);
+  color: var(--peligro-texto);
+}
+
+.hoja-enlace {
+  flex-shrink: 0;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  color: var(--primary-texto);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---------- Pagos del mes ---------- */
+
+.hoja-pagos {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hoja-pagos li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  border-bottom: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  font-size: 13px;
+}
+
+.hoja-pagos li:last-child {
+  border-bottom: 0;
+}
+
+.hoja-pagos-fecha {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak);
+}
+
+.hoja-pagos-nombre {
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hoja-pagos-monto {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-family: var(--font-familyDrink);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.hoja-pagos-monto small {
+  font-family: var(--font-familyPrincipal);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--yellow-texto);
+}
+
+/* ---------- Solicitudes ---------- */
+
+.hoja-solicitud-turno {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 6px 8px 12px;
+  border-radius: 12px;
+  background: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.hoja-solicitud-turno > span {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hoja-solicitud-turno em {
+  font-size: 11.5px;
+  font-style: normal;
+  font-weight: 700;
+  color: var(--rosa-texto);
+}
+
+.hoja-solicitud-turno--lleno {
+  background: color-mix(in srgb, var(--rosa) 9%, transparent);
+}
+
+/* ---------- Pasos (− 12 +) ---------- */
+
+.hoja-pasos {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+}
+
+.hoja-pasos button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--background-color);
+  color: var(--fonts-color-primary);
+  cursor: pointer;
+}
+
+.hoja-pasos button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.hoja-pasos output {
+  min-width: 30px;
+  font-family: var(--font-familyDrink);
+  font-size: 16px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Ajustes de turnos ---------- */
+
+.modal-negocio-segmentado.hoja-segmentado--tres {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.hoja-cupo-general {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.hoja-turnos {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hoja-turnos li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 54px;
+  border-bottom: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+}
+
+.hoja-turnos li:last-child {
+  border-bottom: 0;
+}
+
+.hoja-turnos-textos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.hoja-turnos-hora {
+  font-size: 13.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.hoja-turnos-meta {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak);
+}
+
+.hoja-turnos-meta em {
+  font-style: normal;
+  color: var(--yellow-texto);
+}
+
+.hoja-turnos--pasado .hoja-turnos-meta {
+  color: var(--rosa-texto);
+}
+
+/* ---------- Un turno ---------- */
+
+.hoja-turno-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hoja-turno-nav button {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+  color: var(--fonts-color-primary);
+  cursor: pointer;
+}
+
+.hoja-turno-nav button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.hoja-turno-nav > span {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 0;
+  text-align: center;
+}
+
+.hoja-turno-nav b {
+  font-family: var(--font-familyDrink);
+  font-size: 20px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.hoja-turno-nav small {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak);
+}
+
+.hoja-turno-cupo {
+  --estado: var(--primary-color);
+  --estado-texto: var(--primary-texto);
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 8px 14px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--estado) 30%, transparent);
+  background: color-mix(in srgb, var(--estado) 7%, transparent);
+}
+
+.hoja-turno-cupo--casi {
+  --estado: var(--yellow-color);
+  --estado-texto: var(--yellow-texto);
+}
+
+.hoja-turno-cupo--lleno {
+  --estado: var(--rosa);
+  --estado-texto: var(--rosa-texto);
+}
+
+.hoja-turno-cifra {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak);
+  white-space: nowrap;
+}
+
+.hoja-turno-cifra b {
+  font-family: var(--font-familyDrink);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--fonts-color-primary);
+}
+
+.hoja-turno-barra {
+  display: block;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
+}
+
+.hoja-turno-barra span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--estado);
+  transition: width 0.35s var(--ease-out, ease-out);
+}
+
+.hoja-turno-estado {
+  grid-column: 1 / -1;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--estado-texto);
+}
+
+.hoja-turno-ajuste {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.hoja-mover {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.hoja-mover p {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hoja-boton,
+  .hoja-turno-barra span {
+    transition: none;
+  }
+}

@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { Banknote, Check, ChevronDown, MessageCircle, Phone, UserMinus, X } from 'lucide-react'
+import { ArrowRightLeft, Banknote, CalendarDays, Check, ChevronDown, Clock, MessageCircle, Phone, UserMinus, X } from 'lucide-react'
 import { iniciales } from '../../../utils/fichaLocal.js'
 import {
   ETIQUETA_SITUACION,
@@ -12,10 +12,25 @@ import './socioDueno.css'
 
 /* Una fila de la lista de socios. Cerrada dice quién es, su plan y cómo va
    con el pago; abierta enseña las cuentas y lo que se puede hacer: cobrar,
-   recordar por WhatsApp, cambiar de plan o darle de baja. */
-function SocioDueno({ socio, situacion, local, onCobrar, onAceptar, onRechazar, onCambiarPlan, onBaja }) {
+   recordar por WhatsApp, cambiar de turno, de plan o de fecha de pago, o
+   darle de baja. */
+function SocioDueno({
+  socio,
+  situacion,
+  local,
+  turno,
+  conTurnos = false,
+  onCobrar,
+  onAceptar,
+  onRechazar,
+  onCambiarPlan,
+  onCambiarTurno,
+  onCambiarFecha,
+  onBaja,
+}) {
   const [abierta, setAbierta] = useState(false)
   const [bajaArmada, setBajaArmada] = useState(false)
+  const [fecha, setFecha] = useState(null)
   const idDetalle = useId()
   const { clave, plan, cuota, recargo, total } = situacion
   const tel = String(socio.telefono || '').replace(/\D/g, '')
@@ -68,7 +83,7 @@ function SocioDueno({ socio, situacion, local, onCobrar, onAceptar, onRechazar, 
               type="button"
               className="socio-rapida socio-rapida--si"
               onClick={onAceptar}
-              aria-label={`Aceptar a ${socio.nombre} como socio`}
+              aria-label={`Aceptar a ${socio.nombre} como cliente`}
             >
               <Check size={17} strokeWidth={2.75} />
             </button>
@@ -94,7 +109,7 @@ function SocioDueno({ socio, situacion, local, onCobrar, onAceptar, onRechazar, 
           </dl>
 
           <p className="socio-historia">
-            {esBaja ? 'Fue socio' : 'Socio'} desde el {fechaCorta(socio.desde)}
+            {esBaja ? 'Fue cliente' : 'Cliente'} desde el {fechaCorta(socio.desde)}
             {!esBaja && <> · toca pagar el {fechaCorta(socio.proximoPago)}</>}
             {ultimoPago && <> · último pago el {fechaCorta(ultimoPago.fecha)}</>}
           </p>
@@ -105,6 +120,66 @@ function SocioDueno({ socio, situacion, local, onCobrar, onAceptar, onRechazar, 
                 <Banknote size={17} strokeWidth={2.25} aria-hidden="true" />
                 Cobrar {total} CUP
               </button>
+
+              <div className="socio-ajustes">
+                {conTurnos && (
+                  <div className="socio-ajuste">
+                    <Clock size={15} strokeWidth={2.25} aria-hidden="true" />
+                    <span className="socio-ajuste-textos">
+                      <small>Turno</small>
+                      {turno ? turno.texto : 'Sin turno'}
+                    </span>
+                    <button type="button" className="socio-ajuste-boton" onClick={onCambiarTurno}>
+                      <ArrowRightLeft size={13} strokeWidth={2.25} aria-hidden="true" />
+                      {turno ? 'Cambiar' : 'Elegir'}
+                    </button>
+                  </div>
+                )}
+
+                <div className="socio-ajuste">
+                  <CalendarDays size={15} strokeWidth={2.25} aria-hidden="true" />
+                  {fecha == null ? (
+                    <>
+                      <span className="socio-ajuste-textos">
+                        <small>Próximo pago</small>
+                        {fechaLarga(socio.proximoPago)}
+                      </span>
+                      <button type="button" className="socio-ajuste-boton" onClick={() => setFecha(socio.proximoPago)}>
+                        Cambiar
+                      </button>
+                    </>
+                  ) : (
+                    <form
+                      className="socio-fecha"
+                      onSubmit={(e) => {
+                        e.preventDefault()
+                        if (!fecha) return
+                        if (fecha !== socio.proximoPago) onCambiarFecha(fecha)
+                        setFecha(null)
+                      }}
+                    >
+                      <label className="socio-ajuste-textos">
+                        <small>Próximo pago</small>
+                        <input
+                          type="date"
+                          className="modal-negocio-input socio-fecha-input"
+                          value={fecha}
+                          onChange={(e) => setFecha(e.target.value)}
+                          required
+                        />
+                      </label>
+                      <span className="socio-fecha-botones">
+                        <button type="button" className="socio-ajuste-boton socio-ajuste-boton--suave" onClick={() => setFecha(null)}>
+                          Cancelar
+                        </button>
+                        <button type="submit" className="socio-ajuste-boton socio-ajuste-boton--fuerte" disabled={!fecha}>
+                          Guardar
+                        </button>
+                      </span>
+                    </form>
+                  )}
+                </div>
+              </div>
 
               <p className="socio-subtitulo">Cambiar de plan</p>
               <div className="socio-planes" role="group" aria-label="Cambiar de plan">
@@ -155,6 +230,12 @@ function SocioDueno({ socio, situacion, local, onCobrar, onAceptar, onRechazar, 
       )}
     </article>
   )
+}
+
+function fechaLarga(iso) {
+  const [a, m, d] = String(iso).split('-').map(Number)
+  if (!a) return '—'
+  return new Date(a, m - 1, d).toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' })
 }
 
 export default SocioDueno
