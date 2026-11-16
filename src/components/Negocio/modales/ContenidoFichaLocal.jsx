@@ -15,6 +15,7 @@ import {
   horarioTexto,
   minutosAbierto,
   notaDeComentarios,
+  tipoDeLocal,
   turnosDelDia,
 } from '../../../utils/fichaLocal.js'
 import { Seccion } from './piezas.jsx'
@@ -676,24 +677,30 @@ function ModalEditarLocal({ local, seccion, onGuardar }) {
         </div>
       </Seccion>
 
-      <Seccion titulo="Duración de cada turno" extra={`${turnos} turnos al día`}>
-        <div
-          className="modal-negocio-segmentado modal-negocio-segmentado--cinco modal-negocio-segmentado--tono"
-          role="group"
-          aria-label="Duración del turno"
+      {/* En un gimnasio o un curso no se reservan horas: no hay turnos. */}
+      {tipoDeLocal(local) !== 'suscripcion' && (
+        <Seccion
+          titulo={tipoDeLocal(local) === 'mesa' ? 'Cuánto dura cada reserva' : 'Duración de cada turno'}
+          extra={`${turnos} turnos al día`}
         >
-          {DURACIONES_TURNO.map((min) => (
-            <button
-              key={min}
-              type="button"
-              aria-pressed={form.intervaloMinutos === min}
-              onClick={() => cambiar('intervaloMinutos', min)}
-            >
-              {etiquetaDuracion(min)}
-            </button>
-          ))}
-        </div>
-      </Seccion>
+          <div
+            className="modal-negocio-segmentado modal-negocio-segmentado--cinco modal-negocio-segmentado--tono"
+            role="group"
+            aria-label="Duración del turno"
+          >
+            {DURACIONES_TURNO.map((min) => (
+              <button
+                key={min}
+                type="button"
+                aria-pressed={form.intervaloMinutos === min}
+                onClick={() => cambiar('intervaloMinutos', min)}
+              >
+                {etiquetaDuracion(min)}
+              </button>
+            ))}
+          </div>
+        </Seccion>
+      )}
 
       <Seccion titulo="Contacto" seccion="contacto">
         <label className="modal-negocio-campo">

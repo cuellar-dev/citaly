@@ -6,6 +6,7 @@ import talyAMano from '../components/Taly/taly-a-mano.svg'
 import talyPapel from '../components/Taly/taly-papel.svg'
 import talyCrayon from '../components/Taly/taly-crayon.svg'
 import talyCrayon2 from '../components/Taly/taly-crayon-dormido.svg'
+import Logotipo from '../components/Logotipo/Logotipo.jsx'
 import './auth.css'
 
 function Auth() {
@@ -70,7 +71,7 @@ function Auth() {
       </header>
 
       <div className="auth-cuerpo">
-        <p className="auth-marca">Citaly</p>
+        <Logotipo className="auth-marca" />
         <h1 className="auth-titulo">{esRegistro ? 'Crea tu cuenta' : 'Bienvenido de nuevo'}</h1>
         
 

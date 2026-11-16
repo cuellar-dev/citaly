@@ -566,3 +566,33 @@
     transform: none;
   }
 }
+
+/* ---------- Suscripción ---------- */
+
+/* Las tarjetas de plan viven dentro de un bloque: el papel es el fondo de la
+   página y las muescas dejan ver el del bloque. */
+.reserva .planes {
+  --plan-fondo: var(--background-color, #121413);
+  --plan-exterior: var(--background-color-secondary, #1e2221);
+}
+
+/* Cómo sigue la cosa después de mandar la solicitud. */
+.reserva-alta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 12px 14px 12px 34px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 7%, transparent);
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  text-align: left;
+}
+
+.reserva-alta li::marker {
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  color: var(--primary-texto, #00c2ad);
+}

@@ -147,8 +147,41 @@ export function diasTexto(dias = []) {
   return indices.map((i) => DIAS[i].corto).join(', ')
 }
 
-export function tipoLocalTexto(lugar) {
-  return lugar ? 'Reservas de mesa' : 'Citas de servicio'
+/* Tres tipos de local. Los datos viejos solo traen `lugar` (true = mesas):
+   el de suscripción se marca aparte con `suscripcion: true` y lleva `planes`
+   en vez de `servicios`. Siempre que haya que decidir por tipo, pasar por aquí. */
+export const TIPOS_LOCAL = {
+  mesa: 'mesa',
+  servicio: 'servicio',
+  suscripcion: 'suscripcion',
+}
+
+export function tipoDeLocal(local) {
+  if (local?.suscripcion) return TIPOS_LOCAL.suscripcion
+  return local?.lugar ? TIPOS_LOCAL.mesa : TIPOS_LOCAL.servicio
+}
+
+export function tipoLocalTexto(local) {
+  const tipo = tipoDeLocal(local)
+  if (tipo === TIPOS_LOCAL.suscripcion) return 'Pago mensual'
+  return tipo === TIPOS_LOCAL.mesa ? 'Reservas de mesa' : 'Citas de servicio'
+}
+
+/* Cada cuánto se paga un plan. Por ahora casi todo es mensual. */
+const PERIODOS = {
+  semana: { corto: 'sem', largo: 'a la semana' },
+  mes: { corto: 'mes', largo: 'al mes' },
+  trimestre: { corto: 'trim.', largo: 'cada 3 meses' },
+  anio: { corto: 'año', largo: 'al año' },
+}
+
+export function periodoDe(plan) {
+  return PERIODOS[plan?.periodo] ?? PERIODOS.mes
+}
+
+/** "1500 CUP/mes" */
+export function precioPlanTexto(plan) {
+  return `${Number(plan?.precio) || 0} CUP/${periodoDe(plan).corto}`
 }
 
 /* Al elegir portada, `urls` pasa a guardar todas las fotos: así el orden de la galería no salta. */

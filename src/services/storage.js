@@ -59,3 +59,38 @@ export function savePerfil(id, cambios) {
     return false
   }
 }
+
+/* Solicitudes para unirse a un local de suscripción (gimnasio, curso…).
+   No son citas: no tienen día ni hora, así que van aparte. */
+const SUSCRIPCIONES_KEY = 'citaly_suscripciones'
+
+export function getSuscripciones() {
+  try {
+    return JSON.parse(localStorage.getItem(SUSCRIPCIONES_KEY)) ?? []
+  } catch {
+    return []
+  }
+}
+
+/* Devuelve false si el navegador no tiene sitio para guardar. */
+export function saveSuscripcion(solicitud) {
+  const lista = getSuscripciones().filter((s) => s.id !== solicitud.id)
+  try {
+    localStorage.setItem(SUSCRIPCIONES_KEY, JSON.stringify([solicitud, ...lista]))
+    return true
+  } catch {
+    return false
+  }
+}
+
+/* El dueño acepta o rechaza una solicitud: 1 = aceptada, 3 = rechazada. */
+export function actualizarSuscripcion(id, cambios) {
+  const lista = getSuscripciones()
+  if (!lista.some((s) => s.id === id)) return false
+  try {
+    localStorage.setItem(SUSCRIPCIONES_KEY, JSON.stringify(lista.map((s) => (s.id === id ? { ...s, ...cambios } : s))))
+    return true
+  } catch {
+    return false
+  }
+}

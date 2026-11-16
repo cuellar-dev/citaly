@@ -3,7 +3,11 @@ import {
   ChevronRight,
   Clock3,
   Info,
+  LayoutGrid,
   MessageSquareQuote,
+  Percent,
+  Ticket,
+  UtensilsCrossed,
   Phone,
   Scissors,
   Star,
@@ -19,11 +23,15 @@ import {
   iniciales,
   minutosAbierto,
   notaDeComentarios,
+  precioPlanTexto,
   precioTexto,
+  tipoDeLocal,
   tipoLocalTexto,
   turnosDelDia,
 } from '../../utils/fichaLocal.js'
 import { profesionalesActivos } from '../../services/usuarios.js'
+import { mesasDeLocal, textoCobroMesa } from '../../utils/mesas.js'
+import { recargoDe } from '../../utils/socios.js'
 import './fichaLocal.css'
 
 /**
@@ -42,10 +50,70 @@ function FichaLocal({ local, onEditar, onOpiniones, onCatalogo }) {
   const comodidades = COMODIDADES.filter((c) => local.iconos?.some((i) => i.id === c.id))
   const { nota, cantidad: opiniones } = notaDeComentarios(local)
 
-  /* Solo los locales de citas tienen catálogo; los de mesas no lo usan al reservar. */
-  const catalogo = local.lugar
-    ? []
-    : [
+  /* Lo primero de la ficha es lo que se vende, y cambia con el tipo de
+     local: mesas y su cobro, planes y su recargo, o servicios y equipo. */
+  const tipo = tipoDeLocal(local)
+  const mesas = tipo === 'mesa' ? mesasDeLocal(local) : []
+  const soloCalle = mesas.filter((m) => !m.online).length
+  const planes = local.planes ?? []
+  const recargo = recargoDe(local)
+  const catalogo =
+    tipo === 'mesa'
+      ? [
+          [
+            {
+              id: 'mesas',
+              alAbrir: () => onCatalogo('mesas'),
+              Icono: LayoutGrid,
+              titulo: 'Mesas y plano',
+              valor: [
+                `${mesas.length} mesas · ${mesas.reduce((t, m) => t + m.capacidad, 0)} asientos`,
+                soloCalle && `${soloCalle} solo en el local`,
+              ]
+                .filter(Boolean)
+                .join(' · '),
+            },
+            {
+              id: 'reservaMesa',
+              alAbrir: () => onCatalogo('reservaMesa'),
+              Icono: UtensilsCrossed,
+              titulo: 'Precio de la reserva',
+              valor: textoCobroMesa(local),
+            },
+          ],
+        ]
+      : tipo === 'suscripcion'
+        ? [
+            [
+              {
+                id: 'planes',
+                alAbrir: () => onCatalogo('planes'),
+                Icono: Ticket,
+                titulo: 'Planes y precios',
+                valor: planes.length
+                  ? `${planes.length} ${planes.length === 1 ? 'plan' : 'planes'} · desde ${precioPlanTexto(
+                      planes.reduce((a, b) => (Number(b.precio) < Number(a.precio) ? b : a)),
+                    )}`
+                  : 'Añade lo que cobras',
+              },
+              {
+                id: 'recargo',
+                alAbrir: () => onCatalogo('recargo'),
+                Icono: Percent,
+                titulo: 'Recargo por atraso',
+                valor: recargo.porDia
+                  ? [
+                      `${recargo.porDia} CUP por día`,
+                      recargo.diasGracia && `${recargo.diasGracia} días de gracia`,
+                      recargo.tope && `tope ${recargo.tope}`,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')
+                  : 'Sin recargo',
+              },
+            ],
+          ]
+        : [
         [
           {
             id: 'servicios',
@@ -120,7 +188,7 @@ function FichaLocal({ local, onEditar, onOpiniones, onCatalogo }) {
         alAbrir: () => onEditar('local'),
         Icono: Info,
         titulo: 'Sobre el local',
-        valor: [local.categoria, tipoLocalTexto(local.lugar), comodidades.length && `${comodidades.length} comodidades`]
+        valor: [local.categoria, tipoLocalTexto(local), comodidades.length && `${comodidades.length} comodidades`]
           .filter(Boolean)
           .join(' · '),
         extra: comodidades.length > 0 && (

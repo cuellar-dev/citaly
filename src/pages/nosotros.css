@@ -151,13 +151,8 @@
 }
 
 /* Héroe */
-.nosotros--ligero .nos-hero-palabra {
-  color: var(--nos-texto);
-  text-shadow: 0.035em 0.045em 0 #bdf4e8;
-}
-.nosotros--ligero .nos-hero-letra:first-child,
-.nosotros--ligero .nos-hero-letra:nth-child(6) {
-  color: var(--nos-menta);
+.nosotros--ligero .nos-hero-letra .logotipo {
+  filter: drop-shadow(0.03em 0.04em 0 #bdf4e8);
 }
 .nosotros--ligero .nos-hero-sub {
   color: var(--nos-texto-suave);

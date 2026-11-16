@@ -7,6 +7,7 @@ import { IconoFacebook, IconoInstagram } from './IconosRedes.jsx'
 import { CITALY, CONTACTO, EXPLORA, LEGALES, REDES } from './pieDatos.js'
 import { filtrosIniciales } from '../../utils/busqueda.js'
 import { compartirCitaly } from '../../services/compartir.js'
+import Logotipo from '../Logotipo/Logotipo.jsx'
 import './pie.css'
 
 const ICONO_RED = { instagram: IconoInstagram, facebook: IconoFacebook }
@@ -55,7 +56,7 @@ function PieDePagina() {
         <div className="pie-rejilla">
           <section className="pie-marca">
             <h2 id="pie-marca" className="pie-logo">
-              <span className="pie-logo-acento">C</span>italy
+              <Logotipo variante="blanco" />
             </h2>
             <p className="pie-lema">Descubre los sitios de tu zona y reserva tu cita o tu mesa sin llamar ni esperar.</p>
             <Link to="/negocio" className="pie-cta">

@@ -5,7 +5,7 @@ import { es } from 'date-fns/locale'
 import { CalendarDays, LayoutGrid, Users, UsersRound } from 'lucide-react'
 import IconoWhatsApp from '../components/IconoWhatsApp/IconoWhatsApp.jsx'
 import { getLocalById } from '../services/locales.js'
-import { MESAS_MAPA } from '../data/mesasMapa.js'
+import { cobroDeMesa, mesasDeLocal, reservaMesaDe } from '../utils/mesas.js'
 import { useCitas } from '../hooks/useCitas.js'
 import { useReserva } from '../hooks/useReserva.js'
 import ReservaShell, {
@@ -20,9 +20,6 @@ import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import '../components/Reserva/reserva.css'
 
 const PANEL_MESA_MS = 4000
-/* La mesa más grande del plano. A partir de ahí hay que juntar mesas, y eso se
-   acuerda con el local, no se reserva desde aquí. */
-const MAX_PERSONAS = Math.max(...MESAS_MAPA.map((mesa) => mesa.capacidad))
 const GRUPO = 'grupo'
 
 function formatearPrecio(precio) {
@@ -106,6 +103,15 @@ function ReservarConLugar() {
     )
   }
 
+  /* Las mesas con lo que el dueño cambió: las que guarda para la calle se
+     ven en el plano, pero no se pueden coger. */
+  const mesasLocal = mesasDeLocal(local).map((m) => (m.online ? m : { ...m, estado: 'calle' }))
+  const hayCalle = mesasLocal.some((m) => m.estado === 'calle')
+  /* La mesa más grande que se puede reservar. A partir de ahí hay que juntar
+     mesas, y eso se acuerda con el local, no se reserva desde aquí. */
+  const MAX_PERSONAS = Math.max(...mesasLocal.filter((m) => m.online).map((m) => m.capacidad))
+  const ajustes = reservaMesaDe(local)
+  const configurado = Boolean(local.reservaMesa)
   const esGrupo = personas === GRUPO
 
   function elegirPersonas(cantidad) {
@@ -121,7 +127,7 @@ function ReservarConLugar() {
 
   function alPulsarMesa(mesa) {
     if (!personas || esGrupo) return
-    if (mesa.estado === 'ocupado' || mesa.estado === 'no-cabe') return
+    if (mesa.estado === 'ocupado' || mesa.estado === 'no-cabe' || mesa.estado === 'calle') return
     if (mesa.capacidad < personas) return
     setMesaActiva(mesa)
     setPanelVisible(true)
@@ -194,8 +200,8 @@ function ReservarConLugar() {
             capacidad: mesaSeleccionada.capacidad,
             ubicacion: mesaSeleccionada.ubicacion,
           },
-      precioReserva: esGrupo ? 0 : (mesaSeleccionada.precio ?? 0),
-      consumoMinimo: esGrupo ? null : (mesaSeleccionada.consumoMinimo ?? null),
+      precioReserva: esGrupo ? 0 : cobroDeMesa(local, mesaSeleccionada).precio,
+      consumoMinimo: esGrupo ? null : cobroDeMesa(local, mesaSeleccionada).consumoMinimo || null,
       personas: esGrupo ? null : personas,
       estadoReserva: 0,
       creadaEn: new Date().toISOString(),
@@ -219,11 +225,9 @@ function ReservarConLugar() {
         ? format(reserva.fecha, "EEE d 'de' MMM", { locale: es })
         : null
 
-  const precioMesa = mesaSeleccionada?.precio ?? 0
-  const consumo =
-    mesaSeleccionada && precioMesa === 0 && mesaSeleccionada.consumoMinimo
-      ? `${mesaSeleccionada.consumoMinimo} CUP a consumir`
-      : null
+  const cobro = mesaSeleccionada ? cobroDeMesa(local, mesaSeleccionada) : { precio: 0, consumoMinimo: 0 }
+  const precioMesa = cobro.precio
+  const consumo = mesaSeleccionada && precioMesa === 0 && cobro.consumoMinimo ? `${cobro.consumoMinimo} CUP a consumir` : null
 
   return (
     <ReservaShell
@@ -255,7 +259,11 @@ function ReservarConLugar() {
         numero={1}
         icono={Users}
         titulo="¿Cuántos van?"
-        descripcion="Te dejamos elegir solo entre las mesas con sitio para todos."
+        descripcion={
+          configurado && !ajustes.gruposGrandes
+            ? `Hasta ${MAX_PERSONAS} personas por reserva. Te dejamos elegir solo entre las mesas con sitio para todos.`
+            : 'Te dejamos elegir solo entre las mesas con sitio para todos.'
+        }
         hecho={hechos.personas}
         activo={pasoActivo === 0}
       >
@@ -271,17 +279,19 @@ function ReservarConLugar() {
               {n}
             </button>
           ))}
-          <button
-            type="button"
-            className={`reserva-persona reserva-persona--grupo${
-              esGrupo ? ' reserva-persona--activa' : ''
-            }`}
-            aria-pressed={esGrupo}
-            aria-label={`Más de ${MAX_PERSONAS} personas`}
-            onClick={() => elegirPersonas(GRUPO)}
-          >
-            +{MAX_PERSONAS}
-          </button>
+          {(!configurado || ajustes.gruposGrandes) && (
+            <button
+              type="button"
+              className={`reserva-persona reserva-persona--grupo${
+                esGrupo ? ' reserva-persona--activa' : ''
+              }`}
+              aria-pressed={esGrupo}
+              aria-label={`Más de ${MAX_PERSONAS} personas`}
+              onClick={() => elegirPersonas(GRUPO)}
+            >
+              +{MAX_PERSONAS}
+            </button>
+          )}
         </div>
       </BloqueReserva>
 
@@ -324,6 +334,7 @@ function ReservarConLugar() {
         <div className={`mapa-mesas-container${personas ? '' : ' mapa-mesas-container--apagado'}`}>
           <div className="mapa-mesas-viewport">
             <MapaMesas
+              mesas={mesasLocal}
               mesaSeleccionada={mesaSeleccionada}
               onMesaClick={alPulsarMesa}
               capacidadMinima={personas ?? 0}
@@ -363,6 +374,12 @@ function ReservarConLugar() {
             <div className="mapa-mesas-leyenda-swatch mapa-mesas-leyenda-swatch--seleccionado" />
             <p className="mapa-mesas-leyenda-texto">La tuya</p>
           </div>
+          {hayCalle && (
+            <div className="mapa-mesas-leyenda">
+              <div className="mapa-mesas-leyenda-swatch mapa-mesas-leyenda-swatch--calle" />
+              <p className="mapa-mesas-leyenda-texto">En el local</p>
+            </div>
+          )}
         </div>
       </BloqueReserva>
 
@@ -411,6 +428,9 @@ function ReservarConLugar() {
               nota: consumo,
               fuerte: true,
             },
+            ...(configurado
+              ? [{ etiqueta: 'Si llegas tarde', valor: `Te guardan la mesa ${ajustes.tolerancia} min` }]
+              : []),
           ]}
         />
       </BloqueReserva>

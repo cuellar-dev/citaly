@@ -1,7 +1,7 @@
 import { addDays, isSameDay, startOfToday } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { format } from 'date-fns'
-import { COMODIDADES, codigoDia, estaAbierto, franjaTurno, horaAmPm, aMinutos, notaDeComentarios } from './fichaLocal.js'
+import { COMODIDADES, codigoDia, estaAbierto, franjaTurno, horaAmPm, aMinutos, notaDeComentarios, precioPlanTexto } from './fichaLocal.js'
 
 /* Lo que Descubre necesita saber de un local para contarlo como LUGAR, no como
    formulario de reserva: qué nota tiene, si puedes ir ahora, cómo es por dentro
@@ -94,6 +94,12 @@ export function fraseDeLocal(local) {
 
 /** Precio más bajo publicado, para situar al local sin empujar a reservar. */
 export function desdeTexto(local) {
+  if (local?.suscripcion) {
+    const planes = (local.planes ?? []).filter((p) => Number(p.precio) > 0)
+    if (!planes.length) return null
+    const barato = planes.reduce((a, b) => (Number(b.precio) < Number(a.precio) ? b : a))
+    return `desde ${precioPlanTexto(barato)}`
+  }
   const precios = (local?.servicios ?? []).map((s) => Number(s.precio) || 0).filter((p) => p > 0)
   if (!precios.length) return null
   return `desde ${Math.min(...precios)} CUP`

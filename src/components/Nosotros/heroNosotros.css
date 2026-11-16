@@ -69,36 +69,26 @@
   padding: 0 16px;
 }
 
+/* El logotipo a pincel, letra a letra (cada una en su caja, ver
+   Logotipo/trazos.js). font-size solo fija la escala: Taly mide en em. */
 .nos-hero-palabra {
-  position: relative;
-  display: flex;
   margin: 0;
-  color: var(--fonts-color-primary, #f0f0f0);
-  font-family: var(--font-familyDrink, 'drink', sans-serif);
   font-size: clamp(4.2rem, 17vw, 15.5rem);
-  font-weight: 800;
-  line-height: 0.92;
-  letter-spacing: -0.03em;
-  /* Un borde de tinta debajo para que la palabra se lea sobre el 3D. */
-  text-shadow:
-    0.04em 0.05em 0 #0e2e2a,
-    0 0 0.4em rgba(18, 20, 19, 0.7);
+  height: 1.15em;
 }
 
 .nos-hero-letra {
-  position: relative;
-  display: inline-block;
   will-change: transform;
 }
 
 .nos-hero-letra-in {
-  display: inline-block;
+  display: block;
+  height: 100%;
 }
 
-/* La C y la Y en menta, como el logotipo partido en dos tintas. */
-.nos-hero-letra:first-child,
-.nos-hero-letra:nth-child(6) {
-  color: var(--primary-color, #00c2ad);
+/* Un borde de tinta debajo para que la palabra se lea sobre el 3D. */
+.nos-hero-letra .logotipo {
+  filter: drop-shadow(0.035em 0.045em 0 #0e2e2a) drop-shadow(0 0 0.3em rgba(18, 20, 19, 0.7));
 }
 
 .nos-hero-taly {

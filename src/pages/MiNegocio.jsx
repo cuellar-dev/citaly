@@ -3,13 +3,20 @@ import { addDays, format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { Banknote, CalendarDays, FileDown, Images, MessageSquareQuote, Pencil, Scissors, Timer, UserPlus, UserRound, Users, ZapOff } from 'lucide-react'
+import { Banknote, CalendarDays, FileDown, Images, LayoutGrid, MessageSquareQuote, Pencil, Scissors, Timer, UserPlus, UserRound, Users, UtensilsCrossed, ZapOff } from 'lucide-react'
 import CabeceraNegocio from '../components/Negocio/CabeceraNegocio.jsx'
 import CitaDueno from '../components/Negocio/CitaDueno.jsx'
 import FichaLocal from '../components/Negocio/FichaLocal.jsx'
 import FiltroCitas from '../components/Negocio/FiltroCitas.jsx'
 import ContenidoCatalogo from '../components/Negocio/modales/ContenidoCatalogo.jsx'
 import ContenidoFichaLocal from '../components/Negocio/modales/ContenidoFichaLocal.jsx'
+import ContenidoMesas from '../components/Negocio/modales/ContenidoMesas.jsx'
+import SalaTurno from '../components/Negocio/SalaTurno.jsx'
+import SwitchEjemplo from '../components/Negocio/SwitchEjemplo.jsx'
+import { EJEMPLOS, leerEjemplo } from '../data/ejemplosNegocio.js'
+import NegocioSuscripcion from '../components/Negocio/Suscripcion/NegocioSuscripcion.jsx'
+import { reservasMesaDemo } from '../data/reservasMesaDemo.js'
+import { mesasDeLocal } from '../utils/mesas.js'
 import ContenidoModalNegocio from '../components/Negocio/modales/ContenidoModalNegocio.jsx'
 import ModalNegocioShell from '../components/Negocio/ModalNegocioShell.jsx'
 import ResumenNegocio from '../components/Negocio/ResumenNegocio.jsx'
@@ -21,17 +28,18 @@ import { conPerfiles, profesionalesActivos } from '../services/usuarios.js'
 import { minutosHastaCita, textoEnCita } from '../utils/citasVista.js'
 import { CANCELADA, CONFIRMADA, PENDIENTE, POR_TI, caducarPendientes, textoEstadoReserva } from '../utils/estadosCita.js'
 import { pausaActiva, textoHasta } from '../utils/pausaAgenda.js'
-import { notaDeComentarios } from '../utils/fichaLocal.js'
+import { notaDeComentarios, tipoDeLocal } from '../utils/fichaLocal.js'
 import { descargarPdfCitas } from '../utils/pdfCitasNegocio.js'
 import { codigoDia, fotosDe, horaAmPm as horaDeMinutos, minutosAbierto, nuevoId, turnosDelDia } from '../utils/fichaLocal.js'
 import './miNegocio.css'
 
 gsap.registerPlugin(useGSAP)
 
-/* Local del dueño mientras no hay sesión. Sara abre 9:00–18:00 cada 90 min.
-   Sus citas (las de hoy y las de los días de alrededor) salen de
-   data/citasNegocioDemo.js. */
-const ID_LOCAL = 'sara'
+/* Locales del dueño mientras no hay sesión: uno de cada tipo, elegibles con
+   el switch de arriba (components/Negocio/SwitchEjemplo.jsx).
+   - Sara (servicio): abre 9:00–18:00 cada 90 min. Citas en data/citasNegocioDemo.js.
+   - Al Medio (mesas): abre 10:00–21:00, reservas de 1 h. data/reservasMesaDemo.js.
+   - Energym (suscripción): socios y pagos. data/sociosDemo.js. */
 
 /* Reloj fijo del mock, para ver el timeline a mitad de turno mientras se estila. */
 const AHORA_DEMO = new Date()
@@ -47,6 +55,9 @@ const MODALES = {
   editar: { titulo: 'Editar local', subtitulo: 'Datos de tu ficha', tono: 'verde', Icono: Pencil },
   servicios: { titulo: 'Servicios', subtitulo: 'Lo que ofreces', tono: 'verde', Icono: Scissors },
   servicio: { titulo: 'Servicio', subtitulo: 'Precio, duración y quién lo hace', tono: 'verde', Icono: Scissors },
+  mesas: { titulo: 'Mesas', subtitulo: 'El plano de tu sala', tono: 'verde', Icono: LayoutGrid },
+  mesa: { titulo: 'Mesa', subtitulo: 'Asientos y dónde está', tono: 'verde', Icono: LayoutGrid },
+  reservaMesa: { titulo: 'Precio de la reserva', subtitulo: 'Igual para todas las mesas', tono: 'verde', Icono: UtensilsCrossed },
   equipo: { titulo: 'Equipo', subtitulo: 'Quién atiende', tono: 'verde', Icono: Users },
   buscar: { titulo: 'Añadir profesional', subtitulo: 'Busca su cuenta de Citaly', tono: 'verde', Icono: UserPlus },
   profesional: { titulo: 'Profesional', subtitulo: 'Servicios que hace en tu local', tono: 'verde', Icono: UserRound },
@@ -54,6 +65,7 @@ const MODALES = {
 
 const MODALES_FICHA = new Set(['opiniones', 'galeria', 'editar'])
 const MODALES_CATALOGO = new Set(['servicios', 'servicio', 'equipo', 'buscar', 'profesional'])
+const MODALES_MESAS = new Set(['mesas', 'mesa', 'reservaMesa'])
 
 const FILTROS = [
   { id: 'todas', label: 'Todas' },
@@ -76,7 +88,7 @@ function nombreDelDia(desplazamiento, fecha) {
 }
 
 const VACIO_FILTRO = {
-  todas: 'No hay citas en la agenda de hoy.',
+  todas: 'No hay nada en la agenda de hoy.',
   pendientes: 'Nada por confirmar. Todo al día.',
   confirmadas: 'No quedan citas confirmadas por llegar.',
   atendidas: 'Todavía no has atendido a nadie hoy.',
@@ -157,10 +169,14 @@ function detalleOcupacion(porcentaje) {
 function resumenDelDia(citas, ahora, local) {
   const apertura = aMinutos(local.horarioApertura)
   const cierre = apertura + minutosAbierto(local.horarioApertura, local.horarioCierre)
-  const profesionales = profesionalesActivos(local).map((p) => String(p.name).split(' ')[0])
+  /* Cuántas cosas a la vez puede atender el local: profesionales en uno de
+     citas, mesas que se reservan por Citaly en uno de mesas. */
+  const esMesa = tipoDeLocal(local) === 'mesa'
+  const enParalelo = esMesa
+    ? mesasDeLocal(local).filter((m) => m.online).length
+    : profesionalesActivos(local).length
   const capacidad =
-    turnosDelDia(local.horarioApertura, local.horarioCierre, local.intervaloMinutos).length *
-    Math.max(1, profesionales.length)
+    turnosDelDia(local.horarioApertura, local.horarioCierre, local.intervaloMinutos).length * Math.max(1, enParalelo)
 
   const activas = citas.filter((c) => c.estadoReserva !== CANCELADA)
   const proximas = activas
@@ -168,7 +184,8 @@ function resumenDelDia(citas, ahora, local) {
     .sort((a, b) => minutosHastaCita(a, ahora) - minutosHastaCita(b, ahora))
   const [siguiente, despues] = proximas
   const porGrupo = (g) => citas.filter((c) => grupoCita(c, ahora) === g)
-  const suma = (lista) => lista.reduce((t, c) => t + (c.precio ?? 0), 0)
+  /* En mesas gratis cuenta el consumo mínimo comprometido (c.estimado). */
+  const suma = (lista) => lista.reduce((t, c) => t + (c.estimado ?? c.precio ?? 0), 0)
 
   const atendidas = porGrupo('atendidas')
   const confirmadas = porGrupo('confirmadas')
@@ -211,6 +228,7 @@ function resumenDelDia(citas, ahora, local) {
       porcentaje,
       detalle: detalleOcupacion(porcentaje),
       capacidad,
+      unidad: esMesa ? 'huecos' : 'turnos',
       ocupados,
       libres,
       ventana: `${horaDeMinutos(apertura)} – ${horaDeMinutos(cierre)}`,
@@ -250,9 +268,15 @@ function resumenDelDia(citas, ahora, local) {
   }
 }
 
-function MiNegocio() {
-  const [local, setLocal] = useState(() => getLocalById(ID_LOCAL))
-  const [citas, setCitas] = useState(() => citasNegocioDemo(getLocalById(ID_LOCAL), AHORA_DEMO))
+function agendaDemo(local) {
+  return tipoDeLocal(local) === 'mesa' ? reservasMesaDemo(local, AHORA_DEMO) : citasNegocioDemo(local, AHORA_DEMO)
+}
+
+function NegocioAgenda({ idLocal, cabeceraExtra }) {
+  const [local, setLocal] = useState(() => getLocalById(idLocal))
+  const [citas, setCitas] = useState(() => agendaDemo(getLocalById(idLocal)))
+  const esMesa = tipoDeLocal(local) === 'mesa'
+  const palabra = esMesa ? 'Reservas' : 'Citas'
   const [filtro, setFiltro] = useState('todas')
   /* El día que se está mirando. Solo uno a la vez: la tira de arriba deja
      moverse por la semana sin juntar todas las citas en un bulto. */
@@ -348,7 +372,7 @@ function MiNegocio() {
 
   /* Devuelve false si el navegador no tiene sitio (pasa con muchas fotos). */
   const guardarFicha = (cambios) => {
-    const guardado = saveFicha(ID_LOCAL, cambios)
+    const guardado = saveFicha(idLocal, cambios)
     if (guardado) setLocal((prev) => conPerfiles({ ...prev, ...cambios }))
     return guardado
   }
@@ -383,7 +407,7 @@ function MiNegocio() {
         ...datos,
         id: nuevoId('express'),
         fecha: hoyClave,
-        esLugar: false,
+        esLugar: esMesa,
         express: true,
         estadoReserva: CONFIRMADA,
         creadaEn: new Date().toISOString(),
@@ -429,8 +453,9 @@ function MiNegocio() {
   )
 
   return (
-    <section className="negocio" aria-label="Mi Negocio">
+    <>
       <div className="negocio-tablero">
+      {cabeceraExtra}
       <CabeceraNegocio
         nombre={local.localName}
         url={local.url}
@@ -462,7 +487,9 @@ function MiNegocio() {
       <div className="negocio-citas">
         <header className="negocio-citas-encabezado">
           <div>
-            <h2 className="negocio-citas-titulo">Citas {nombreDelDia(diaActual.desplazamiento, diaActual.fecha)}</h2>
+            <h2 className="negocio-citas-titulo">
+              {palabra} {nombreDelDia(diaActual.desplazamiento, diaActual.fecha)}
+            </h2>
             <p className="negocio-citas-fecha">
               <span>{conMayuscula(format(diaActual.fecha, "EEEE d 'de' MMMM", { locale: es }))}</span>
               {!esHoy && (
@@ -491,6 +518,10 @@ function MiNegocio() {
 
         <TiraDias dias={dias} seleccionada={diaElegido} onElegir={elegirDia} />
 
+        {esMesa && diaActual.abre && (
+          <SalaTurno key={diaElegido} local={local} citas={citasDelDia} ahora={AHORA_DEMO} esHoy={esHoy} />
+        )}
+
         {diaActual.abre && conHora.length > 0 && (
           <FiltroCitas opciones={opcionesFiltro} activo={filtro} onCambiar={setFiltro} />
         )}
@@ -504,11 +535,11 @@ function MiNegocio() {
                   ? 'Ese día no abres.'
                   : conHora.length === 0
                     ? esPasado
-                      ? 'Ese día no tuviste citas.'
-                      : 'Todavía no hay citas para ese día.'
+                      ? `Ese día no tuviste ${palabra.toLowerCase()}.`
+                      : `Todavía no hay ${palabra.toLowerCase()} para ese día.`
                     : esHoy
                       ? VACIO_FILTRO[filtro]
-                      : 'Ninguna cita con ese filtro ese día.'}
+                      : 'Nada con ese filtro ese día.'}
               </p>
             </div>
           )}
@@ -517,7 +548,7 @@ function MiNegocio() {
               <header className="negocio-franja-cabecera negocio-citas-item">
                 <h3 className="negocio-franja-titulo">{franja.label}</h3>
                 <span className="negocio-franja-cuenta">
-                  {franja.citas.length} {franja.citas.length === 1 ? 'cita' : 'citas'}
+                  {franja.citas.length} {(esMesa ? 'reserva' : 'cita') + (franja.citas.length === 1 ? '' : 's')}
                 </span>
               </header>
               <div className="negocio-franja-lista">
@@ -564,7 +595,18 @@ function MiNegocio() {
         vista={`${modal?.tipo}-${modal?.id ?? modal?.usuarioId ?? modal?.seccion ?? ''}`}
         onCerrar={cerrarModal}
       >
-        {MODALES_CATALOGO.has(modal?.tipo) ? (
+        {MODALES_MESAS.has(modal?.tipo) ? (
+          <ContenidoMesas
+            modal={modal}
+            local={local}
+            onNavegar={setModal}
+            onGuardar={(cambios, siguiente) => {
+              guardarFicha(cambios)
+              if (siguiente) setModal(siguiente)
+              else cerrarModal()
+            }}
+          />
+        ) : MODALES_CATALOGO.has(modal?.tipo) ? (
           <ContenidoCatalogo
             modal={modal}
             local={local}
@@ -602,6 +644,24 @@ function MiNegocio() {
           />
         )}
       </ModalNegocioShell>
+    </>
+  )
+}
+
+/* La página: el switch de ejemplos y, debajo, el panel que toca según el
+   tipo de local. La key hace que cada local empiece de cero al cambiar. */
+function MiNegocio() {
+  const [ejemplo, setEjemplo] = useState(leerEjemplo)
+  const actual = EJEMPLOS.find((e) => e.id === ejemplo) ?? EJEMPLOS[0]
+  const cabeceraExtra = <SwitchEjemplo activo={actual.id} onCambiar={setEjemplo} />
+
+  return (
+    <section className="negocio" aria-label="Mi Negocio">
+      {actual.tipo === 'suscripcion' ? (
+        <NegocioSuscripcion key={actual.idLocal} idLocal={actual.idLocal} ahora={AHORA_DEMO} cabeceraExtra={cabeceraExtra} />
+      ) : (
+        <NegocioAgenda key={actual.idLocal} idLocal={actual.idLocal} cabeceraExtra={cabeceraExtra} />
+      )}
     </section>
   )
 }

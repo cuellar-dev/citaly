@@ -15,7 +15,7 @@ export function useCompartir(local) {
 
   const compartir = useCallback(async () => {
     if (!local) return
-    const url = `${window.location.origin}/local/${local.id}`
+    const url = `${window.location.origin}${import.meta.env.BASE_URL}local/${local.id}`
     const copiar = async () => {
       try {
         await navigator.clipboard.writeText(url)

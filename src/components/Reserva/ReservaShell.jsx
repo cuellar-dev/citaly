@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import GuiaReserva from './GuiaReserva.jsx'
 import './reserva.css'
 
-/* Armazón de las dos pantallas de reserva (mesa y servicio). Lo que cambia de
+/* Armazón de las pantallas de reserva (mesa, servicio y suscripción). Lo que cambia de
    una a otra son los bloques del medio; cabecera, guía, resumen y barra de
    confirmar son los mismos y viven aquí. */
 
@@ -27,7 +27,8 @@ function ReservaShell({
         {subtitulo ? <p className="reserva-subtitulo">{subtitulo}</p> : null}
       </header>
 
-      <GuiaReserva {...guia} />
+      {/* La de suscripción no lleva guía: solo hay una cosa que elegir. */}
+      {guia ? <GuiaReserva {...guia} /> : null}
 
       <div className="reserva-cuerpo">{children}</div>
 

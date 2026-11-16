@@ -10,7 +10,7 @@ const DATOS_COMPARTIR = {
 }
 
 export function compartirCitaly(alTerminar) {
-  const url = window.location.origin
+  const url = `${window.location.origin}${import.meta.env.BASE_URL}`
   if (navigator.share) {
     /* Se llama sin esperar nada antes: el navegador solo abre el menú si
        viene directo del toque. */

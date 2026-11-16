@@ -56,7 +56,7 @@ function quienHace(profesionales, idServicio) {
 }
 
 /* Botón de borrar en dos toques, para no perder datos de un roce. */
-function BotonEliminar({ texto, aviso, onEliminar }) {
+export function BotonEliminar({ texto, aviso, onEliminar }) {
   const [armado, setArmado] = useState(false)
   return (
     <div className="catalogo-eliminar">

@@ -1,0 +1,48 @@
+/* Tintas del logotipo (las mismas que brand/logo/final/citaly-logotipo-*.svg).
+   Blanco sobre la noche; sobre papel, tinta casi negra con la A y la Y
+   un punto más hondas para que se lean sobre crema. */
+.logotipo {
+  display: block;
+  height: auto;
+  overflow: visible;
+  --logo-tinta: #ffffff;
+  --logo-a: #4fd8c4;
+  --logo-y: #ffd166;
+}
+
+.logotipo--negro,
+:root[data-tema='claro'] .logotipo--auto:not(:is(.tema-oscuro-fijo, .nosotros) .logotipo) {
+  --logo-tinta: #121413;
+  --logo-a: #2aa795;
+  --logo-y: #d99a2b;
+}
+
+.logotipo-tinta {
+  stroke: var(--logo-tinta);
+}
+
+.logotipo-a {
+  stroke: var(--logo-a);
+}
+
+.logotipo-y {
+  stroke: var(--logo-y);
+}
+
+/* Letras sueltas: un contenedor con la proporción del logotipo y cada letra
+   colocada en su trozo (cajaLetra). */
+.logotipo-letras {
+  position: relative;
+  aspect-ratio: 464 / 154;
+}
+
+.logotipo-letras > [data-letra] {
+  position: absolute;
+  top: 0;
+  height: 100%;
+}
+
+.logotipo-letra {
+  width: 100%;
+  height: 100%;
+}

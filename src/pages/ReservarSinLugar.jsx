@@ -58,6 +58,10 @@ function ReservarSinLugar() {
     return <Navigate to={`/local/${id}/reservar`} replace />
   }
 
+  if (local?.suscripcion) {
+    return <Navigate to={`/local/${id}/unirse`} replace />
+  }
+
   if (!local) {
     return (
       <section className="reserva reserva--centrada">

@@ -5,12 +5,14 @@ import { ArrowLeft } from 'lucide-react'
 import { getLocalById } from '../services/locales.js'
 import { saveFicha } from '../services/storage.js'
 import { useCitas } from '../hooks/useCitas.js'
-import { fotosDe, notaDeComentarios } from '../utils/fichaLocal.js'
+import { TIPOS_LOCAL, fotosDe, notaDeComentarios, precioPlanTexto, tipoDeLocal } from '../utils/fichaLocal.js'
 import { estadoApertura } from '../utils/descubre.js'
 import { CONFIRMADA } from '../utils/estadosCita.js'
 import HeroLocal from '../components/DetalleLocal/HeroLocal.jsx'
 import PestanasLocal from '../components/DetalleLocal/PestanasLocal.jsx'
 import ServiciosLocal from '../components/DetalleLocal/ServiciosLocal.jsx'
+import PlanesPrecio from '../components/PlanesPrecio/PlanesPrecio.jsx'
+import { ofertaMesas } from '../utils/mesas.js'
 import OpinionesLocal from '../components/DetalleLocal/OpinionesLocal.jsx'
 import InfoLocal from '../components/DetalleLocal/InfoLocal.jsx'
 import BarraReservaLocal from '../components/DetalleLocal/BarraReservaLocal.jsx'
@@ -21,6 +23,15 @@ import VisorImagen from '../components/VisorImagen/VisorImagen.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import taly404 from '../components/Taly/taly-404-animado.svg'
 import './DetalleLocal.css'
+
+const ETIQUETA_PESTANA = { mesa: 'Reservas', servicio: 'Servicios', suscripcion: 'Planes' }
+const TITULO_SECCION = { mesa: 'Qué puedes reservar', servicio: 'Servicios', suscripcion: 'Planes y precios' }
+
+function etiquetaCuenta(tipo, n) {
+  if (tipo === 'mesa') return 'Opciones'
+  if (tipo === 'suscripcion') return n === 1 ? 'Plan' : 'Planes'
+  return n === 1 ? 'Servicio' : 'Servicios'
+}
 
 /* La ficha del local es su escaparate: está ordenada como un embudo.
    Primero lo que convence (fotos, nota, qué ofrece y a qué precio, qué dice
@@ -64,14 +75,25 @@ function DetalleLocal() {
     }
   }, [nombre])
 
-  const servicios = useMemo(() => local?.servicios ?? [], [local])
+  const tipo = tipoDeLocal(local)
+  const esSuscripcion = tipo === TIPOS_LOCAL.suscripcion
+  /* Un local de mesas ya configurado por el dueño enseña sus mesas con el
+     cobro de la reserva; los demás, su lista de siempre. */
+  const servicios = useMemo(
+    () =>
+      local?.lugar && local?.reservaMesa
+        ? ofertaMesas(local, Number(local.intervaloMinutos) || 60)
+        : (local?.servicios ?? []),
+    [local],
+  )
+  const planes = useMemo(() => local?.planes ?? [], [local])
   const secciones = useMemo(
     () => [
-      { id: 'local-servicios', label: local?.lugar ? 'Reservas' : 'Servicios' },
+      { id: 'local-servicios', label: ETIQUETA_PESTANA[tipo] },
       { id: 'local-opiniones', label: 'Opiniones', cuenta: local?.comentarios?.length || null },
       { id: 'local-info', label: 'Info' },
     ],
-    [local],
+    [local, tipo],
   )
 
   if (!local) {
@@ -97,14 +119,23 @@ function DetalleLocal() {
   const fotos = fotosDe(local)
 
   const precios = servicios.map((s) => Number(s.precio) || 0).filter((p) => p > 0)
-  const desde = precios.length ? `${Math.min(...precios)} CUP` : null
+  /* En suscripción, el "desde" es la cuota más baja, con su periodo. */
+  const planesPagados = planes.filter((p) => Number(p.precio) > 0)
+  const planBarato = planesPagados.length
+    ? planesPagados.reduce((a, b) => (Number(b.precio) < Number(a.precio) ? b : a))
+    : null
+  const desde = esSuscripcion
+    ? planBarato && precioPlanTexto(planBarato)
+    : precios.length
+      ? `${Math.min(...precios)} CUP`
+      : null
+  const oferta = esSuscripcion ? planes : servicios
+  const etiquetaDesde = esSuscripcion && planes.length === 1 ? 'Cuota' : 'Desde'
 
   /* Cifras que no repiten lo que ya dice la cabecera (la nota va arriba). */
   const cifras = [
-    servicios.length ? { valor: desde ?? 'Gratis', label: desde ? 'Desde' : 'Reserva' } : null,
-    servicios.length
-      ? { valor: servicios.length, label: local.lugar ? 'Opciones' : servicios.length === 1 ? 'Servicio' : 'Servicios' }
-      : null,
+    oferta.length ? { valor: desde ?? 'Gratis', label: desde ? etiquetaDesde : 'Reserva' } : null,
+    oferta.length ? { valor: oferta.length, label: etiquetaCuenta(tipo, oferta.length) } : null,
     { valor: `${local.metros} m`, label: 'Distancia' },
   ].filter(Boolean)
 
@@ -115,6 +146,11 @@ function DetalleLocal() {
   )
 
   function reservar(servicioId) {
+    if (esSuscripcion) {
+      const sufijo = servicioId ? `?plan=${encodeURIComponent(servicioId)}` : ''
+      navigate(`/local/${id}/unirse${sufijo}`)
+      return
+    }
     if (local.lugar) {
       navigate(`/local/${id}/reservar`)
       return
@@ -181,9 +217,13 @@ function DetalleLocal() {
           aria-labelledby="local-servicios-titulo"
         >
           <h2 id="local-servicios-titulo" className="detalle-local-titulo">
-            {local.lugar ? 'Qué puedes reservar' : 'Servicios'}
+            {TITULO_SECCION[tipo]}
           </h2>
-          <ServiciosLocal servicios={servicios} lugar={local.lugar} onReservar={reservar} />
+          {esSuscripcion ? (
+            <PlanesPrecio planes={planes} onElegir={reservar} nombreLocal={local.localName} />
+          ) : (
+            <ServiciosLocal servicios={servicios} lugar={local.lugar} onReservar={reservar} />
+          )}
         </section>
 
         <TrazoCosido />
@@ -223,7 +263,13 @@ function DetalleLocal() {
         </section>
       </div>
 
-      <BarraReservaLocal precio={desde} nota={notaBarra} lugar={local.lugar} onReservar={() => reservar()} />
+      <BarraReservaLocal
+        precio={desde}
+        etiqueta={etiquetaDesde}
+        nota={notaBarra}
+        tipo={tipo}
+        onReservar={() => reservar()}
+      />
 
       {imagenActiva ? (
         <VisorImagen url={imagenActiva} alt={`Foto de ${local.localName}`} onClose={() => setImagenActiva(null)} />

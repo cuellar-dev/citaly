@@ -8,6 +8,8 @@ import { Dato, FilaDato, Seccion } from './piezas.jsx'
 import { profesionalesActivos } from '../../../services/usuarios.js'
 import { digitos as soloDigitos, duracionAMinutos, horaAmPm, turnosDelDia } from '../../../utils/fichaLocal.js'
 import { pausaActiva, proximaApertura, textoHasta, textoQueda } from '../../../utils/pausaAgenda.js'
+import { mesasDeLocal } from '../../../utils/mesas.js'
+import { reservaDeMesa } from '../../../data/reservasMesaDemo.js'
 
 gsap.registerPlugin(useGSAP)
 
@@ -299,7 +301,7 @@ function ModalOcupacion({ ocupacion }) {
       </div>
 
       <div className="modal-negocio-datos" data-entra>
-        <Dato etiqueta="Capacidad" valor={`${ocupacion.capacidad} turnos`} />
+        <Dato etiqueta="Capacidad" valor={`${ocupacion.capacidad} ${ocupacion.unidad ?? 'turnos'}`} />
         <Dato etiqueta="Ocupados" valor={ocupacion.ocupados} tono="verde" />
         <Dato etiqueta="Libres" valor={ocupacion.libres} tono="amarillo" />
       </div>
@@ -595,7 +597,9 @@ function hhmm(minutos) {
    puerta. */
 function turnosLibres(local, citas, ahora) {
   const intervalo = Number(local.intervaloMinutos) || 60
-  const capacidad = Math.max(1, profesionalesActivos(local).length)
+  /* En mesas, quien llega puede sentarse en cualquiera, también en las que
+     se guardan para la calle. */
+  const capacidad = Math.max(1, local.lugar ? mesasDeLocal(local).length : profesionalesActivos(local).length)
   const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes()
   return turnosDelDia(local.horarioApertura, local.horarioCierre, local.intervaloMinutos)
     .filter((t) => t + intervalo > ahoraMin)
@@ -604,6 +608,141 @@ function turnosLibres(local, citas, ahora) {
       return ocupados < capacidad
     })
     .map((t) => ({ minutos: t, ahora: t <= ahoraMin, texto: horaAmPm(t) }))
+}
+
+/* Mesas sin reserva en ese turno. Las de la calle van primero: para eso están. */
+function mesasLibres(local, citas, horario) {
+  const cogidas = new Set(
+    citas.filter((c) => c.estadoReserva !== CANCELADA && c.horario === horario && c.mesaId).map((c) => c.mesaId),
+  )
+  return mesasDeLocal(local)
+    .filter((m) => !cogidas.has(m.id))
+    .sort((a, b) => Number(a.online) - Number(b.online) || a.capacidad - b.capacidad)
+}
+
+function ModalExpressMesa({ local, citas, ahora, onAgregar }) {
+  const libres = turnosLibres(local, citas, ahora)
+  const [turno, setTurno] = useState(libres[0]?.minutos ?? null)
+  const [mesaId, setMesaId] = useState(null)
+  const [personas, setPersonas] = useState(2)
+  const [nombre, setNombre] = useState('')
+
+  const elegido = libres.find((t) => t.minutos === turno)
+  const mesas = elegido ? mesasLibres(local, citas, hhmm(elegido.minutos)) : []
+  const mesa = mesas.find((m) => m.id === mesaId) ?? null
+  const valido = elegido && mesa && personas <= mesa.capacidad
+
+  const agregar = (e) => {
+    e.preventDefault()
+    if (!valido) return
+    onAgregar(
+      reservaDeMesa(local, mesa, {
+        horario: hhmm(elegido.minutos),
+        cliente: nombre.trim() || 'Sin nombre (en la puerta)',
+        personas,
+      }),
+    )
+  }
+
+  if (!libres.length) {
+    return (
+      <div className="modal-negocio-stack">
+        <div className="modal-negocio-hueco" data-entra>
+          <span className="modal-negocio-hueco-etiqueta">Sin mesas libres</span>
+          <span className="modal-negocio-numero">La sala está llena</span>
+          <span className="modal-negocio-hueco-sub">No queda ninguna mesa libre hasta el cierre.</span>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <form className="modal-negocio-stack" onSubmit={agregar} noValidate>
+      <div className="modal-negocio-hueco" data-entra>
+        <span className="modal-negocio-hueco-etiqueta">Gente en la puerta</span>
+        <span className="modal-negocio-numero">{elegido?.ahora ? 'Para ahora' : elegido?.texto}</span>
+        <span className="modal-negocio-hueco-sub">Siéntalos en una mesa libre y queda apuntado en la agenda.</span>
+      </div>
+
+      <Seccion titulo="Cuándo" extra={`${libres.length} ${libres.length === 1 ? 'turno' : 'turnos'} con sitio`}>
+        <div className="express-turnos" role="radiogroup" aria-label="Turno">
+          {libres.map((t) => (
+            <button
+              key={t.minutos}
+              type="button"
+              role="radio"
+              aria-checked={turno === t.minutos}
+              className={`express-turno${t === libres[0] ? ' express-turno--sugerido' : ''}`}
+              onClick={() => {
+                setTurno(t.minutos)
+                setMesaId(null)
+              }}
+            >
+              {t.ahora ? 'Ahora' : t.texto}
+            </button>
+          ))}
+        </div>
+      </Seccion>
+
+      <Seccion titulo="Cuántos son">
+        <div className="modal-negocio-opciones" role="group" aria-label="Personas">
+          {[1, 2, 3, 4, 5, 6].map((n) => (
+            <button
+              key={n}
+              type="button"
+              className="modal-negocio-chip modal-negocio-chip--verde"
+              aria-pressed={personas === n}
+              onClick={() => {
+                setPersonas(n)
+                if (mesa && mesa.capacidad < n) setMesaId(null)
+              }}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+      </Seccion>
+
+      <Seccion titulo="Mesa" extra={`${mesas.length} libres`}>
+        <div className="modal-negocio-opciones" role="group" aria-label="Mesa libre">
+          {mesas.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              className="modal-negocio-chip modal-negocio-chip--verde"
+              aria-pressed={mesaId === m.id}
+              disabled={m.capacidad < personas}
+              onClick={() => setMesaId(m.id)}
+            >
+              {m.codigo.replace('MESA-', 'Mesa ')} · {m.capacidad}
+              {!m.online && ' · calle'}
+            </button>
+          ))}
+        </div>
+        {mesas.length > 0 && mesas.every((m) => m.capacidad < personas) && (
+          <p className="modal-negocio-nota">Ninguna mesa libre es tan grande: tendréis que juntar dos.</p>
+        )}
+      </Seccion>
+
+      <Seccion titulo="Nombre" extra="Opcional">
+        <label className="modal-negocio-campo">
+          <span>A nombre de</span>
+          <input
+            type="text"
+            placeholder="Ej. Familia Pérez"
+            className="modal-negocio-input"
+            autoComplete="off"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+          />
+        </label>
+      </Seccion>
+
+      <button type="submit" className="modal-negocio-accion-principal" disabled={!valido} data-entra>
+        {mesa ? `Sentarlos en la ${mesa.codigo.replace('MESA-', 'mesa ')}` : 'Elige una mesa'}
+      </button>
+    </form>
+  )
 }
 
 function ModalExpress({ local, citas, ahora, onAgregar }) {
@@ -765,7 +904,11 @@ export default function ContenidoModalNegocio({
         />
       )
     case 'express':
-      return <ModalExpress local={local} citas={citas} ahora={reloj} onAgregar={onAgregarCita} />
+      return local.lugar ? (
+        <ModalExpressMesa local={local} citas={citas} ahora={reloj} onAgregar={onAgregarCita} />
+      ) : (
+        <ModalExpress local={local} citas={citas} ahora={reloj} onAgregar={onAgregarCita} />
+      )
     default:
       return null
   }

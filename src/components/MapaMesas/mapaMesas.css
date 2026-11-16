@@ -105,6 +105,39 @@
   opacity: 0.35;
 }
 
+/* Guardada para quien llega sin reserva: hueca, con el borde a puntos. */
+.mesa--calle {
+  pointer-events: none;
+  cursor: default;
+}
+
+.mesa--calle .mesa-forma {
+  fill: transparent;
+  stroke: color-mix(in srgb, var(--fonts-color-primary-alternative) 70%, transparent);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+}
+
+.mesa--calle .mesa-etiqueta {
+  fill: var(--fonts-color-primary-alternative);
+}
+
+/* En el editor del dueño todas se pueden tocar. */
+.mapa-mesas-svg--editable .mesa {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.mapa-mesas-svg--editable .mesa:focus-visible .mesa-forma {
+  stroke: var(--yellow-color);
+  stroke-width: 2;
+}
+
+.mapa-mesas-leyenda-swatch--calle {
+  background-color: transparent;
+  border: 1.5px dashed var(--fonts-color-primary-alternative);
+}
+
 .mesa--ocupado .mesa-forma {
   fill: color-mix(in srgb, var(--primary-color-weak-full) 50%, transparent);
 }

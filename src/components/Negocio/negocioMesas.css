@@ -1,0 +1,217 @@
+/* Piezas del panel del dueño en un local de mesas: el plano dentro de las
+   hojas, la sala del turno en la agenda y la miniatura de cada mesa. */
+
+.mesas-plano {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mesas-plano .mapa-mesas-container {
+  height: 210px;
+  background: rgb(var(--tinte) / calc(0.03 * var(--tinte-fuerza)));
+}
+
+.mesas-plano .mapa-mesas-leyenda-container {
+  margin-top: 0;
+}
+
+.mesas-segmentado--dos {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.mesas-segmentado--dos button {
+  padding: 0 8px;
+  line-height: 1.2;
+}
+
+/* La mesa en pequeño, con sus asientos dentro. */
+.mesas-ficha-forma {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-right: 2px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary-color) 80%, transparent);
+  color: #fff;
+  font-family: var(--font-familyDrink);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mesas-ficha-forma--rectangulo {
+  width: 44px;
+  height: 26px;
+  border-radius: 6px;
+}
+
+.mesas-ficha-forma--calle {
+  background: transparent;
+  border: 1.5px dashed var(--primary-texto);
+  color: var(--primary-texto);
+}
+
+.mesas-calle {
+  color: var(--primary-texto);
+}
+
+.mesas-previa {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ---------- La sala en un turno (agenda del dueño) ---------- */
+
+.sala-turno {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+  border-radius: 18px;
+  background: var(--tarjeta-fondo);
+}
+
+.sala-turno-cabecera {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.sala-turno-titulo {
+  margin: 0;
+  font-family: var(--font-familyDrink);
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.sala-turno-cuenta {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak);
+  white-space: nowrap;
+}
+
+.sala-turno-cuenta strong {
+  color: var(--primary-texto);
+}
+
+.sala-turno-horas {
+  display: flex;
+  gap: 6px;
+  margin: 0 -14px;
+  padding: 0 14px 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.sala-turno-horas::-webkit-scrollbar {
+  display: none;
+}
+
+.sala-turno-hora {
+  flex-shrink: 0;
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fonts-color-primary-weak);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.sala-turno-hora[aria-pressed='true'] {
+  border-color: transparent;
+  background: var(--primary-color);
+  color: #062a26;
+}
+
+.sala-turno-hora--pasada:not([aria-pressed='true']) {
+  opacity: 0.5;
+}
+
+.sala-turno-hora b {
+  margin-left: 5px;
+  font-weight: 700;
+  color: var(--yellow-texto);
+}
+
+.sala-turno-hora[aria-pressed='true'] b {
+  color: inherit;
+}
+
+.sala-turno .mapa-mesas-container {
+  height: 190px;
+  padding: 6px;
+}
+
+.sala-turno .mapa-mesas-leyenda-container {
+  margin-top: 0;
+}
+
+.sala-turno-quienes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sala-turno-quienes li {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgb(var(--tinte) / calc(0.05 * var(--tinte-fuerza)));
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sala-turno-quienes b {
+  color: var(--primary-texto);
+}
+
+.sala-turno-quienes .sala-turno-quienes--pendiente b {
+  color: var(--yellow-texto);
+}
+
+/* En la sala del dueño los colores se invierten: lo que importa es lo
+   reservado, así que eso brilla y lo libre se apaga. */
+.sala-turno .mesa--disponible .mesa-forma {
+  fill: color-mix(in srgb, var(--primary-color-weak-full) 55%, transparent);
+}
+
+.sala-turno .mesa--ocupado .mesa-forma {
+  fill: var(--primary-color);
+}
+
+.sala-turno .mesa--pendiente .mesa-forma {
+  fill: color-mix(in srgb, var(--yellow-color) 80%, transparent);
+}
+
+.sala-turno .mesa--pendiente .mesa-etiqueta {
+  fill: #2a2206;
+}
+
+.sala-swatch--libre {
+  background-color: color-mix(in srgb, var(--primary-color-weak-full) 55%, transparent);
+}
+
+.sala-swatch--reservada {
+  background-color: var(--primary-color);
+}
+
+.sala-turno .mapa-mesas-leyenda-container {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 12px;
+  border-radius: 14px;
+}

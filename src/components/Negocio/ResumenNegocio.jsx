@@ -89,7 +89,7 @@ function TarjetaSiguiente({ datos, onClick }) {
         </span>
         <span className="resumen-negocio-siguiente-quien">
           {vacia ? (
-            <span className="resumen-negocio-siguiente-hora resumen-negocio-siguiente-hora--suave">Sin más citas hoy</span>
+            <span className="resumen-negocio-siguiente-hora resumen-negocio-siguiente-hora--suave">Nada más por hoy</span>
           ) : (
             <>
               <span className="resumen-negocio-siguiente-cliente">{datos.cliente}</span>
@@ -123,7 +123,7 @@ function TarjetaOcupacion({ datos, onClick }) {
         <small>%</small>
       </span>
       <span className="resumen-negocio-pie">
-        {datos?.ocupados ?? 0} de {datos?.capacidad ?? 0} turnos
+        {datos?.ocupados ?? 0} de {datos?.capacidad ?? 0} {datos?.unidad ?? 'turnos'}
       </span>
       <span className="resumen-negocio-segmentos" role="presentation">
         {segmentos.map((s, i) => (

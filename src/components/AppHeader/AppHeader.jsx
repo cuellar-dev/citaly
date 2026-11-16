@@ -5,6 +5,7 @@ import { Ellipsis, Plus, ClipboardClock, Bell } from 'lucide-react'
 import MenuTablas from './MenuTablas.jsx'
 import GraciasCompartir from './GraciasCompartir.jsx'
 import TalyPosado from '../Taly/TalyPosado.jsx'
+import Logotipo from '../Logotipo/Logotipo.jsx'
 import { contarSinLeer } from '../../services/notificaciones.js'
 import { compartirCitaly } from '../../services/compartir.js'
 import './AppHeader.css'
@@ -100,7 +101,7 @@ function AppHeader() {
   return (
     <header className="app-header" ref={headerRef}>
       <div className="app-header-inner" ref={textosRef}>
-        <span className="app-header-brand">Citaly</span>
+        <Logotipo className="app-header-brand" />
         <h1 className="app-header-title">{title}</h1>
       </div>
 

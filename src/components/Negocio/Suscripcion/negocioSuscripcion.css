@@ -1,0 +1,185 @@
+/* Mi Negocio de un local de suscripción: alertas de pago, lista de socios
+   y las piezas de las hojas de planes y recargo. */
+
+.socios-alertas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.socios-alerta {
+  --tono: var(--rosa);
+  --tono-texto: var(--rosa-texto);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 56px;
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--tono) 35%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--tono) 9%, transparent);
+  color: var(--fonts-color-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    transform 0.15s var(--ease-out, ease-out);
+}
+
+.socios-alerta--mostaza {
+  --tono: var(--yellow-color);
+  --tono-texto: var(--yellow-texto);
+}
+
+.socios-alerta[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--tono) 16%, transparent);
+}
+
+.socios-alerta:active {
+  transform: scale(0.985);
+}
+
+.socios-alerta:focus-visible {
+  outline: 2px solid var(--tono);
+  outline-offset: 2px;
+}
+
+.socios-alerta svg {
+  flex-shrink: 0;
+  color: var(--tono-texto);
+}
+
+.socios-alerta span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.socios-alerta b {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.socios-alerta small {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak);
+}
+
+.socios-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Tonos del filtro (mismo menú que el de citas). */
+.filtro-citas-opcion--atrasados {
+  --tono: var(--rosa);
+}
+
+.filtro-citas-opcion--por-vencer,
+.filtro-citas-opcion--solicitudes {
+  --tono: var(--yellow-color);
+}
+
+.filtro-citas-opcion--al-dia {
+  --tono: var(--primary-color);
+}
+
+.filtro-citas-opcion--bajas {
+  --tono: var(--neutro-apagado);
+}
+
+/* ---------- Hojas ---------- */
+
+.planes-estrella {
+  margin-left: 6px;
+  vertical-align: -1px;
+  color: var(--yellow-texto);
+}
+
+.planes-previa .planes {
+  --plan-fondo: var(--background-color);
+  --plan-exterior: var(--background-color-secondary);
+}
+
+.planes-previa .plan-boton {
+  display: none;
+}
+
+.planes-incluye {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.planes-incluye li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 6px 0 14px;
+  border-radius: 12px;
+  background: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.planes-incluye li span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.planes-incluye button,
+.planes-linea button {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--fonts-color-primary-weak);
+  cursor: pointer;
+}
+
+.planes-linea {
+  display: flex;
+  gap: 8px;
+}
+
+.planes-linea input {
+  flex: 1;
+  min-width: 0;
+}
+
+.planes-linea button {
+  width: 46px;
+  height: auto;
+  border-radius: 12px;
+  background: var(--primary-color);
+  color: #062a26;
+}
+
+.planes-linea button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.recargo-ejemplo {
+  --tono: var(--yellow-texto);
+}
+
+/* Cinco opciones en una fila (gana a la rejilla de 4 de modalNegocio.css,
+   que puede cargarse después). */
+.modal-negocio-segmentado.modal-negocio-segmentado--cinco {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}

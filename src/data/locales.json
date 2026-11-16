@@ -41,6 +41,21 @@
     ],
     "opiniones": 4,
     "lugar": true,
+    "reservaMesa": {
+      "cobro": "gratis",
+      "precio": 0,
+      "consumoMinimo": 1000,
+      "tolerancia": 15,
+      "gruposGrandes": true
+    },
+    "mesas": [
+      {
+        "id": "m-1",
+        "capacidad": 2,
+        "ubicacion": "Junto a la entrada",
+        "online": false
+      }
+    ],
     "servicios": [
       {
         "id": "mesa-2",
@@ -296,9 +311,27 @@
     "opiniones": 4,
     "lugar": true,
     "servicios": [
-      { "id": "mesa-estandar", "nombre": "Mesa estándar", "precio": 0, "duracion": 120, "nota": "Consumo mínimo 600 CUP" },
-      { "id": "mesa-vip", "nombre": "Mesa VIP", "precio": 0, "duracion": 150, "nota": "Consumo mínimo 1800 CUP" },
-      { "id": "reserva-grupo", "nombre": "Reserva de grupo", "precio": 0, "duracion": 180, "nota": "Consumo mínimo 3000 CUP" }
+      {
+        "id": "mesa-estandar",
+        "nombre": "Mesa estándar",
+        "precio": 0,
+        "duracion": 120,
+        "nota": "Consumo mínimo 600 CUP"
+      },
+      {
+        "id": "mesa-vip",
+        "nombre": "Mesa VIP",
+        "precio": 0,
+        "duracion": 150,
+        "nota": "Consumo mínimo 1800 CUP"
+      },
+      {
+        "id": "reserva-grupo",
+        "nombre": "Reserva de grupo",
+        "precio": 0,
+        "duracion": 180,
+        "nota": "Consumo mínimo 3000 CUP"
+      }
     ],
     "comentarios": [
       {
@@ -1779,6 +1812,20 @@
     ],
     "opiniones": 3,
     "lugar": false,
+    "suscripcion": true,
+    "planes": [
+      {
+        "id": "mensualidad",
+        "nombre": "Mensualidad",
+        "precio": 1800,
+        "periodo": "mes",
+        "incluye": [
+          "Pesas, cardio y clases dirigidas",
+          "De lunes a sábado, todo el horario",
+          "Una sesión de valoración al empezar"
+        ]
+      }
+    ],
     "servicios": [
       {
         "id": "pase-dia",
@@ -1867,6 +1914,47 @@
     ],
     "opiniones": 4,
     "lugar": false,
+    "suscripcion": true,
+    "planes": [
+      {
+        "id": "plan-basico",
+        "nombre": "Básico",
+        "precio": 1500,
+        "periodo": "mes",
+        "incluye": [
+          "Área de pesas y cardio",
+          "De 6 de la mañana a 4 de la tarde"
+        ]
+      },
+      {
+        "id": "plan-completo",
+        "nombre": "Completo",
+        "precio": 2200,
+        "periodo": "mes",
+        "destacado": true,
+        "incluye": [
+          "Todo el horario",
+          "Clases dirigidas sin límite",
+          "Taquilla propia"
+        ]
+      },
+      {
+        "id": "plan-personal",
+        "nombre": "Con entrenador",
+        "precio": 4000,
+        "periodo": "mes",
+        "incluye": [
+          "Todo lo del Completo",
+          "8 sesiones con entrenador",
+          "Plan de comidas"
+        ]
+      }
+    ],
+    "recargo": {
+      "porDia": 50,
+      "diasGracia": 2,
+      "tope": 600
+    },
     "servicios": [
       {
         "id": "pase-dia",
@@ -2549,6 +2637,15 @@
     ],
     "opiniones": 3,
     "lugar": false,
+    "suscripcion": true,
+    "planes": [
+      {
+        "id": "curso-mes",
+        "nombre": "Curso mensual",
+        "precio": 2500,
+        "periodo": "mes"
+      }
+    ],
     "servicios": [
       {
         "id": "taller-pintura",

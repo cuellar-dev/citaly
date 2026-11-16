@@ -10,6 +10,7 @@ import Perfil from './pages/Perfil.jsx'
 import DetalleLocal from './pages/DetalleLocal.jsx'
 import ReservarConLugar from './pages/ReservarConLugar.jsx'
 import ReservarSinLugar from './pages/ReservarSinLugar.jsx'
+import ReservarSuscripcion from './pages/ReservarSuscripcion.jsx'
 import NotFound from './pages/NotFound.jsx'
 import Busqueda from './pages/Busqueda.jsx'
 import Notificaciones from './pages/Notificaciones.jsx'
@@ -28,9 +29,17 @@ function ReservarSinLugarPage() {
   return <ReservarSinLugar key={id} />
 }
 
+function ReservarSuscripcionPage() {
+  const { id } = useParams()
+  return <ReservarSuscripcion key={id} />
+}
+
+/* Sin la barra final: '' en local, '/citaly' en GitHub Pages. */
+const BASE_RUTAS = import.meta.env.BASE_URL.replace(/\/$/, '')
+
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={BASE_RUTAS}>
       <Routes>
         {/* Auth fuera del Layout: sin navbar ni header, pantalla a foco. */}
         <Route path="/auth" element={<Auth />} />
@@ -49,6 +58,7 @@ function App() {
           <Route path="local/:id" element={<DetalleLocal />} />
           <Route path="local/:id/reservar" element={<ReservarConLugarPage />} />
           <Route path="local/:id/reservar-cita" element={<ReservarSinLugarPage />} />
+          <Route path="local/:id/unirse" element={<ReservarSuscripcionPage />} />
           <Route path="citas" element={<MisCitas />} />
           <Route path="negocio" element={<MiNegocio />} />
           <Route path="negocio/compartir" element={<CompartirNegocio />} />

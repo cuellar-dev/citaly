@@ -202,6 +202,7 @@
     display: grid;
     grid-template-columns: 390px minmax(0, 1fr);
     grid-template-areas:
+      'ejemplo ejemplo'
       'cabecera citas'
       'resumen citas'
       'ficha citas';
@@ -212,6 +213,13 @@
 
   .negocio-tablero > .cabecera-negocio {
     grid-area: cabecera;
+  }
+
+  .negocio-tablero > .switch-ejemplo {
+    grid-area: ejemplo;
+    justify-self: center;
+    width: min(100%, 520px);
+    margin: 0 0 16px;
   }
 
   .negocio-tablero > .cabecera-negocio .cabecera-negocio-identidad {
@@ -248,6 +256,12 @@
   .negocio-tablero .filtro-citas {
     margin-inline: 0;
     padding-inline: 0;
+  }
+
+  /* El panel de la derecha tiene alto máximo y scroll propio: sin esto, con
+     una lista larga, el filtro (que es un scroll horizontal) se encoge a 0. */
+  .negocio-tablero > .negocio-citas > * {
+    flex-shrink: 0;
   }
 }
 

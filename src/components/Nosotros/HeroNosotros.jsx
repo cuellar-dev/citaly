@@ -2,6 +2,8 @@ import { useLayoutEffect, useRef } from 'react'
 import { CON_MOVIMIENTO, CON_RATON, gsap, useGSAP } from './gsapNosotros.js'
 import TalyTinta from './TalyTinta.jsx'
 import IconoTinta from './IconosTinta.jsx'
+import { LetraLogotipo } from '../Logotipo/Logotipo.jsx'
+import { LETRAS, TOPE_T, cajaLetra } from '../Logotipo/trazos.js'
 import { aletear, modoVuelo, parpadear, parte, picotear } from './talyMovimientos.js'
 import { TINTA as T } from './tinta.js'
 import './heroNosotros.css'
@@ -16,7 +18,6 @@ import './heroNosotros.css'
    Capas de cada objeto, de fuera adentro, para que nadie pise a nadie:
    [data-orbita] scroll · .orbita-raton ratón · .orbita-in entrada · .orbita-flota CSS */
 
-const LETRAS = ['C', 'I', 'T', 'A', 'L', 'Y']
 
 /* x / y en % de la portada; d = profundidad (cuánto sale disparado). */
 const ORBITA = [
@@ -49,7 +50,8 @@ function HeroNosotros({ ligero = false, onCambiarModo }) {
     if (!t || !a || !palabra) return undefined
     const colocar = () => {
       a.style.left = `${t.offsetLeft + t.offsetWidth / 2}px`
-      a.style.top = `${t.offsetTop}px`
+      /* La letra ocupa todo el alto del logotipo: Taly pisa el travesaño. */
+      a.style.top = `${t.offsetTop + t.offsetHeight * TOPE_T}px`
     }
     colocar()
     const ro = new ResizeObserver(colocar)
@@ -263,10 +265,19 @@ function HeroNosotros({ ligero = false, onCambiarModo }) {
       </div>
 
       <div className="nos-hero-centro">
-        <h1 className="nos-hero-palabra" id="nos-hero-titulo" ref={palabraRef} aria-label="Citaly">
-          {LETRAS.map((l, i) => (
-            <span className="nos-hero-letra" data-letra key={l + i} ref={l === 'T' ? letraTRef : undefined} aria-hidden="true">
-              <span className="nos-hero-letra-in">{l}</span>
+        <h1 className="nos-hero-palabra logotipo-letras" id="nos-hero-titulo" ref={palabraRef} aria-label="Citaly">
+          {LETRAS.map((l) => (
+            <span
+              className="nos-hero-letra"
+              data-letra
+              key={l.id}
+              style={cajaLetra(l)}
+              ref={l.id === 'T' ? letraTRef : undefined}
+              aria-hidden="true"
+            >
+              <span className="nos-hero-letra-in">
+                <LetraLogotipo letra={l} variante={ligero ? 'negro' : 'blanco'} />
+              </span>
             </span>
           ))}
           <span className="nos-hero-taly" ref={anclaRef} aria-hidden="true">

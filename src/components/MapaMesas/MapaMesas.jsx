@@ -13,8 +13,11 @@ function clasesMesa(mesa, mesaSeleccionada) {
     .join(' ')
 }
 
-function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, soloLectura, children }) {
-  const bloqueada = mesa.estado === 'ocupado' || mesa.estado === 'no-cabe'
+/* Estados: disponible, ocupado, no-cabe (no da para tantos) y calle (el
+   dueño la guarda para quien llega sin reserva). En modo dueño (`editable`)
+   se puede tocar cualquiera. */
+function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, soloLectura, editable, children }) {
+  const bloqueada = !editable && (mesa.estado === 'ocupado' || mesa.estado === 'no-cabe' || mesa.estado === 'calle')
 
   return (
     <g
@@ -23,7 +26,7 @@ function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, soloLectura, children 
         onClick: () => onMesaClick(mesa),
         role: 'button',
         tabIndex: 0,
-        'aria-label': `Mesa ${mesa.codigo}, ${mesa.capacidad} personas`,
+        'aria-label': `Mesa ${mesa.codigo}, ${mesa.capacidad} personas${mesa.estado === 'calle' ? ', solo para quien llega' : ''}`,
         onKeyDown: (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault()
@@ -45,20 +48,29 @@ function MesaGrupo({ mesa, mesaSeleccionada, onMesaClick, soloLectura, children 
  * Las clases mapa-fondo / mapa-detalle / mapa-detalle-borde permiten
  * re-entintar el plano desde CSS (variante tÃ©rmica en citaCard.css).
  */
-export default function MapaMesas({ mesaSeleccionada, onMesaClick, soloLectura = false, capacidadMinima = 0 }) {
-  const mesas = MESAS_MAPA.map((mesa) =>
-    capacidadMinima && mesa.capacidad < capacidadMinima && mesa.estado !== 'ocupado'
+export default function MapaMesas({
+  mesas: mesasLocal = MESAS_MAPA,
+  mesaSeleccionada,
+  onMesaClick,
+  soloLectura = false,
+  editable = false,
+  capacidadMinima = 0,
+}) {
+  /* El dibujo va por posición: se ordenan como MESAS_MAPA aunque lleguen cambiadas. */
+  const porId = new Map(mesasLocal.map((m) => [m.id, m]))
+  const mesas = MESAS_MAPA.map((base) => porId.get(base.id) ?? base).map((mesa) =>
+    capacidadMinima && mesa.capacidad < capacidadMinima && mesa.estado === 'disponible'
       ? { ...mesa, estado: 'no-cabe' }
       : mesa
   )
-  const propsGrupo = { mesaSeleccionada, onMesaClick, soloLectura }
+  const propsGrupo = { mesaSeleccionada, onMesaClick, soloLectura, editable }
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 300 180"
-      className="mapa-mesas-svg"
+      className={`mapa-mesas-svg${editable ? ' mapa-mesas-svg--editable' : ''}`}
       preserveAspectRatio="xMidYMid meet"
       aria-hidden={soloLectura || undefined}
     >

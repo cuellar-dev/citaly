@@ -1,0 +1,398 @@
+/* Tarjetas de precio de los locales de suscripción. Mismo idioma que los
+   tickets de servicio de la ficha (línea troquelada con muescas, precio en
+   mostaza, acento teal), pero en vertical: un abono por plan.
+
+   --plan-fondo:    el papel de la tarjeta.
+   --plan-exterior: lo que hay detrás (las muescas lo dejan ver).
+   --plan-sangria:  cuánto se sale el rail hacia los bordes del contenedor. */
+
+.planes {
+  --plan-fondo: var(--tarjeta-fondo);
+  --plan-exterior: var(--background-color);
+  --plan-borde: rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
+  --plan-sangria: 16px;
+
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(232px, 80%);
+  gap: 12px;
+  margin-inline: calc(var(--plan-sangria) * -1);
+  padding: 4px var(--plan-sangria) 10px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--plan-sangria);
+  scrollbar-width: none;
+}
+
+/* Por los lados las tarjetas se funden en vez de cortarse en seco (en
+   escritorio el rail no llega al borde de la pantalla). */
+.planes:not(.planes--solo) {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--plan-sangria), #000 calc(100% - var(--plan-sangria)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--plan-sangria), #000 calc(100% - var(--plan-sangria)), transparent 100%);
+}
+
+.planes::-webkit-scrollbar {
+  display: none;
+}
+
+/* Un solo plan: nada de rail, una tarjeta ancha y el precio en grande. */
+.planes--solo {
+  display: block;
+  margin-inline: 0;
+  padding: 0;
+  overflow: visible;
+}
+
+/* ---------- La tarjeta ---------- */
+
+.plan {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid var(--plan-borde);
+  border-radius: 20px;
+  background: var(--plan-fondo);
+  overflow: hidden;
+  scroll-snap-align: center;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s var(--ease-out, ease-out);
+}
+
+.plan--destacado {
+  border-color: color-mix(in srgb, var(--primary-color) 42%, transparent);
+  background:
+    radial-gradient(130% 80% at 50% 0%, color-mix(in srgb, var(--primary-color) 10%, transparent) 0%, transparent 70%),
+    var(--plan-fondo);
+  box-shadow: 0 16px 34px -22px color-mix(in srgb, var(--primary-color) 70%, transparent);
+}
+
+.plan-cabeza {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 16px 16px 14px;
+}
+
+/* Si el nombre y la cinta no caben juntos, la cinta baja: mejor eso que
+   partir el nombre por la mitad. */
+.plan-fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  min-height: 24px;
+}
+
+.plan-nombre {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-familyPrincipal);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+  text-transform: uppercase;
+  text-align: left;
+  color: var(--fonts-color-primary-weak);
+  overflow-wrap: break-word;
+}
+
+.plan--destacado .plan-nombre,
+.plan--marcado .plan-nombre {
+  color: var(--primary-texto);
+}
+
+.plan-cinta {
+  flex-shrink: 0;
+  padding: 4px 9px;
+  border-radius: 999px;
+  background: var(--yellow-color);
+  color: #2a2206;
+  font-family: var(--font-familyPrincipal);
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.plan-precio {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+  margin: 8px 0 0;
+}
+
+.plan-cifra {
+  font-family: var(--font-familyDrink);
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--yellow-texto);
+  font-variant-numeric: tabular-nums;
+}
+
+.plan-moneda {
+  font-family: var(--font-familyPrincipal);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fonts-color-primary);
+}
+
+.plan-periodo {
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak);
+}
+
+.plan-cobro {
+  margin: 4px 0 0;
+  font-family: var(--font-familyPrincipal);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak);
+}
+
+/* Línea troquelada con una muesca a cada lado: el abono se "corta" por aquí. */
+.plan-corte {
+  position: relative;
+  flex-shrink: 0;
+  height: 2px;
+  margin: 0;
+  background-image: linear-gradient(
+    to right,
+    rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza))) 50%,
+    transparent 50%
+  );
+  background-size: 10px 2px;
+  background-position: 6px 0;
+  background-repeat: repeat-x;
+  background-clip: content-box;
+  padding-inline: 16px;
+}
+
+.plan-corte::before,
+.plan-corte::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--plan-borde);
+  border-radius: 50%;
+  background: var(--plan-exterior);
+  transform: translateY(-50%);
+}
+
+.plan-corte::before {
+  left: -9px;
+}
+
+.plan-corte::after {
+  right: -9px;
+}
+
+.plan--destacado .plan-corte::before,
+.plan--destacado .plan-corte::after {
+  border-color: color-mix(in srgb, var(--primary-color) 42%, transparent);
+}
+
+.plan-incluye {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 0;
+  padding: 14px 16px 16px;
+  list-style: none;
+}
+
+.plan-incluye li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: var(--font-familyPrincipal);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--fonts-color-primary);
+  text-align: left;
+}
+
+.plan-incluye svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--primary-texto);
+}
+
+/* ---------- Botón (modo vista) ---------- */
+
+.plan-boton {
+  min-height: 44px;
+  margin: auto 16px 16px;
+  padding: 0 16px;
+  border: 1.5px solid color-mix(in srgb, var(--primary-color) 55%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--primary-texto);
+  font-family: var(--font-familyPrincipal);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.15s var(--ease-out, ease-out),
+    background-color 0.2s ease;
+}
+
+/* Sin lista, el botón se separa del precio con el mismo aire. */
+.plan--sin-lista .plan-boton {
+  margin-top: 2px;
+}
+
+.plan--destacado .plan-boton,
+.plan--solo .plan-boton {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-weak) 100%);
+  color: #062a26;
+  box-shadow: 0 8px 20px -12px var(--primary-color);
+}
+
+@media (hover: hover) {
+  .plan-boton:hover {
+    background-color: color-mix(in srgb, var(--primary-color) 10%, transparent);
+  }
+
+  .plan--destacado .plan-boton:hover,
+  .plan--solo .plan-boton:hover {
+    filter: brightness(1.06);
+  }
+}
+
+.plan-boton:active {
+  transform: scale(0.97);
+}
+
+.plan-boton:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ---------- Un solo plan ---------- */
+
+.plan--solo .plan-cabeza {
+  align-items: center;
+  padding: 22px 18px 18px;
+  text-align: center;
+}
+
+.plan--solo .plan-fila {
+  justify-content: center;
+}
+
+.plan--solo .plan-nombre {
+  flex: 0 1 auto;
+  text-align: center;
+}
+
+.plan--solo .plan-cifra {
+  font-size: 48px;
+}
+
+.plan--solo .plan-incluye {
+  padding: 16px 20px 18px;
+}
+
+.plan--solo.plan--sin-lista .plan-cabeza {
+  padding: 28px 18px 20px;
+}
+
+/* ---------- Modo elegir: radios ---------- */
+
+.plan--elegible {
+  cursor: pointer;
+}
+
+/* El radio real queda escondido pero accesible; el label se estira sobre
+   toda la tarjeta, así se puede tocar en cualquier parte. */
+.plan-radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.plan--elegible .plan-nombre {
+  cursor: pointer;
+}
+
+.plan--elegible .plan-nombre::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.plan-marca {
+  display: grid;
+  flex-shrink: 0;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgb(var(--tinte) / calc(0.22 * var(--tinte-fuerza)));
+  color: var(--fonts-color-secondary);
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.plan--marcado {
+  border-color: var(--primary-color);
+  box-shadow:
+    0 0 0 1px var(--primary-color),
+    0 16px 34px -22px color-mix(in srgb, var(--primary-color) 80%, transparent);
+}
+
+.plan--marcado .plan-marca {
+  background: var(--primary-color);
+  box-shadow: none;
+}
+
+.plan--marcado .plan-corte::before,
+.plan--marcado .plan-corte::after {
+  border-color: var(--primary-color);
+}
+
+.plan--elegible:active {
+  transform: scale(0.985);
+}
+
+.plan:has(.plan-radio:focus-visible) {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 3px;
+}
+
+/* ---------- Sin planes ---------- */
+
+.planes-vacio {
+  margin: 0;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px dashed rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  font-family: var(--font-familyPrincipal);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fonts-color-primary-weak);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plan,
+  .plan-boton {
+    transition: none;
+  }
+}
