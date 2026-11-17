@@ -1,10 +1,13 @@
 import locales from '../data/locales.json'
 import { localesDemo } from '../data/localesDemo.js'
 import { getFichas } from './storage.js'
-import { conPerfiles } from './usuarios.js'
 
+/* Las fichas guardadas antes podían traer `profesionales`: ya no existen, se ignoran. */
 function conCambios(local, fichas) {
-  return conPerfiles(fichas[local.id] ? { ...local, ...fichas[local.id] } : local)
+  if (!fichas[local.id]) return local
+  // eslint-disable-next-line no-unused-vars
+  const { profesionales, ...cambios } = fichas[local.id]
+  return { ...local, ...cambios }
 }
 
 export function getAllLocales() {

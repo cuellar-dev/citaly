@@ -421,11 +421,6 @@
   color: var(--primary-texto, #00c2ad);
 }
 
-.perfil-pastilla--espera {
-  background: color-mix(in srgb, var(--yellow-color, #ffd166) 16%, transparent);
-  color: var(--yellow-texto, #ffd166);
-}
-
 .perfil-switch {
   position: relative;
   flex-shrink: 0;

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Bell,
-  Briefcase,
   CalendarDays,
   ChevronRight,
   Clock3,
@@ -194,7 +193,7 @@ function PanelFavoritos() {
   )
 }
 
-function DatosPerfil({ dueno, trabajo = [], onPedirTrabajo, onSesion }) {
+function DatosPerfil({ dueno, onSesion }) {
   const [avisos, setAvisos] = useState(leerAvisos)
   const [panel, setPanel] = useState(null)
   const [nFavs, setNFavs] = useState(() => getFavoritos().length)
@@ -291,40 +290,6 @@ function DatosPerfil({ dueno, trabajo = [], onPedirTrabajo, onSesion }) {
               />
             </div>
           </li>
-        </ul>
-      </section>
-
-      <section className="perfil-bloque" aria-labelledby="perfil-trabajo">
-        <header className="perfil-bloque-cabecera">
-          <h2 id="perfil-trabajo">Trabajo</h2>
-        </header>
-        <ul className="perfil-grupo">
-          {trabajo.length === 0 ? (
-            <Fila
-              Icono={Briefcase}
-              titulo="Trabajas en"
-              valor="En ningún local de Citaly"
-              onClick={onPedirTrabajo}
-            />
-          ) : (
-            <>
-              {trabajo.map((item) => (
-                <Fila
-                  key={item.id}
-                  Icono={Briefcase}
-                  titulo={`Trabajas en ${item.localName}`}
-                  valor={item.rol}
-                  extra={
-                    <span className={`perfil-pastilla${item.estado === 'pendiente' ? ' perfil-pastilla--espera' : ' perfil-pastilla--si'}`}>
-                      {item.estado === 'pendiente' ? 'Pendiente' : 'Activo'}
-                    </span>
-                  }
-                  to={`/local/${item.id}`}
-                />
-              ))}
-              <Fila Icono={Store} titulo="Trabajas en más de un lugar ? " valor="Solicita unirte" onClick={onPedirTrabajo} />
-            </>
-          )}
         </ul>
       </section>
 

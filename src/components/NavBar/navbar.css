@@ -115,26 +115,35 @@
   letter-spacing: 0.01em;
 }
 
-/* De día los colores de sección se leen como letra sobre papel: van en su
-   versión oscura. La píldora y la línea de luz los toman igual, solo que
-   más suaves. */
+/* De día: la píldora va en el color plano de la sección y el icono en
+   negro encima. Antes la píldora era un tinte al 13 % con el icono en el
+   color oscuro de la sección, y todo se veía lavado, como transparente.
+   Perfil no tiene color propio: de día su píldora es un gris de papel.
+   Son colores literales porque GSAP los interpola (NavBar.jsx). */
 :root[data-tema='claro'] .navbar {
-  --nav-color-descubre: var(--primary-texto);
-  --nav-color-citas: var(--yellow-texto);
-  --nav-color-negocio: var(--rosa-texto);
+  --nav-color-descubre: #00c2ad;
+  --nav-color-citas: #ffd166;
+  --nav-color-negocio: #f06787;
+  --nav-color-perfil: #ddd7cb;
+  --nav-icono-activo: #111614;
+  border-top: 1px solid rgb(var(--tinte) / 0.07);
   box-shadow: 0 -6px 20px rgb(var(--sombra) / 0.08);
 }
-
-/* De día el brillo de la línea superior quedaba como un bloque oscuro
-   saliendo de la barra, y la píldora al 20 % se volvía gris sucio. */
-:root[data-tema='claro'] .navbar {
-  border-top: 1px solid rgb(var(--tinte) / 0.07);
+:root[data-tema='claro'] .navbar-enlace {
+  color: color-mix(in srgb, var(--fonts-color-primary) 72%, transparent);
 }
+:root[data-tema='claro'] .navbar-enlace.active {
+  color: var(--nav-icono-activo);
+}
+:root[data-tema='claro'] .navbar-enlace:focus-visible {
+  outline-color: var(--nav-icono-activo);
+}
+:root[data-tema='claro'] .navbar-indicador-pill {
+  background-color: var(--nav-color-activo);
+}
+/* El brillo de la línea superior quedaba como un bloque oscuro saliendo de
+   la barra: de día es más fino y apenas sombreado. */
 :root[data-tema='claro'] .navbar-indicador-luz {
   height: 2.5px;
   box-shadow: 0 2px 6px color-mix(in srgb, var(--nav-color-activo) 30%, transparent);
-}
-:root[data-tema='claro'] .navbar-indicador-pill {
-  background-color: color-mix(in srgb, var(--nav-color-activo) 13%, transparent);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--nav-color-activo) 22%, transparent);
 }

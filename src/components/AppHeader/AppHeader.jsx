@@ -20,9 +20,7 @@ function getHeaderIcons(title) {
   switch (title) {
     case 'Mis Citas':
       return [
-        { name: 'plus', content: <Plus size={24} color="currentColor" /> },
-        { name: 'clipboard-clock', content: <ClipboardClock size={24} color="currentColor" /> },
-        CAMPANA,
+        CAMPANA
       ]
 
     default:
@@ -86,12 +84,17 @@ function AppHeader() {
       const libre = iconos.getBoundingClientRect().left - textos.getBoundingClientRect().right - 12
       header.style.setProperty('--iconos-ancho', `${iconos.offsetWidth}px`)
       header.style.setProperty('--rincon-ancho', `${Math.round(Math.min(Math.max(libre, 80), 150))}px`)
+      /* Lo que mide el header, para que lo pegajoso de cada página se pegue debajo. */
+      document.documentElement.style.setProperty('--app-header-alto', `${header.offsetHeight}px`)
     }
     medir()
     const ro = new ResizeObserver(medir)
     ro.observe(header)
     ro.observe(iconos)
-    return () => ro.disconnect()
+    return () => {
+      ro.disconnect()
+      document.documentElement.style.removeProperty('--app-header-alto')
+    }
   }, [title, visible])
 
   if (!visible) return null

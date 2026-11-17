@@ -28,3 +28,15 @@
   background: transparent;
   box-shadow: none;
 }
+
+/* Zonas desde las que se arrastra una hoja para cerrarla
+   (hooks/useArrastrarParaCerrar.js): el navegador no debe hacer scroll ahí. */
+[data-arrastre] {
+  touch-action: none;
+  user-select: none;
+}
+
+.hoja--arrastrando,
+.hoja--arrastrando [data-arrastre] {
+  cursor: grabbing;
+}

@@ -27,8 +27,18 @@
   z-index: 2;
   display: block;
   width: 100%;
-  height: 30px;
+  height: 34px;
   pointer-events: none;
+}
+
+/* Trazo fino de pluma. */
+.tinta-nube-filo {
+  fill: none;
+  stroke: var(--tinta-trazo);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
 .tinta-mapa {

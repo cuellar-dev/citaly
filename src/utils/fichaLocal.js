@@ -41,7 +41,6 @@ export const CAMPOS_EDITABLES = [
   'direccion',
   'iconos',
   'servicios',
-  'profesionales',
   /* { desde, hasta, motivo }: la agenda no recibe reservas hasta `hasta`. */
   'pausa',
 ]
@@ -244,8 +243,4 @@ export function nuevoId(prefijo) {
 export function iniciales(nombre) {
   const partes = String(nombre || '').trim().split(/\s+/).filter(Boolean)
   return (partes[0]?.[0] ?? '') + (partes.length > 1 ? partes.at(-1)[0] : '')
-}
-
-export function primerNombre(nombre) {
-  return String(nombre || '').trim().split(/\s+/)[0] || '—'
 }

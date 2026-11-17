@@ -3,7 +3,7 @@ import { addDays, format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { Banknote, CalendarDays, FileDown, Images, LayoutGrid, MessageSquareQuote, Pencil, Scissors, Timer, UserPlus, UserRound, Users, UtensilsCrossed, ZapOff } from 'lucide-react'
+import { Banknote, CalendarDays, FileDown, Images, LayoutGrid, MessageSquareQuote, Pencil, Scissors, Timer, UserPlus, Users, UtensilsCrossed, ZapOff } from 'lucide-react'
 import CabeceraNegocio from '../components/Negocio/CabeceraNegocio.jsx'
 import CitaDueno from '../components/Negocio/CitaDueno.jsx'
 import FichaLocal from '../components/Negocio/FichaLocal.jsx'
@@ -24,7 +24,6 @@ import TiraDias from '../components/Negocio/TiraDias.jsx'
 import { DIAS_ADELANTE, DIAS_ATRAS, citasNegocioDemo } from '../data/citasNegocioDemo.js'
 import { getLocalById } from '../services/locales.js'
 import { saveFicha } from '../services/storage.js'
-import { conPerfiles, profesionalesActivos } from '../services/usuarios.js'
 import { minutosHastaCita, textoEnCita } from '../utils/citasVista.js'
 import { CANCELADA, CONFIRMADA, PENDIENTE, POR_TI, caducarPendientes, textoEstadoReserva } from '../utils/estadosCita.js'
 import { pausaActiva, textoHasta } from '../utils/pausaAgenda.js'
@@ -54,17 +53,14 @@ const MODALES = {
   galeria: { titulo: 'Galería', subtitulo: 'Fotos del local', tono: 'verde', Icono: Images },
   editar: { titulo: 'Editar local', subtitulo: 'Datos de tu ficha', tono: 'verde', Icono: Pencil },
   servicios: { titulo: 'Servicios', subtitulo: 'Lo que ofreces', tono: 'verde', Icono: Scissors },
-  servicio: { titulo: 'Servicio', subtitulo: 'Precio, duración y quién lo hace', tono: 'verde', Icono: Scissors },
+  servicio: { titulo: 'Servicio', subtitulo: 'Precio y duración', tono: 'verde', Icono: Scissors },
   mesas: { titulo: 'Mesas', subtitulo: 'El plano de tu sala', tono: 'verde', Icono: LayoutGrid },
   mesa: { titulo: 'Mesa', subtitulo: 'Asientos y dónde está', tono: 'verde', Icono: LayoutGrid },
   reservaMesa: { titulo: 'Precio de la reserva', subtitulo: 'Igual para todas las mesas', tono: 'verde', Icono: UtensilsCrossed },
-  equipo: { titulo: 'Equipo', subtitulo: 'Quién atiende', tono: 'verde', Icono: Users },
-  buscar: { titulo: 'Añadir profesional', subtitulo: 'Busca su cuenta de Citaly', tono: 'verde', Icono: UserPlus },
-  profesional: { titulo: 'Profesional', subtitulo: 'Servicios que hace en tu local', tono: 'verde', Icono: UserRound },
 }
 
 const MODALES_FICHA = new Set(['opiniones', 'galeria', 'editar'])
-const MODALES_CATALOGO = new Set(['servicios', 'servicio', 'equipo', 'buscar', 'profesional'])
+const MODALES_CATALOGO = new Set(['servicios', 'servicio'])
 const MODALES_MESAS = new Set(['mesas', 'mesa', 'reservaMesa'])
 
 const FILTROS = [
@@ -169,12 +165,10 @@ function detalleOcupacion(porcentaje) {
 function resumenDelDia(citas, ahora, local) {
   const apertura = aMinutos(local.horarioApertura)
   const cierre = apertura + minutosAbierto(local.horarioApertura, local.horarioCierre)
-  /* Cuántas cosas a la vez puede atender el local: profesionales en uno de
-     citas, mesas que se reservan por Citaly en uno de mesas. */
+  /* Cuántas cosas a la vez puede atender el local: una cita por turno en uno
+     de servicio, mesas que se reservan por Citaly en uno de mesas. */
   const esMesa = tipoDeLocal(local) === 'mesa'
-  const enParalelo = esMesa
-    ? mesasDeLocal(local).filter((m) => m.online).length
-    : profesionalesActivos(local).length
+  const enParalelo = esMesa ? mesasDeLocal(local).filter((m) => m.online).length : 1
   const capacidad =
     turnosDelDia(local.horarioApertura, local.horarioCierre, local.intervaloMinutos).length * Math.max(1, enParalelo)
 
@@ -373,7 +367,7 @@ function NegocioAgenda({ idLocal, cabeceraExtra }) {
   /* Devuelve false si el navegador no tiene sitio (pasa con muchas fotos). */
   const guardarFicha = (cambios) => {
     const guardado = saveFicha(idLocal, cambios)
-    if (guardado) setLocal((prev) => conPerfiles({ ...prev, ...cambios }))
+    if (guardado) setLocal((prev) => ({ ...prev, ...cambios }))
     return guardado
   }
 

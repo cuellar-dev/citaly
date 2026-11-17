@@ -21,10 +21,16 @@
 
 /* ---------- Buscador ---------- */
 
+/* Pegado justo bajo el header de la app (que mide AppHeader). Al bajar se
+   esconde por debajo del header y al subir vuelve, como la barra del
+   navegador en el móvil (hooks/useOcultarAlBajar.js). */
 .descubre-search-wrap {
   position: sticky;
-  top: 0;
+  top: var(--app-header-alto, 0px);
   z-index: 90;
+  transition:
+    transform 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.2s ease;
   padding: 14px 18px 10px;
   /* El buscador se despega del cielo con un degradado, no con un corte. */
   background: linear-gradient(
@@ -94,6 +100,26 @@
   outline: 2px solid var(--primary-color, #00c2ad);
   outline-offset: 2px;
   border-radius: 8px;
+}
+
+.descubre-search-wrap--oculto {
+  transform: translateY(calc(-100% - 6px));
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.26s cubic-bezier(0.4, 0, 1, 1),
+    opacity 0.2s ease 0.06s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .descubre-search-wrap,
+  .descubre-search-wrap--oculto {
+    transition: opacity 0.15s ease;
+  }
+
+  .descubre-search-wrap--oculto {
+    transform: none;
+  }
 }
 
 /* ---------- Sugerencias ---------- */

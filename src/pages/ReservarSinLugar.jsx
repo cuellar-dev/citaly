@@ -2,9 +2,8 @@ import { useRef, useState } from 'react'
 import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { CalendarDays, Scissors, UserRound, UsersRound } from 'lucide-react'
+import { CalendarDays, Scissors } from 'lucide-react'
 import { getLocalById } from '../services/locales.js'
-import { profesionalesActivos } from '../services/usuarios.js'
 import { useCitas } from '../hooks/useCitas.js'
 import { useReserva } from '../hooks/useReserva.js'
 import { duracionAMinutos } from '../utils/fichaLocal.js'
@@ -16,7 +15,6 @@ import ReservaShell, {
 } from '../components/Reserva/ReservaShell.jsx'
 import PasoFechaHora from '../components/Reserva/PasoFechaHora.jsx'
 import ServicioItem from '../components/ServicioItem/ServicioItem.jsx'
-import SelectPro from '../components/SelectPro/SelectPro.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import '../components/Reserva/reserva.css'
 
@@ -41,17 +39,17 @@ function ReservarSinLugar() {
 
   /* Todos los hooks antes de cualquier return: useReserva aguanta local nulo. */
   const reserva = useReserva(local, citas)
-  /* ?servicio=<id> llega desde el "+" de la ficha del local: ese servicio
-     sale ya marcado. Si no existe en este local, se ignora. */
+  /* ?servicio=<id> llega desde el "+" de la ficha del local, y
+     ?servicio=a,b desde «Repetir» en Mis citas (lo de siempre): esos
+     servicios salen ya marcados. Los que no existan en este local se ignoran. */
   const [searchParams] = useSearchParams()
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState(() => {
-    const pedido = searchParams.get('servicio')
-    return pedido && (local?.servicios ?? []).some((s) => s.id === pedido) ? [pedido] : []
+    const pedidos = (searchParams.get('servicio') ?? '').split(',').filter(Boolean)
+    const ofrece = new Set((local?.servicios ?? []).map((s) => s.id))
+    return pedidos.filter((p) => ofrece.has(p))
   })
-  const [profesionalSeleccionado, setProfesionalSeleccionado] = useState(null)
   const [confirmada, setConfirmada] = useState(false)
   const refServicios = useRef(null)
-  const refProfesional = useRef(null)
   const refFecha = useRef(null)
 
   if (local?.lugar) {
@@ -93,46 +91,31 @@ function ReservarSinLugar() {
     )
   }
 
-  /* Un profesional sin lista propia de servicios los hace todos (datos viejos). */
-  const todosLosProfesionales = profesionalesActivos(local)
-  const hace = (pro, ids) =>
-    !Array.isArray(pro.servicios) || ids.every((s) => pro.servicios.includes(s))
-
-  const serviciosDisponibles = (local.servicios ?? []).filter(
-    (s) => !todosLosProfesionales.length || todosLosProfesionales.some((p) => hace(p, [s.id])),
-  )
+  const serviciosDisponibles = local.servicios ?? []
   const serviciosElegidos = serviciosDisponibles.filter((s) =>
     serviciosSeleccionados.includes(s.id),
   )
-  const profesionales = todosLosProfesionales.filter((p) => hace(p, serviciosSeleccionados))
 
   const precioTotal = serviciosElegidos.reduce((sum, s) => sum + (s.precio || 0), 0)
   const demoraMinutos = serviciosElegidos.reduce(
     (sum, s) => sum + duracionAMinutos(s.duracion),
     0,
   )
-  const proElegido = profesionales.find((p) => p.id === profesionalSeleccionado)
 
   function alternarServicio(idServicio) {
-    const siguiente = serviciosSeleccionados.includes(idServicio)
-      ? serviciosSeleccionados.filter((s) => s !== idServicio)
-      : [...serviciosSeleccionados, idServicio]
-    setServiciosSeleccionados(siguiente)
-    /* Si el profesional elegido ya no hace todo lo marcado, se suelta. */
-    const actual = todosLosProfesionales.find((p) => p.id === profesionalSeleccionado)
-    if (actual && !hace(actual, siguiente)) setProfesionalSeleccionado(null)
+    setServiciosSeleccionados((prev) =>
+      prev.includes(idServicio) ? prev.filter((s) => s !== idServicio) : [...prev, idServicio],
+    )
   }
 
   // ---- pasos -------------------------------------------------------------
 
   const hechos = {
     servicios: serviciosElegidos.length > 0,
-    profesional: profesionalSeleccionado != null,
     fecha: reserva.horario != null,
   }
   const pasos = [
     { id: 'servicios', label: 'Servicios', completo: hechos.servicios },
-    { id: 'profesional', label: 'Profesional', completo: hechos.profesional },
     { id: 'fecha', label: 'Día y hora', completo: hechos.fecha },
   ]
   const pasoActivo = pasos.findIndex((p) => !p.completo)
@@ -140,19 +123,15 @@ function ReservarSinLugar() {
 
   const mensaje = !hechos.servicios
     ? 'Marca los servicios que quieres hacerte'
-    : !hechos.profesional
-      ? 'Elige quién te atiende'
-      : !hechos.fecha
-        ? 'Escoge el día y la hora'
-        : 'Todo listo, ya puedes confirmar'
+    : !hechos.fecha
+      ? 'Escoge el día y la hora'
+      : 'Todo listo, ya puedes confirmar'
 
   const falta = !hechos.servicios
     ? 'Marca al menos un servicio'
-    : !hechos.profesional
-      ? 'Falta elegir profesional'
-      : !hechos.fecha
-        ? 'Falta elegir la hora'
-        : null
+    : !hechos.fecha
+      ? 'Falta elegir la hora'
+      : null
 
   const resumenGuia = []
   if (serviciosElegidos.length) {
@@ -160,12 +139,11 @@ function ReservarSinLugar() {
       `${serviciosElegidos.length} servicio${serviciosElegidos.length > 1 ? 's' : ''}`,
     )
   }
-  if (proElegido?.name) resumenGuia.push(proElegido.name.split(' ')[0])
   if (reserva.horario && reserva.fecha) {
     resumenGuia.push(`${format(reserva.fecha, "EEE d", { locale: es })} · ${reserva.horario}`)
   }
 
-  const anclas = { servicios: refServicios, profesional: refProfesional, fecha: refFecha }
+  const anclas = { servicios: refServicios, fecha: refFecha }
   const irAPaso = (idPaso) =>
     anclas[idPaso]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
@@ -184,16 +162,12 @@ function ReservarSinLugar() {
         precio: s.precio ?? 0,
         duracion: s.duracion ?? null,
       })),
-      profesional: proElegido
-        ? { id: proElegido.id, name: proElegido.name }
-        : { id: profesionalSeleccionado, name: null },
       precioTotal,
       demoraMinutos,
       estadoReserva: 0,
       creadaEn: new Date().toISOString(),
     })
     setServiciosSeleccionados([])
-    setProfesionalSeleccionado(null)
     reserva.reiniciarFechaYHora()
     setConfirmada(true)
   }
@@ -214,7 +188,7 @@ function ReservarSinLugar() {
       volverA={`/local/${id}`}
       volverTexto={local.localName}
       titulo="Reservar cita"
-      subtitulo={`Elige servicios, profesional y hora en ${local.localName}.`}
+      subtitulo={`Elige servicios y hora en ${local.localName}.`}
       guia={{
         pasos,
         pasoActual: todoListo ? pasos.length : pasoActivo,
@@ -266,65 +240,13 @@ function ReservarSinLugar() {
       </BloqueReserva>
 
       <BloqueReserva
-        anclaRef={refProfesional}
-        numero={2}
-        icono={UserRound}
-        titulo="Profesional"
-        descripcion={
-          hechos.servicios
-            ? 'Estos pueden hacerte todo lo que marcaste.'
-            : 'Marca primero los servicios y te decimos quién puede hacerlos.'
-        }
-        hecho={hechos.profesional}
-        activo={pasoActivo === 1}
-        vacio={
-          /* El aviso de "nadie hace todos esos servicios" solo tiene sentido si
-             el usuario YA marcó algo. Antes salía también con la lista vacía,
-             mandándote a quitar un servicio que nunca pusiste. */
-          !hechos.servicios ? (
-            <VacioReserva
-              icono={Scissors}
-              titulo="Primero los servicios"
-              texto="Cuando marques lo que quieres, aquí salen quienes lo hacen."
-            />
-          ) : profesionales.length === 0 ? (
-            <VacioReserva
-              icono={UsersRound}
-              titulo="Nadie hace todo eso en una sola cita"
-              texto="Prueba a quitar alguno de los servicios y vuelve a mirar."
-            />
-          ) : null
-        }
-      >
-        <div className="reserva-pros">
-          {profesionales.map((pro) => (
-            <SelectPro
-              key={pro.id}
-              name={pro.name}
-              url={pro.url}
-              points={pro.points}
-              seleccionado={pro.id === profesionalSeleccionado}
-              onClick={(e) => {
-                setProfesionalSeleccionado((prev) => (prev === pro.id ? null : pro.id))
-                e.currentTarget.scrollIntoView({
-                  behavior: 'smooth',
-                  inline: 'center',
-                  block: 'nearest',
-                })
-              }}
-            />
-          ))}
-        </div>
-      </BloqueReserva>
-
-      <BloqueReserva
         anclaRef={refFecha}
-        numero={3}
+        numero={2}
         icono={CalendarDays}
         titulo="Día y hora"
         descripcion="Solo te mostramos los días en que abren y con hueco libre."
         hecho={hechos.fecha}
-        activo={pasoActivo === 2}
+        activo={pasoActivo === 1}
       >
         <PasoFechaHora
           agenda={reserva.agenda}
@@ -335,7 +257,7 @@ function ReservarSinLugar() {
         />
       </BloqueReserva>
 
-      <BloqueReserva numero={4} titulo="Resumen" hecho={todoListo} activo={todoListo}>
+      <BloqueReserva numero={3} titulo="Resumen" hecho={todoListo} activo={todoListo}>
         <ResumenReserva
           filas={[
             {
@@ -344,7 +266,6 @@ function ReservarSinLugar() {
                 ? serviciosElegidos.map((s) => s.nombre).join(', ')
                 : null,
             },
-            { etiqueta: 'Profesional', valor: proElegido?.name ?? null },
             { etiqueta: 'Cuándo', valor: fechaTexto },
             { etiqueta: 'Demora', valor: formatearDemora(demoraMinutos) },
             {

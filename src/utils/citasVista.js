@@ -129,7 +129,6 @@ export function propsDesdeCita(cita) {
     ...base,
     fecha: cita.fecha,
     hora: cita.horario,
-    profesional: cita.profesional?.name || 'Por asignar',
     servicios: (cita.servicios || []).map((s) => s.nombre).join(', ') || 'Servicio',
     /* Líneas del recibo: nombre, duración y precio por servicio. */
     lineas: cita.servicios || [],

@@ -11,16 +11,13 @@ import {
   Phone,
   Scissors,
   Star,
-  Users,
 } from 'lucide-react'
 import {
   COMODIDADES,
   DIAS,
   aMinutos,
   duracionTexto,
-  fotoAncho,
   horaAmPm,
-  iniciales,
   minutosAbierto,
   notaDeComentarios,
   precioPlanTexto,
@@ -29,7 +26,6 @@ import {
   tipoLocalTexto,
   turnosDelDia,
 } from '../../utils/fichaLocal.js'
-import { profesionalesActivos } from '../../services/usuarios.js'
 import { mesasDeLocal, textoCobroMesa } from '../../utils/mesas.js'
 import { recargoDe } from '../../utils/socios.js'
 import { DURACIONES_TURNO, listaTurnos, turnosDe } from '../../utils/turnos.js'
@@ -41,9 +37,6 @@ import './fichaLocal.css'
  */
 function FichaLocal({ local, onEditar, onOpiniones, onCatalogo }) {
   const servicios = local.servicios ?? []
-  const profesionales = local.profesionales ?? []
-  const activos = profesionalesActivos(local).length
-  const pendientes = profesionales.length - activos
   const precios = servicios.map((s) => Number(s.precio) || 0)
   const ini = aMinutos(local.horarioApertura)
   const fin = ini + minutosAbierto(local.horarioApertura, local.horarioCierre)
@@ -52,7 +45,7 @@ function FichaLocal({ local, onEditar, onOpiniones, onCatalogo }) {
   const { nota, cantidad: opiniones } = notaDeComentarios(local)
 
   /* Lo primero de la ficha es lo que se vende, y cambia con el tipo de
-     local: mesas y su cobro, planes y su recargo, o servicios y equipo. */
+     local: mesas y su cobro, planes y su recargo, o servicios. */
   const tipo = tipoDeLocal(local)
   const mesas = tipo === 'mesa' ? mesasDeLocal(local) : []
   const soloCalle = mesas.filter((m) => !m.online).length
@@ -136,32 +129,6 @@ function FichaLocal({ local, onEditar, onOpiniones, onCatalogo }) {
             valor: servicios.length
               ? `${servicios.length} ${servicios.length === 1 ? 'servicio' : 'servicios'} · desde ${precioTexto(Math.min(...precios))}`
               : 'Añade lo que ofreces',
-          },
-          {
-            id: 'equipo',
-            alAbrir: () => onCatalogo('equipo'),
-            Icono: Users,
-            titulo: 'Equipo',
-            valor: profesionales.length
-              ? [
-                  `${activos} ${activos === 1 ? 'activo' : 'activos'}`,
-                  pendientes && `${pendientes} ${pendientes === 1 ? 'invitación' : 'invitaciones'}`,
-                ]
-                  .filter(Boolean)
-                  .join(' · ')
-              : 'Añade quién atiende',
-            extra: profesionales.length > 0 && (
-              <span className="ficha-local-pila" aria-hidden="true">
-                {profesionales.slice(0, 3).map((p) =>
-                  p.url ? (
-                    <img key={p.id} src={fotoAncho(p.url, 56)} alt="" width={26} height={26} loading="lazy" decoding="async" />
-                  ) : (
-                    <span key={p.id}>{iniciales(p.name)}</span>
-                  )
-                )}
-                {profesionales.length > 3 && <span>+{profesionales.length - 3}</span>}
-              </span>
-            ),
           },
         ],
       ]

@@ -179,30 +179,6 @@
   color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
-.ficha-local-pila {
-  display: inline-flex;
-}
-
-.ficha-local-pila > * {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  object-fit: cover;
-  background: var(--background-color-another);
-  box-shadow: 0 0 0 2px var(--superficie-alta);
-  color: var(--primary-texto, #00c2ad);
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-.ficha-local-pila > * + * {
-  margin-left: -8px;
-}
-
 .ficha-local-nota {
   display: inline-flex;
   align-items: center;

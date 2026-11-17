@@ -1,23 +1,21 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Briefcase, LogOut, Pencil } from 'lucide-react'
+import { LogOut, Pencil } from 'lucide-react'
 import CabeceraPerfil from '../components/Perfil/CabeceraPerfil.jsx'
 import DatosPerfil from '../components/Perfil/DatosPerfil.jsx'
 import EditarPerfil from '../components/Perfil/EditarPerfil.jsx'
 import PanelSesion from '../components/Perfil/PanelSesion.jsx'
-import SolicitarTrabajo from '../components/Perfil/SolicitarTrabajo.jsx'
 import VisorFotoPerfil from '../components/Perfil/VisorFotoPerfil.jsx'
 import ModalNegocioShell from '../components/Negocio/ModalNegocioShell.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import talyDormido from '../components/Taly/taly-a-mano-dormido-animado.svg'
 import { getLocalById } from '../services/locales.js'
 import { getPerfiles, savePerfil } from '../services/storage.js'
-import { trabajoDeUsuario } from '../services/trabajo.js'
 import { getUsuarioById } from '../services/usuarios.js'
 import { fotoCuadrada } from '../utils/fichaLocal.js'
 import './perfil.css'
 
-/* Cuenta de prueba: dueña de Sara, no trabaja en ningún equipo. */
+/* Cuenta de prueba: dueña de Sara. */
 const ID_USUARIO = 'u-laura-mendez'
 const ID_LOCAL_DUENO = 'sara'
 
@@ -28,7 +26,6 @@ function leerUsuario() {
 function Perfil() {
   const [usuario, setUsuario] = useState(leerUsuario)
   const dueno = getLocalById(ID_LOCAL_DUENO)
-  const [trabajo, setTrabajo] = useState(() => trabajoDeUsuario(ID_USUARIO, { excluirLocalId: ID_LOCAL_DUENO }))
   const [fotoAbierta, setFotoAbierta] = useState(false)
   const [hoja, setHoja] = useState(null)
   const [fuera, setFuera] = useState(null)
@@ -82,8 +79,6 @@ function Perfil() {
       />
       <DatosPerfil
         dueno={dueno}
-        trabajo={trabajo}
-        onPedirTrabajo={() => setHoja('trabajo')}
         onSesion={() => setHoja('sesion')}
       />
       {fotoAbierta && usuario.foto && (
@@ -103,25 +98,6 @@ function Perfil() {
         onCerrar={() => setHoja(null)}
       >
         <EditarPerfil key={usuario.foto + usuario.nombre} usuario={usuario} onGuardar={guardar} />
-      </ModalNegocioShell>
-      <ModalNegocioShell
-        abierto={hoja === 'trabajo'}
-        titulo="Trabajas en"
-        subtitulo="El dueño confirma si es verdad"
-        tono="verde"
-        Icono={Briefcase}
-        vista="pedir-trabajo"
-        onCerrar={() => setHoja(null)}
-      >
-        <SolicitarTrabajo
-          usuarioId={ID_USUARIO}
-          excluirLocalId={ID_LOCAL_DUENO}
-          ocupados={trabajo}
-          onListo={() => {
-            setTrabajo(trabajoDeUsuario(ID_USUARIO, { excluirLocalId: ID_LOCAL_DUENO }))
-            setHoja(null)
-          }}
-        />
       </ModalNegocioShell>
       <ModalNegocioShell
         abierto={hoja === 'sesion'}

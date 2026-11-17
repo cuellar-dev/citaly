@@ -28,14 +28,10 @@
   box-sizing: border-box;
 }
 
-/* Con citas: la sección ocupa exactamente la pantalla menos header y navbar,
-   y la lista de tarjetas se estira para llenar el resto con su propio scroll. */
+/* Con citas: la página hace scroll entera (citas, suscripciones y resumen). */
 .citas--lista {
-  --citas-cromo: 150px; /* header + navbar, misma cifra que el estado vacío */
   position: relative;
   isolation: isolate; /* sin overflow:hidden aquí: rompería el sticky del switch */
-  height: calc(100dvh - var(--citas-cromo));
-  min-height: 400px;
   justify-content: flex-start;
   gap: 14px;
   padding: 14px 12px 10px;
@@ -48,9 +44,8 @@
   }
 }
 
-/* Estado vacío: el switch arriba y Taly centrado en el resto de la pantalla */
+/* Estado vacío: el switch arriba y Taly debajo; luego siguen los apartados. */
 .citas:has(.taly-momento) {
-  min-height: calc(100dvh - 150px);
   justify-content: flex-start;
 }
 
@@ -86,7 +81,7 @@
   width: 70%;
   max-width: 300px;
   position: sticky;
-  top: 80px;
+  top: calc(var(--app-header-alto, 80px) + 6px);
   padding: 5px;
   background: var(--citas-track);
   border: 1px solid var(--citas-track-border);
@@ -172,4 +167,75 @@
   --citas-tab-active: #8a5d00;
   --citas-track: linear-gradient(100deg, #f8eed7 0%, #f4e6c6 50%, #f0dfb8 100%);
   --citas-track-border: #e6d3a6;
+}
+
+.citas-ver-todas {
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid color-mix(in srgb, var(--citas-accent) 40%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--citas-tab-active);
+  font: 700 13px var(--font-familyPrincipal);
+  cursor: pointer;
+}
+
+/* ---------- Debajo de las citas: suscripciones y resumen ---------- */
+
+.mis-extra {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 460px;
+  margin-top: 18px;
+  padding: 0 4px 24px;
+}
+
+.mis-bloque {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-familyPrincipal);
+}
+
+.mis-bloque-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-left: 2px;
+}
+
+.mis-bloque-cabecera h2 {
+  margin: 0;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* El mismo filo de tinta que los títulos de Mi Perfil. */
+.mis-bloque-cabecera::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, color-mix(in srgb, var(--ink-light, #2aa795) 38%, transparent), transparent 72%);
+}
+
+.mis-bloque-vacio {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: rgb(var(--tinte) / calc(0.03 * var(--tinte-fuerza)));
+  color: var(--fonts-color-primary-weak);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+@media (min-width: 720px) {
+  .mis-extra {
+    max-width: 520px;
+  }
 }

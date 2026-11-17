@@ -135,6 +135,43 @@
   pointer-events: none;
 }
 
+/* Puntitos de las fotos: a la derecha, a la altura de la nota, donde el
+   nombre del local nunca llega. */
+.local-hero-puntos {
+  position: absolute;
+  right: 16px;
+  bottom: 40px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 7px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+.local-hero-punto {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  transition:
+    width 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease;
+}
+
+.local-hero-punto--activo {
+  width: 16px;
+  background: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .local-hero-punto {
+    transition: none;
+  }
+}
+
 .local-hero-texto {
   position: absolute;
   left: 0;

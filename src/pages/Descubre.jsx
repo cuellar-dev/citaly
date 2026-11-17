@@ -14,6 +14,7 @@ import PieDePagina from '../components/Pie/PieDePagina.jsx'
 import { getAllLocales } from '../services/locales.js'
 import { getFavoritos, FAVORITOS_EVENTO } from '../services/favoritos.js'
 import { construirDescubre } from '../utils/descubre.js'
+import { useOcultarAlBajar } from '../hooks/useOcultarAlBajar.js'
 import { filtrosIniciales, normalizar } from '../utils/busqueda.js'
 import './Descubre.css'
 
@@ -36,6 +37,7 @@ function Descubre() {
   const [filtrosAbiertos, setFiltrosAbiertos] = useState(false)
   const [hora, setHora] = useState(() => new Date().getHours())
   const [favoritos, setFavoritos] = useState(getFavoritos)
+  const [escribiendo, setEscribiendo] = useState(false)
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 500)
@@ -67,6 +69,8 @@ function Descubre() {
     return locales.filter((local) => normalizar(local.localName).includes(texto)).slice(0, 3)
   }, [debouncedQuery, locales])
   const mostrarSugerencias = query.trim().length >= 2
+  /* Mientras escribes o hay sugerencias, el buscador no se va. */
+  const buscadorOculto = useOcultarAlBajar({ fijo: escribiendo || mostrarSugerencias || filtrosAbiertos })
 
   /* Feed al estilo Play Store: carrusel de héroes + rail de abiertos + lista
      vertical cortada cada 5 tarjetas por estantas horizontales. Se rehace si
@@ -85,7 +89,7 @@ function Descubre() {
       <FondoDescubre />
 
       <div className="descubre-contenido">
-        <div className="descubre-search-wrap">
+        <div className={`descubre-search-wrap${buscadorOculto ? ' descubre-search-wrap--oculto' : ''}`}>
           <form
             className="descubre-search"
             onSubmit={(event) => {
@@ -96,6 +100,8 @@ function Descubre() {
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
+              onFocus={() => setEscribiendo(true)}
+              onBlur={() => setEscribiendo(false)}
               placeholder="¿Qué estás buscando?"
               aria-label="Buscar lugares"
             />

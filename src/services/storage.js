@@ -94,3 +94,24 @@ export function actualizarSuscripcion(id, cambios) {
     return false
   }
 }
+
+/* Datos de prueba que llegaron después de la primera siembra: se añaden una
+   sola vez a quien ya tenía la app abierta, sin pisar lo suyo. */
+const DEMO_V_KEY = 'citaly_demo_v'
+
+export function sembrarDemoExtra(citas, suscripciones) {
+  try {
+    if (localStorage.getItem(DEMO_V_KEY) === '2') return
+    const actuales = getCitas()
+    const ids = new Set(actuales.map((c) => c.id))
+    const nuevas = citas.filter((c) => !ids.has(c.id))
+    if (nuevas.length) saveCitas([...actuales, ...nuevas])
+    const subs = getSuscripciones()
+    const idsSubs = new Set(subs.map((s) => s.id))
+    const nuevasSubs = suscripciones.filter((s) => !idsSubs.has(s.id))
+    if (nuevasSubs.length) localStorage.setItem(SUSCRIPCIONES_KEY, JSON.stringify([...subs, ...nuevasSubs]))
+    localStorage.setItem(DEMO_V_KEY, '2')
+  } catch {
+    /* sin almacenamiento: la demo queda como estaba */
+  }
+}

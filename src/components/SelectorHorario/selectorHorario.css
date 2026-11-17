@@ -9,6 +9,7 @@
 
 .selector-horario-item {
   min-height: 42px;
+  -webkit-tap-highlight-color: transparent;
   border: 1px solid rgb(var(--tinte) / calc(0.09 * var(--tinte-fuerza)));
   border-radius: 12px;
   background: var(--background-color, #121413);
@@ -30,9 +31,13 @@
   outline-offset: 2px;
 }
 
-.selector-horario-item--libre:hover {
-  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 40%, transparent);
-  background: color-mix(in srgb, var(--primary-color, #00c2ad) 8%, var(--background-color, #121413));
+/* Solo con ratón: en el móvil el hover se queda pegado tras el toque y
+   tapaba el verde de la hora elegida hasta tocar otra cosa. */
+@media (hover: hover) and (pointer: fine) {
+  .selector-horario-item--libre:not(.selector-horario-item--activo):hover {
+    border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 40%, transparent);
+    background: color-mix(in srgb, var(--primary-color, #00c2ad) 8%, var(--background-color, #121413));
+  }
 }
 
 .selector-horario-item--activo {

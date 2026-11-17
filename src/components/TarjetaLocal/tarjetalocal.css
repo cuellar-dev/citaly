@@ -181,9 +181,16 @@
 /* El relleno recorta por ancho, así un 4.2 y un 4.8 ya no se ven iguales. */
 .tarjeta-estrellas-relleno {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  bottom: 0;
   overflow: hidden;
   color: var(--yellow-texto, #ffd166);
+}
+
+/* Las estrellas no encogen: el ancho recorta, no las aprieta. */
+.tarjeta-estrellas svg {
+  flex-shrink: 0;
 }
 
 .tarjeta-estrellas-relleno svg {

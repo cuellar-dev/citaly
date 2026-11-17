@@ -5,7 +5,6 @@ import { Clock, MessageCircle, Phone, Scissors, UtensilsCrossed } from 'lucide-r
 import { minutosHastaCita, textoEnCita } from '../../../utils/citasVista.js'
 import { CANCELADA, claveEstadoReserva, textoEstadoReserva } from '../../../utils/estadosCita.js'
 import { Dato, FilaDato, Seccion } from './piezas.jsx'
-import { profesionalesActivos } from '../../../services/usuarios.js'
 import { digitos as soloDigitos, duracionAMinutos, horaAmPm, turnosDelDia } from '../../../utils/fichaLocal.js'
 import { pausaActiva, proximaApertura, textoHasta, textoQueda } from '../../../utils/pausaAgenda.js'
 import { mesasDeLocal } from '../../../utils/mesas.js'
@@ -598,8 +597,8 @@ function hhmm(minutos) {
 function turnosLibres(local, citas, ahora) {
   const intervalo = Number(local.intervaloMinutos) || 60
   /* En mesas, quien llega puede sentarse en cualquiera, también en las que
-     se guardan para la calle. */
-  const capacidad = Math.max(1, local.lugar ? mesasDeLocal(local).length : profesionalesActivos(local).length)
+     se guardan para la calle. Un local de servicio atiende una cita por turno. */
+  const capacidad = Math.max(1, local.lugar ? mesasDeLocal(local).length : 1)
   const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes()
   return turnosDelDia(local.horarioApertura, local.horarioCierre, local.intervaloMinutos)
     .filter((t) => t + intervalo > ahoraMin)

@@ -1,6 +1,7 @@
-import { useId, useEffect } from 'react'
+import { useId, useEffect, useRef } from 'react'
 import { Filter, X } from 'lucide-react'
 import Modal from '../Modal/Modal.jsx'
+import { useArrastrarParaCerrar } from '../../hooks/useArrastrarParaCerrar.js'
 import FiltroSelect from './FiltroSelect.jsx'
 import FiltroSwitch from './FiltroSwitch.jsx'
 import './panelFiltros.css'
@@ -18,6 +19,8 @@ function PanelFiltros({ filtros, setFiltros, locales, onClose, onApply }) {
   const abiertosId = useId()
   const ratingId = useId()
   const tituloId = useId()
+  const hojaRef = useRef(null)
+  useArrastrarParaCerrar({ hojaRef, onCerrar: onClose, animarSalida: true })
   const zonas = obtenerOpciones(locales.map((local) => local.direccion?.split(',').pop()?.trim()))
   const categorias = obtenerOpciones(locales.map((local) => local.categoria))
   const ratings = [
@@ -42,13 +45,14 @@ function PanelFiltros({ filtros, setFiltros, locales, onClose, onApply }) {
   return (
     <Modal abierto onCerrar={onClose} className="modal-backdrop--hoja">
       <section
+        ref={hojaRef}
         className="filtros-sheet"
         role="dialog"
         aria-modal="true"
         aria-labelledby={tituloId}
       >
-        <div className="filtros-handle" />
-        <div className="filtros-heading">
+        <div className="filtros-handle" aria-hidden="true" data-arrastre />
+        <div className="filtros-heading" data-arrastre>
           <div>
             <span className="eyebrow">Descubre a tu manera</span>
             <h2 id={tituloId}>Filtrar lugares</h2>

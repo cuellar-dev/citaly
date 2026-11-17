@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
 import './tinta.css'
 
 /* Piezas dibujadas a tinta para la ficha del local, del mismo mundo que
@@ -49,20 +49,77 @@ export function TrazoCosido({ pluma = true }) {
   )
 }
 
-/* Borde de nube de plumón: tapa el pie de la foto de cabecera con bultos del
-   color del fondo, así la foto se deshace en el mundo de Taly en vez de
-   cortarse en recto. El trazo de encima es la tinta de la nube. */
+/* Borde de nubecitas: tapa el pie de la foto de cabecera con una fila de
+   nubes pequeñas del color del fondo, así la foto se deshace en el mundo de
+   Taly en vez de cortarse en recto. Dos capas: las de atrás un poco más
+   altas y con el trazo más suave, las de delante encima tapando sus
+   costuras. Se calculan para el ancho real: nunca se estiran. */
+const NUBE_ALTO = 34
+const NUBE_BASE = 30 // donde se apoyan las nubes de delante
+const NUBE_ANCHOS = [44, 34, 40, 30, 46, 36] // ritmo fijo, sin azar
+
+/* Una nube: bulto pequeño, bulto grande, bulto pequeño, base plana. */
+function nube(x0, w, base) {
+  const h = w * 0.52
+  const p = (n) => n.toFixed(2)
+  const x1 = x0 + w * 0.3
+  const x2 = x0 + w * 0.72
+  const filo =
+    `M${p(x0)} ${base} ` +
+    `A${p(w * 0.17)} ${p(w * 0.17)} 0 0 1 ${p(x1)} ${p(base - h * 0.48)} ` +
+    `A${p(w * 0.23)} ${p(w * 0.23)} 0 0 1 ${p(x2)} ${p(base - h * 0.42)} ` +
+    `A${p(w * 0.15)} ${p(w * 0.15)} 0 0 1 ${p(x0 + w)} ${base}`
+  return { filo, relleno: `${filo} L${p(x0 + w)} ${NUBE_ALTO} L${p(x0)} ${NUBE_ALTO} Z` }
+}
+
+function filaDeNubes(ancho) {
+  const nubes = []
+  let x = -10
+  for (let i = 0; x < ancho + 10; i++) {
+    const w = NUBE_ANCHOS[i % NUBE_ANCHOS.length]
+    /* Las grandes un pelín más abajo y las chicas más arriba: la fila respira. */
+    nubes.push(nube(x, w, NUBE_BASE - (w < 38 ? 2 : 0)))
+    x += w * 0.74
+  }
+  return nubes
+}
+
 export function NubeBorde() {
-  const { defs, filtro } = usePulso('nube', 2)
-  const borde =
-    'M0 30 C14 30 18 18 34 20 C42 8 62 8 70 19 C82 12 98 14 104 24 C118 20 128 22 134 28 C150 14 174 12 186 24 C196 16 214 16 222 26 C236 18 254 18 262 27 C276 12 300 12 310 25 C322 18 340 18 348 26 C354 22 358 22 360 23'
+  const ref = useRef(null)
+  const [ancho, setAncho] = useState(360)
+
+  useLayoutEffect(() => {
+    const svg = ref.current
+    if (!svg) return undefined
+    const medir = () => setAncho(Math.round(svg.getBoundingClientRect().width) || 360)
+    medir()
+    const ro = new ResizeObserver(medir)
+    ro.observe(svg)
+    return () => ro.disconnect()
+  }, [])
+
+  const nubes = filaDeNubes(ancho)
+  const fondo = 'var(--fondo-pagina, var(--background-color))'
+
   return (
-    <svg className="tinta-nube" viewBox="0 0 360 40" preserveAspectRatio="none" aria-hidden="true" focusable="false">
-      {defs}
-      <g filter={filtro}>
-        <path d={`${borde} L360 40 L0 40 Z`} fill="var(--fondo-pagina, var(--background-color))" />
-        <path d={borde} fill="none" stroke="var(--tinta-trazo)" strokeWidth="1.2" strokeLinecap="round" />
-      </g>
+    <svg
+      ref={ref}
+      className="tinta-nube"
+      viewBox={`0 0 ${ancho} ${NUBE_ALTO}`}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {/* Cada nube se rellena y luego se perfila: la siguiente tapa el trazo
+          de la anterior donde se montan, así no se cruzan líneas por dentro. */}
+      {nubes.map(({ filo, relleno }, i) => (
+        <g key={i}>
+          <path d={relleno} fill={fondo} />
+          <path d={filo} className="tinta-nube-filo" />
+        </g>
+      ))}
+      {/* Tapa el pie de las nubes: se ven las copas, no las patas. */}
+      <rect x="0" y={NUBE_BASE - 6} width={ancho} height={NUBE_ALTO - NUBE_BASE + 6} fill={fondo} />
     </svg>
   )
 }

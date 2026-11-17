@@ -3,6 +3,7 @@ import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { X } from 'lucide-react'
 import Modal from '../Modal/Modal.jsx'
+import { useArrastrarParaCerrar } from '../../hooks/useArrastrarParaCerrar.js'
 import './modalNegocio.css'
 
 gsap.registerPlugin(useGSAP)
@@ -37,7 +38,7 @@ function ModalNegocioShell({ abierto, titulo, subtitulo, tono = 'neutro', Icono,
         const tl = gsap
           .timeline()
           .fromTo(velo, { opacity: 0 }, { opacity: 1, duration: 0.2 * d, ease: 'power1.out' }, 0)
-          .fromTo(hoja, { yPercent: 100 }, { yPercent: 0, duration: 0.34 * d, ease: 'expo.out', force3D: true }, 0)
+          .fromTo(hoja, { yPercent: 100, y: 0 }, { yPercent: 0, y: 0, duration: 0.34 * d, ease: 'expo.out', force3D: true }, 0)
         if (entradas.length) {
           tl.from(
             entradas,
@@ -55,6 +56,9 @@ function ModalNegocioShell({ abierto, titulo, subtitulo, tono = 'neutro', Icono,
     },
     { dependencies: [abierto, montado] }
   )
+
+  /* Bajar el asa o la cabecera la cierra; la salida la anima el timeline de arriba. */
+  useArrastrarParaCerrar({ hojaRef, veloRef, onCerrar, activo: abierto && montado })
 
   useEffect(() => {
     if (!abierto) return
@@ -80,8 +84,8 @@ function ModalNegocioShell({ abierto, titulo, subtitulo, tono = 'neutro', Icono,
         aria-modal="true"
         aria-labelledby="modal-negocio-titulo"
       >
-        <span className="modal-negocio-asa" aria-hidden="true" />
-        <header className="modal-negocio-cabecera">
+        <span className="modal-negocio-asa" aria-hidden="true" data-arrastre />
+        <header className="modal-negocio-cabecera" data-arrastre>
           {Icono && (
             <span className="modal-negocio-icono" aria-hidden="true">
               <Icono size={22} strokeWidth={2} />

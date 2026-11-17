@@ -1,4 +1,4 @@
-import TarjetaCita, { DatoCita } from '../CitaCard/TarjetaCita.jsx'
+import TarjetaCita from '../CitaCard/TarjetaCita.jsx'
 import { duracionAMinutos, duracionTexto } from '../../utils/fichaLocal.js'
 
 /* Tarjeta de una cita de servicio (peluquería, barbería, etc.). */
@@ -7,7 +7,6 @@ function CitaServicio({
   wasa,
   telefono,
   coste,
-  profesional,
   servicios,
   lineas = [],
   estadoReserva = 0,
@@ -40,10 +39,6 @@ function CitaServicio({
       proxima={proxima}
       etiquetaAria={`Cita en ${lugar}`}
     >
-      <dl className="tarjeta-cita-datos">
-        <DatoCita etiqueta="Profesional">{profesional}</DatoCita>
-      </dl>
-
       {lineas.length > 0 ? (
         <ul className="tarjeta-cita-lista" aria-label="Servicios">
           {lineas.map((linea) => (

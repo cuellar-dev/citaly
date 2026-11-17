@@ -184,49 +184,6 @@
         "duracion": 40
       }
     ],
-    "profesionales": [
-      {
-        "id": "pro-sara-1",
-        "usuarioId": "u-laura-mendez",
-        "estado": "activo",
-        "points": 4.8,
-        "servicios": [
-          "corte-dama",
-          "tinte"
-        ]
-      },
-      {
-        "id": "pro-sara-2",
-        "usuarioId": "u-carlos-ruiz",
-        "estado": "activo",
-        "points": 4.5,
-        "servicios": [
-          "corte-caballero",
-          "corte-dama"
-        ]
-      },
-      {
-        "id": "pro-sara-3",
-        "usuarioId": "u-sofia-herrera",
-        "estado": "activo",
-        "points": 4.2,
-        "servicios": [
-          "manicura",
-          "corte-dama"
-        ]
-      },
-      {
-        "id": "pro-sara-4",
-        "usuarioId": "u-miguel-torres",
-        "estado": "activo",
-        "points": 3.9,
-        "servicios": [
-          "corte-caballero",
-          "tinte",
-          "manicura"
-        ]
-      }
-    ],
     "comentarios": [
       {
         "id": "1",

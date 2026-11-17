@@ -5,15 +5,23 @@ import CitaLugar from '../components/CitaLugar/CitaLugar.jsx'
 import ModalAccionCita from '../components/ModalAccionCita/ModalAccionCita.jsx'
 import { elegirTexto, TEXTOS_CANCELAR, TEXTOS_VOY } from '../components/ModalAccionCita/textosAccionCita.js'
 import ListaCitas from '../components/ListaCitas/ListaCitas.jsx'
+import SuscripcionesCliente from '../components/MisCitas/SuscripcionesCliente.jsx'
+import ResumenCliente from '../components/MisCitas/ResumenCliente.jsx'
+import { actualizarSuscripcion, getSuscripciones } from '../services/storage.js'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import { useCitas } from '../hooks/useCitas.js'
 import { CANCELADA, CONFIRMADA } from '../utils/estadosCita.js'
 import { esCitaDeLugar, esCitaPasada, propsDesdeCita } from '../utils/citasVista.js'
 import './misCitas.css'
 
+/* Pasadas puede crecer sin fin: se enseñan las últimas y el resto a petición. */
+const PASADAS_VISIBLES = 4
+
 function MisCitas() {
   const [vista, setVista] = useState('proximas')
   const [accion, setAccion] = useState(null)
+  const [todasPasadas, setTodasPasadas] = useState(false)
+  const [suscripciones, setSuscripciones] = useState(getSuscripciones)
   const { citas, actualizarCita } = useCitas()
   const navigate = useNavigate()
   const esProximas = vista === 'proximas'
@@ -61,6 +69,13 @@ function MisCitas() {
     })
 
   const hayCitas = citasVista.length > 0
+  const recortar = !esProximas && !todasPasadas && citasVista.length > PASADAS_VISIBLES
+  const citasLista = recortar ? citasVista.slice(0, PASADAS_VISIBLES) : citasVista
+
+  const cambiarSuscripcion = (id, cambios) => {
+    actualizarSuscripcion(id, cambios)
+    setSuscripciones(getSuscripciones())
+  }
 
   /* Una tarjeta por cita. `proxima` marca la más cercana en Próximas: es la
      única donde Taly asoma y la única que va destacada. */
@@ -119,9 +134,22 @@ function MisCitas() {
           onAccion={esProximas ? () => navigate('/') : undefined}
         />
       ) : (
-        /* key={vista}: al cambiar de pestaña la lista arranca arriba, sin animar el salto. */
-        <ListaCitas key={vista} citas={citasVista} renderCita={renderCita} />
+        /* key={vista}: al cambiar de pestaña la lista se monta de nuevo. */
+        <>
+          <ListaCitas key={vista} citas={citasLista} renderCita={renderCita} />
+          {recortar && (
+            <button type="button" className="citas-ver-todas" onClick={() => setTodasPasadas(true)}>
+              Ver las {citasVista.length} pasadas
+            </button>
+          )}
+        </>
       )}
+
+      {/* Debajo de las citas: lo que no es una cita suelta. */}
+      <div className="mis-extra">
+        <SuscripcionesCliente suscripciones={suscripciones} onCambiar={cambiarSuscripcion} />
+        <ResumenCliente citas={citas} onActualizarCita={actualizarCita} />
+      </div>
       <ModalAccionCita accion={accion} onConfirmar={confirmarAccion} onCerrar={cerrarAccion} />
     </section>
   )

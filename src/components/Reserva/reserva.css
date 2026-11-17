@@ -310,7 +310,7 @@
   filter: saturate(0.5);
 }
 
-/* ---------- Servicios y profesionales (solo servicio) ---------- */
+/* ---------- Servicios (solo servicio) ---------- */
 
 .reserva-servicios {
   margin: 0;
@@ -319,23 +319,6 @@
   display: flex;
   flex-direction: column;
   gap: 9px;
-}
-
-.reserva-pros {
-  display: flex;
-  gap: 10px;
-  padding: 2px;
-  overflow-x: auto;
-  scroll-snap-type: x proximity;
-  scrollbar-width: none;
-}
-
-.reserva-pros::-webkit-scrollbar {
-  display: none;
-}
-
-.reserva-pros > * {
-  scroll-snap-align: center;
 }
 
 /* ---------- Resumen ---------- */

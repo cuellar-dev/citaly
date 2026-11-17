@@ -196,16 +196,6 @@ export function notificacionesDemo() {
       enlace: '/negocio',
     },
     {
-      id: 'n-equipo-miguel',
-      ambito: 'negocio',
-      tipo: 'equipo',
-      titulo: 'Miguel Torres dice que trabaja aquí',
-      texto: 'Confírmalo y saldrá en tu equipo para que lo reserven.',
-      creadaEn: hace(60 * 24 * 12),
-      enlace: '/negocio',
-      accion: 'Revisar',
-    },
-    {
       id: 'n-opinion-dayana',
       ambito: 'negocio',
       tipo: 'opinion',
