@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import AppHeader from '../components/AppHeader/AppHeader.jsx'
 import NavBar from '../components/NavBar/NavBar.jsx'
+import ChatTaly from '../components/ChatTaly/index.jsx' // PROTOTIPO chat Taly: quitar esta línea
 import { SECCIONES, useSwipeSecciones } from '../hooks/useSwipeSecciones.js'
 import './Layout.css'
 
@@ -42,6 +43,7 @@ function Layout() {
         </div>
       </main>
       <NavBar />
+      <ChatTaly /> {/* PROTOTIPO chat Taly: quitar esta línea */}
     </div>
   )
 }

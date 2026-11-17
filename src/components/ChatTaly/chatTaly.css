@@ -1,0 +1,343 @@
+/* Chat con Taly (prototipo). Todo cuelga de .chat-taly: no toca estilos de fuera. */
+.chat-taly {
+  --chat-taly-barra: 0px;
+  --chat-taly-hueco: 14px;
+  --chat-taly-z: 100000; /* la navbar está en 99999 */
+  --chat-taly-curva: cubic-bezier(0.23, 1, 0.32, 1);
+  font-family: var(--font-familyPrincipal);
+}
+
+/* ---------- Botón flotante ---------- */
+.chat-taly-boton {
+  position: fixed;
+  right: 16px;
+  bottom: calc(var(--chat-taly-barra) + var(--chat-taly-hueco) + env(safe-area-inset-bottom, 0px));
+  z-index: var(--chat-taly-z);
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--primary-color) 55%, transparent);
+  background: var(--background-color-secondary);
+  box-shadow: 0 6px 18px rgb(var(--sombra, 0 0 0) / 0.28);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 160ms var(--chat-taly-curva), border-color 160ms ease;
+  animation: chat-taly-aparece 260ms var(--chat-taly-curva);
+}
+.chat-taly-boton svg { max-width: 100%; }
+@media (hover: hover) {
+  .chat-taly-boton:hover { border-color: var(--primary-color); transform: translateY(-2px); }
+}
+.chat-taly-boton:active { transform: scale(0.94); }
+.chat-taly-boton:focus-visible { outline: 3px solid var(--primary-color); outline-offset: 3px; }
+
+/* ---------- Panel ---------- */
+.chat-taly-velo { display: none; }
+
+.chat-taly-panel {
+  position: fixed;
+  right: 16px;
+  bottom: calc(var(--chat-taly-barra) + var(--chat-taly-hueco) + env(safe-area-inset-bottom, 0px));
+  z-index: calc(var(--chat-taly-z) + 1);
+  width: min(390px, calc(100vw - 32px));
+  height: min(600px, calc(100dvh - var(--chat-taly-barra) - 48px));
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid color-mix(in srgb, var(--fonts-color-primary) 10%, transparent);
+  background: var(--background-color);
+  color: var(--fonts-color-primary);
+  box-shadow: 0 18px 50px rgb(var(--sombra, 0 0 0) / 0.4);
+  transform-origin: bottom right;
+  animation: chat-taly-abre 240ms var(--chat-taly-curva);
+}
+
+/* Móvil: hoja que sube desde abajo, por encima de todo */
+@media (max-width: 640px) {
+  .chat-taly-velo {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: var(--chat-taly-z);
+    background: rgb(var(--velo-modal, 8 10 9) / calc(0.55 * var(--velo-alfa, 1)));
+    animation: chat-taly-velo 200ms ease-out;
+  }
+  .chat-taly-panel {
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: min(88dvh, 720px);
+    border-radius: 24px 24px 0 0;
+    border-bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transform-origin: bottom center;
+    animation: chat-taly-sube 280ms var(--chat-taly-curva);
+  }
+}
+
+.chat-taly-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 10px 12px 14px;
+  background: var(--background-color-secondary);
+  border-bottom: 1px solid color-mix(in srgb, var(--fonts-color-primary) 8%, transparent);
+}
+.chat-taly-avatar {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  padding: 5px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+}
+.chat-taly-titulos { flex: 1; min-width: 0; display: flex; flex-direction: column; line-height: 1.2; }
+.chat-taly-titulos strong { font-size: 16px; }
+.chat-taly-titulos span { font-size: 12.5px; color: var(--fonts-color-primary-weak); }
+
+.chat-taly-icono {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--fonts-color-primary-weak);
+  cursor: pointer;
+}
+@media (hover: hover) {
+  .chat-taly-icono:hover { background: var(--background-color-another); color: var(--fonts-color-primary); }
+}
+
+/* ---------- Mensajes ---------- */
+.chat-taly-lista {
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-taly-bienvenida {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+.chat-taly-bienvenida > svg { max-width: 92px !important; }
+.chat-taly-bienvenida p { margin: 0; max-width: 30ch; color: var(--fonts-color-primary-weak); font-size: 14.5px; line-height: 1.45; }
+.chat-taly-sugerencias { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 4px; }
+.chat-taly-sugerencias button {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--primary-color) 35%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  color: var(--fonts-color-primary);
+  font: inherit;
+  font-size: 13.5px;
+  cursor: pointer;
+  transition: background-color 140ms ease, transform 140ms var(--chat-taly-curva);
+}
+@media (hover: hover) {
+  .chat-taly-sugerencias button:hover { background: color-mix(in srgb, var(--primary-color) 18%, transparent); }
+}
+.chat-taly-sugerencias button:active { transform: scale(0.97); }
+
+.chat-taly-fila { display: flex; flex-direction: column; gap: 6px; animation: chat-taly-mensaje 220ms var(--chat-taly-curva); }
+.chat-taly-fila--yo { align-items: flex-end; }
+.chat-taly-fila--taly { align-items: flex-start; }
+
+.chat-taly-burbuja {
+  margin: 0;
+  max-width: 86%;
+  padding: 10px 14px;
+  border-radius: 18px;
+  font-size: 14.5px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.chat-taly-fila--taly .chat-taly-burbuja {
+  background: var(--background-color-secondary);
+  border: 1px solid color-mix(in srgb, var(--fonts-color-primary) 7%, transparent);
+  border-bottom-left-radius: 6px;
+}
+.chat-taly-fila--yo .chat-taly-burbuja {
+  background: var(--primary-color);
+  color: #0d1514;
+  border-bottom-right-radius: 6px;
+}
+.chat-taly-burbuja strong { font-weight: 700; }
+.chat-taly-burbuja--error { color: var(--peligro-texto); }
+
+.chat-taly-reintentar {
+  border: 0;
+  background: none;
+  padding: 2px 6px;
+  color: var(--primary-texto);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Puntos de "escribiendo" */
+.chat-taly-escribiendo { display: inline-flex; gap: 5px; padding: 14px 16px; }
+.chat-taly-escribiendo span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fonts-color-primary-weak);
+  animation: chat-taly-punto 1s ease-in-out infinite;
+}
+.chat-taly-escribiendo span:nth-child(2) { animation-delay: 0.15s; }
+.chat-taly-escribiendo span:nth-child(3) { animation-delay: 0.3s; }
+
+.chat-taly-espera {
+  margin: 0 0 0 4px;
+  font-size: 12.5px;
+  color: var(--fonts-color-primary-weak);
+  animation: chat-taly-mensaje 220ms var(--chat-taly-curva);
+}
+
+/* Tarjetas de locales: tira horizontal */
+.chat-taly-locales {
+  list-style: none;
+  margin: 0;
+  padding: 2px 2px 4px;
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.chat-taly-locales::-webkit-scrollbar { display: none; }
+.chat-taly-local {
+  flex: 0 0 min(210px, 78%);
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--tarjeta-fondo);
+  border: 1px solid color-mix(in srgb, var(--fonts-color-primary) 8%, transparent);
+}
+.chat-taly-local-nombre { font-weight: 700; font-size: 14.5px; }
+.chat-taly-local-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  color: var(--fonts-color-primary-weak);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chat-taly-local-meta svg { flex: none; }
+.chat-taly-local-enlace,
+.chat-taly-cita-enlace {
+  margin-top: 6px;
+  align-self: flex-start;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color) 16%, transparent);
+  color: var(--primary-texto);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+@media (hover: hover) {
+  .chat-taly-local-enlace:hover,
+  .chat-taly-cita-enlace:hover { background: color-mix(in srgb, var(--primary-color) 26%, transparent); }
+}
+
+/* Tarjeta de cita reservada */
+.chat-taly-cita {
+  width: min(280px, 86%);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 14px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--primary-color) 10%, var(--background-color-secondary));
+  border: 1px solid color-mix(in srgb, var(--primary-color) 40%, transparent);
+}
+.chat-taly-cita-titulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--primary-texto);
+}
+.chat-taly-cita-local { font-size: 16px; font-weight: 700; }
+.chat-taly-cita-detalle { font-size: 13.5px; color: var(--fonts-color-primary-weak); }
+.chat-taly-cita-detalle::first-letter { text-transform: uppercase; }
+
+/* ---------- Entrada ---------- */
+.chat-taly-entrada {
+  display: flex;
+  gap: 8px;
+  padding: 10px 12px 12px;
+  border-top: 1px solid color-mix(in srgb, var(--fonts-color-primary) 8%, transparent);
+  background: var(--background-color);
+}
+.chat-taly-entrada input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--fonts-color-primary) 12%, transparent);
+  background: var(--background-color-secondary);
+  color: var(--fonts-color-primary);
+  font: inherit;
+  font-size: 16px; /* 16px: iOS no hace zoom al enfocar */
+  outline: none;
+}
+.chat-taly-entrada input:focus { border-color: var(--primary-color); }
+.chat-taly-entrada input::placeholder { color: var(--fonts-color-primary-weak); }
+.chat-taly-entrada button {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: var(--primary-color);
+  color: #0d1514;
+  cursor: pointer;
+  transition: transform 140ms var(--chat-taly-curva), opacity 140ms ease;
+}
+.chat-taly-entrada button:active:not(:disabled) { transform: scale(0.92); }
+.chat-taly-entrada button:disabled { opacity: 0.35; cursor: default; }
+
+/* ---------- Movimiento ---------- */
+@keyframes chat-taly-aparece { from { opacity: 0; transform: scale(0.6); } }
+@keyframes chat-taly-abre { from { opacity: 0; transform: translateY(8px) scale(0.96); } }
+@keyframes chat-taly-sube { from { transform: translateY(100%); } }
+@keyframes chat-taly-velo { from { opacity: 0; } }
+@keyframes chat-taly-mensaje { from { opacity: 0; transform: translateY(6px); } }
+@keyframes chat-taly-punto { 0%, 60%, 100% { opacity: 0.35; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-taly *,
+  .chat-taly-boton,
+  .chat-taly-panel { animation-duration: 1ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+}
