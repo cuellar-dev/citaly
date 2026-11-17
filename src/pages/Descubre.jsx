@@ -11,6 +11,7 @@ import CarruselHeroe from '../components/Descubre/CarruselHeroe.jsx'
 import RailDescubre from '../components/Descubre/RailDescubre.jsx'
 import TarjetaLocalCompacta from '../components/Descubre/TarjetaLocalCompacta.jsx'
 import PieDePagina from '../components/Pie/PieDePagina.jsx'
+import LlamadaOpinion from '../components/Ayuda/LlamadaOpinion.jsx'
 import { getAllLocales } from '../services/locales.js'
 import { getFavoritos, FAVORITOS_EVENTO } from '../services/favoritos.js'
 import { construirDescubre } from '../utils/descubre.js'
@@ -81,7 +82,11 @@ function Descubre() {
   )
 
   const saludo = saludoDeLaHora(hora)
-  const buscar = () => navigate(`/buscar?q=${encodeURIComponent(query.trim())}`)
+  /* La lupa solo busca algo escrito: vacía no lleva a ningún sitio. */
+  const hayTexto = query.trim().length > 0
+  const buscar = () => {
+    if (hayTexto) navigate(`/buscar?q=${encodeURIComponent(query.trim())}`)
+  }
   const aplicarFiltros = () => navigate('/buscar', { state: { filtros } })
 
   return (
@@ -115,7 +120,7 @@ function Descubre() {
                 <X size={17} />
               </button>
             )}
-            <button className="search-submit" type="submit" aria-label="Buscar">
+            <button className="search-submit" type="submit" aria-label="Buscar" disabled={!hayTexto}>
               <Search size={20} />
             </button>
             <button
@@ -196,6 +201,10 @@ function Descubre() {
               </RailDescubre>
             ),
           )}
+        </div>
+
+        <div className="descubre-opinion">
+          <LlamadaOpinion />
         </div>
       </div>
 

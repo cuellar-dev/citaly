@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { differenceInCalendarMonths, parseISO } from 'date-fns'
-import { CalendarClock, Clock, Dumbbell, MessageCircle, Ticket, X } from 'lucide-react'
+import { ArrowRightLeft, CalendarClock, Check, Clock, Dumbbell, MessageCircle, Ticket, X } from 'lucide-react'
 import { getLocalById } from '../../services/locales.js'
 import { periodoDe, precioPlanTexto } from '../../utils/fichaLocal.js'
 import { fechaCorta, situacionSocio, textoSituacion } from '../../utils/socios.js'
@@ -117,7 +117,49 @@ function TarjetaSuscripcion({ sus, onCambiar }) {
         )}
       </dl>
 
-      {esperando && (
+      {/* El turno que pidió está lleno y el local le propone otro: decide él. */}
+      {esperando && sus.propuesta && (
+        <div className="sus-propuesta" role="status">
+          <p>
+            <Clock size={15} strokeWidth={2.4} aria-hidden="true" />
+            <span>
+              {sus.propuesta.pedidoTexto ? `El turno de ${sus.propuesta.pedidoTexto} está lleno. ` : ''}
+              {sus.localNombre} te propone el de <b>{sus.propuesta.texto}</b>. ¿Te vale?
+            </span>
+          </p>
+          <div className="sus-propuesta-botones">
+            <Link className="sus-boton" to={`/local/${sus.localId}/unirse`}>
+              Pedir otro turno
+            </Link>
+            <button
+              type="button"
+              className="sus-boton sus-boton--si"
+              onClick={() =>
+                onCambiar(sus.id, { turno: sus.propuesta.turno, turnoTexto: sus.propuesta.texto, propuesta: null })
+              }
+            >
+              <Check size={16} strokeWidth={2.6} aria-hidden="true" />
+              Me vale
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* El local le cambió de turno para hacer sitio: se lo contamos. */}
+      {!esperando && sus.avisoTurno && (
+        <div className="sus-aviso-turno" role="status">
+          <ArrowRightLeft size={15} strokeWidth={2.4} aria-hidden="true" />
+          <span>
+            {sus.localNombre} te cambió del turno de {sus.avisoTurno.de} al de <b>{sus.avisoTurno.a}</b>. Si no te viene bien,
+            escríbeles.
+          </span>
+          <button type="button" className="sus-enlace" onClick={() => onCambiar(sus.id, { avisoTurno: null })}>
+            Entendido
+          </button>
+        </div>
+      )}
+
+      {esperando && !sus.propuesta && (
         <p className="sus-nota">El local te escribe para confirmar el alta. El pago se hace allí, no en Citaly.</p>
       )}
 

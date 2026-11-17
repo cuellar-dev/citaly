@@ -100,6 +100,21 @@
   }
 }
 
+/* Pregunta: el interrogante sube y baja a saltos, como quien le da vueltas. */
+.taly-pixel--pregunta .taly-pixel-px--Q {
+  animation: taly-pixel-duda 1.6s steps(1, end) infinite;
+}
+
+@keyframes taly-pixel-duda {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .taly-pixel,
   .taly-pixel-cuerpo,

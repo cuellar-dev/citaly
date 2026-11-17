@@ -211,10 +211,37 @@ function NegocioSuscripcion({ idLocal, ahora, cabeceraExtra }) {
     setAviso(`Solicitud de ${socio.nombre.split(' ')[0]} rechazada`)
   }
   const mover = (socio, turnoId) => {
-    actualizar(socio.id, { turno: turnoId })
-    if (socio.estado === 'solicitud') actualizarSuscripcion(socio.id, { turno: turnoId })
+    const origen = turnoDeSocio(turnos, socio)
     const destino = turnos.find((t) => t.id === turnoId)
+    actualizar(socio.id, { turno: turnoId })
+    /* Si es una suscripción de esta cuenta, le llega el aviso en Mis citas. */
+    actualizarSuscripcion(socio.id, {
+      turno: turnoId,
+      turnoTexto: destino?.texto ?? turnoId,
+      ...(socio.estado === 'activo' && origen
+        ? { avisoTurno: { de: origen.texto, a: destino?.texto ?? turnoId, en: new Date().toISOString() } }
+        : {}),
+    })
     setAviso(`${socio.nombre.split(' ')[0]} pasa al turno de ${destino?.texto ?? turnoId}`)
+  }
+  /* Turno lleno: se le propone otro y decide él. null retira la propuesta. */
+  const proponer = (socio, turnoId) => {
+    const destino = turnos.find((t) => t.id === turnoId)
+    const pedido = turnoDeSocio(turnos, socio)
+    const propuesta = turnoId ? { turno: turnoId, texto: destino?.texto ?? turnoId } : null
+    actualizar(socio.id, { propuesta })
+    actualizarSuscripcion(socio.id, {
+      propuesta: propuesta ? { ...propuesta, pedidoTexto: pedido?.texto ?? null, en: new Date().toISOString() } : null,
+    })
+    setAviso(turnoId ? `Propuesta enviada a ${socio.nombre.split(' ')[0]}` : 'Propuesta retirada')
+  }
+  /* Dijo que sí (por WhatsApp o en la tienda): su solicitud pasa a ese turno. */
+  const confirmarPropuesta = (socio) => {
+    const p = socio.propuesta
+    if (!p) return
+    actualizar(socio.id, { turno: p.turno, propuesta: null })
+    actualizarSuscripcion(socio.id, { turno: p.turno, turnoTexto: p.texto, propuesta: null })
+    setAviso(`${socio.nombre.split(' ')[0]} pide ahora el turno de ${p.texto}`)
   }
   const guardarTurnos = (cambios) => {
     guardarFicha({ turnos: { ...configTurnos, ...cambios } })
@@ -470,6 +497,8 @@ function NegocioSuscripcion({ idLocal, ahora, cabeceraExtra }) {
             onAceptar={aceptar}
             onRechazar={rechazar}
             onMover={mover}
+            onProponer={proponer}
+            onConfirmarPropuesta={confirmarPropuesta}
             onCupoTurno={cupoTurno}
             onGuardar={(cambios) => {
               guardarFicha(cambios)

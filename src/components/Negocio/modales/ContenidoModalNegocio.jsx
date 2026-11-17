@@ -689,7 +689,7 @@ function ModalExpressMesa({ local, citas, ahora, onAgregar }) {
             <button
               key={n}
               type="button"
-              className="modal-negocio-chip modal-negocio-chip--verde"
+              className="modal-negocio-chip modal-negocio-chip--verde modal-negocio-chip--redondo"
               aria-pressed={personas === n}
               onClick={() => {
                 setPersonas(n)

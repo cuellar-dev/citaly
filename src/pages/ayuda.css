@@ -226,28 +226,6 @@
   transition-delay: 0.08s;
 }
 
-/* ---------- Contacto ---------- */
-
-.ayuda-contacto {
-  margin-top: 40px;
-}
-
-.ayuda-contacto-titulo {
-  margin: 0;
-  font-family: var(--font-familyDrink, 'drink', sans-serif);
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.ayuda-contacto-texto {
-  margin: 6px 0 0;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1.5;
-  color: var(--fonts-color-primary-weak, #bdbaba);
-}
-
 @media (max-width: 380px) {
   .ayuda {
     padding-inline: 12px;
@@ -275,3 +253,7 @@
     transition-delay: 0s;
   }
 }
+.ayuda-llamada {
+  margin: 0 0 22px;
+}
+

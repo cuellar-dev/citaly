@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { differenceInCalendarDays, format, isSameMonth, parseISO } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { ArrowRightLeft, Banknote, Check, ChevronLeft, ChevronRight, MessageCircle, Minus, Phone, Plus, X } from 'lucide-react'
+import { ArrowRightLeft, Banknote, Check, ChevronLeft, ChevronRight, Clock, MessageCircle, Minus, Phone, Plus, Send, X } from 'lucide-react'
 import SelectorTurno from '../../Turnos/SelectorTurno.jsx'
 import { BarraDinero, Contador, Dona } from '../modales/ContenidoModalNegocio.jsx'
 import { Dato, Seccion } from '../modales/piezas.jsx'
@@ -400,11 +400,39 @@ function HojaMes({ lista, ahora }) {
 
 /* ---------- Solicitudes ---------- */
 
-function Solicitud({ x, turnos, ahora, onAceptar, onRechazar, onMover }) {
-  const [cambiando, setCambiando] = useState(false)
+/* Mensajes de WhatsApp ya escritos: el dueño solo tiene que darle a enviar. */
+function mensajeMovido(socio, local, desde, hasta) {
+  return `Hola ${primerNombre(socio.nombre)}, te escribimos de ${local.localName}. Necesitamos pasarte del turno de ${desde} al de ${hasta}. Si no te viene bien, contéstanos y lo hablamos.`
+}
+
+function mensajePropuesta(socio, local, pedido, propuesto) {
+  return `Hola ${primerNombre(socio.nombre)}, te escribimos de ${local.localName}. El turno de ${pedido} está lleno. ¿Te vale el de ${propuesto}? Respóndenos o contéstalo en Citaly, en Mis citas.`
+}
+
+const wa = (socio, texto) => (tel(socio) ? `https://wa.me/${tel(socio)}?text=${encodeURIComponent(texto)}` : null)
+
+/* Un turno lleno no se resuelve moviendo al que pide sin preguntarle. El
+   dueño tiene dos caminos:
+   - Hacerle sitio: pasa a otro socio de ese turno a otro (y le avisa).
+   - Proponerle otro turno: la solicitud queda esperando a que diga que sí.
+   Hasta que haya sitio, Aceptar está bloqueado. */
+function Solicitud({ x, local, lista, turnos, ahora, onAceptar, onRechazar, onMover, onProponer, onConfirmarPropuesta }) {
+  const [modo, setModo] = useState(null) // null | 'sitio' | 'proponer' | 'elegir'
+  const [aMover, setAMover] = useState(null)
+  const [movido, setMovido] = useState(null)
   const turno = turnoDeSocio(turnos, x.socio)
-  const lleno = turno && estadoTurno(turno.ocupados, turno.cupo) === 'lleno'
+  const lleno = Boolean(turno) && turno.ocupados >= turno.cupo
+  const propuesta = x.socio.propuesta ?? null
   const hace = differenceInCalendarDays(ahora, parseISO(x.socio.desde))
+  const nombre = primerNombre(x.socio.nombre)
+
+  const enEseTurno = turno
+    ? lista.filter((y) => y.socio.estado === 'activo' && turnoDeSocio(turnos, y.socio)?.id === turno.id)
+    : []
+  const alternar = (m) => {
+    setModo((v) => (v === m ? null : m))
+    setAMover(null)
+  }
 
   return (
     <Persona
@@ -421,34 +449,175 @@ function Solicitud({ x, turnos, ahora, onAceptar, onRechazar, onMover }) {
             {turno ? (
               <>
                 Quiere el turno de <b>{turno.texto}</b>
-                {lleno && <em>Ese turno está lleno: pásalo a otro o sube el cupo.</em>}
+                {lleno && !propuesta && <em>Está lleno ({turno.ocupados} de {turno.cupo}). Hazle sitio o proponle otro.</em>}
               </>
             ) : (
-              'No eligió turno.'
+              'No eligió turno: ponle tú uno.'
             )}
           </span>
-          <button type="button" className="hoja-enlace" onClick={() => setCambiando((v) => !v)}>
-            {cambiando ? 'Cerrar' : turno ? 'Cambiar' : 'Elegir'}
+          {!turno && (
+            <button type="button" className="hoja-enlace" onClick={() => alternar('elegir')}>
+              {modo === 'elegir' ? 'Cerrar' : 'Elegir'}
+            </button>
+          )}
+          {turno && !lleno && !propuesta && (
+            <button type="button" className="hoja-enlace" onClick={() => alternar('proponer')}>
+              {modo === 'proponer' ? 'Cerrar' : 'Proponer otro'}
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Lleno y sin propuesta: los dos caminos. */}
+      {lleno && !propuesta && (
+        <div className="hoja-lleno-opciones" role="group" aria-label={`Qué hacer con el turno lleno de ${nombre}`}>
+          <button type="button" className="hoja-lleno-opcion" aria-pressed={modo === 'sitio'} onClick={() => alternar('sitio')}>
+            <ArrowRightLeft size={16} strokeWidth={2.3} aria-hidden="true" />
+            <span>
+              <b>Hacerle sitio</b>
+              <small>Pasas a alguien de ese turno a otro y le avisas</small>
+            </span>
+          </button>
+          <button type="button" className="hoja-lleno-opcion" aria-pressed={modo === 'proponer'} onClick={() => alternar('proponer')}>
+            <Clock size={16} strokeWidth={2.3} aria-hidden="true" />
+            <span>
+              <b>Proponerle otro turno</b>
+              <small>{nombre} decide si le vale</small>
+            </span>
           </button>
         </div>
       )}
-      {cambiando && (
-        <SelectorTurno
-          turnos={turnos}
-          elegido={turno?.id}
-          etiqueta={`Turno para ${x.socio.nombre}`}
-          onElegir={(id) => {
-            onMover(x.socio, id)
-            setCambiando(false)
-          }}
-        />
+
+      {modo === 'sitio' && (
+        <div className="hoja-mover">
+          <p>¿A quién del turno de {turno.texto} cambias?</p>
+          <ul className="hoja-elegir-socio">
+            {enEseTurno.map((y) => (
+              <li key={y.socio.id}>
+                <button
+                  type="button"
+                  aria-pressed={aMover?.id === y.socio.id}
+                  onClick={() => setAMover((v) => (v?.id === y.socio.id ? null : y.socio))}
+                >
+                  <span className="hoja-elegir-avatar" aria-hidden="true">
+                    {iniciales(y.socio.nombre)}
+                  </span>
+                  <span>
+                    {y.socio.nombre}
+                    <small>{y.situacion.plan?.nombre ?? 'Sin plan'} · socio desde {fechaCorta(y.socio.desde)}</small>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          {aMover && (
+            <>
+              <p>¿A qué turno pasa {primerNombre(aMover.nombre)}?</p>
+              <SelectorTurno
+                turnos={turnos}
+                actual={turno.id}
+                elegido={turno.id}
+                etiqueta={`Nuevo turno para ${aMover.nombre}`}
+                onElegir={(destino) => {
+                  if (destino === turno.id) return
+                  onMover(aMover, destino)
+                  setMovido({ socio: aMover, desde: turno.texto, hasta: turnos.find((t) => t.id === destino)?.texto ?? destino })
+                  setAMover(null)
+                  setModo(null)
+                }}
+              />
+            </>
+          )}
+        </div>
       )}
+
+      {(modo === 'proponer' || modo === 'elegir') && (
+        <div className="hoja-mover">
+          <p>
+            {modo === 'elegir'
+              ? `¿Qué turno le pones a ${nombre}?`
+              : `¿Qué turno le propones a ${nombre}? Hasta que diga que sí, sigue pidiendo el suyo.`}
+          </p>
+          <SelectorTurno
+            turnos={turnos}
+            actual={turno?.id ?? null}
+            elegido={turno?.id}
+            etiqueta={`Turno para ${x.socio.nombre}`}
+            onElegir={(destino) => {
+              if (destino === turno?.id) return
+              if (modo === 'elegir') onMover(x.socio, destino)
+              else onProponer(x.socio, destino)
+              setModo(null)
+            }}
+          />
+        </div>
+      )}
+
+      {/* Movimos a alguien para hacer sitio: que no se entere en la puerta. */}
+      {movido && (
+        <div className="hoja-aviso-movido" role="status">
+          <Check size={15} strokeWidth={2.6} aria-hidden="true" />
+          <span>
+            <b>{primerNombre(movido.socio.nombre)}</b> pasa al turno de {movido.hasta}. Ya hay sitio para {nombre}.
+          </span>
+          {wa(movido.socio, mensajeMovido(movido.socio, local, movido.desde, movido.hasta)) && (
+            <a
+              className="hoja-boton hoja-boton--suave"
+              href={wa(movido.socio, mensajeMovido(movido.socio, local, movido.desde, movido.hasta))}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <MessageCircle size={15} strokeWidth={2.25} aria-hidden="true" />
+              Avisar a {primerNombre(movido.socio.nombre)}
+            </a>
+          )}
+        </div>
+      )}
+
+      {/* Propuesta enviada: se espera su respuesta. */}
+      {propuesta && (
+        <div className="hoja-propuesta">
+          <span className="hoja-propuesta-texto">
+            <Send size={14} strokeWidth={2.4} aria-hidden="true" />
+            <span>
+              Le propusiste el turno de <b>{propuesta.texto}</b>. Esperando a que {nombre} diga si le vale.
+            </span>
+          </span>
+          <div className="hoja-persona-acciones">
+            {wa(x.socio, mensajePropuesta(x.socio, local, turno?.texto ?? 'que pediste', propuesta.texto)) && (
+              <a
+                className="hoja-boton hoja-boton--suave"
+                href={wa(x.socio, mensajePropuesta(x.socio, local, turno?.texto ?? 'que pediste', propuesta.texto))}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <MessageCircle size={15} strokeWidth={2.25} aria-hidden="true" />
+                Preguntarle
+              </a>
+            )}
+            <button type="button" className="hoja-boton hoja-boton--suave" onClick={() => onConfirmarPropuesta(x.socio)}>
+              <Check size={15} strokeWidth={2.5} aria-hidden="true" />
+              Me dijo que sí
+            </button>
+            <button type="button" className="hoja-enlace" onClick={() => onProponer(x.socio, null)}>
+              Retirar propuesta
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="hoja-persona-acciones">
         <button type="button" className="hoja-boton hoja-boton--peligro" onClick={() => onRechazar(x)}>
           <X size={15} strokeWidth={2.5} aria-hidden="true" />
           No aceptar
         </button>
-        <button type="button" className="hoja-boton hoja-boton--principal" onClick={() => onAceptar(x)}>
+        <button
+          type="button"
+          className="hoja-boton hoja-boton--principal"
+          disabled={lleno}
+          title={lleno ? 'Ese turno está lleno: hazle sitio o proponle otro' : undefined}
+          onClick={() => onAceptar(x)}
+        >
           <Check size={15} strokeWidth={2.75} aria-hidden="true" />
           Aceptar
         </button>
@@ -458,7 +627,7 @@ function Solicitud({ x, turnos, ahora, onAceptar, onRechazar, onMover }) {
   )
 }
 
-function HojaSolicitudes({ lista, turnos, ahora, onAceptar, onRechazar, onMover }) {
+function HojaSolicitudes({ lista, local, turnos, ahora, onAceptar, onRechazar, onMover, onProponer, onConfirmarPropuesta }) {
   const solicitudes = lista.filter((x) => x.socio.estado === 'solicitud')
   if (!solicitudes.length) {
     return (
@@ -478,11 +647,15 @@ function HojaSolicitudes({ lista, turnos, ahora, onAceptar, onRechazar, onMover 
           <Solicitud
             key={x.socio.id}
             x={x}
+            local={local}
+            lista={lista}
             turnos={turnos}
             ahora={ahora}
             onAceptar={onAceptar}
             onRechazar={onRechazar}
             onMover={onMover}
+            onProponer={onProponer}
+            onConfirmarPropuesta={onConfirmarPropuesta}
           />
         ))}
       </ul>
@@ -562,7 +735,7 @@ function HojaTurnos({ local, config, socios, onGuardar }) {
                 <button
                   key={n}
                   type="button"
-                  className="modal-negocio-chip modal-negocio-chip--verde"
+                  className="modal-negocio-chip modal-negocio-chip--verde modal-negocio-chip--redondo"
                   aria-pressed={form.cupo === n}
                   onClick={() => cambiar('cupo', n)}
                 >
@@ -737,6 +910,8 @@ export default function ContenidoSocios({
   onAceptar,
   onRechazar,
   onMover,
+  onProponer,
+  onConfirmarPropuesta,
   onCupoTurno,
   onGuardar,
 }) {
@@ -751,11 +926,14 @@ export default function ContenidoSocios({
       return (
         <HojaSolicitudes
           lista={lista}
+          local={local}
           turnos={turnos}
           ahora={ahora}
           onAceptar={onAceptar}
           onRechazar={onRechazar}
           onMover={onMover}
+          onProponer={onProponer}
+          onConfirmarPropuesta={onConfirmarPropuesta}
         />
       )
     case 'turnos':

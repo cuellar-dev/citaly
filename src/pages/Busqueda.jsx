@@ -57,10 +57,23 @@ function Busqueda() {
     setBusqueda(query.trim())
   }
 
+  const conFiltros = hayFiltrosActivos(filtrosAplicados)
+  /* Sin texto ni filtros no hay nada que listar: enseñar el catálogo entero
+     no es una búsqueda. Sale un arranque con categorías y las filas curadas. */
+  const hayAlgo = Boolean(busqueda) || conFiltros
+
   const resultados = useMemo(() => {
+    if (!hayAlgo) return []
     const porTexto = buscarLocales(locales, busqueda)
     return porTexto.filter((local) => coincideFiltros(local, filtrosAplicados))
-  }, [locales, busqueda, filtrosAplicados])
+  }, [locales, busqueda, filtrosAplicados, hayAlgo])
+
+  /* Las categorías con más locales, para empezar a buscar con un toque. */
+  const categorias = useMemo(() => {
+    const cuenta = new Map()
+    locales.forEach((l) => l.categoria && cuenta.set(l.categoria, (cuenta.get(l.categoria) ?? 0) + 1))
+    return [...cuenta.entries()].sort((a, b) => b[1] - a[1]).slice(0, 10)
+  }, [locales])
 
   /* Varias filas con criterios distintos, para que debajo de los resultados
      siga habiendo algo que mirar. Cada local aparece UNA sola vez en toda la
@@ -123,7 +136,12 @@ function Busqueda() {
   }, [locales, resultados])
 
   const chips = resumenFiltros(filtrosAplicados)
-  const conFiltros = hayFiltrosActivos(filtrosAplicados)
+
+  function buscarCategoria(categoria) {
+    window.clearTimeout(temporizadorRef.current)
+    setQuery(categoria)
+    setBusqueda(categoria)
+  }
 
   function quitarChip(chip) {
     const siguiente = { ...filtrosAplicados, [chip.campo]: chip.valor }
@@ -235,13 +253,32 @@ function Busqueda() {
       </div>
 
       <div className="busqueda-cuerpo">
+        {!hayAlgo && !tecleando ? (
+          <section className="busqueda-inicio">
+            <header className="busqueda-seccion-cabecera">
+              <div>
+                <span className="busqueda-eyebrow">Por dónde empezar</span>
+                <h2>¿Qué te apetece?</h2>
+              </div>
+            </header>
+            <p className="busqueda-inicio-texto">Escribe un nombre, una zona o un servicio, o toca un tipo de lugar.</p>
+            <div className="busqueda-inicio-categorias">
+              {categorias.map(([cat, n]) => (
+                <button key={cat} type="button" className="busqueda-categoria" onClick={() => buscarCategoria(cat)}>
+                  {cat}
+                  <small>{n}</small>
+                </button>
+              ))}
+            </div>
+          </section>
+        ) : (
         <section className="busqueda-resultados">
           <header className="busqueda-seccion-cabecera">
             <div>
               <span className="busqueda-eyebrow">
-                {busqueda ? `Resultados para “${busqueda}”` : 'Todo el catálogo'}
+                {busqueda ? `Resultados para “${busqueda}”` : 'Con tus filtros'}
               </span>
-              <h2>{busqueda ? 'Lo que encontramos' : 'Lugares para ti'}</h2>
+              <h2>Lo que encontramos</h2>
             </div>
             {/* El contador se calla mientras escribes: antes enseñaba el número
                 de la búsqueda anterior como si fuera el de la nueva. */}
@@ -270,7 +307,7 @@ function Busqueda() {
                 ilustracion={<img src={talySinResultados} alt="Taly no encontró resultados" />}
                 titulo={vacio.titulo}
                 texto={vacio.texto}
-                accion={conFiltros ? 'Quitar los filtros' : 'Ver todos los lugares'}
+                accion={conFiltros ? 'Quitar los filtros' : 'Empezar de nuevo'}
                 onAccion={limpiarTodo}
                 accionSecundaria="Ajustar filtros"
                 onAccionSecundaria={() => setFiltrosAbiertos(true)}
@@ -278,6 +315,7 @@ function Busqueda() {
             </div>
           )}
         </section>
+        )}
 
         {/* Las filas de abajo: cada una con su criterio y sin repetir ningún
             local, ni entre ellas ni con los resultados de arriba. */}

@@ -321,3 +321,36 @@
 :root[data-tema='claro'] .contacto-campo textarea {
   background: rgb(var(--tinte) / 0.045);
 }
+
+/* ---------- Freno anti-spam ---------- */
+
+.contacto-enviar:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.contacto-freno,
+.contacto-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 4px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  text-align: left;
+}
+
+.contacto-freno {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--estado) 12%, transparent);
+  color: var(--estado-texto);
+}
+
+.contacto-freno svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}

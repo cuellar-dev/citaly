@@ -1,0 +1,122 @@
+/* Tarjeta que lleva al formulario de opinión. Mostaza, como la «Idea» del
+   formulario, con el borde de papel recortado del mismo formulario para que
+   se reconozca como la misma cosa. */
+
+.llamada-opinion {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'taly textos'
+    'boton boton';
+  align-items: center;
+  gap: 12px 14px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 16px 14px;
+  border: 2px dashed color-mix(in srgb, var(--yellow-color, #ffd166) 62%, transparent);
+  border-radius: 22px 14px 24px 12px / 14px 24px 12px 22px;
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 9%, var(--background-color-secondary, #1e2221));
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.15s var(--ease-out, ease-out), border-color 0.2s ease;
+}
+
+.llamada-opinion:active {
+  transform: scale(0.985);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .llamada-opinion:hover {
+    border-color: var(--yellow-color, #ffd166);
+  }
+}
+
+.llamada-opinion:focus-visible {
+  outline: 2px solid var(--yellow-color, #ffd166);
+  outline-offset: 3px;
+}
+
+.llamada-opinion-taly {
+  grid-area: taly;
+  width: 54px;
+}
+
+.llamada-opinion-taly .taly-pixel {
+  width: 100%;
+}
+
+.llamada-opinion-textos {
+  grid-area: textos;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.llamada-opinion-textos strong {
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.12rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.llamada-opinion-sello {
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 20%, transparent);
+  color: var(--yellow-texto, var(--yellow-color, #ffd166));
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.llamada-opinion-boton {
+  grid-area: boton;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 42px;
+  border-radius: 999px;
+  background: var(--yellow-color, #ffd166);
+  color: #2b2008;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* Compacta: el botón a la derecha, en una sola fila. */
+.llamada-opinion--compacta {
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: 'taly textos boton';
+  padding: 12px 12px 12px 14px;
+}
+
+.llamada-opinion--compacta .llamada-opinion-taly {
+  width: 42px;
+}
+
+.llamada-opinion--compacta .llamada-opinion-boton {
+  min-height: 38px;
+  padding: 0 14px;
+}
+
+@media (max-width: 360px) {
+  .llamada-opinion--compacta {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'taly textos'
+      'boton boton';
+  }
+}

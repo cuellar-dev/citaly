@@ -1,6 +1,15 @@
-import { useId, useRef, useState } from 'react'
-import { Heart, Lightbulb, Megaphone, Send } from 'lucide-react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { Heart, Hourglass, Lightbulb, Megaphone, Send } from 'lucide-react'
 import TalyPixel from './TalyPixel.jsx'
+import {
+  LIMITE,
+  anotarEnvio as anotar,
+  enviosRecientes as recientes,
+  esperaRestante as restanteDe,
+  guardarMensaje,
+  textoEspera,
+  ultimoTexto as ultimoDe,
+} from '../../utils/limiteEnvios.js'
 import './formContacto.css'
 
 /* Formulario para escribirnos: una idea, algo que te gustó o una queja.
@@ -16,6 +25,12 @@ import './formContacto.css'
 
 const CLAVE = 'citaly_mensajes_soporte'
 const MINIMO = 10
+/* Como mucho 3 mensajes cada 5 minutos (utils/limiteEnvios.js). */
+const CLAVE_ENVIOS = 'citaly_soporte_envios'
+const enviosRecientes = () => recientes(CLAVE_ENVIOS)
+const anotarEnvio = () => anotar(CLAVE_ENVIOS)
+const esperaRestante = () => restanteDe(CLAVE_ENVIOS)
+const ultimoTexto = () => ultimoDe(CLAVE)
 
 const ESTADOS = [
   {
@@ -47,14 +62,7 @@ const ESTADOS = [
   },
 ]
 
-function guardar(mensaje) {
-  try {
-    const lista = JSON.parse(localStorage.getItem(CLAVE)) || []
-    localStorage.setItem(CLAVE, JSON.stringify([mensaje, ...lista]))
-  } catch {
-    /* Sin almacenamiento: el envío es de mentira igualmente. */
-  }
-}
+const guardar = (mensaje) => guardarMensaje(CLAVE, mensaje)
 
 function FormContacto() {
   const [estado, setEstado] = useState('sugerencia')
@@ -63,8 +71,19 @@ function FormContacto() {
   const [local, setLocal] = useState('')
   const [error, setError] = useState('')
   const [enviado, setEnviado] = useState(false)
+  const [espera, setEspera] = useState(() => esperaRestante())
   const opcionesRef = useRef([])
   const id = useId()
+
+  /* Mientras hay que esperar, la cuenta atrás baja sola cada segundo. */
+  useEffect(() => {
+    if (!espera) return undefined
+    const t = window.setInterval(() => setEspera(esperaRestante()), 1000)
+    return () => window.clearInterval(t)
+  }, [espera])
+
+  const frenado = espera > 0
+  const quedan = LIMITE - enviosRecientes().length
 
   const indice = ESTADOS.findIndex((e) => e.id === estado)
   const actual = ESTADOS[indice]
@@ -81,10 +100,21 @@ function FormContacto() {
 
   const enviar = (e) => {
     e.preventDefault()
+    const restante = esperaRestante()
+    if (restante) {
+      setEspera(restante)
+      return
+    }
     if (texto.trim().length < MINIMO) {
       setError(`Cuéntanos un poco más (al menos ${MINIMO} letras).`)
       return
     }
+    if (texto.trim() === ultimoTexto()) {
+      setError('Este mensaje ya nos llegó. Si quieres añadir algo, cámbialo un poco.')
+      return
+    }
+    anotarEnvio()
+    setEspera(esperaRestante())
     guardar({
       tipo: estado,
       texto: texto.trim(),
@@ -142,9 +172,16 @@ function FormContacto() {
           <p className="contacto-ayuda">
             Gracias por escribirnos. {correo.trim() ? 'Te contestamos a tu correo en cuanto podamos.' : 'Lo leemos todo, aunque no nos dejes correo.'}
           </p>
-          <button type="button" className="contacto-enviar contacto-enviar--suave" onClick={otraVez}>
-            Escribir otra cosa
-          </button>
+          {frenado ? (
+            <p className="contacto-freno" role="status">
+              <Hourglass size={15} strokeWidth={2.4} aria-hidden="true" />
+              Ya nos mandaste {LIMITE} seguidos. Podrás escribir otra vez en {textoEspera(espera)}.
+            </p>
+          ) : (
+            <button type="button" className="contacto-enviar contacto-enviar--suave" onClick={otraVez}>
+              Escribir otra cosa
+            </button>
+          )}
         </div>
       ) : (
         <form className="contacto-form" onSubmit={enviar} noValidate>
@@ -200,7 +237,16 @@ function FormContacto() {
             />
           </label>
 
-          <button type="submit" className="contacto-enviar">
+          {frenado ? (
+            <p className="contacto-freno" role="status">
+              <Hourglass size={15} strokeWidth={2.4} aria-hidden="true" />
+              Ya nos mandaste {LIMITE} mensajes seguidos. Podrás enviar otro en {textoEspera(espera)}; lo que escribas no se pierde.
+            </p>
+          ) : (
+            quedan === 1 && <p className="contacto-aviso">Te queda 1 mensaje en estos 5 minutos.</p>
+          )}
+
+          <button type="submit" className="contacto-enviar" disabled={frenado}>
             <Send size={16} strokeWidth={2.4} aria-hidden="true" />
             {actual.boton}
           </button>

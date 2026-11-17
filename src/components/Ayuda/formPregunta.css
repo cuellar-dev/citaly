@@ -1,0 +1,194 @@
+/* Formulario clásico de Ayuda: caja limpia, campos con su etiqueta encima
+   y un botón. Taly pensativo asoma por la esquina de arriba a la derecha. */
+
+.pregunta-form-marco {
+  position: relative;
+  margin-top: 64px;
+  padding: 22px 18px 20px;
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  border-radius: 20px;
+  background: var(--background-color-secondary, #1e2221);
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  text-align: left;
+}
+
+.pregunta-taly {
+  position: absolute;
+  top: -58px;
+  right: 14px;
+  pointer-events: none;
+}
+
+.pregunta-taly .taly-pixel {
+  width: 66px;
+}
+
+.pregunta-titulo {
+  margin: 0;
+  padding-right: 64px;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.pregunta-ayuda {
+  margin: 6px 0 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.pregunta-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.pregunta-campo {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.pregunta-campo span {
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.pregunta-form textarea,
+.pregunta-form input {
+  box-sizing: border-box;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 11px 13px;
+  border: 1px solid rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
+  border-radius: 12px;
+  background: var(--background-color, #121413);
+  color: var(--fonts-color-primary, #f0f0f0);
+  /* 16px: por debajo, Safari en iPhone acerca la página al enfocar. */
+  font: 600 16px var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  resize: vertical;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pregunta-form textarea::placeholder,
+.pregunta-form input::placeholder {
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  opacity: 0.6;
+}
+
+.pregunta-form textarea:focus,
+.pregunta-form input:focus {
+  outline: none;
+  border-color: var(--primary-color, #00c2ad);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color, #00c2ad) 20%, transparent);
+}
+
+.pregunta-form textarea[aria-invalid='true'] {
+  margin-bottom: 6px;
+  border-color: var(--rosa, #f06787);
+}
+
+.pregunta-error {
+  margin-bottom: 14px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--rosa-texto, #f06787);
+}
+
+.pregunta-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: #062a26;
+  font: 700 15px var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.14s var(--ease-out, ease-out), opacity 0.2s ease;
+}
+
+.pregunta-boton:active {
+  transform: scale(0.97);
+}
+
+.pregunta-boton:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+}
+
+.pregunta-boton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pregunta-boton--suave {
+  align-self: flex-start;
+  margin-top: 6px;
+  border: 1.5px solid color-mix(in srgb, var(--primary-color, #00c2ad) 55%, transparent);
+  background: transparent;
+  color: var(--primary-texto, #00c2ad);
+}
+
+.pregunta-freno,
+.pregunta-aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.pregunta-freno {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 12%, transparent);
+  color: var(--yellow-texto, #ffd166);
+}
+
+.pregunta-freno svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pregunta-enviada {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 10%, transparent);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  animation: pregunta-entra 0.3s var(--ease-out, ease-out);
+}
+
+.pregunta-enviada strong {
+  font-size: 15px;
+  color: var(--primary-texto, #00c2ad);
+}
+
+@keyframes pregunta-entra {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pregunta-enviada {
+    animation: none;
+  }
+}

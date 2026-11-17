@@ -11,7 +11,9 @@ import './talyPixel.css'
      bombilla que se le enciende encima;
    - bien:       ojos de felicidad, alas arriba, pico grande y un corazón;
    - queja:      cejas enfadadas, mofletes rojos, pico abierto gritando,
-     patas abiertas y vapor saliendo de la cabeza.
+     patas abiertas y vapor saliendo de la cabeza;
+   - pregunta:   la del formulario de Ayuda. Pensativo: mira hacia arriba,
+     se lleva el ala a la barbilla y le flota un interrogante.
 
    Se pinta como una rejilla fija de rectángulos (la unión de las tres
    caras). Al cambiar de estado no se cambia de dibujo: cada píxel cambia de
@@ -31,6 +33,7 @@ const COLORES = {
   P: '#FF9DB0', // mofletes contentos
   R: '#FF7A6B', // mofletes de enfado
   G: '#A9B4B0', // vapor
+  Q: '#FFD166', // interrogante (aparte del copete para animarlo solo a él)
 }
 
 const CARAS = {
@@ -84,6 +87,23 @@ const CARAS = {
     '...DBBLLLLBBD...',
     '....BBBBBBBB....',
     '....M......M....',
+  ],
+  pregunta: [
+    '............QQ..',
+    '...........Q..Q.',
+    '..............Q.',
+    '.............Q..',
+    '......MMM.......',
+    '....BBBBBBBB.Q..',
+    '...BBBOBBBBOB...',
+    '...BBBBBBBBBB...',
+    '...BBBBBMMBBB...',
+    '...BBBBDDBBBB...',
+    '...BBDDDLLLBB...',
+    '..DDDBLLLLLBB...',
+    '...BBBLLLLBBB...',
+    '....BBBBBBBB....',
+    '.....M....M.....',
   ],
 }
 

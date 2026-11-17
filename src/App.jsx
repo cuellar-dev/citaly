@@ -16,6 +16,7 @@ import Busqueda from './pages/Busqueda.jsx'
 import Notificaciones from './pages/Notificaciones.jsx'
 import Favoritos from './pages/Favoritos.jsx'
 import Ayuda from './pages/Ayuda.jsx'
+import Opinion from './pages/Opinion.jsx'
 /* Sobre nosotros arrastra Three.js y varios plugins: se carga solo al entrar. */
 const Nosotros = lazy(() => import('./pages/Nosotros.jsx'))
 
@@ -66,6 +67,7 @@ function App() {
           <Route path="notificaciones" element={<Notificaciones />} />
           <Route path="favoritos" element={<Favoritos />} />
           <Route path="ayuda" element={<Ayuda />} />
+          <Route path="opinion" element={<Opinion />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

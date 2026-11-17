@@ -1,0 +1,34 @@
+/* Tu opinión: la barra y el ancho son los de Ayuda (ayuda.css). */
+
+.opinion-intro {
+  padding: 4px 0 6px;
+  text-align: left;
+}
+
+.opinion-sello {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 18%, transparent);
+  color: var(--yellow-texto, #ffd166);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.opinion-titulo {
+  margin: 10px 0 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.opinion-texto {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}

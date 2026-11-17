@@ -83,6 +83,13 @@
 
 .search-submit {
   padding-left: 5px;
+  transition: opacity 0.2s ease;
+}
+
+/* Sin texto la lupa se apaga: no hay nada que buscar todavía. */
+.search-submit:disabled {
+  opacity: 0.32;
+  cursor: default;
 }
 
 .search-filter {
@@ -329,4 +336,9 @@
     margin: 0 -12px;
     padding-inline: 12px;
   }
+}
+
+/* Al final del feed, antes del pie: pedir opinión mientras Citaly es nuevo. */
+.descubre-opinion {
+  margin: 28px 0 8px;
 }

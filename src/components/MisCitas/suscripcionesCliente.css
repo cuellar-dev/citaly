@@ -240,3 +240,82 @@
     transition: none;
   }
 }
+
+/* ---------- Propuesta de otro turno y aviso de cambio ---------- */
+
+.sus-propuesta,
+.sus-aviso-turno {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.sus-propuesta {
+  border: 1.5px dashed color-mix(in srgb, var(--yellow-color, #ffd166) 60%, transparent);
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 9%, transparent);
+}
+
+.sus-propuesta p {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+
+.sus-propuesta p svg,
+.sus-aviso-turno > svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sus-propuesta p svg {
+  color: var(--yellow-texto, #ffd166);
+}
+
+.sus-propuesta-botones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.sus-propuesta-botones .sus-boton {
+  justify-content: center;
+}
+
+.sus-boton--si {
+  border-color: transparent;
+  background: var(--primary-color, #00c2ad);
+  color: #062a26;
+}
+
+.sus-aviso-turno {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 6px 8px;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 10%, transparent);
+}
+
+.sus-aviso-turno > svg {
+  color: var(--primary-texto, #00c2ad);
+}
+
+.sus-aviso-turno > span {
+  flex: 1;
+  min-width: 180px;
+}
+
+.sus-enlace {
+  margin-left: auto;
+  padding: 2px 4px;
+  border: 0;
+  background: none;
+  color: var(--primary-texto, #00c2ad);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+}

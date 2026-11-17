@@ -2,10 +2,12 @@ import { useId, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Plus } from 'lucide-react'
 import Taly from '../components/Taly/Taly.jsx'
-import FormContacto from '../components/Ayuda/FormContacto.jsx'
+import FormPregunta from '../components/Ayuda/FormPregunta.jsx'
+import LlamadaOpinion from '../components/Ayuda/LlamadaOpinion.jsx'
 import './ayuda.css'
 
-/* Preguntas frecuentes y, debajo, el formulario para escribirnos.
+/* Preguntas frecuentes y, debajo, el formulario para mandar la tuya si no
+   estaba. Las ideas, quejas y lo que te gustó van en /opinion.
 
    Las preguntas se abren de una en una: al abrir otra se cierra la
    anterior, para que la página no se convierta en un muro de texto.
@@ -109,6 +111,10 @@ function Ayuda() {
         </div>
       </div>
 
+      <div className="ayuda-llamada">
+        <LlamadaOpinion compacta />
+      </div>
+
       <ul className="faq">
         {PREGUNTAS.map((item, i) => (
           <Pregunta
@@ -120,15 +126,7 @@ function Ayuda() {
         ))}
       </ul>
 
-      <section className="ayuda-contacto" aria-labelledby="ayuda-contacto-titulo">
-        <h2 className="ayuda-contacto-titulo" id="ayuda-contacto-titulo">
-          ¿No está tu pregunta?
-        </h2>
-        <p className="ayuda-contacto-texto">
-          Escríbenos. Una idea, algo que te gustó o algo que salió mal: todo nos sirve.
-        </p>
-        <FormContacto />
-      </section>
+      <FormPregunta />
     </section>
   )
 }

@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { CircleHelp, Info, Moon, Share2, Sun } from 'lucide-react'
+import { CircleHelp, Info, MessageCircleHeart, Moon, Share2, Sun } from 'lucide-react'
 import IconoFavoritos from './IconoFavoritos.jsx'
 import SwitchTema from './SwitchTema.jsx'
 import { useTema } from '../../hooks/useTema.js'
@@ -28,6 +28,7 @@ gsap.registerPlugin(useGSAP)
 const OPCIONES = [
   { id: 'tema', tipo: 'tema', giro: '-1.2deg' },
   { id: 'favoritos', label: 'Favoritos', Icono: IconoFavoritos, giro: '0.8deg', ruta: '/favoritos' },
+  { id: 'opinion', label: 'Danos tu opinión', Icono: MessageCircleHeart, giro: '-1deg', ruta: '/opinion' },
   { id: 'ayuda', label: 'Preguntas frecuentes', Icono: CircleHelp, giro: '-0.6deg', ruta: '/ayuda' },
   { id: 'sobre', label: 'Sobre Citaly', Icono: Info, giro: '1.1deg', ruta: '/nosotros' },
   { id: 'compartir', label: 'Compartir Citaly', Icono: Share2, giro: '-0.9deg', accion: 'compartir' },

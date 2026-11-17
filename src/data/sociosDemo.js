@@ -1,5 +1,7 @@
 import { addDays, addMonths, format } from 'date-fns'
 import { getSuscripciones } from '../services/storage.js'
+import { USUARIO_ACTUAL_ID } from '../services/sesion.js'
+import { getUsuarioById } from '../services/usuarios.js'
 
 /* Los socios de prueba del local de suscripción (el ejemplo es Energym).
    Las fechas se calculan desde hoy para que siempre haya de todo: gente al
@@ -18,7 +20,7 @@ const SOCIOS = [
   ['Carmen Díaz', '+53 5590 2037', 'plan-basico', 21, 22, '09:00'],
   ['Elena Ruiz', '+53 5221 6643', 'plan-completo', -1, 5, '18:00'],
   ['Raúl Fonseca', '+53 5318 9902', 'plan-basico', -4, 2, '13:30'],
-  ['Lianet Varona', '+53 5476 1150', 'plan-completo', 7, 11, '18:00'],
+  ['Lianet Varona', '+53 5476 1150', 'plan-completo', 7, 11, '19:30'],
   ['Osniel Cabrera', '+53 5263 3381', 'plan-personal', 1, 4, '19:30'],
   ['Daylín Marrero', '+53 5390 7724', 'plan-basico', 17, 1, '07:30'],
   ['Yunior Llanes', '+53 5244 0016', 'plan-completo', 26, 8, '06:00'],
@@ -88,11 +90,29 @@ export function sociosDemo(local, hoy = new Date()) {
       telefono: '',
       planId: s.plan.id,
       turno: s.turno ?? null,
+      propuesta: s.propuesta ? { turno: s.propuesta.turno, texto: s.propuesta.texto } : null,
       desde: s.creadaEn.slice(0, 10),
       proximoPago: iso(hoy),
       estado: 'solicitud',
       pagos: [],
     }))
 
-  return [...tuyas, ...solicitudes, ...activos, ...bajas]
+  /* Y si ya eres socio de este local, sales en su lista con tu turno: así
+     se ve el aviso cuando el dueño te cambia de turno para hacer sitio. */
+  const yo = getUsuarioById(USUARIO_ACTUAL_ID)
+  const socioTu = getSuscripciones()
+    .filter((s) => s.localId === local.id && s.estado === 1)
+    .map((s) => ({
+      id: s.id,
+      nombre: `${yo?.nombre ?? 'Tú'} (tú)`,
+      telefono: yo?.telefono ?? '',
+      planId: s.plan.id,
+      turno: s.turno ?? null,
+      desde: s.desde ?? s.creadaEn.slice(0, 10),
+      proximoPago: s.proximoPago ?? iso(hoy),
+      estado: 'activo',
+      pagos: [],
+    }))
+
+  return [...tuyas, ...solicitudes, ...socioTu, ...activos, ...bajas]
 }

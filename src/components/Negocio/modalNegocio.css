@@ -746,8 +746,11 @@
 
 .modal-negocio-chip {
   --chip: var(--yellow-color, #ffd166);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 38px;
-
+  padding: 8px 14px;
   border-radius: 999px;
   border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
   background: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
@@ -755,12 +758,28 @@
   font: inherit;
   font-size: 13px;
   font-weight: 700;
+  line-height: 1.2;
   cursor: pointer;
-  aspect-ratio: 1/1;
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
     color 0.2s ease;
+}
+
+/* Números sueltos (personas, cupos): círculo perfecto, mismo alto que las píldoras. */
+.modal-negocio-chip--redondo {
+  width: 40px;
+  height: 40px;
+  min-height: 0;
+  padding: 0;
+  border-radius: 50%;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.modal-negocio-chip:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
 }
 
 .modal-negocio-chip--verde {
