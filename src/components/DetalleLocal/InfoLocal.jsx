@@ -5,6 +5,7 @@ import { DIAS, codigoDia, digitos, horarioDeLocal } from '../../utils/fichaLocal
 import { comodidadesDe } from '../../utils/descubre.js'
 import talyDormido from '../Taly/taly-crayon-dormido.svg'
 import { MapaTinta } from './Tinta.jsx'
+import MapaPin from '../NuevoLocal/MapaPin.jsx'
 import './infoLocal.css'
 
 const NOMBRE_DIA = {
@@ -21,7 +22,25 @@ const NOMBRE_DIA = {
    comodidades tiene el sitio. */
 function InfoLocal({ local, estado }) {
   const comodidades = comodidadesDe(local, Infinity)
-  const urlMaps = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(local.direccion ?? '')}`
+  /* Si el dueño marcó su puerta en el mapa, se enseña el mapa de verdad y
+     el enlace lleva al punto exacto, no a una búsqueda por la dirección. */
+  const conPunto = Number.isFinite(local.lat) && Number.isFinite(local.lng)
+  const urlMaps = conPunto
+    ? `https://www.google.com/maps/search/?api=1&query=${local.lat},${local.lng}`
+    : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(local.direccion ?? '')}`
+  const filaMapa = (
+    <span className="local-info-fila">
+      <span className="local-info-icono"><MapPin size={19} /></span>
+      <span className="local-info-textos">
+        <span className="local-info-titulo">{local.direccion}</span>
+        <span className="local-info-valor">
+          {local.metros ? `A ${local.metros} m de ti · ` : ''}
+          {conPunto ? 'cómo llegar' : 'abrir en Maps'}
+        </span>
+      </span>
+      <ChevronRight size={18} className="local-info-flecha" aria-hidden="true" />
+    </span>
+  )
   const whatsapp = local.whatsapp ?? local.telefono
   const urlWhatsApp = `https://wa.me/${digitos(whatsapp)}?text=${encodeURIComponent(
     `Hola, vi ${local.localName} en Citaly y me gustaría consultar.`,
@@ -33,23 +52,36 @@ function InfoLocal({ local, estado }) {
 
       <div className="local-info-bloque">
         <h3 className="local-info-subtitulo">Cómo llegar</h3>
-        <a
-          className="local-info-grupo local-info-mapa"
-          href={urlMaps}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={`Abrir ${local.direccion} en Google Maps`}
-        >
-          <MapaTinta />
-          <span className="local-info-fila">
-            <span className="local-info-icono"><MapPin size={19} /></span>
-            <span className="local-info-textos">
-              <span className="local-info-titulo">{local.direccion}</span>
-              <span className="local-info-valor">A {local.metros} m de ti · abrir en Maps</span>
-            </span>
-            <ChevronRight size={18} className="local-info-flecha" aria-hidden="true" />
-          </span>
-        </a>
+        {conPunto ? (
+          <div className="local-info-grupo local-info-mapa local-info-mapa--real">
+            <MapaPin
+              soloVer
+              centro={{ lat: local.lat, lng: local.lng, zoom: 16 }}
+              valor={{ lat: local.lat, lng: local.lng }}
+              etiqueta={`Mapa con la ubicación de ${local.localName}`}
+            />
+            <a
+              className="local-info-mapa-enlace"
+              href={urlMaps}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`Cómo llegar a ${local.localName} en Google Maps`}
+            >
+              {filaMapa}
+            </a>
+          </div>
+        ) : (
+          <a
+            className="local-info-grupo local-info-mapa"
+            href={urlMaps}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Abrir ${local.direccion} en Google Maps`}
+          >
+            <MapaTinta />
+            {filaMapa}
+          </a>
+        )}
       </div>
 
       <div className="local-info-bloque">

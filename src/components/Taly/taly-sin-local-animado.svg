@@ -1,0 +1,199 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Taly mira con pena un local cerrado mientras pasa rodando una bola de matojo">
+  <title>Taly sin local (a mano, animado)</title>
+
+  <style>
+    /* Mismo trazo que el Taly dormido de Perfil. Aquí Taly suspira frente
+       a un local con el cartel de CERRADO, que se mece en su clavo, y por
+       el suelo pasa rodando un matojo: ni un alma. */
+
+    .respira { transform-origin: 200px 335px; animation: respira 4.8s ease-in-out infinite; }
+    @keyframes respira {
+      0%, 100% { transform: scale(1, 1); }
+      40%      { transform: scale(1.02, 1.045); }
+      62%      { transform: scale(.995, .985); }
+    }
+
+    .cabeza { transform-origin: 190px 150px; animation: cabeza 4.8s ease-in-out infinite; }
+    @keyframes cabeza {
+      0%, 100% { transform: rotate(4deg); }
+      40%      { transform: rotate(1deg) translateY(-2px); }
+      62%      { transform: rotate(6deg) translateY(2px); }
+    }
+
+    .copete { transform-origin: 175px 90px; animation: copete 4.8s ease-in-out infinite; }
+    @keyframes copete {
+      0%, 100% { transform: rotate(6deg); }
+      62%      { transform: rotate(12deg); }
+    }
+
+    .suspiro { transform-box: fill-box; transform-origin: 0% 50%; opacity: 0; animation: suspiro 4.8s ease-out infinite; }
+    @keyframes suspiro {
+      0%, 55% { opacity: 0; transform: translate(0, 0) scale(.4); }
+      64%     { opacity: 1; }
+      100%    { opacity: 0; transform: translate(22px, -10px) scale(1.15); }
+    }
+
+    .cartel { transform-origin: 322px 196px; animation: cartel 2.8s ease-in-out infinite; }
+    @keyframes cartel {
+      0%, 100% { transform: rotate(-7deg); }
+      50%      { transform: rotate(6deg); }
+    }
+
+    .matojo { animation: matojo 7s linear infinite; }
+    @keyframes matojo {
+      0%   { transform: translate(470px, 0); }
+      42%  { transform: translate(250px, -10px); }
+      50%  { transform: translate(210px, 0); }
+      58%  { transform: translate(170px, -8px); }
+      100% { transform: translate(-90px, 0); }
+    }
+    .matojo-giro { transform-box: fill-box; transform-origin: center; animation: giro 1.4s linear infinite; }
+    @keyframes giro { to { transform: rotate(-360deg); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+      .matojo { transform: translate(150px, 0); }
+      .suspiro { opacity: 0; }
+    }
+  </style>
+
+  <defs>
+    <filter id="pulso" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="11" result="ruido"/>
+      <feDisplacementMap in="SourceGraphic" in2="ruido" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <path id="cuerpo" d="M175 85 C215 68 246 94 249 134 C252 166 286 186 304 226 C324 278 286 328 200 330 C114 334 78 282 98 226 C116 180 150 162 152 126 C152 106 160 92 175 85 Z"/>
+    <path id="ala" d="M134 204 C166 182 218 198 236 240 C220 284 160 290 128 256 C118 238 120 218 134 204 Z"/>
+    <clipPath id="dentroCuerpo"><use href="#cuerpo"/></clipPath>
+  </defs>
+
+  <!-- suelo, a garabato -->
+  <g filter="url(#pulso)" stroke-linecap="round" fill="none">
+    <path d="M14 364 C110 370 260 368 390 362" stroke="#0E2E2A" stroke-opacity=".28" stroke-width="5"/>
+    <path d="M40 374 C140 379 250 378 360 372" stroke="#0E2E2A" stroke-opacity=".14" stroke-width="4"/>
+  </g>
+
+  <!-- el local cerrado -->
+  <g filter="url(#pulso)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- fachada -->
+    <path transform="translate(4 3)" d="M266 160 L380 160 L382 362 L264 362 Z" fill="#F2EBDD"/>
+    <path d="M266 160 L380 160 L382 362 L264 362 Z" fill="none" stroke="#0E2E2A" stroke-width="4"/>
+    <!-- ladrillos sueltos -->
+    <g stroke="#0E2E2A" stroke-opacity=".22" stroke-width="3" fill="none">
+      <path d="M272 182 l16 0 M366 196 l10 0 M270 300 l14 0 M362 322 l14 0 M366 262 l10 0"/>
+    </g>
+    <!-- puerta con la persiana bajada -->
+    <path transform="translate(3 2)" d="M292 214 L354 214 L354 362 L292 362 Z" fill="#2AA795"/>
+    <path d="M292 214 L354 214 L354 362 L292 362 Z" fill="none" stroke="#0E2E2A" stroke-width="4"/>
+    <g stroke="#0E2E2A" stroke-opacity=".45" stroke-width="2.5" fill="none">
+      <path d="M296 234 L350 234 M296 252 L350 252 M296 270 L350 270 M296 288 L350 288 M296 306 L350 306 M296 324 L350 324 M296 342 L350 342"/>
+    </g>
+    <!-- toldo a rayas -->
+    <path transform="translate(4 3)" d="M252 122 L394 122 L398 158 C388 170 376 170 368 158 C360 170 346 170 338 158 C330 170 316 170 308 158 C300 170 286 170 278 158 C270 170 256 170 248 158 Z" fill="#4FD8C4"/>
+    <g transform="translate(4 3)" fill="#FFD166">
+      <path d="M278 122 L298 122 L308 158 C300 170 286 170 278 158 Z"/>
+      <path d="M338 122 L358 122 L368 158 C360 170 346 170 338 158 Z"/>
+    </g>
+    <path d="M252 122 L394 122 L398 158 C388 170 376 170 368 158 C360 170 346 170 338 158 C330 170 316 170 308 158 C300 170 286 170 278 158 C270 170 256 170 248 158 Z" fill="none" stroke="#0E2E2A" stroke-width="4"/>
+    <path d="M250 140 C300 142 350 142 396 140" fill="none" stroke="#0E2E2A" stroke-opacity=".35" stroke-width="2.5"/>
+  </g>
+
+  <!-- el cartel, colgado de su clavo y meciéndose -->
+  <g filter="url(#pulso)" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="322" cy="196" r="4" fill="#0E2E2A"/>
+    <g class="cartel">
+      <path d="M322 196 L302 222 M322 196 L342 222" fill="none" stroke="#0E2E2A" stroke-width="2.5"/>
+      <rect x="291" y="224" width="66" height="28" rx="4" transform="translate(3 2)" fill="#FFD166"/>
+      <rect x="291" y="224" width="66" height="28" rx="4" fill="none" stroke="#0E2E2A" stroke-width="3.5"/>
+      <text x="324" y="243" text-anchor="middle" font-family="Quicksand, 'Trebuchet MS', sans-serif" font-size="12.5" font-weight="800" letter-spacing="1" fill="#0E2E2A">CERRADO</text>
+    </g>
+  </g>
+
+  <!-- Taly, de pie frente al local, suspirando -->
+  <g filter="url(#pulso)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <g transform="translate(-28 74) scale(.78)">
+
+      <!-- patas -->
+      <g stroke="#0E2E2A" stroke-width="13">
+        <path d="M178 326 L176 358 M176 358 L158 365 M176 358 L192 366"/>
+        <path d="M226 327 L228 358 M228 358 L210 366 M228 358 L244 365"/>
+      </g>
+      <g stroke="#FFD166" stroke-width="6">
+        <path d="M178 326 L176 358 M176 358 L158 365 M176 358 L192 366"/>
+        <path d="M226 327 L228 358 M228 358 L210 366 M228 358 L244 365"/>
+      </g>
+
+      <g class="respira">
+        <g transform="translate(4 3)">
+          <use href="#cuerpo" fill="#4FD8C4"/>
+          <g clip-path="url(#dentroCuerpo)">
+            <path d="M205 214 C256 210 304 236 296 286 C288 328 236 336 190 326 C232 306 244 256 205 214 Z" fill="#BDF4E8"/>
+            <g stroke="#8FE0D0" stroke-width="4">
+              <path d="M240 250 l9 3 M254 266 l9 2 M232 276 l9 3 M250 289 l9 1 M232 300 l9 2 M262 248 l8 4"/>
+            </g>
+            <g stroke="#2FBDA8" stroke-width="4">
+              <path d="M120 232 l-3 9 M108 255 l-2 9 M118 282 l2 8 M136 304 l4 7"/>
+              <path d="M176 100 l8 3 M194 90 l9 1 M212 94 l8 3 M170 124 l7 -2 M168 148 l4 7 M188 168 l7 3"/>
+              <path d="M268 206 l-4 8 M284 228 l-6 6 M292 252 l-8 4"/>
+            </g>
+          </g>
+        </g>
+
+        <!-- ala caída, sin ganas -->
+        <g transform="rotate(8 170 245)">
+          <g transform="translate(4 3)">
+            <use href="#ala" fill="#2AA795"/>
+            <g stroke="#4FD8C4" stroke-width="4">
+              <path d="M148 218 C172 208 200 214 216 232"/>
+              <path d="M142 236 C168 228 194 234 214 248"/>
+              <path d="M144 254 C166 250 188 256 202 266"/>
+            </g>
+          </g>
+          <use href="#ala" stroke="#0E2E2A" stroke-width="4"/>
+        </g>
+
+        <use href="#cuerpo" stroke="#0E2E2A" stroke-width="5"/>
+        <g stroke="#0E2E2A" stroke-width="2" stroke-opacity=".45" transform="translate(-2 -2) rotate(.6 200 200)">
+          <use href="#cuerpo"/>
+        </g>
+
+        <!-- cabeza: copete lacio, ceja triste, ojo abierto mirando el cartel -->
+        <g class="cabeza">
+          <g class="copete">
+            <path transform="translate(4 3)" d="M168 92 C156 70 160 52 174 42 C178 58 188 62 192 76 C198 62 206 58 214 56 C214 72 204 84 196 92 Z" fill="#FFD166"/>
+            <path d="M168 92 C156 70 160 52 174 42 C178 58 188 62 192 76 C198 62 206 58 214 56 C214 72 204 84 196 92" stroke="#0E2E2A" stroke-width="4"/>
+          </g>
+
+          <path transform="translate(4 3)" d="M246 112 C268 112 290 122 300 134 C282 146 262 150 247 146 Z" fill="#FFD166"/>
+          <path d="M246 112 C268 112 290 122 300 134 C282 146 262 150 247 146" stroke="#0E2E2A" stroke-width="4"/>
+          <path d="M250 134 C266 134 282 134 298 134" stroke="#0E2E2A" stroke-width="3"/>
+
+          <!-- ojo: abierto, con el párpado a media asta -->
+          <circle cx="226" cy="120" r="9" fill="#F2EBDD" stroke="#0E2E2A" stroke-width="3.5"/>
+          <circle cx="229" cy="122" r="4.5" fill="#0E2E2A"/>
+          <path d="M215 116 C220 110 232 110 237 116" fill="#4FD8C4" stroke="#0E2E2A" stroke-width="3.5"/>
+          <!-- ceja de pena: sube hacia el pico -->
+          <path d="M211 102 C219 101 229 96 235 88" stroke="#0E2E2A" stroke-width="4.5"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- el suspiro, una nubecita que sale del pico -->
+  <g filter="url(#pulso)" stroke-linecap="round" fill="none">
+    <g class="suspiro">
+      <path d="M212 168 C210 158 222 154 226 160 C230 152 242 156 240 166 C246 168 244 178 236 178 L216 178 C208 178 206 170 212 168 Z" fill="#BDF4E8" stroke="#0E2E2A" stroke-width="3"/>
+    </g>
+  </g>
+
+  <!-- el matojo rodando por el suelo -->
+  <g class="matojo">
+    <g filter="url(#pulso)" fill="none" stroke="#90856B" stroke-width="3" stroke-linecap="round">
+      <g class="matojo-giro">
+        <circle cx="0" cy="346" r="15" stroke-opacity=".9"/>
+        <path d="M-12 338 C-2 352 8 336 12 350 M-10 352 C0 340 6 356 13 340 M-6 334 C-8 346 4 358 2 360 M6 334 C-4 344 10 352 -4 360"/>
+      </g>
+    </g>
+  </g>
+</svg>

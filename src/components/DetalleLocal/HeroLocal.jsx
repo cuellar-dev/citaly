@@ -164,8 +164,12 @@ function HeroLocal({ local, fotos, estado, nota, cantidad, onCompartir, onAbrirF
           ) : (
             <span className="local-hero-nuevo">Nuevo en Citaly</span>
           )}
-          <span aria-hidden="true">·</span>
-          <span>A {local.metros} m</span>
+          {local.metros ? (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>A {local.metros} m</span>
+            </>
+          ) : null}
         </p>
       </div>
 

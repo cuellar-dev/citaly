@@ -1,4 +1,5 @@
 import { notificacionesDemo } from '../data/notificacionesDemo.js'
+import { notisMisLocales } from './misLocales.js'
 
 /* Capa de notificaciones. Hoy es mock: la lista sale de la demo y lo único
    que se guarda es qué ids se leyeron y cuáles se borraron. Mañana se cambia
@@ -27,7 +28,7 @@ function guardar(clave, set) {
 export function getNotificaciones() {
   const leidas = leer(LEIDAS_KEY)
   const borradas = leer(BORRADAS_KEY)
-  return notificacionesDemo()
+  return [...notificacionesDemo(), ...notisMisLocales()]
     .filter((n) => !borradas.has(n.id))
     .map((n) => ({ ...n, leida: Boolean(n.leida) || leidas.has(n.id) }))
     .sort((a, b) => new Date(b.creadaEn) - new Date(a.creadaEn))

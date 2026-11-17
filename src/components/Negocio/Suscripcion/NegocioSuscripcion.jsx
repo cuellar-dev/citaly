@@ -98,7 +98,11 @@ function nombreCorto(nombre) {
 
 function NegocioSuscripcion({ idLocal, ahora, cabeceraExtra }) {
   const [local, setLocal] = useState(() => getLocalById(idLocal))
-  const [socios, setSocios] = useState(() => sociosDemo(getLocalById(idLocal), ahora))
+  const [socios, setSocios] = useState(() => {
+    const inicial = getLocalById(idLocal)
+    /* Un local recién creado empieza sin socios de mentira. */
+    return inicial?.propio ? [] : sociosDemo(inicial, ahora)
+  })
   const [filtro, setFiltro] = useState('todos')
   const [modal, setModal] = useState(null)
   const [modalAbierto, setModalAbierto] = useState(false)

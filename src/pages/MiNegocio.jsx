@@ -3,7 +3,7 @@ import { addDays, format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { Banknote, CalendarDays, FileDown, Images, LayoutGrid, MessageSquareQuote, Pencil, Scissors, Timer, UserPlus, Users, UtensilsCrossed, ZapOff } from 'lucide-react'
+import { Banknote, CalendarDays, EyeOff, FileDown, Images, LayoutGrid, MessageSquareQuote, Pencil, Scissors, Timer, UserPlus, Users, UtensilsCrossed, ZapOff } from 'lucide-react'
 import CabeceraNegocio from '../components/Negocio/CabeceraNegocio.jsx'
 import CitaDueno from '../components/Negocio/CitaDueno.jsx'
 import FichaLocal from '../components/Negocio/FichaLocal.jsx'
@@ -13,8 +13,14 @@ import ContenidoFichaLocal from '../components/Negocio/modales/ContenidoFichaLoc
 import ContenidoMesas from '../components/Negocio/modales/ContenidoMesas.jsx'
 import SalaTurno from '../components/Negocio/SalaTurno.jsx'
 import SwitchEjemplo from '../components/Negocio/SwitchEjemplo.jsx'
-import { EJEMPLOS, leerEjemplo } from '../data/ejemplosNegocio.js'
+import { EJEMPLOS, guardarEjemplo, leerEjemplo } from '../data/ejemplosNegocio.js'
 import NegocioSuscripcion from '../components/Negocio/Suscripcion/NegocioSuscripcion.jsx'
+import EstadoAprobado from '../components/Negocio/MiLocal/EstadoAprobado.jsx'
+import EstadoRevision from '../components/Negocio/MiLocal/EstadoRevision.jsx'
+import SelectorMisLocales from '../components/Negocio/MiLocal/SelectorMisLocales.jsx'
+import SinLocal from '../components/Negocio/MiLocal/SinLocal.jsx'
+import ZonaLocal from '../components/Negocio/MiLocal/ZonaLocal.jsx'
+import { actualizarMiLocal, borrarMiLocal, getMisLocales, guardarSeleccion, leerSeleccion, revisarAprobaciones } from '../services/misLocales.js'
 import { reservasMesaDemo } from '../data/reservasMesaDemo.js'
 import { mesasDeLocal } from '../utils/mesas.js'
 import ContenidoModalNegocio from '../components/Negocio/modales/ContenidoModalNegocio.jsx'
@@ -262,7 +268,9 @@ function resumenDelDia(citas, ahora, local) {
   }
 }
 
+/* Un local recién creado empieza con la agenda vacía: nada de clientes de mentira. */
 function agendaDemo(local) {
+  if (local.propio) return []
   return tipoDeLocal(local) === 'mesa' ? reservasMesaDemo(local, AHORA_DEMO) : citasNegocioDemo(local, AHORA_DEMO)
 }
 
@@ -642,19 +650,147 @@ function NegocioAgenda({ idLocal, cabeceraExtra }) {
   )
 }
 
-/* La página: el switch de ejemplos y, debajo, el panel que toca según el
-   tipo de local. La key hace que cada local empiece de cero al cambiar. */
+/* La página. Arriba, los locales del usuario (si tiene) y el switch de
+   ejemplos de la demo. Debajo, según el local elegido:
+     - en revisión            → qué está pasando y qué viene
+     - aprobado sin completar → la bienvenida y lo que falta
+     - listo (o un ejemplo)   → el panel de su tipo, y al final la zona
+                                para ocultarlo o eliminarlo
+   Tras eliminar, la pantalla sin local con Taly frente al cartel. */
 function MiNegocio() {
+  const [misLocales, setMisLocales] = useState(() => {
+    revisarAprobaciones()
+    return getMisLocales()
+  })
   const [ejemplo, setEjemplo] = useState(leerEjemplo)
-  const actual = EJEMPLOS.find((e) => e.id === ejemplo) ?? EJEMPLOS[0]
-  const cabeceraExtra = <SwitchEjemplo activo={actual.id} onCambiar={setEjemplo} />
+  const [seleccion, setSeleccion] = useState(() => leerSeleccion() ?? { tipo: 'demo', id: leerEjemplo() })
+  const [fuera, setFuera] = useState(null) // null | { simulado }
+  /* Sube al ocultar/mostrar o guardar el punto: el panel vuelve a leer el local. */
+  const [version, setVersion] = useState(0)
 
+  const propio = seleccion.tipo === 'propio' ? misLocales.find((l) => l.id === seleccion.id) : null
+  const actual = EJEMPLOS.find((e) => e.id === ejemplo) ?? EJEMPLOS[0]
+  const idLocal = propio?.id ?? actual.idLocal
+  const tipoPanel = propio ? propio.tipo : actual.tipo
+  /* El local con sus cambios (oculto, punto…), para la zona y el aviso. */
+  const local = getLocalById(idLocal)
+
+  const recargar = useCallback(() => setMisLocales(getMisLocales()), [])
+
+  const elegirPropio = (id) => {
+    const s = { tipo: 'propio', id }
+    guardarSeleccion(s)
+    setSeleccion(s)
+    window.scrollTo({ top: 0 })
+  }
+
+  const elegirEjemplo = (id) => {
+    guardarEjemplo(id)
+    setEjemplo(id)
+    const s = { tipo: 'demo', id }
+    guardarSeleccion(s)
+    setSeleccion(s)
+  }
+
+  const volverAEjemplos = () => {
+    const s = { tipo: 'demo', id: ejemplo }
+    guardarSeleccion(s)
+    setSeleccion(s)
+  }
+
+  const cambioDeEstado = useCallback(
+    (info) => {
+      recargar()
+      if (info?.eliminado) volverAEjemplos()
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [recargar, ejemplo],
+  )
+
+  const ocultar = (oculto) => {
+    if (propio) actualizarMiLocal(propio.id, { oculto })
+    saveFicha(idLocal, { oculto })
+    recargar()
+    setVersion((v) => v + 1)
+  }
+
+  const ubicar = ({ lat, lng }) => {
+    actualizarMiLocal(idLocal, { lat, lng })
+    recargar()
+    setVersion((v) => v + 1)
+  }
+
+  const eliminar = () => {
+    if (propio) {
+      borrarMiLocal(propio.id)
+      recargar()
+      volverAEjemplos()
+      setFuera({ simulado: false })
+    } else {
+      setFuera({ simulado: true })
+    }
+    window.scrollTo({ top: 0 })
+  }
+
+  if (fuera) {
+    return (
+      <section className="negocio" aria-label="Mi Negocio">
+        <SinLocal simulado={fuera.simulado} onVolver={() => setFuera(null)} />
+      </section>
+    )
+  }
+
+  const cabeceraExtra = (
+    <>
+      <SelectorMisLocales locales={misLocales} activo={propio?.id} onElegir={elegirPropio} />
+      <SwitchEjemplo activo={propio ? null : actual.id} onCambiar={elegirEjemplo} />
+      {local?.oculto && (!propio || propio.completado) && (
+        <p className="mi-local-oculto" role="status">
+          <EyeOff size={17} strokeWidth={2.3} aria-hidden="true" />
+          <span>Tu local está oculto: nadie lo ve en Citaly.</span>
+          <button type="button" onClick={() => ocultar(false)}>
+            Mostrar
+          </button>
+        </p>
+      )}
+    </>
+  )
+
+  if (propio && propio.estado === 'revision') {
+    return (
+      <section className="negocio" aria-label="Mi Negocio">
+        {cabeceraExtra}
+        <EstadoRevision key={propio.id} local={propio} onCambio={cambioDeEstado} />
+      </section>
+    )
+  }
+
+  if (propio && !propio.completado) {
+    return (
+      <section className="negocio" aria-label="Mi Negocio">
+        {cabeceraExtra}
+        <EstadoAprobado key={propio.id} local={propio} />
+      </section>
+    )
+  }
+
+  const clavePanel = `${idLocal}-${version}`
   return (
     <section className="negocio" aria-label="Mi Negocio">
-      {actual.tipo === 'suscripcion' ? (
-        <NegocioSuscripcion key={actual.idLocal} idLocal={actual.idLocal} ahora={AHORA_DEMO} cabeceraExtra={cabeceraExtra} />
+      {tipoPanel === 'suscripcion' ? (
+        <NegocioSuscripcion key={clavePanel} idLocal={idLocal} ahora={AHORA_DEMO} cabeceraExtra={cabeceraExtra} />
       ) : (
-        <NegocioAgenda key={actual.idLocal} idLocal={actual.idLocal} cabeceraExtra={cabeceraExtra} />
+        <NegocioAgenda key={clavePanel} idLocal={idLocal} cabeceraExtra={cabeceraExtra} />
+      )}
+      {local && (
+        <ZonaLocal
+          key={`zona-${idLocal}`}
+          local={local}
+          esEjemplo={!propio}
+          onOcultar={ocultar}
+          onEliminar={eliminar}
+          onUbicar={ubicar}
+        />
       )}
     </section>
   )

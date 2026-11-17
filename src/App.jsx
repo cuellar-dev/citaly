@@ -17,8 +17,15 @@ import Notificaciones from './pages/Notificaciones.jsx'
 import Favoritos from './pages/Favoritos.jsx'
 import Ayuda from './pages/Ayuda.jsx'
 import Opinion from './pages/Opinion.jsx'
+import NuevoLocal from './pages/NuevoLocal.jsx'
+import CompletarLocal from './pages/CompletarLocal.jsx'
 /* Sobre nosotros arrastra Three.js y varios plugins: se carga solo al entrar. */
 const Nosotros = lazy(() => import('./pages/Nosotros.jsx'))
+
+function CompletarLocalPage() {
+  const { id } = useParams()
+  return <CompletarLocal key={id} />
+}
 
 function ReservarConLugarPage() {
   const { id } = useParams()
@@ -44,6 +51,9 @@ function App() {
       <Routes>
         {/* Auth fuera del Layout: sin navbar ni header, pantalla a foco. */}
         <Route path="/auth" element={<Auth />} />
+        {/* Crear y completar el local: también a foco, un paso cada vez. */}
+        <Route path="/negocio/nuevo" element={<NuevoLocal />} />
+        <Route path="/negocio/completar/:id" element={<CompletarLocalPage />} />
         {/* Sobre nosotros también va a pantalla completa: es un viaje, no una tabla. */}
         <Route
           path="/nosotros"

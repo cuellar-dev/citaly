@@ -136,7 +136,7 @@ function DetalleLocal() {
   const cifras = [
     oferta.length ? { valor: desde ?? 'Gratis', label: desde ? etiquetaDesde : 'Reserva' } : null,
     oferta.length ? { valor: oferta.length, label: etiquetaCuenta(tipo, oferta.length) } : null,
-    { valor: `${local.metros} m`, label: 'Distancia' },
+    local.metros ? { valor: `${local.metros} m`, label: 'Distancia' } : null,
   ].filter(Boolean)
 
   /* Solo opina quien ya tuvo una cita confirmada aquí (hoy o antes). */

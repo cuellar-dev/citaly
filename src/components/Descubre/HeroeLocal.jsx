@@ -41,9 +41,11 @@ function HeroeLocal({ local, etiqueta = 'El de hoy' }) {
               {cantidad > 0 ? <small>({cantidad})</small> : null}
             </span>
             <span>{local.categoria}</span>
-            <span className="heroe-local-lejos">
-              <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />A {local.metros} m
-            </span>
+            {local.metros ? (
+              <span className="heroe-local-lejos">
+                <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />A {local.metros} m
+              </span>
+            ) : null}
           </p>
 
           {frase ? <p className="heroe-local-frase">“{frase.texto}”</p> : null}

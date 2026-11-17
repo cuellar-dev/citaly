@@ -70,11 +70,12 @@ function CabeceraNegocio({
 
         <div className="cabecera-negocio-textos">
           <h2 className="cabecera-negocio-nombre">{nombre}</h2>
-          {(categoria || nota) && (
+          {/* Sin opiniones la nota es 0: con `&&` se pintaría un «0» suelto. */}
+          {(categoria || nota > 0) && (
             <p className="cabecera-negocio-meta">
               {categoria}
-              {categoria && nota && <span aria-hidden="true">·</span>}
-              {nota && (
+              {categoria && nota > 0 && <span aria-hidden="true">·</span>}
+              {nota > 0 && (
                 <span className="cabecera-negocio-nota">
                   <Star size={12} strokeWidth={2} fill="currentColor" aria-hidden="true" />
                   {nota}

@@ -1,0 +1,179 @@
+/* El mapa del pin. Leaflet trae su CSS (se carga con el mapa); aquí va lo
+   nuestro: el marco, el pin con los colores de Taly y los avisos. */
+
+.mapa-pin-caja {
+  position: relative;
+  overflow: hidden;
+  height: 340px;
+  border: 1.5px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  border-radius: 18px;
+  background: var(--background-color-secondary, #1e2221);
+  isolation: isolate;
+}
+
+.mapa-pin-caja--ver {
+  height: 170px;
+  border-radius: 16px 16px 0 0;
+  border: 0;
+}
+
+.mapa-pin-lienzo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #e8e4da;
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+/* Teselas un poco apagadas en el tema oscuro, para que el mapa no deslumbre. */
+:root:not([data-tema='claro']) .mapa-pin-lienzo .leaflet-tile-pane {
+  filter: brightness(0.82) contrast(1.05) saturate(0.85);
+}
+
+.mapa-pin-lienzo .leaflet-control-attribution {
+  font-size: 10px;
+}
+
+/* El pin: una gota teal con el punto mostaza de Taly. */
+.mapa-pin {
+  background: none;
+  border: 0;
+}
+
+.mapa-pin-forma {
+  position: absolute;
+  top: 0;
+  left: 3px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 3px solid #0e2e2a;
+  border-radius: 50% 50% 50% 0;
+  background: #00c2ad;
+  transform: rotate(-45deg);
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.3);
+  animation: mapa-pin-cae 0.42s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.mapa-pin-punto {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #0e2e2a;
+  border-radius: 50%;
+  background: #ffd166;
+}
+
+.mapa-pin-sombra {
+  position: absolute;
+  bottom: 0;
+  left: 12px;
+  width: 12px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.35);
+}
+
+.leaflet-dragging .mapa-pin-forma {
+  transform: rotate(-45deg) translate(3px, -3px);
+}
+
+@keyframes mapa-pin-cae {
+  from {
+    opacity: 0;
+    transform: rotate(-45deg) translate(10px, -14px);
+  }
+}
+
+.mapa-pin-pista {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  z-index: 500;
+  margin: 0;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgb(14 46 42 / 0.88);
+  color: #f0f0f0;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.mapa-pin-gps {
+  position: absolute;
+  right: 10px;
+  bottom: 22px;
+  z-index: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 999px;
+  background: #fffdf8;
+  color: #0e2e2a;
+  font: 800 13px var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.25);
+  cursor: pointer;
+}
+
+.mapa-pin-gps:disabled {
+  opacity: 0.7;
+}
+
+.mapa-pin-velo {
+  position: absolute;
+  inset: 0;
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  background: var(--background-color-secondary, #1e2221);
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.mapa-pin-cargando {
+  width: 26px;
+  height: 26px;
+  border: 3px solid rgb(var(--tinte) / calc(0.15 * var(--tinte-fuerza)));
+  border-top-color: var(--primary-color, #00c2ad);
+  border-radius: 50%;
+  animation: mapa-pin-gira 0.9s linear infinite;
+}
+
+@keyframes mapa-pin-gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.mapa-pin-reintentar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1.5px solid rgb(var(--tinte) / calc(0.18 * var(--tinte-fuerza)));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font: 700 13px var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mapa-pin-forma,
+  .mapa-pin-cargando {
+    animation: none;
+  }
+}

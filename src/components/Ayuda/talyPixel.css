@@ -115,6 +115,64 @@
   }
 }
 
+/* ---------- Las del alta de locales ---------- */
+
+/* Apunte: el lápiz da golpecitos al aire, como quien señala la pizarra. */
+.taly-pixel--apunte :is(.taly-pixel-px--Y, .taly-pixel-px--T, .taly-pixel-px--N, .taly-pixel-px--E) {
+  animation: taly-pixel-golpecito 1.4s steps(1, end) infinite;
+}
+
+@keyframes taly-pixel-golpecito {
+  0%,
+  50%,
+  70%,
+  100% {
+    transform: translateY(0);
+  }
+  60%,
+  80% {
+    transform: translateY(1px);
+  }
+}
+
+/* Tarjeta: la agita en alto, dos sacudidas y pausa, como un árbitro. */
+.taly-pixel--tarjeta .taly-pixel-px--C {
+  animation: taly-pixel-tarjeta 1.5s steps(1, end) 0.4s infinite;
+}
+
+@keyframes taly-pixel-tarjeta {
+  0%,
+  40%,
+  100% {
+    transform: translateY(0);
+  }
+  10%,
+  30% {
+    transform: translateY(-1px);
+  }
+}
+
+/* Llave: tintinea de lado a lado, orgulloso de su local. */
+.taly-pixel--llave .taly-pixel-px--A {
+  animation: taly-pixel-llave 1.8s steps(1, end) 0.5s infinite;
+}
+
+@keyframes taly-pixel-llave {
+  0%,
+  50%,
+  100% {
+    transform: translateX(0);
+  }
+  60%,
+  80% {
+    transform: translateX(-1px);
+  }
+  70%,
+  90% {
+    transform: translateX(1px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .taly-pixel,
   .taly-pixel-cuerpo,

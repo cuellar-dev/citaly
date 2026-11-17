@@ -26,8 +26,12 @@ function LocalHorizontal({ local, onClick }) {
             <Star size={11} strokeWidth={2.6} aria-hidden="true" />
             {nota ? nota.toFixed(1) : '—'}
           </span>
-          <span className="local-horizontal-punto" aria-hidden="true" />
-          <span>A {local.metros} m</span>
+          {local.metros ? (
+            <>
+              <span className="local-horizontal-punto" aria-hidden="true" />
+              <span>A {local.metros} m</span>
+            </>
+          ) : null}
         </span>
       </span>
 

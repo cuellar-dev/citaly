@@ -39,10 +39,14 @@ function TarjetaLocal(local) {
               <h2>{localName}</h2>
               <p className="tarjeta-meta">
                 <span>{categoria}</span>
-                <span className="tarjeta-punto" aria-hidden="true" />
-                <span className="tarjeta-lejos">
-                  <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />A {metros} m
-                </span>
+                {metros ? (
+                  <>
+                    <span className="tarjeta-punto" aria-hidden="true" />
+                    <span className="tarjeta-lejos">
+                      <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />A {metros} m
+                    </span>
+                  </>
+                ) : null}
               </p>
             </div>
           </div>

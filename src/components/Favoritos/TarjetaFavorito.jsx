@@ -59,10 +59,14 @@ function TarjetaFavorito({ local, indice = 0, quitada = false }) {
 
           <p className="fav-meta">
             <span>{categoria}</span>
-            <span className="fav-meta-punto" aria-hidden="true" />
-            <span className="fav-meta-lejos">
-              <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />A {metros} m
-            </span>
+            {metros ? (
+              <>
+                <span className="fav-meta-punto" aria-hidden="true" />
+                <span className="fav-meta-lejos">
+                  <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />A {metros} m
+                </span>
+              </>
+            ) : null}
           </p>
 
           {quitada ? (

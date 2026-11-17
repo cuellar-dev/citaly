@@ -15,6 +15,14 @@ import './talyPixel.css'
    - pregunta:   la del formulario de Ayuda. Pensativo: mira hacia arriba,
      se lleva el ala a la barbilla y le flota un interrogante.
 
+   Y tres más para los formularios de crear y completar el local, con la
+   misma intención que las de opinión pero su propio gesto (de montar un
+   negocio), para que no se vean calcadas:
+   - apunte:  el consejo. Lápiz en alto como quien explica y un guiño;
+   - tarjeta: el error. De árbitro, con silbato y la tarjeta roja en alto;
+   - llave:   lo que salió bien. Orgulloso, ojos cerrados de gusto, con
+     las llaves del local en alto.
+
    Se pinta como una rejilla fija de rectángulos (la unión de las tres
    caras). Al cambiar de estado no se cambia de dibujo: cada píxel cambia de
    color, fila a fila de arriba abajo, así que Taly se transforma en vez de
@@ -34,6 +42,12 @@ const COLORES = {
   R: '#FF7A6B', // mofletes de enfado
   G: '#A9B4B0', // vapor
   Q: '#FFD166', // interrogante (aparte del copete para animarlo solo a él)
+  Y: '#FFD166', // cuerpo del lápiz
+  T: '#E8B98A', // madera del lápiz
+  N: '#5C6662', // punta del lápiz (grafito: se ve en los dos temas)
+  E: '#FF9DB0', // goma del lápiz
+  C: '#E5484D', // tarjeta roja
+  A: '#FFD166', // llave
 }
 
 const CARAS = {
@@ -102,6 +116,57 @@ const CARAS = {
     '...BBDDDLLLBB...',
     '..DDDBLLLLLBB...',
     '...BBBLLLLBBB...',
+    '....BBBBBBBB....',
+    '.....M....M.....',
+  ],
+  apunte: [
+    '..............N.',
+    '.............TT.',
+    '.............YY.',
+    '.............YY.',
+    '......MMM....YY.',
+    '....BBBBBBBB.EE.',
+    '...BBBOBBBBOODD.',
+    '...BBBBBBBBBBDD.',
+    '...BBBBBMMBBBD..',
+    '..DBBBBBBBBBB...',
+    '..DBBLLLLLLBB...',
+    '..DDBLLLLLLBB...',
+    '...DBBLLLLBBB...',
+    '....BBBBBBBB....',
+    '.....M....M.....',
+  ],
+  tarjeta: [
+    '...........CCC..',
+    '...........CCC..',
+    '...........CCC..',
+    '...........CCC..',
+    '......MMM...DD..',
+    '....BBBBBBBBDD..',
+    '...BBOOBBBBOO...',
+    '...BBBOBBBBOB...',
+    '...BBBBBMMSBB...',
+    '..DBBBBBBBBBB...',
+    '..DBBLLLLLLBB...',
+    '..DDBLLLLLLBB...',
+    '...DBBLLLLBBB...',
+    '....BBBBBBBB....',
+    '.....M....M.....',
+  ],
+  llave: [
+    '..AAA...........',
+    '..A.A...........',
+    '..AAA...........',
+    '...A............',
+    '...AA.MMM.......',
+    '..DDBBBBBBBB....',
+    '...DBBBBBBBBB...',
+    '...BBOOBBBBOO...',
+    '...BBPBBMMBBP...',
+    '...BBBBBBBBBB...',
+    '...BLLLLLLLLBD..',
+    '...BLLLLLLLLBDD.',
+    '...BBLLLLLLBBD..',
     '....BBBBBBBB....',
     '.....M....M.....',
   ],
