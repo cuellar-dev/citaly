@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { MapPin, Quote, Star } from 'lucide-react'
 import BotonFavorito from '../Favorito/BotonFavorito.jsx'
+import Foto from '../Foto/Foto.jsx'
 import { comodidadesDe, desdeTexto, estadoApertura, fraseDeLocal, notaLocal } from '../../utils/descubre.js'
 import './tarjetalocal.css'
 
@@ -25,8 +26,9 @@ function TarjetaLocal(local) {
     <article className="tarjeta-wrap">
       <Link to={`/local/${id}`} className="tarjeta-link" aria-label={`Ver ${localName}`}>
         <div className="tarjeta">
-          <div className="tarjeta-foto tema-oscuro-fijo">
-            <img src={url} alt="" loading="lazy" decoding="async" />
+          <div className="tarjeta-foto tema-oscuro-fijo foto-marco">
+            {/* Caja 16:11 de hasta 420 px de ancho. */}
+            <Foto src={url} anchos={[400, 640]} calidad={70} proporcion={11 / 16} sizes="(max-width: 452px) calc(100vw - 32px), 420px" />
             <span className="tarjeta-velo" aria-hidden="true" />
 
             <span className={`tarjeta-puertas${puertas.abierto ? ' tarjeta-puertas--abierto' : ''}`}>

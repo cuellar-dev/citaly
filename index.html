@@ -1,18 +1,41 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Citaly</title>
+    <title>Citaly · Reserva en los lugares de tu barrio</title>
+    <meta
+      name="description"
+      content="Descubre barberías, restaurantes, veterinarias y más cerca de ti, mira cómo son por dentro y reserva tu turno o tu mesa en un par de toques."
+    />
+    <!-- Color de la barra del navegador en el móvil. Se cambia en vivo al
+         alternar el tema (services/tema.js); estos son los de arranque. -->
+    <meta name="theme-color" content="#121413" />
+
+    <!-- Las fuentes se piden ya, en vez de esperar a que React pinte texto.
+         fetchpriority="low": que no le quiten ancho de banda al JS, que es lo
+         que de verdad bloquea la primera pintura en esta app. Deben ser los
+         mismos archivos que los @font-face de src/index.css. -->
+    <link rel="preload" href="%BASE_URL%fonts/quicksand-v1.woff2" as="font" type="font/woff2" crossorigin fetchpriority="low" />
+    <link rel="preload" href="%BASE_URL%fonts/outfit-v1.woff2" as="font" type="font/woff2" crossorigin fetchpriority="low" />
+
+    <!-- Fotos de demo (Unsplash): adelantar la conexión ahorra un viaje de
+         ida y vuelta a la primera foto. Cuando las fotos vengan de nuestro
+         servidor/CDN, cambiar este origen (ver docs/pendientes-backend.md). -->
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+
     <!-- El tema se pone antes de pintar: si alguien eligió claro, la página
          no debe parpadear en oscuro al cargar. Por defecto, oscuro. -->
     <script>
       try {
-        document.documentElement.dataset.tema =
-          localStorage.getItem('citaly_tema') === 'claro' ? 'claro' : 'oscuro'
+        var tema = localStorage.getItem('citaly_tema') === 'claro' ? 'claro' : 'oscuro'
+        document.documentElement.dataset.tema = tema
+        if (tema === 'claro') {
+          document.querySelector('meta[name="theme-color"]').content = '#f6f2ea'
+        }
       } catch (e) {
         document.documentElement.dataset.tema = 'oscuro'
       }

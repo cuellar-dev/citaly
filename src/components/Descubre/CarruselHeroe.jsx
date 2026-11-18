@@ -36,8 +36,29 @@ function CarruselHeroe({ locales = [] }) {
     return () => window.clearTimeout(id)
   }, [indice, total, pausado, quieto])
 
+  /* Fotos del carrusel: al entrar solo se pide la primera (con prioridad, es
+     lo primero que se ve). La siguiente se adelanta cuando la página terminó
+     de cargar, para no robarle ancho de banda a la primera; y desde ahí,
+     siempre la que viene después de la que se ve. Las demás no se piden
+     hasta que tocan: con mala conexión son ~100 KB menos al abrir. */
+  const [paginaLista, setPaginaLista] = useState(false)
+  useEffect(() => {
+    if (document.readyState === 'complete') {
+      const id = window.setTimeout(() => setPaginaLista(true), 300)
+      return () => window.clearTimeout(id)
+    }
+    const alCargar = () => setPaginaLista(true)
+    window.addEventListener('load', alCargar, { once: true })
+    return () => window.removeEventListener('load', alCargar)
+  }, [])
+
+  const activo = Math.min(indice, Math.max(total - 1, 0))
+  /* Lo más lejos que se ha llegado: lo ya visto no se vuelve a descargar. */
+  const [vistoHasta, setVistoHasta] = useState(0)
+  if (activo > vistoHasta) setVistoHasta(activo)
+  const cargarHasta = Math.max(vistoHasta, activo) + (paginaLista ? 1 : 0)
+
   if (!total) return null
-  const activo = Math.min(indice, total - 1)
 
   return (
     <div
@@ -51,14 +72,20 @@ function CarruselHeroe({ locales = [] }) {
           style={{ transform: `translateX(-${activo * 100}%)` }}
         >
           {locales.map((local, i) => (
+            /* inert y no aria-hidden: las diapositivas que no se ven tienen
+               enlaces y botones; con aria-hidden seguían recibiendo el foco
+               del teclado (Lighthouse: aria-hidden-focus). inert las saca
+               del foco y del árbol de accesibilidad a la vez. */
             <div
               className="carrusel-heroe-slide"
               key={local.id}
-              aria-hidden={i !== activo}
+              inert={i !== activo}
             >
               <HeroeLocal
                 local={local}
                 etiqueta={estaAbierto(local) ? 'Abierto ahora' : 'El mejor valorado'}
+                prioridad={i === 0}
+                cargar={i <= cargarHasta}
               />
             </div>
           ))}

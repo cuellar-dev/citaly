@@ -1,7 +1,8 @@
 import { Mail, Pencil, Phone } from 'lucide-react'
 import MarcoPerfil from './MarcoPerfil.jsx'
 import { NubeBorde } from '../DetalleLocal/Tinta.jsx'
-import { digitos, fotoCuadrada, iniciales } from '../../utils/fichaLocal.js'
+import Foto from '../Foto/Foto.jsx'
+import { digitos, iniciales } from '../../utils/fichaLocal.js'
 import './cabeceraPerfil.css'
 
 function handleDe(usuario) {
@@ -72,14 +73,14 @@ function AroTinta() {
 function CabeceraPerfil({ nombre, usuario, foto, correo, telefono, ciudad, onEditar, onFoto }) {
   const tel = digitos(telefono)
   const handle = handleDe(usuario)
-  const avatar = foto ? fotoCuadrada(foto, 400) : ''
-  const fondo = foto ? fotoCuadrada(foto, 900) : ''
-
   return (
-    <header
-      className={`cabecera-perfil${foto ? ' cabecera-perfil--con-foto tema-oscuro-fijo' : ''}`}
-      style={fondo ? { '--perfil-fondo': `url("${fondo}")` } : undefined}
-    >
+    <header className={`cabecera-perfil${foto ? ' cabecera-perfil--con-foto tema-oscuro-fijo' : ''}`}>
+      {/* La foto de fondo es una <img> y no un background CSS: así el
+          navegador la pide antes (es lo más grande de la pantalla) y sin
+          cookies de terceros. Va oscurecida y ampliada, así que basta pequeña. */}
+      {foto ? (
+        <Foto src={foto} className="cabecera-perfil-fondo" ancho={480} proporcion={1} caras prioridad />
+      ) : null}
       <MarcoPerfil />
 
       <div className="cabecera-perfil-barra">
@@ -98,7 +99,7 @@ function CabeceraPerfil({ nombre, usuario, foto, correo, telefono, ciudad, onEdi
         {foto ? (
           <button type="button" className="cabecera-perfil-foto" onClick={onFoto} aria-label={`Ver la foto de ${nombre}`}>
             <AroTinta />
-            <img src={avatar} alt="" />
+            <Foto src={foto} ancho={320} proporcion={1} caras carga="eager" />
           </button>
         ) : (
           <div className="cabecera-perfil-foto">

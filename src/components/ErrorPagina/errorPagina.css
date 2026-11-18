@@ -1,0 +1,40 @@
+.error-pagina {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  max-width: 420px;
+  margin: 64px auto;
+  padding: 0 24px;
+  text-align: center;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+}
+
+.error-pagina h2 {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 22px;
+}
+
+.error-pagina p {
+  margin: 0;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  line-height: 1.5;
+}
+
+.error-pagina button {
+  min-height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.error-pagina button:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+}

@@ -8,7 +8,7 @@ import TarjetaLocalCompacta from '../Descubre/TarjetaLocalCompacta.jsx'
 import { FAVORITOS_EVENTO, getFavoritos } from '../../services/favoritos.js'
 import { getLocalById } from '../../services/locales.js'
 import { publicarOpinion } from '../../services/opiniones.js'
-import { fotoAncho } from '../../utils/fichaLocal.js'
+import Foto from '../Foto/Foto.jsx'
 import { estadisticasCliente, sitiosFijos, ultimasCitas } from '../../utils/resumenCitas.js'
 import './resumenCliente.css'
 
@@ -71,7 +71,7 @@ function SitioFijo({ fijo }) {
   return (
     <article className="fijo">
       <Link to={`/local/${local.id}`} className="fijo-portada tema-oscuro-fijo">
-        <img src={fotoAncho(local.url, 700)} alt="" loading="lazy" decoding="async" />
+        <Foto src={local.url} anchos={[480, 720]} sizes="(max-width: 532px) calc(100vw - 32px), 500px" />
         <span className="fijo-velo" aria-hidden="true" />
         <span className="fijo-sello">{TU_SITIO[local.categoria] ?? 'Tu sitio'}</span>
         <span className="fijo-nombre">{local.localName}</span>

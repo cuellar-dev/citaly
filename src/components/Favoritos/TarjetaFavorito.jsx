@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { MapPin, Star } from 'lucide-react'
 import BotonFavorito from '../Favorito/BotonFavorito.jsx'
 import { estadoApertura, fraseDeLocal, notaLocal } from '../../utils/descubre.js'
+import Foto from '../Foto/Foto.jsx'
 import './tarjetaFavorito.css'
 
 /* Tarjeta de un favorito: una polaroid pegada con cinta.
@@ -33,8 +34,9 @@ function TarjetaFavorito({ local, indice = 0, quitada = false }) {
       <span className="fav-cinta" aria-hidden="true" />
 
       <Link to={`/local/${id}`} className="fav-link" aria-label={`Ver ${localName}`}>
-        <div className="fav-foto">
-          <img src={url} alt="" loading="lazy" decoding="async" />
+        <div className="fav-foto foto-marco">
+          {/* Caja 4:3 de hasta ~420 px. */}
+          <Foto src={url} anchos={[400, 640]} calidad={70} proporcion={3 / 4} sizes="(max-width: 452px) calc(100vw - 32px), 420px" />
           <span className={`fav-puertas${puertas.abierto ? ' fav-puertas--abierto' : ''}`}>
             <span className="fav-puertas-punto" aria-hidden="true" />
             {puertas.texto}

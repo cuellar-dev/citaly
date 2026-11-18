@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react'
 import { ArrowRight, Search, SlidersHorizontal, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import TarjetaLocal from '../components/TarjetaLocal/TarjetaLocal.jsx'
@@ -10,14 +10,26 @@ import FondoDescubre from '../components/Descubre/FondoDescubre.jsx'
 import CarruselHeroe from '../components/Descubre/CarruselHeroe.jsx'
 import RailDescubre from '../components/Descubre/RailDescubre.jsx'
 import TarjetaLocalCompacta from '../components/Descubre/TarjetaLocalCompacta.jsx'
-import PieDePagina from '../components/Pie/PieDePagina.jsx'
 import LlamadaOpinion from '../components/Ayuda/LlamadaOpinion.jsx'
+import { ListaEsqueleto } from '../components/Esqueletos/Esqueletos.jsx'
 import { getAllLocales } from '../services/locales.js'
 import { getFavoritos, FAVORITOS_EVENTO } from '../services/favoritos.js'
 import { construirDescubre } from '../utils/descubre.js'
 import { useOcultarAlBajar } from '../hooks/useOcultarAlBajar.js'
+import { useScrollInfinito } from '../hooks/useScrollInfinito.js'
 import { filtrosIniciales, normalizar } from '../utils/busqueda.js'
 import './Descubre.css'
+
+/* El pie (la hoguera de Taly, un canvas con su animación) solo sale cuando se
+   acaban los lugares: se descarga entonces y no al abrir Descubre. */
+const PieDePagina = lazy(() => import('../components/Pie/PieDePagina.jsx'))
+
+/* Scroll infinito: al abrir se pinta el héroe, el rail de abiertos y el
+   primer bloque del feed; el resto entra de dos en dos al acercarse al
+   final. Menos DOM al arrancar = la página responde antes (Lighthouse medía
+   más de 4.000 elementos y medio segundo de hilo bloqueado). */
+const BLOQUES_INICIALES = 1
+const BLOQUES_POR_TANDA = 2
 
 /* El saludo cambia con la hora: lo primero que se lee no es igual por la
    mañana que de noche, y eso solo ya hace que la pantalla no se sienta
@@ -80,6 +92,14 @@ function Descubre() {
     () => construirDescubre(locales, favoritos),
     [locales, favoritos],
   )
+
+  const [cuantosBloques, setCuantosBloques] = useState(BLOQUES_INICIALES)
+  const hayMas = cuantosBloques < bloques.length
+  const mostrarMas = useCallback(
+    () => setCuantosBloques((n) => Math.min(n + BLOQUES_POR_TANDA, bloques.length)),
+    [bloques.length],
+  )
+  const centinelaRef = useScrollInfinito({ hayMas, alLlegar: mostrarMas, clave: cuantosBloques })
 
   const saludo = saludoDeLaHora(hora)
   /* La lupa solo busca algo escrito: vacía no lleva a ningún sitio. */
@@ -178,7 +198,7 @@ function Descubre() {
             </RailDescubre>
           )}
 
-          {bloques.map((bloque) =>
+          {bloques.slice(0, cuantosBloques).map((bloque) =>
             bloque.tipo === 'lista' ? (
               <section className="descubre-lista" key={bloque.clave}>
                 {bloque.titulo && (
@@ -201,15 +221,31 @@ function Descubre() {
               </RailDescubre>
             ),
           )}
+
+          {/* Centinela del scroll infinito: cuando se acerca a la pantalla
+              entra la siguiente tanda. Lleva tarjetas-esqueleto por si la
+              persona baja más rápido de lo que se pinta (y, con backend,
+              mientras llega la página siguiente). */}
+          {hayMas ? (
+            <div ref={centinelaRef} className="descubre-centinela">
+              <ListaEsqueleto cantidad={2} />
+            </div>
+          ) : null}
         </div>
 
-        <div className="descubre-opinion">
-          <LlamadaOpinion />
-        </div>
+        {!hayMas ? (
+          <div className="descubre-opinion">
+            <LlamadaOpinion />
+          </div>
+        ) : null}
       </div>
 
       {/* Cuando se acaban los locales: Taly descansa en la hoguera. */}
-      <PieDePagina />
+      {!hayMas ? (
+        <Suspense fallback={null}>
+          <PieDePagina />
+        </Suspense>
+      ) : null}
 
       {filtrosAbiertos && (
         <PanelFiltros

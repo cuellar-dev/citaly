@@ -1,5 +1,6 @@
 import './opiniones.css'
 import { Star, ChevronDown} from 'lucide-react'
+import Foto from '../Foto/Foto.jsx'
 function Opiniones({ id, destacada = false, nombre, fecha, calificacion, comentario, imagenPerfil, onToggle, expandido, reciente = false, respuesta }) {
   const inicial = String(nombre || '?').trim().charAt(0).toUpperCase()
   return (
@@ -7,7 +8,7 @@ function Opiniones({ id, destacada = false, nombre, fecha, calificacion, comenta
       <div className='opiniones-header'>
         <div className='opiniones-header-left'>
           {imagenPerfil ? (
-            <img src={imagenPerfil} alt="" className='opiniones-imagen-perfil' />
+            <Foto src={imagenPerfil} className='opiniones-imagen-perfil' ancho={120} proporcion={1} caras />
           ) : (
             <span className="opiniones-avatar" aria-hidden="true">{inicial}</span>
           )}

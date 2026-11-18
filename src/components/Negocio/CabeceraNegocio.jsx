@@ -2,7 +2,8 @@ import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { Link } from 'react-router-dom'
 import { Pencil, QrCode, Star } from 'lucide-react'
-import { fotoAncho, franjaTurno } from '../../utils/fichaLocal.js'
+import { franjaTurno } from '../../utils/fichaLocal.js'
+import Foto from '../Foto/Foto.jsx'
 import TimelineTurno from './TimelineTurno.jsx'
 import { NubeBorde } from '../DetalleLocal/Tinta.jsx'
 import './cabeceraNegocio.css'
@@ -30,7 +31,18 @@ function CabeceraNegocio({
 
   return (
     <header className="cabecera-negocio">
-      <div className="cabecera-negocio-identidad tema-oscuro-fijo" style={{ backgroundImage: `url(${url})` }}>
+      <div className="cabecera-negocio-identidad tema-oscuro-fijo">
+        {/* Foto de portada como <img> (antes background CSS): es lo más grande
+            de la pantalla y así el navegador la pide antes y sin cookies de
+            terceros. Va detrás del degradado (::before). */}
+        <Foto
+          src={url}
+          className="cabecera-negocio-fondo"
+          anchos={[480, 720]}
+          calidad={70}
+          sizes="(max-width: 480px) 100vw, 480px"
+          prioridad
+        />
         <div className="cabecera-negocio-barra">
           {fotos.length > 0 && (
             <button
@@ -41,7 +53,7 @@ function CabeceraNegocio({
             >
               <span className="cabecera-negocio-miniaturas" aria-hidden="true">
                 {fotos.slice(0, 3).map((foto) => (
-                  <img key={foto} src={fotoAncho(foto, 96)} alt="" loading="lazy" decoding="async" />
+                  <Foto key={foto} src={foto} ancho={96} proporcion={1} carga="eager" />
                 ))}
               </span>
               {fotos.length} fotos

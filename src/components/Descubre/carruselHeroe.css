@@ -38,32 +38,44 @@
   box-shadow: none;
 }
 
+/* El botón mide 24x24 (mínimo táctil de WCAG 2.2); el punto que se ve sigue
+   siendo pequeño y se dibuja con ::before en el centro. */
 .carrusel-heroe-puntos {
   display: flex;
   justify-content: center;
-  gap: 7px;
-  margin-top: 12px;
+  gap: 0;
+  margin-top: 4px;
 }
 
 .carrusel-heroe-punto {
-  width: 7px;
-  height: 7px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: 0;
   border-radius: 999px;
-  background: rgb(var(--tinte) / calc(0.28 * var(--tinte-fuerza)));
+  background: transparent;
   cursor: pointer;
+}
+
+.carrusel-heroe-punto::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgb(var(--tinte) / calc(0.28 * var(--tinte-fuerza)));
   transition: width 0.3s ease, background 0.3s ease;
 }
 
-.carrusel-heroe-punto--on {
+.carrusel-heroe-punto--on::before {
   width: 20px;
   background: var(--primary-color, #00c2ad);
 }
 
 .carrusel-heroe-punto:focus-visible {
   outline: 2px solid var(--primary-color, #00c2ad);
-  outline-offset: 2px;
+  outline-offset: -2px;
 }
 
 @media (prefers-reduced-motion: reduce) {

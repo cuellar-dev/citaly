@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Star } from 'lucide-react'
 import { estadoApertura, notaLocal } from '../../utils/descubre.js'
+import Foto from '../Foto/Foto.jsx'
 import './tarjetaLocalCompacta.css'
 
 /* Versión de bolsillo para los carruseles. Solo lo que se lee de un vistazo
@@ -16,8 +17,9 @@ function TarjetaLocalCompacta({ local }) {
       className="local-compacto"
       aria-label={`Ver ${local.localName}`}
     >
-      <span className="local-compacto-foto tema-oscuro-fijo">
-        <img src={local.url} alt="" loading="lazy" decoding="async" />
+      <span className="local-compacto-foto tema-oscuro-fijo foto-marco">
+        {/* Cuadrada de 152 px. */}
+        <Foto src={local.url} anchos={[160, 320, 480]} proporcion={1} sizes="152px" />
         <span className="local-compacto-velo" aria-hidden="true" />
         {puertas.abierto ? <span className="local-compacto-abierto">Abierto</span> : null}
       </span>

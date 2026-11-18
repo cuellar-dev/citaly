@@ -4,6 +4,7 @@ import { Store } from 'lucide-react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
 import { useTema } from '../../hooks/useTema.js'
+import { precargarRuta } from '../../paginas.js'
 import './navbar.css'
 
 gsap.registerPlugin(useGSAP)
@@ -116,7 +117,9 @@ function NavBar() {
         gsap.set(raiz, { '--nav-color-activo': color })
         gsap.set(indicador, { xPercent: indice * 100, autoAlpha: hayActivo ? 1 : 0 })
         gsap.set(iconos, { y: (i) => (i === indice && hayActivo ? -2 : 0) })
-        gsap.set(etiquetas, { opacity: (i) => (i === indice && hayActivo ? 1 : 0.62) })
+        /* 0.78 y no menos: con 0.62 el texto de 10 px quedaba en 4.08:1 de
+           contraste y WCAG pide 4.5:1 (Lighthouse lo marcaba). */
+        gsap.set(etiquetas, { opacity: (i) => (i === indice && hayActivo ? 1 : 0.78) })
         indicePrevioRef.current = indice
         return
       }
@@ -151,7 +154,7 @@ function NavBar() {
         )
         .to(
           etiquetas,
-          { opacity: (i) => (i === indice && hayActivo ? 1 : 0.62), duration: 0.3 * d, ease: 'power1.out' },
+          { opacity: (i) => (i === indice && hayActivo ? 1 : 0.78), duration: 0.3 * d, ease: 'power1.out' },
           0
         )
     },
@@ -193,6 +196,11 @@ function NavBar() {
             style={{ '--nav-color': `var(${item.colorVar})` }}
             className={({ isActive }) => `navbar-enlace${isActive ? ' active' : ''}`}
             onClick={(e) => gestoAlPulsar(e.currentTarget, item.anim)}
+            /* Al apuntar o empezar a tocar ya se pide el trozo de la página:
+               se gana el rato entre el dedo bajando y el clic. */
+            onPointerEnter={() => precargarRuta(item.to)}
+            onPointerDown={() => precargarRuta(item.to)}
+            onFocus={() => precargarRuta(item.to)}
           >
             <span
               className="navbar-icono"

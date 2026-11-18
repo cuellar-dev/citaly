@@ -154,7 +154,9 @@
 
 .cita-dueno--cancelada .cita-dueno-cliente,
 .cita-dueno--cancelada .cita-dueno-tiempo time {
-  color: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 45%, transparent);
+  /* 55% (antes 45%, 4.1:1): el tachado ya dice "cancelada"; el gris solo
+     acompaña y tiene que seguir leyéndose. */
+  color: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 55%, transparent);
 }
 
 .cita-dueno--cancelada .cita-dueno-cliente {

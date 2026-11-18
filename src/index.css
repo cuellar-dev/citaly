@@ -1,20 +1,25 @@
 /* Sin font-weight en @font-face, Firefox usa un solo corte y finge el 600/700.
-   Chromium (Opera GX) interpola la variable igual; Mozilla no. */
+   Chromium (Opera GX) interpola la variable igual; Mozilla no.
+
+   Las dos fuentes del texto viven en public/fonts/ (no en src/) para que su
+   nombre no cambie en cada build: index.html las PRECARGA por ese nombre y
+   así bajan a la vez que el JS, no después del CSS. Si se cambia el archivo,
+   subir el número (-v2) aquí y en index.html para que nadie use la vieja.
+   - Quicksand: la variable original pasada a WOFF2, sin recortar glifos ni
+     tocar el nombre (la licencia OFL reserva el nombre "Quicksand" para la
+     fuente sin modificar).
+   - Outfit: WOFF2 recortado a latín (español, puntuación, €, flechas).
+   Los originales siguen en src/fonts/. */
 @font-face {
   font-family: 'Quicksand';
-  src:
-    url('./fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype-variations'),
-    url('./fonts/Quicksand/Quicksand-VariableFont_wght.ttf') format('truetype');
+  src: url('/fonts/quicksand-v1.woff2') format('woff2');
   font-weight: 300 700;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
   font-family: 'drink';
-  src:
-    url('./fonts/Outfit/Outfit-VariableFont_wght.woff2') format('woff2-variations'),
-    url('./fonts/Outfit/Outfit-VariableFont_wght.woff2') format('woff2'),
-    url('./fonts/Outfit/Outfit-VariableFont_wght.ttf') format('truetype');
+  src: url('/fonts/outfit-v1.woff2') format('woff2');
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;

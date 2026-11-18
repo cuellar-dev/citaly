@@ -1,5 +1,6 @@
 import { ChevronRight, Star } from 'lucide-react'
 import { estadoApertura, notaLocal } from '../../utils/descubre.js'
+import Foto from '../Foto/Foto.jsx'
 
 /* Fila de un lugar dentro de un carrusel. La nota sale de notaLocal, igual que
    en la tarjeta grande; antes se leía `local.points` crudo y podía no cuadrar
@@ -11,8 +12,8 @@ function LocalHorizontal({ local, onClick }) {
 
   return (
     <button type="button" className="local-horizontal" onClick={onClick}>
-      <span className="local-horizontal-foto">
-        <img src={local.url} alt="" loading="lazy" decoding="async" />
+      <span className="local-horizontal-foto foto-marco">
+        <Foto src={local.url} ancho={160} proporcion={1} />
         {puertas.abierto ? (
           <span className="local-horizontal-abierto" aria-hidden="true" />
         ) : null}

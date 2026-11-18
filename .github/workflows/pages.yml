@@ -33,6 +33,14 @@ jobs:
       # Pages no sabe de rutas de React: cualquier dirección que no exista
       # (p. ej. /citaly/local/energym al recargar) sirve 404.html, que es la app.
       - run: cp dist/index.html dist/404.html
+      # El 404.html arregla la navegación, pero responde con estado 404: el
+      # navegador lo pinta igual, pero Lighthouse/Google lo ven como página
+      # que no existe. Para las rutas FIJAS se escribe dist/<ruta>.html (Pages
+      # lo sirve en /citaly/<ruta> con 200) con los archivos de esa página ya
+      # precargados. Detalles y lista de rutas en el propio script.
+      - run: node scripts/rutas-estaticas.mjs
+        env:
+          BASE_PATH: /citaly/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

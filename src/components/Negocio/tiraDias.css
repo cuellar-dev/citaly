@@ -107,7 +107,9 @@
 /* Días que no abre: apagados del todo. */
 .tira-dia--cerrada .tira-dia-numero,
 .tira-dia--cerrada .tira-dia-nombre {
-  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 35%, transparent);
+  /* 66%: sigue más apagado que un día normal (80%) pero llega a 4.5:1 en el
+     tema oscuro. Con 35% quedaba en 2.2:1 y el botón se puede tocar. */
+  color: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 66%, transparent);
 }
 
 /* El elegido: círculo relleno. Va al final para ganarle a hoy y a pasado. */

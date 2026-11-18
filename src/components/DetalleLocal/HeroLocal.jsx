@@ -3,7 +3,7 @@ import gsap from 'gsap'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Share2, Star } from 'lucide-react'
 import BotonFavorito from '../Favorito/BotonFavorito.jsx'
-import { fotoAncho } from '../../utils/fichaLocal.js'
+import Foto from '../Foto/Foto.jsx'
 import { NubeBorde } from './Tinta.jsx'
 import './heroLocal.css'
 
@@ -103,12 +103,17 @@ function HeroLocal({ local, fotos, estado, nota, cantidad, onCompartir, onAbrirF
             onClick={() => onAbrirFoto(url)}
             aria-label={`Ver foto ${i + 1} de ${fotos.length} en grande`}
           >
-            <img
-              src={i === 0 ? url : fotoAncho(url, 900)}
+            {/* Caja casi cuadrada en el móvil (ancho completo × 320–440 px de
+                alto): se pide recortada 1:1 para que no se vea borrosa al
+                cubrir la altura. */}
+            <Foto
+              src={url}
               alt={i === 0 ? `Foto de ${local.localName}` : ''}
-              loading={i === 0 ? 'eager' : 'lazy'}
-              fetchPriority={i === 0 ? 'high' : 'auto'}
-              decoding="async"
+              anchos={[480, 720, 960]}
+              calidad={70}
+              proporcion={1}
+              sizes="100vw"
+              prioridad={i === 0}
               draggable={false}
             />
           </button>

@@ -45,3 +45,9 @@ coverage/
 
 # Cursor local (opcional; no subir estado de IDE)
 # .cursor/
+
+# Backend (vive en su propio repo, no se sube aquí)
+backend-citaly-main/
+
+# Informes de Lighthouse (pesan varios MB; se generan cuando se mide)
+lighthouse/

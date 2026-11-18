@@ -35,17 +35,25 @@
   inset: -18px;
   z-index: 0;
   pointer-events: none;
-  background-image:
-    linear-gradient(
-      180deg,
-      rgb(var(--fondo-rgb) / 0.62) 0%,
-      rgb(var(--fondo-rgb) / 0.5) 45%,
-      rgb(var(--fondo-rgb) / 0.58) 100%
-    ),
-    var(--perfil-fondo);
-  background-size: cover;
-  background-position: center;
+  background-image: linear-gradient(
+    180deg,
+    rgb(var(--fondo-rgb) / 0.62) 0%,
+    rgb(var(--fondo-rgb) / 0.5) 45%,
+    rgb(var(--fondo-rgb) / 0.58) 100%
+  );
+}
+
+/* La foto en sí (antes iba como background del ::before). z-index -1: queda
+   sobre el fondo de la cabecera (isolation: isolate) pero bajo el linear. */
+.cabecera-perfil > .cabecera-perfil-fondo {
+  position: absolute;
+  inset: -18px;
+  z-index: -1;
+  width: calc(100% + 36px);
+  height: calc(100% + 36px);
+  object-fit: cover;
   transform: scale(1.12);
+  pointer-events: none;
 }
 
 /* El velo ya no cubre el cuadro entero: es una banda abajo, a la altura de lo
@@ -65,7 +73,7 @@
   );
 }
 
-.cabecera-perfil > *:not(.marco-perfil) {
+.cabecera-perfil > *:not(.marco-perfil):not(.cabecera-perfil-fondo) {
   position: relative;
   z-index: 1;
 }

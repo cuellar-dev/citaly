@@ -15,7 +15,8 @@ import {
 } from 'lucide-react'
 import { FAVORITOS_EVENTO, getFavoritos } from '../../services/favoritos.js'
 import { getAllLocales, getLocalById } from '../../services/locales.js'
-import { fotoAncho, horarioDeLocal } from '../../utils/fichaLocal.js'
+import { horarioDeLocal } from '../../utils/fichaLocal.js'
+import Foto from '../Foto/Foto.jsx'
 import { statsCitasPerfil } from '../../utils/statsCitasPerfil.js'
 import './datosPerfil.css'
 
@@ -117,7 +118,9 @@ function TarjetaLocalDueno({ local }) {
 
   return (
     <Link className="perfil-local tema-oscuro-fijo" to="/negocio" aria-label={`Abrir ${local.localName} en Mi Negocio`}>
-      <span className="perfil-local-foto" style={{ backgroundImage: `url(${fotoAncho(local.url, 720)})` }} />
+      <span className="perfil-local-marco foto-marco" aria-hidden="true">
+        <Foto src={local.url} className="perfil-local-foto" anchos={[480, 720]} sizes="(max-width: 532px) calc(100vw - 32px), 500px" />
+      </span>
       <span className="perfil-local-velo" />
       <span className="perfil-local-cuerpo">
         <span className="perfil-pastilla perfil-pastilla--si">Dueño</span>
@@ -180,7 +183,7 @@ function PanelFavoritos() {
       {orden.map((l) => (
         <li key={l.id}>
           <Link className="perfil-fav" to={`/local/${l.id}`}>
-            <span className="perfil-fav-foto" style={{ backgroundImage: `url(${fotoAncho(l.url, 200)})` }} />
+            <Foto src={l.url} className="perfil-fav-foto" ancho={120} proporcion={1} />
             <span className="perfil-fila-textos">
               <span className="perfil-fila-titulo">{l.localName}</span>
               <span className="perfil-fila-valor">{l.categoria}</span>

@@ -2,7 +2,10 @@
   /* Un color por seccion. Cambia solo estos cuatro para repintar toda la barra. */
   --nav-color-descubre: var(--primary-color);
   --nav-color-citas: var(--yellow-color);
-  --nav-color-negocio: var(--rosa);
+  /* Un 4% de blanco sobre el rosa de marca: a simple vista es el mismo color,
+     pero la etiqueta de 10 px pasa de 4.44:1 a ~4.6:1 de contraste (WCAG pide
+     4.5:1). El tema claro tiene su propio valor más abajo. */
+  --nav-color-negocio: color-mix(in srgb, var(--rosa) 96%, white);
   --nav-color-perfil: var(--fonts-color-primary);
   /* GSAP interpola esta variable entre los cuatro colores de arriba. */
   --nav-color-activo: var(--nav-color-descubre);

@@ -1,4 +1,5 @@
-import { fotoCuadrada, iniciales } from '../../utils/fichaLocal.js'
+import { iniciales } from '../../utils/fichaLocal.js'
+import Foto from '../Foto/Foto.jsx'
 import './caraGiratoria.css'
 
 /* Tu foto y la de tu local son las dos caras de una misma moneda: el botón de
@@ -24,7 +25,7 @@ function Cara({ foto, nombre, clase }) {
   return (
     <span className={`cara-giratoria-cara ${clase}`}>
       {foto ? (
-        <img src={fotoCuadrada(foto, 240)} alt="" decoding="async" />
+        <Foto src={foto} ancho={240} proporcion={1} caras carga="eager" />
       ) : (
         <span className="cara-giratoria-iniciales">{iniciales(nombre)}</span>
       )}

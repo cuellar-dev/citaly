@@ -26,7 +26,10 @@ function CaraRating({ nivel = 0, size = 22, className = '' }) {
       className={`cara-rating ${activo ? 'cara-rating--activo' : ''} ${className}`.trim()}
       style={{ width: size, height: size, color: activo ? color : 'transparent' }}
       title={label}
-      aria-label={label || 'Sin puntuación'}
+      /* role="img": un <span> no puede llevar aria-label por sí solo; así el
+         lector lo anuncia como una imagen con nombre ("Excelente servicio"). */
+      role={activo ? 'img' : undefined}
+      aria-label={activo ? label : undefined}
       aria-hidden={!activo}
     >
       <svg

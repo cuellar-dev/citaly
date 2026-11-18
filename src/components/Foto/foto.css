@@ -1,0 +1,68 @@
+/* Esqueletos de carga.
+
+   .foto-marco  → el contenedor de una foto: brilla mientras la foto carga y
+                  se queda en un tono plano si falla (sin conexión, 404…).
+   .foto        → la <img>: entra con un fundido cuando termina de cargar.
+   .esqueleto   → bloque gris suelto para maquetas de carga (tarjetas, textos).
+
+   El brillo se apaga en cuanto la foto está lista, para no repintar debajo
+   de una imagen opaca. */
+
+.foto-marco,
+.esqueleto {
+  background-color: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+  background-image: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza))) 50%,
+    transparent 70%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: esqueleto-brillo 1.5s ease-in-out infinite;
+}
+
+.foto-marco:has(.foto[data-estado='lista']),
+.foto-marco:has(.foto[data-estado='error']) {
+  animation: none;
+  background-image: none;
+}
+
+.esqueleto {
+  border-radius: 10px;
+}
+
+@keyframes esqueleto-brillo {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+
+/* Mientras no ha cargado, la foto no se ve (se ve el brillo). Con
+   :not([data-estado]) la regla deja de aplicar al cargar, así no pisa la
+   opacidad que cada componente le dé a su foto.
+   La foto prioritaria (fetchpriority=high, la grande de arriba) NO se oculta
+   ni hace fundido: es la que el navegador mide como "contenido principal
+   pintado" (LCP) y debe verse en el mismo instante en que llega. */
+.foto:not([data-estado]):not([fetchpriority='high']),
+.foto[data-estado='error'] {
+  opacity: 0;
+}
+
+.foto {
+  transition: opacity 0.35s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foto-marco,
+  .esqueleto {
+    animation: none;
+  }
+
+  .foto {
+    transition: none;
+  }
+}

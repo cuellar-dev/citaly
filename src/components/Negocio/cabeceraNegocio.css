@@ -15,12 +15,23 @@
   padding: 14px 14px 16px;
   box-sizing: border-box;
   overflow: hidden;
-  background-size: cover;
-  background-position: center;
+  /* La foto va como <img> con z-index -1: isolation la deja encima del fondo
+     de la página y debajo del degradado (::before, z-index 0). */
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+
+.cabecera-negocio-identidad > .cabecera-negocio-fondo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
 }
 
 /* Velo sobre la foto: se funde con el fondo de la página, sin negro puro. */

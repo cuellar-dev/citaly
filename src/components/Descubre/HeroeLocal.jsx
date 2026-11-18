@@ -1,14 +1,19 @@
 import { Link } from 'react-router-dom'
 import { MapPin, Star } from 'lucide-react'
 import BotonFavorito from '../Favorito/BotonFavorito.jsx'
+import Foto from '../Foto/Foto.jsx'
 import { comodidadesDe, estadoApertura, fraseDeLocal, notaLocal } from '../../utils/descubre.js'
 import './heroeLocal.css'
 
 /* El lugar que abre la página. Foto a sangre y pocos datos, grandes: rompe el
    ritmo de la lista y le da a Descubre un punto de entrada en vez de empezar
-   con trece tarjetas iguales. */
+   con trece tarjetas iguales.
 
-function HeroeLocal({ local, etiqueta = 'El de hoy' }) {
+   `prioridad`: es la foto más grande de la primera pantalla (la que Lighthouse
+   mide como LCP); se pide antes que nada. `cargar`: en el carrusel, las
+   diapositivas que aún no tocan no piden su foto (ver CarruselHeroe). */
+
+function HeroeLocal({ local, etiqueta = 'El de hoy', prioridad = false, cargar = true }) {
   if (!local) return null
 
   const { nota, cantidad } = notaLocal(local)
@@ -18,8 +23,23 @@ function HeroeLocal({ local, etiqueta = 'El de hoy' }) {
 
   return (
     <article className="heroe-local tema-oscuro-fijo">
-      <Link to={`/local/${local.id}`} className="heroe-local-link" aria-label={`Ver ${local.localName}`}>
-        <img src={local.url} alt="" className="heroe-local-foto" loading="eager" decoding="async" />
+      <Link to={`/local/${local.id}`} className="heroe-local-link foto-marco" aria-label={`Ver ${local.localName}`}>
+        {/* Caja vertical 4:5 de hasta 420 px: la foto llega ya recortada así. */}
+        {cargar ? (
+          <Foto
+            src={local.url}
+            className="heroe-local-foto"
+            /* Tope 640 px y calidad 70: en un móvil de densidad 2.6 el
+               navegador pedía la de 840 (183 KB) y era la foto que más
+               tardaba en pintarse. A 380 px de ancho, 640 sigue nítida. */
+            anchos={[420, 640]}
+            calidad={70}
+            proporcion={5 / 4}
+            sizes="(max-width: 452px) calc(100vw - 32px), 420px"
+            prioridad={prioridad}
+            carga="eager"
+          />
+        ) : null}
         <span className="heroe-local-velo" aria-hidden="true" />
 
         <div className="heroe-local-arriba">

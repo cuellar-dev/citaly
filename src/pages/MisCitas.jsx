@@ -136,6 +136,9 @@ function MisCitas() {
       ) : (
         /* key={vista}: al cambiar de pestaña la lista se monta de nuevo. */
         <>
+          {/* Título solo para lectores de pantalla: cada cita lleva un h3 con el
+              lugar, y sin un h2 encima la jerarquía salta del h1 al h3. */}
+          <h2 className="sr-only">{esProximas ? 'Próximas citas' : 'Citas pasadas'}</h2>
           <ListaCitas key={vista} citas={citasLista} renderCita={renderCita} />
           {recortar && (
             <button type="button" className="citas-ver-todas" onClick={() => setTodasPasadas(true)}>

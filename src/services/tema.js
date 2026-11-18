@@ -28,6 +28,9 @@ export function ponerTema(tema) {
     /* Sin almacenamiento (modo privado): vale para esta visita. */
   }
   document.documentElement.dataset.tema = valor
+  /* La barra del navegador en el móvil sigue al tema (mismos colores que
+     --background-color de index.css). */
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', valor === 'claro' ? '#f6f2ea' : '#121413')
   window.dispatchEvent(new Event(TEMA_EVENTO))
 }
 

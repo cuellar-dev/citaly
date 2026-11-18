@@ -1,26 +1,31 @@
-import { Suspense, lazy } from 'react'
-import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom'
+import { Suspense } from 'react'
+import { BrowserRouter, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import Layout from './layout/Layout.jsx'
-import Auth from './pages/Auth.jsx'
+/* Descubre es la portada: va en el JS inicial para pintarse sin esperar a
+   otra descarga. NotFound es mínima. Todo lo demás baja al entrar (paginas.js). */
 import Descubre from './pages/Descubre.jsx'
-import MisCitas from './pages/MisCitas.jsx'
-import MiNegocio from './pages/MiNegocio.jsx'
-import CompartirNegocio from './pages/CompartirNegocio.jsx'
-import Perfil from './pages/Perfil.jsx'
-import DetalleLocal from './pages/DetalleLocal.jsx'
-import ReservarConLugar from './pages/ReservarConLugar.jsx'
-import ReservarSinLugar from './pages/ReservarSinLugar.jsx'
-import ReservarSuscripcion from './pages/ReservarSuscripcion.jsx'
 import NotFound from './pages/NotFound.jsx'
-import Busqueda from './pages/Busqueda.jsx'
-import Notificaciones from './pages/Notificaciones.jsx'
-import Favoritos from './pages/Favoritos.jsx'
-import Ayuda from './pages/Ayuda.jsx'
-import Opinion from './pages/Opinion.jsx'
-import NuevoLocal from './pages/NuevoLocal.jsx'
-import CompletarLocal from './pages/CompletarLocal.jsx'
-/* Sobre nosotros arrastra Three.js y varios plugins: se carga solo al entrar. */
-const Nosotros = lazy(() => import('./pages/Nosotros.jsx'))
+import {
+  Auth,
+  Ayuda,
+  Busqueda,
+  CompartirNegocio,
+  CompletarLocal,
+  DetalleLocal,
+  Favoritos,
+  MiNegocio,
+  MisCitas,
+  Nosotros,
+  Notificaciones,
+  NuevoLocal,
+  Opinion,
+  Perfil,
+  ReservarConLugar,
+  ReservarSinLugar,
+  ReservarSuscripcion,
+} from './paginas.js'
+import ErrorPagina from './components/ErrorPagina/ErrorPagina.jsx'
+import { PaginaEsqueleto } from './components/Esqueletos/Esqueletos.jsx'
 
 function CompletarLocalPage() {
   const { id } = useParams()
@@ -42,6 +47,20 @@ function ReservarSuscripcionPage() {
   return <ReservarSuscripcion key={id} />
 }
 
+/* Las pantallas a foco (sin barra ni cabecera) también bajan al entrar. Su
+   espera es un fondo liso del color de la app, sin esqueleto: van a pantalla
+   completa y cada una tiene su propia composición. */
+function PantallaCompleta({ children }) {
+  const { pathname } = useLocation()
+  return (
+    <ErrorPagina clave={pathname}>
+      <Suspense fallback={<div style={{ minHeight: '100dvh', background: 'var(--background-color, #121413)' }} />}>
+        {children}
+      </Suspense>
+    </ErrorPagina>
+  )
+}
+
 /* Sin la barra final: '' en local, '/citaly' en GitHub Pages. */
 const BASE_RUTAS = import.meta.env.BASE_URL.replace(/\/$/, '')
 
@@ -50,20 +69,28 @@ function App() {
     <BrowserRouter basename={BASE_RUTAS}>
       <Routes>
         {/* Auth fuera del Layout: sin navbar ni header, pantalla a foco. */}
-        <Route path="/auth" element={<Auth />} />
+        <Route path="/auth" element={<PantallaCompleta><Auth /></PantallaCompleta>} />
         {/* Crear y completar el local: también a foco, un paso cada vez. */}
-        <Route path="/negocio/nuevo" element={<NuevoLocal />} />
-        <Route path="/negocio/completar/:id" element={<CompletarLocalPage />} />
-        {/* Sobre nosotros también va a pantalla completa: es un viaje, no una tabla. */}
+        <Route path="/negocio/nuevo" element={<PantallaCompleta><NuevoLocal /></PantallaCompleta>} />
+        <Route
+          path="/negocio/completar/:id"
+          element={<PantallaCompleta><CompletarLocalPage /></PantallaCompleta>}
+        />
+        {/* Sobre nosotros también va a pantalla completa: es un viaje, no una tabla.
+            Su espera es la noche fija de la página (#121413 en los dos temas). */}
         <Route
           path="/nosotros"
           element={
-            <Suspense fallback={<div style={{ minHeight: '100dvh', background: '#121413' }} />}>
-              <Nosotros />
-            </Suspense>
+            <ErrorPagina clave="/nosotros">
+              <Suspense fallback={<div style={{ minHeight: '100dvh', background: '#121413' }} />}>
+                <Nosotros />
+              </Suspense>
+            </ErrorPagina>
           }
         />
-        <Route path="/" element={<Layout />}>
+        {/* Dentro del Layout, el Suspense y la red de errores van alrededor del
+            <Outlet /> (layout/Layout.jsx): cabecera y barra no parpadean. */}
+        <Route path="/" element={<Layout fallback={<PaginaEsqueleto />} />}>
           <Route index element={<Descubre />} />
           <Route path="buscar" element={<Busqueda />} />
           <Route path="local/:id" element={<DetalleLocal />} />

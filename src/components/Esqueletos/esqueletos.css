@@ -1,0 +1,73 @@
+/* Las medidas copian las de TarjetaLocal (tarjetalocal.css): ancho tope 420,
+   foto 16:11, radio 22, superficie secundaria. Si cambia la tarjeta, cambiar
+   aquí también o el esqueleto "salta" al llegar la de verdad. */
+
+.lista-esqueleto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.tarjeta-esqueleto {
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
+  border-radius: 22px;
+  background: var(--background-color-secondary, #1e2221);
+}
+
+.tarjeta-esqueleto-foto {
+  aspect-ratio: 16 / 11;
+  border-radius: 0;
+}
+
+.tarjeta-esqueleto-cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  padding: 15px 14px 18px;
+}
+
+.tarjeta-esqueleto-linea {
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+}
+
+/* Página genérica mientras baja su JS. */
+.pagina-esqueleto {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 20px 18px 120px;
+  box-sizing: border-box;
+}
+
+.pagina-esqueleto > .esqueleto {
+  display: block;
+}
+
+.pagina-esqueleto-titulo {
+  width: 58%;
+  height: 26px;
+}
+
+.pagina-esqueleto-bloque {
+  height: 168px;
+  border-radius: 22px;
+}
+
+.pagina-esqueleto-bloque--bajo {
+  height: 110px;
+}
+
+.pagina-esqueleto-linea {
+  height: 13px;
+  border-radius: 999px;
+}
