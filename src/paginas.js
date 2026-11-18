@@ -12,6 +12,7 @@ import { lazy } from 'react'
    misma función, así el navegador no pide dos veces el mismo archivo. */
 
 const cargadores = {
+  descubre: () => import('./pages/Descubre.jsx'),
   buscar: () => import('./pages/Busqueda.jsx'),
   detalle: () => import('./pages/DetalleLocal.jsx'),
   reservarConLugar: () => import('./pages/ReservarConLugar.jsx'),
@@ -31,6 +32,7 @@ const cargadores = {
   nosotros: () => import('./pages/Nosotros.jsx'),
 }
 
+export const Descubre = lazy(cargadores.descubre)
 export const Busqueda = lazy(cargadores.buscar)
 export const DetalleLocal = lazy(cargadores.detalle)
 export const ReservarConLugar = lazy(cargadores.reservarConLugar)
@@ -51,6 +53,7 @@ export const Nosotros = lazy(cargadores.nosotros)
 
 /* Ruta de la app → página. Solo las que tiene sentido adelantar. */
 const PORRUTA = {
+  '/': 'descubre',
   '/citas': 'citas',
   '/negocio': 'negocio',
   '/perfil': 'perfil',
@@ -87,16 +90,24 @@ function conexionHolgada() {
   return !/(^|-)2g$|^3g$/.test(c.effectiveType || '')
 }
 
+/* Espera tras el `load` antes de adelantar nada. import() no solo descarga:
+   EJECUTA la página (y mete su CSS). Hecho justo al cargar, competía con la
+   propia página por la CPU del móvil; Lighthouse lo veía como hilo bloqueado
+   (Mi Negocio llegó a 210 ms de TBT con 33 scripts cargados). */
+const ESPERA_REPOSO_MS = 4000
+
 /**
- * Cuando la página ya cargó y el navegador está libre, adelanta las
- * pestañas de la barra y la ficha de un local (lo siguiente más probable),
- * para que cambiar de pestaña o deslizar no enseñe el esqueleto.
+ * Con la página ya cargada, quieta y buena conexión, adelanta SOLO la ficha
+ * de un local (lo más probable desde Descubre). Las pestañas de la barra se
+ * piden al apuntar o empezar a tocar su enlace (NavBar), no por adelantado.
  */
 export function precargarEnReposo() {
   if (!conexionHolgada()) return
   const lanzar = () => {
-    const ocioso = window.requestIdleCallback ?? ((fn) => window.setTimeout(fn, 1200))
-    ocioso(() => ['detalle', 'citas', 'negocio', 'perfil'].forEach(precargar), { timeout: 4000 })
+    window.setTimeout(() => {
+      const ocioso = window.requestIdleCallback ?? ((fn) => window.setTimeout(fn, 200))
+      ocioso(() => precargar('detalle'), { timeout: 3000 })
+    }, ESPERA_REPOSO_MS)
   }
   if (document.readyState === 'complete') lanzar()
   else window.addEventListener('load', lanzar, { once: true })

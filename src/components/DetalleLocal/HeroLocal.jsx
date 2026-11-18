@@ -109,7 +109,9 @@ function HeroLocal({ local, fotos, estado, nota, cantidad, onCompartir, onAbrirF
             <Foto
               src={url}
               alt={i === 0 ? `Foto de ${local.localName}` : ''}
-              anchos={[480, 720, 960]}
+              /* Tope 720: en un móvil de densidad 2.6 pedía la de 960 (147 KB)
+                 y era lo que más tardaba. A ~400 px de ancho, 720 va nítida. */
+              anchos={[480, 720]}
               calidad={70}
               proporcion={1}
               sizes="100vw"

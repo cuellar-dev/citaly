@@ -66,19 +66,30 @@ function archivosDe(clave, js = new Set(), css = new Set()) {
 
 const yaHayCss = new Set(entrada?.css ?? [])
 
-for (const [ruta, pagina] of Object.entries(RUTAS)) {
+/* El index.html original con los archivos de una página añadidos al <head>. */
+function conPrecarga(pagina, nombre) {
   if (!manifest[pagina]) {
-    console.warn(`(aviso) ${pagina} no está en el manifest: ${ruta}.html sale sin precarga`)
+    console.warn(`(aviso) ${pagina} no está en el manifest: ${nombre} sale sin precarga`)
   }
   const { js, css } = archivosDe(pagina)
   const etiquetas = [
     ...[...css].filter((f) => !yaHayCss.has(f)).map((f) => `<link rel="stylesheet" crossorigin href="${BASE}${f}">`),
     ...[...js].map((f) => `<link rel="modulepreload" crossorigin href="${BASE}${f}">`),
   ]
-  const salida = html.replace('</head>', `    ${etiquetas.join('\n    ')}\n  </head>`)
-  fs.writeFileSync(path.join(DIST, `${ruta}.html`), salida)
-  console.log(`${ruta}.html: ${js.size} JS, ${css.size} CSS precargados`)
+  console.log(`${nombre}: ${js.size} JS, ${css.size} CSS precargados`)
+  return html.replace('</head>', `    ${etiquetas.join('\n    ')}\n  </head>`)
 }
+
+for (const [ruta, pagina] of Object.entries(RUTAS)) {
+  fs.writeFileSync(path.join(DIST, `${ruta}.html`), conPrecarga(pagina, `${ruta}.html`))
+}
+
+/* La portada (/) también es una página que baja aparte (src/paginas.js):
+   index.html la anuncia para no esperar a que el JS común la descubra. Va
+   al FINAL, cuando las demás rutas ya se escribieron desde el index.html
+   limpio (así /perfil no se baja Descubre). El 404.html del workflow se
+   copia antes de este script y tampoco la lleva: sirve a /local/:id. */
+fs.writeFileSync(path.join(DIST, 'index.html'), conPrecarga('src/pages/Descubre.jsx', 'index.html'))
 
 /* El manifest solo hacía falta para esto: no se publica. */
 fs.rmSync(path.join(DIST, '.vite'), { recursive: true, force: true })

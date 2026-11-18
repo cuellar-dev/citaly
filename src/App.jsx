@@ -1,9 +1,11 @@
 import { Suspense } from 'react'
 import { BrowserRouter, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import Layout from './layout/Layout.jsx'
-/* Descubre es la portada: va en el JS inicial para pintarse sin esperar a
-   otra descarga. NotFound es mínima. Todo lo demás baja al entrar (paginas.js). */
-import Descubre from './pages/Descubre.jsx'
+/* Todas las páginas bajan al entrar (paginas.js), Descubre incluida: así
+   quien abre /negocio o /perfil no descarga ni ejecuta la portada. Para que
+   la portada no pierda velocidad, el deploy anuncia su archivo en el
+   index.html (scripts/rutas-estaticas.mjs) y baja a la vez que el JS común.
+   NotFound es mínima y se queda en el JS común. */
 import NotFound from './pages/NotFound.jsx'
 import {
   Auth,
@@ -11,6 +13,7 @@ import {
   Busqueda,
   CompartirNegocio,
   CompletarLocal,
+  Descubre,
   DetalleLocal,
   Favoritos,
   MiNegocio,
