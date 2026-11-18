@@ -28,6 +28,7 @@ import {
   ReservarSuscripcion,
 } from './paginas.js'
 import ErrorPagina from './components/ErrorPagina/ErrorPagina.jsx'
+import AvisosApp from './components/AvisosApp/AvisosApp.jsx'
 import { PaginaEsqueleto } from './components/Esqueletos/Esqueletos.jsx'
 
 function CompletarLocalPage() {
@@ -70,6 +71,8 @@ const BASE_RUTAS = import.meta.env.BASE_URL.replace(/\/$/, '')
 function App() {
   return (
     <BrowserRouter basename={BASE_RUTAS}>
+      {/* Versión nueva disponible y sin conexión: en todas las pantallas. */}
+      <AvisosApp />
       <Routes>
         {/* Auth fuera del Layout: sin navbar ni header, pantalla a foco. */}
         <Route path="/auth" element={<PantallaCompleta><Auth /></PantallaCompleta>} />

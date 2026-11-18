@@ -1,0 +1,94 @@
+/* Mismo idioma que AvisoBreve (pastilla arriba), pero estos se quedan hasta
+   que cambia la situación o la persona decide. */
+
+.avisos-app {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: max(12px, env(safe-area-inset-top));
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  pointer-events: none;
+}
+
+.aviso-app {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 40px;
+  padding: 6px 16px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  background: var(--background-color-another, #252926);
+  box-shadow: 0 12px 28px -12px rgb(var(--sombra) / calc(0.9 * var(--sombra-alfa)));
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 14px;
+  font-weight: 700;
+  pointer-events: auto;
+  animation: aviso-app-entra 0.3s var(--ease-out, ease-out);
+}
+
+.aviso-app > svg {
+  flex-shrink: 0;
+  color: var(--primary-texto);
+}
+
+.aviso-app--sin-red > svg {
+  color: var(--yellow-texto, #ffd166);
+}
+
+.aviso-app--version {
+  padding-right: 6px;
+}
+
+.aviso-app-accion {
+  min-height: 32px;
+  margin-left: 4px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.aviso-app-cerrar {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fonts-color-primary-weak);
+  cursor: pointer;
+}
+
+.aviso-app-accion:focus-visible,
+.aviso-app-cerrar:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+@keyframes aviso-app-entra {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aviso-app {
+    animation: none;
+  }
+}

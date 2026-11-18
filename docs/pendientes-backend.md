@@ -119,17 +119,13 @@ Los servicios de `src/services/` son la frontera: las pantallas no tocan `localS
 
 ## 6. Carga sin conexión (PWA / service worker)
 
-**Hoy.** No hay service worker ni manifest. Estaba en el plan ("punto 3") pero **no se ha hecho todavía**. El plan acordado:
+**Hoy.** La Fase 1 está hecha: la app se instala, abre sin conexión, guarda las fotos que se ven y avisa de versiones nuevas y de la falta de red. Todo está en `docs/pwa.md`.
 
-- `vite-plugin-pwa` (≥ 2.0, compatible con Vite 8) en modo `generateSW`.
-- Precachear el esqueleto de la app y los trozos de página. **No** precachear Three.js, jsPDF, html2canvas ni Leaflet (cientos de KB que la mayoría no usa); esos se cachean al usarse.
-- Fotos: gracias a `crossorigin="anonymous"` (punto 1) las respuestas ya no son "opacas" y se pueden cachear sin disparar la cuota de almacenamiento. Límite de unas 60 fotos.
-- Actualizaciones con aviso ("Hay una versión nueva · Actualizar"), no en silencio, para no recargar a nadie a mitad de una reserva.
-- Aviso de "sin conexión". `navigator.onLine` miente con conexiones malas, así que con backend se combina con un ping a `/health` (ya existe en el backend).
-
-**Lo que depende del backend:**
-- Estrategia de caché de la API: `NetworkFirst` con timeout de 3–4 s para los GET; los POST nunca se cachean.
-- Cola de acciones sin conexión (por ejemplo, una reserva hecha sin red que se envía al volver). Necesita que la API acepte reintentos sin duplicar: una clave de idempotencia por reserva.
+**Hay que hacer** con backend: la "Fase 2" de `docs/pwa.md`:
+- caché de la API;
+- ping a `/health`;
+- cola de acciones sin conexión, con clave de idempotencia en el backend;
+- cabeceras `no-cache` para `sw.js` e `index.html`.
 
 ---
 

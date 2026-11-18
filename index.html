@@ -14,6 +14,11 @@
     <!-- Color de la barra del navegador en el móvil. Se cambia en vivo al
          alternar el tema (services/tema.js); estos son los de arranque. -->
     <meta name="theme-color" content="#121413" />
+    <!-- Instalada en iPhone (Añadir a pantalla de inicio): a pantalla
+         completa y con su nombre. El manifest lo añade el build (vite.config.js). -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Citaly" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
 
     <!-- Las fuentes se piden ya, en vez de esperar a que React pinte texto.
          fetchpriority="low": que no le quiten ancho de banda al JS, que es lo
