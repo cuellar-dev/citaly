@@ -22,12 +22,14 @@ import { getAllLocales } from '../services/locales.js'
 import { getFavoritos, FAVORITOS_EVENTO } from '../services/favoritos.js'
 import { construirDescubre } from '../utils/ranking/index.js'
 import { construirPerfil } from '../utils/ranking/perfil.js'
-import { exposicionDe } from '../utils/ranking/exposicion.js'
+import { conExposicionGlobal, exposicionDe } from '../utils/ranking/exposicion.js'
 import { inicioDelDia, semillaDelDia } from '../utils/ranking/semilla.js'
 import { getCitas } from '../services/storage.js'
 import { getImpresiones } from '../services/impresiones.js'
 import { contarFiltro, getUsoFiltros } from '../services/usoFiltros.js'
-import { USUARIO_ACTUAL_ID } from '../services/sesion.js'
+import { getAnonimoId } from '../services/identidad.js'
+import { hayApi } from '../services/api.js'
+import { cargarResumen } from '../services/descubreApi.js'
 import { useImpresiones } from '../hooks/useImpresiones.js'
 import { useOcultarAlBajar } from '../hooks/useOcultarAlBajar.js'
 import { useScrollInfinito } from '../hooks/useScrollInfinito.js'
@@ -65,7 +67,28 @@ function saludoDeLaHora(hora) {
 
 function Descubre() {
   const navigate = useNavigate()
-  const locales = useMemo(() => getAllLocales(), [])
+  /* De dónde salen los locales: del backend si hay VITE_API_URL, si no (o si
+     falla) de los datos de demo, como siempre. Ver services/descubreApi.js. */
+  const [fuente, setFuente] = useState(() =>
+    hayApi ? { estado: 'cargando', locales: [] } : { estado: 'demo', locales: getAllLocales() },
+  )
+  useEffect(() => {
+    if (!hayApi) return undefined
+    let vivo = true
+    cargarResumen()
+      .then((lista) => {
+        if (vivo) setFuente({ estado: lista.length ? 'api' : 'vacio', locales: lista })
+      })
+      .catch((error) => {
+        console.warn('[Descubre] El backend no respondió; uso los datos de demo.', error)
+        if (vivo) setFuente({ estado: 'demo', locales: getAllLocales() })
+      })
+    return () => {
+      vivo = false
+    }
+  }, [])
+  const locales = fuente.locales
+  const cargando = fuente.estado === 'cargando'
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [filtros, setFiltros] = useState(filtrosIniciales)
@@ -111,30 +134,44 @@ function Descubre() {
      día + lo que ya ha visto. La hora se fija al entrar: mientras miras, el
      orden no se mueve; cambia al volver otro día (corte a las 5:00). */
   const [ahora] = useState(() => new Date())
+  /* Las citas y favoritos guardan ids de locales; para saber de qué categoría
+     son se miran los del feed y, si no están, los de demo. */
+  const localesPerfil = useMemo(() => {
+    const porId = new Map(getAllLocales().map((l) => [l.id, l]))
+    locales.forEach((l) => porId.set(l.id, l))
+    return [...porId.values()]
+  }, [locales])
   const perfil = useMemo(
     () =>
       construirPerfil({
         citas: getCitas(),
         favoritos,
         filtrosUsados: getUsoFiltros(),
-        locales,
+        locales: localesPerfil,
         ahora,
       }),
-    [favoritos, locales, ahora],
+    [favoritos, localesPerfil, ahora],
   )
-  /* Solo lo visto ANTES de hoy: lo que ves hoy no reordena el feed de hoy. */
-  const exposicion = useMemo(() => exposicionDe(getImpresiones(), inicioDelDia(ahora)), [ahora])
+  /* Solo lo visto ANTES de hoy: lo que ves hoy no reordena el feed de hoy.
+     Con backend se suma lo que vieron todos (local_exposicion). */
+  const exposicion = useMemo(
+    () => conExposicionGlobal(exposicionDe(getImpresiones(), inicioDelDia(ahora)), locales, inicioDelDia(ahora)),
+    [ahora, locales],
+  )
+  /* Semilla del orden: por persona y día. Sin cuenta real todavía, la persona
+     es el id anónimo de este navegador (services/identidad.js). */
+  const semilla = useMemo(() => semillaDelDia(getAnonimoId(), ahora), [ahora])
   const resultado = useMemo(
     () =>
       construirDescubre({
         locales,
         perfil,
         ahora,
-        semilla: semillaDelDia(USUARIO_ACTUAL_ID, ahora),
+        semilla,
         exposicion,
         favoritos,
       }),
-    [locales, perfil, ahora, exposicion, favoritos],
+    [locales, perfil, ahora, semilla, exposicion, favoritos],
   )
   const { heroLista, abiertos, bloques } = resultado
 
@@ -148,7 +185,7 @@ function Descubre() {
 
   /* Qué tarjetas se ven y cuáles se tocan (services/impresiones.js). */
   const seccionesRef = useRef(null)
-  useImpresiones(seccionesRef, cuantosBloques)
+  useImpresiones(seccionesRef, `${fuente.estado}-${cuantosBloques}`, { semilla })
 
   /* Cola de fotos (colaFotos.js): héroe → primeras tarjetas → segunda foto
      del héroe y el resto. Las "primeras" son las que se ven justo debajo del
@@ -273,6 +310,11 @@ function Descubre() {
         </div>
 
         <div className="descubre-secciones" ref={seccionesRef}>
+          {cargando ? <ListaEsqueleto cantidad={3} texto="Buscando lugares…" /> : null}
+          {fuente.estado === 'vacio' ? (
+            <p className="descubre-vacio">Todavía no hay lugares en tu zona. Vuelve pronto.</p>
+          ) : null}
+
           <CarruselHeroe locales={heroLista} />
 
           {abiertos.length > 0 && (
@@ -318,7 +360,7 @@ function Descubre() {
           ) : null}
         </div>
 
-        {!hayMas ? (
+        {!hayMas && !cargando ? (
           <div className="descubre-opinion">
             <LlamadaOpinion />
           </div>
@@ -326,7 +368,7 @@ function Descubre() {
       </div>
 
       {/* Cuando se acaban los locales: Taly descansa en la hoguera. */}
-      {!hayMas ? (
+      {!hayMas && !cargando ? (
         <Suspense fallback={null}>
           <PieDePagina />
         </Suspense>

@@ -87,6 +87,11 @@ export function horarioDeLocal(local) {
 }
 
 export function notaDeComentarios(local) {
+  /* Locales que vienen del backend (services/descubreApi.js): no traen los
+     comentarios, traen la nota y el número ya contados. */
+  if (!local?.comentarios && local?.notaResumen != null) {
+    return { nota: Math.round(Number(local.notaResumen) * 10) / 10, cantidad: Number(local.opinionesResumen) || 0 }
+  }
   const lista = local?.comentarios ?? []
   if (!lista.length) return { nota: 0, cantidad: 0 }
   const suma = lista.reduce((total, c) => total + (Number(c.calificacion) || 0), 0)

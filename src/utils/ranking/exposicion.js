@@ -23,3 +23,23 @@ export function exposicionDe(eventos, antesDe) {
   }
   return porLocal
 }
+
+/**
+ * Suma lo que sabe el backend de TODOS los usuarios (local_exposicion, viene en
+ * el resumen como ultimaVezTopGlobal y vistas24h). La "última vez arriba"
+ * global también solo cuenta si fue antes de `antesDe`, por lo mismo: que el
+ * orden no se mueva durante el día.
+ */
+export function conExposicionGlobal(porLocal, locales, antesDe) {
+  const limite = antesDe ? new Date(antesDe).getTime() : Infinity
+  const resultado = new Map(porLocal)
+  for (const l of locales) {
+    if (!l.deApi) continue
+    const actual = resultado.get(l.id) ?? { vistas: 0, ultimaVezTop: null }
+    const global = l.ultimaVezTopGlobal ? new Date(l.ultimaVezTopGlobal).getTime() : null
+    const ultimaVezTop =
+      global && global < limite && (!actual.ultimaVezTop || global > actual.ultimaVezTop) ? global : actual.ultimaVezTop
+    resultado.set(l.id, { vistas: actual.vistas + (l.vistas24h || 0), ultimaVezTop })
+  }
+  return resultado
+}

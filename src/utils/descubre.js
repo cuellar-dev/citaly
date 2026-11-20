@@ -78,6 +78,8 @@ export function comodidadesDe(local, maximo = 3) {
 
 /** El comentario más entusiasta y corto: el que mejor cuenta cómo es el sitio. */
 export function fraseDeLocal(local) {
+  /* Del backend ya llega calculada (misma regla, ResumenLocalModel). */
+  if (local?.frase?.texto) return { texto: local.frase.texto, autor: local.frase.autor, foto: local.frase.foto ?? null }
   const lista = (local?.comentarios ?? []).filter((c) => c.comentario?.trim())
   if (!lista.length) return null
   const mejor = [...lista].sort((a, b) => {
@@ -99,6 +101,10 @@ export function desdeTexto(local) {
     if (!planes.length) return null
     const barato = planes.reduce((a, b) => (Number(b.precio) < Number(a.precio) ? b : a))
     return `desde ${precioPlanTexto(barato)}`
+  }
+  /* Del backend ya llega el mínimo de los servicios activos. */
+  if (local?.precioDesde != null && !local?.servicios) {
+    return Number(local.precioDesde) > 0 ? `desde ${Number(local.precioDesde)} CUP` : null
   }
   const precios = (local?.servicios ?? []).map((s) => Number(s.precio) || 0).filter((p) => p > 0)
   if (!precios.length) return null

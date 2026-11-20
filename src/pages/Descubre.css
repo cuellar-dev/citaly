@@ -292,6 +292,13 @@
   color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
+/* Backend conectado pero sin locales en la zona. */
+.descubre-vacio {
+  margin: 8px 2px;
+  font-size: 14px;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
 .descubre-lista-items {
   display: flex;
   flex-direction: column;

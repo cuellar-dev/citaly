@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { enviarPendientes, registrarEventos } from '../services/impresiones.js'
+import { enviarPendientes, getImpresiones, registrarEventos } from '../services/impresiones.js'
 
 /* Registra qué tarjetas de Descubre se ven y cuáles se tocan.
 
@@ -15,6 +15,8 @@ import { enviarPendientes, registrarEventos } from '../services/impresiones.js'
 const UMBRAL = 0.5
 const TIEMPO_VISTA_MS = 1000
 const CADA_MS = 4000
+/* Con backend: se manda en cuanto se juntan estos, o al salir de la página. */
+const ENVIAR_A_PARTIR_DE = 20
 
 /** Atributos para la raíz de una tarjeta. `imp` = { bloque, posicion } o nada. */
 export function atributosImpresion(id, imp) {
@@ -28,8 +30,9 @@ const datosDe = (el) => ({
   posicion: Number(el.dataset.impPos),
 })
 
-/** `clave` cambia cuando entran tarjetas nuevas (scroll infinito): se re-observa. */
-export function useImpresiones(raizRef, clave) {
+/** `clave` cambia cuando entran tarjetas nuevas (scroll infinito): se re-observa.
+    `semilla` (la del día) viaja con cada evento para poder analizar el orden. */
+export function useImpresiones(raizRef, clave, { semilla } = {}) {
   useEffect(() => {
     const raiz = raizRef.current
     if (!raiz || typeof IntersectionObserver === 'undefined') return undefined
@@ -37,7 +40,12 @@ export function useImpresiones(raizRef, clave) {
     const cola = []
     const vistas = new Set()
     const relojes = new Map()
-    const vaciar = () => registrarEventos(cola.splice(0))
+    const vaciar = () => {
+      registrarEventos(cola.splice(0))
+      if (getImpresiones().filter((e) => !e.enviado).length >= ENVIAR_A_PARTIR_DE) enviarPendientes()
+    }
+    /* Lo que quedó sin mandar de la visita anterior. */
+    enviarPendientes()
 
     const observer = new IntersectionObserver(
       (entradas) => {
@@ -53,7 +61,7 @@ export function useImpresiones(raizRef, clave) {
               window.setTimeout(() => {
                 relojes.delete(el)
                 vistas.add(llave)
-                cola.push({ tipo: 'vista', ...datos })
+                cola.push({ tipo: 'vista', semilla, ...datos })
                 observer.unobserve(el)
               }, TIEMPO_VISTA_MS),
             )
@@ -70,7 +78,7 @@ export function useImpresiones(raizRef, clave) {
 
     const alTocar = (evento) => {
       const el = evento.target.closest?.('[data-imp-local]')
-      if (el && raiz.contains(el)) cola.push({ tipo: 'toque', ...datosDe(el) })
+      if (el && raiz.contains(el)) cola.push({ tipo: 'toque', semilla, ...datosDe(el) })
       vaciar()
     }
     const alOcultar = () => {
@@ -90,6 +98,7 @@ export function useImpresiones(raizRef, clave) {
       document.removeEventListener('visibilitychange', alOcultar)
       window.clearInterval(intervalo)
       vaciar()
+      enviarPendientes()
     }
-  }, [raizRef, clave])
+  }, [raizRef, clave, semilla])
 }
