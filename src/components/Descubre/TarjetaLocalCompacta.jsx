@@ -2,13 +2,15 @@ import { Link } from 'react-router-dom'
 import { MapPin, Star } from 'lucide-react'
 import { estadoApertura, notaLocal } from '../../utils/descubre.js'
 import Foto from '../Foto/Foto.jsx'
+import FotoVacia from '../Foto/FotoVacia.jsx'
 import { useTurnoFoto } from './colaFotos.js'
+import { atributosImpresion } from '../../hooks/useImpresiones.js'
 import './tarjetaLocalCompacta.css'
 
 /* Versión de bolsillo para los carruseles. Solo lo que se lee de un vistazo
    mientras deslizas: foto, nombre, nota y si está abierto. */
 
-function TarjetaLocalCompacta({ local, distancia = null }) {
+function TarjetaLocalCompacta({ local, distancia = null, imp }) {
   const { nota } = notaLocal(local)
   const puertas = estadoApertura(local)
   /* En Descubre la foto espera su turno (colaFotos.js); fuera, carga normal. */
@@ -19,10 +21,12 @@ function TarjetaLocalCompacta({ local, distancia = null }) {
       to={`/local/${local.id}`}
       className="local-compacto"
       aria-label={`Ver ${local.localName}`}
+      {...atributosImpresion(local.id, imp)}
     >
       <span className="local-compacto-foto tema-oscuro-fijo foto-marco">
         {/* Cuadrada de 152 px. */}
-        {turno.puede ? (
+        {turno.puede && !local.url ? <FotoVacia alListo={turno.alListo} /> : null}
+        {turno.puede && local.url ? (
           <Foto
             src={local.url}
             anchos={[160, 320, 480]}

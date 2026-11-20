@@ -166,6 +166,19 @@ const OPINIONES_NUEVOS = {
   'sala-yaguajay': 0, 'esmalte-taguasco': 2,
 }
 
+/* Recién llegados a Citaly: hace cuántos días se dieron de alta. Descubre les
+   guarda huecos protegidos durante sus primeros 30 días (utils/ranking/rerank.js).
+   La fecha se cuenta desde hoy para que la demo siempre tenga locales nuevos. */
+const DIAS_DESDE_ALTA = { 'cuts-kilo-12': 4, 'bar-la-vega': 11, 'sala-yaguajay': 2, 'nails-lab': 19 }
+
+function fechaAltaDe(id) {
+  const dias = DIAS_DESDE_ALTA[id]
+  if (dias == null) return undefined
+  const fecha = new Date()
+  fecha.setDate(fecha.getDate() - dias)
+  return fecha.toISOString().slice(0, 10)
+}
+
 const comentariosPorLocal = {
   'brisa-cafe': [
     { usuario: 'María Rodríguez', texto: 'Excelente café y ambiente acogedor', puntuacion: 5 },
@@ -295,6 +308,7 @@ export const localesDemo = [
   categoria,
   metros,
   ...puntoEn(direccion, id),
+  fechaAlta: fechaAltaDe(id),
   direccion,
   points,
   lugar,

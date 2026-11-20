@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom'
 import { MapPin, Star } from 'lucide-react'
 import BotonFavorito from '../Favorito/BotonFavorito.jsx'
 import Foto from '../Foto/Foto.jsx'
+import FotoVacia from '../Foto/FotoVacia.jsx'
 import { comodidadesDe, estadoApertura, fraseDeLocal, notaLocal } from '../../utils/descubre.js'
+import { atributosImpresion } from '../../hooks/useImpresiones.js'
 import './heroeLocal.css'
 
 /* El lugar que abre la página. Foto a sangre y pocos datos, grandes: rompe el
@@ -14,7 +16,7 @@ import './heroeLocal.css'
    diapositivas que aún no tocan no piden su foto (ver CarruselHeroe).
    `alListo`: avisa al carrusel cuando la foto llegó (o falló). */
 
-function HeroeLocal({ local, etiqueta = 'El de hoy', prioridad = false, cargar = true, alListo }) {
+function HeroeLocal({ local, etiqueta = 'El de hoy', prioridad = false, cargar = true, alListo, imp }) {
   if (!local) return null
 
   const { nota, cantidad } = notaLocal(local)
@@ -23,10 +25,11 @@ function HeroeLocal({ local, etiqueta = 'El de hoy', prioridad = false, cargar =
   const frase = fraseDeLocal(local)
 
   return (
-    <article className="heroe-local tema-oscuro-fijo">
+    <article className="heroe-local tema-oscuro-fijo" {...atributosImpresion(local.id, imp)}>
       <Link to={`/local/${local.id}`} className="heroe-local-link foto-marco" aria-label={`Ver ${local.localName}`}>
         {/* Caja vertical 4:5 de hasta 420 px: la foto llega ya recortada así. */}
-        {cargar ? (
+        {cargar && !local.url ? <FotoVacia alListo={alListo} tamano={44} /> : null}
+        {cargar && local.url ? (
           <Foto
             src={local.url}
             className="heroe-local-foto"

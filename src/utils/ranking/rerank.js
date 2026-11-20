@@ -1,0 +1,97 @@
+import { aleatorioCon, hashTexto } from './semilla.js'
+
+/* Paso 8 — Re-ranking (sección 12): lo que una puntuación no capta.
+   Todo puro: recibe listas ya puntuadas y devuelve listas nuevas. */
+
+/* 12.1 Diversidad: no más de 2 seguidos de la misma categoría y nunca dos
+   seguidos del mismo dueño. Voraz: si el siguiente rompe la regla, se coge el
+   primero que no la rompa y el saltado espera su turno. */
+const MAX_SEGUIDOS = 2
+
+function rompeDiversidad(candidato, resultado) {
+  const ultimo = resultado[resultado.length - 1]
+  if (ultimo && candidato.local.duenoId && candidato.local.duenoId === ultimo.local.duenoId) return true
+  const cola = resultado.slice(-MAX_SEGUIDOS)
+  return cola.length === MAX_SEGUIDOS && cola.every((c) => c.local.categoria === candidato.local.categoria)
+}
+
+export function diversificar(ordenados) {
+  const resultado = []
+  const pendientes = [...ordenados]
+  while (pendientes.length) {
+    const i = pendientes.findIndex((c) => !rompeDiversidad(c, resultado))
+    resultado.push(pendientes.splice(i === -1 ? 0 : i, 1)[0])
+  }
+  return resultado
+}
+
+/* Para el héroe: una categoría por diapositiva mientras se pueda. */
+export function unoPorCategoria(ordenados, cuantos) {
+  const vistas = new Set()
+  const primero = []
+  const resto = []
+  for (const c of ordenados) {
+    if (!vistas.has(c.local.categoria)) {
+      vistas.add(c.local.categoria)
+      primero.push(c)
+    } else resto.push(c)
+  }
+  return [...primero, ...resto].slice(0, cuantos)
+}
+
+/* 12.2 Exploración ε-greedy: en cada hueco se tira un dado (con semilla, nunca
+   Math.random). Con probabilidad ε = riesgo del bloque se coge el candidato
+   MENOS mostrado en vez del mejor puntuado. Así un local bueno que aún nadie
+   ha visto tiene su oportunidad. */
+export function llenarConExploracion(
+  ordenados,
+  huecos,
+  { riesgo, semilla, bloqueId, exposicion, maxPorCategoria = Infinity, yaElegidos = [] },
+) {
+  const dado = aleatorioCon(semilla ^ hashTexto(`explorar|${bloqueId}`))
+  /* En los bloques que mezclan de todo, ninguna categoría se lo come entero. */
+  const porCategoria = new Map()
+  const contar = (c) => porCategoria.set(c.local.categoria, (porCategoria.get(c.local.categoria) ?? 0) + 1)
+  yaElegidos.forEach(contar)
+  const cabe = (c) => (porCategoria.get(c.local.categoria) ?? 0) < maxPorCategoria
+  let pendientes = [...ordenados]
+  const elegidos = []
+  while (elegidos.length < huecos) {
+    pendientes = pendientes.filter(cabe)
+    if (!pendientes.length) break
+    let i = 0
+    let explora = false
+    if (riesgo > 0 && dado() < riesgo && pendientes.length > 1) {
+      const vistas = (c) => exposicion?.get(c.local.id)?.vistas ?? 0
+      const minimo = Math.min(...pendientes.map(vistas))
+      i = pendientes.findIndex((c) => vistas(c) === minimo)
+      explora = i !== 0
+    }
+    const [elegido] = pendientes.splice(i, 1)
+    contar(elegido)
+    elegidos.push(explora ? { ...elegido, exploracion: true } : elegido)
+  }
+  return elegidos
+}
+
+/* 12.3 Arranque en frío: un local recién dado de alta no tiene opiniones, así
+   que la nota bayesiana lo deja en la media y nunca subiría. Se le guardan
+   huecos protegidos durante sus primeros 30 días. */
+export const DIAS_NUEVO = 30
+
+export function esNuevo(local, ahora) {
+  const alta = local.fechaAlta ?? local.aprobadoEn
+  if (!alta) return false
+  const dias = (ahora.getTime() - new Date(alta).getTime()) / 86400000
+  return dias >= 0 && dias < DIAS_NUEVO
+}
+
+/** Mete hasta `cuantos` locales nuevos en las posiciones 2, 5, 8… del bloque. */
+export function meterNuevos(lista, nuevos, cuantos) {
+  const resultado = [...lista]
+  nuevos.slice(0, cuantos).forEach((c, i) => {
+    const posicion = Math.min(1 + i * 3, resultado.length)
+    resultado.splice(posicion, 0, { ...c, nuevo: true })
+  })
+  return resultado
+}

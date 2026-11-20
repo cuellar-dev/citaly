@@ -8,6 +8,7 @@ import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import talyBuscando from '../components/Taly/taly-buscando-animado.svg'
 import talySinResultados from '../components/Taly/taly-sin-resultados-animado.svg'
 import { getAllLocales } from '../services/locales.js'
+import { contarFiltro } from '../services/usoFiltros.js'
 import { estaAbierto } from '../utils/fichaLocal.js'
 import { notaLocal } from '../utils/descubre.js'
 import {
@@ -141,6 +142,8 @@ function Busqueda() {
     window.clearTimeout(temporizadorRef.current)
     setQuery(categoria)
     setBusqueda(categoria)
+    /* Señal de afinidad para Descubre (utils/ranking/perfil.js). */
+    contarFiltro(categoria)
   }
 
   function quitarChip(chip) {
@@ -158,6 +161,7 @@ function Busqueda() {
   }
 
   const aplicarFiltros = () => {
+    if (filtros.categoria !== filtrosIniciales.categoria) contarFiltro(filtros.categoria)
     setFiltrosAplicados(filtros)
     setFiltrosAbiertos(false)
   }

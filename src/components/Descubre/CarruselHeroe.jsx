@@ -113,6 +113,7 @@ function CarruselHeroe({ locales = [] }) {
                 prioridad={i === 0}
                 cargar={debeCargar(i)}
                 alListo={() => alListo(i)}
+                imp={{ bloque: 'heroe', posicion: i }}
               />
             </div>
           ))}

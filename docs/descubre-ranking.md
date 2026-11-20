@@ -4,7 +4,7 @@ Documento de diseño. Recoge la conversación completa sobre **qué local se le 
 
 **Esto no es** una especificación de implementación ni código acordado. Es el razonamiento cerrado, las decisiones tomadas y lo que queda pendiente, para poder sentarse a construirlo sin volver a discutirlo todo.
 
-Estado: **nada de esto está implementado.** Lo que hay hoy en `src/utils/descubre.js` es lo descrito en el punto 3.
+Estado (20-11-2026): **implementado en el frontend (fase 1)**, en `src/utils/ranking/`. Cambio respecto a este documento: estar abierto ahora pesa poco en el orden (Luis): sirve para la fila "Puedes ir ahora mismo", no para subir locales. Para ver por qué sale cada local: `?debug=ranking` en desarrollo. Pendiente: promociones (paso 9), envío de impresiones al backend, geolocalización y lealtad por profesional.
 
 ---
 

@@ -20,7 +20,15 @@ import LlamadaOpinion from '../components/Ayuda/LlamadaOpinion.jsx'
 import { ListaEsqueleto } from '../components/Esqueletos/Esqueletos.jsx'
 import { getAllLocales } from '../services/locales.js'
 import { getFavoritos, FAVORITOS_EVENTO } from '../services/favoritos.js'
-import { construirDescubre } from '../utils/descubre.js'
+import { construirDescubre } from '../utils/ranking/index.js'
+import { construirPerfil } from '../utils/ranking/perfil.js'
+import { exposicionDe } from '../utils/ranking/exposicion.js'
+import { inicioDelDia, semillaDelDia } from '../utils/ranking/semilla.js'
+import { getCitas } from '../services/storage.js'
+import { getImpresiones } from '../services/impresiones.js'
+import { contarFiltro, getUsoFiltros } from '../services/usoFiltros.js'
+import { USUARIO_ACTUAL_ID } from '../services/sesion.js'
+import { useImpresiones } from '../hooks/useImpresiones.js'
 import { useOcultarAlBajar } from '../hooks/useOcultarAlBajar.js'
 import { useScrollInfinito } from '../hooks/useScrollInfinito.js'
 import { filtrosIniciales, normalizar } from '../utils/busqueda.js'
@@ -29,6 +37,14 @@ import './Descubre.css'
 /* El pie (la hoguera de Taly, un canvas con su animación) solo sale cuando se
    acaban los lugares: se descarga entonces y no al abrir Descubre. */
 const PieDePagina = lazy(() => import('../components/Pie/PieDePagina.jsx'))
+
+/* Modo depuración del ranking (?debug=ranking): solo en desarrollo, nunca
+   llega a producción. Enseña por qué cada local está donde está. */
+const DepuracionRanking = import.meta.env.DEV
+  ? lazy(() => import('../components/Descubre/DepuracionRanking.jsx'))
+  : null
+const DEBUG_RANKING =
+  import.meta.env.DEV && new URLSearchParams(window.location.search).get('debug') === 'ranking'
 
 /* Scroll infinito: al abrir se pinta el héroe, el rail de abiertos y el
    primer bloque del feed; el resto entra de dos en dos al acercarse al
@@ -91,13 +107,36 @@ function Descubre() {
   /* Mientras escribes o hay sugerencias, el buscador no se va. */
   const buscadorOculto = useOcultarAlBajar({ fijo: escribiendo || mostrarSugerencias || filtrosAbiertos })
 
-  /* Feed al estilo Play Store: carrusel de héroes + rail de abiertos + lista
-     vertical cortada cada 5 tarjetas por estantas horizontales. Se rehace si
-     cambia el catálogo o los favoritos. */
-  const { heroLista, abiertos, bloques } = useMemo(
-    () => construirDescubre(locales, favoritos),
-    [locales, favoritos],
+  /* El orden de Descubre (utils/ranking): perfil del usuario + semilla del
+     día + lo que ya ha visto. La hora se fija al entrar: mientras miras, el
+     orden no se mueve; cambia al volver otro día (corte a las 5:00). */
+  const [ahora] = useState(() => new Date())
+  const perfil = useMemo(
+    () =>
+      construirPerfil({
+        citas: getCitas(),
+        favoritos,
+        filtrosUsados: getUsoFiltros(),
+        locales,
+        ahora,
+      }),
+    [favoritos, locales, ahora],
   )
+  /* Solo lo visto ANTES de hoy: lo que ves hoy no reordena el feed de hoy. */
+  const exposicion = useMemo(() => exposicionDe(getImpresiones(), inicioDelDia(ahora)), [ahora])
+  const resultado = useMemo(
+    () =>
+      construirDescubre({
+        locales,
+        perfil,
+        ahora,
+        semilla: semillaDelDia(USUARIO_ACTUAL_ID, ahora),
+        exposicion,
+        favoritos,
+      }),
+    [locales, perfil, ahora, exposicion, favoritos],
+  )
+  const { heroLista, abiertos, bloques } = resultado
 
   const [cuantosBloques, setCuantosBloques] = useState(BLOQUES_INICIALES)
   const hayMas = cuantosBloques < bloques.length
@@ -107,9 +146,13 @@ function Descubre() {
   )
   const centinelaRef = useScrollInfinito({ hayMas, alLlegar: mostrarMas, clave: cuantosBloques })
 
+  /* Qué tarjetas se ven y cuáles se tocan (services/impresiones.js). */
+  const seccionesRef = useRef(null)
+  useImpresiones(seccionesRef, cuantosBloques)
+
   /* Cola de fotos (colaFotos.js): héroe → primeras tarjetas → segunda foto
      del héroe y el resto. Las "primeras" son las que se ven justo debajo del
-     héroe: hasta 2 del rail de abiertos y el resto de la lista "Cerca de ti". */
+     héroe: hasta 2 del rail de abiertos y el resto de la primera lista. */
   const primeras = useMemo(() => {
     const ids = abiertos.slice(0, 2).map((l) => l.id)
     const lista = bloques.find((b) => b.tipo === 'lista')
@@ -145,7 +188,10 @@ function Descubre() {
   const buscar = () => {
     if (hayTexto) navigate(`/buscar?q=${encodeURIComponent(query.trim())}`)
   }
-  const aplicarFiltros = () => navigate('/buscar', { state: { filtros } })
+  const aplicarFiltros = () => {
+    if (filtros.categoria !== filtrosIniciales.categoria) contarFiltro(filtros.categoria)
+    navigate('/buscar', { state: { filtros } })
+  }
 
   return (
     <ColaFotosContext.Provider value={cola}>
@@ -226,13 +272,13 @@ function Descubre() {
           <h1>{saludo.titulo}</h1>
         </div>
 
-        <div className="descubre-secciones">
+        <div className="descubre-secciones" ref={seccionesRef}>
           <CarruselHeroe locales={heroLista} />
 
           {abiertos.length > 0 && (
             <RailDescubre titulo="Puedes ir ahora mismo" nota={`${abiertos.length} abiertos`}>
-              {abiertos.map((local) => (
-                <TarjetaLocalCompacta key={local.id} local={local} />
+              {abiertos.map((local, i) => (
+                <TarjetaLocalCompacta key={local.id} local={local} imp={{ bloque: 'abiertos', posicion: i }} />
               ))}
             </RailDescubre>
           )}
@@ -247,15 +293,15 @@ function Descubre() {
                   </header>
                 )}
                 <div className="descubre-lista-items">
-                  {bloque.items.map((local) => (
-                    <TarjetaLocal key={local.id} {...local} />
+                  {bloque.items.map((local, i) => (
+                    <TarjetaLocal key={local.id} {...local} imp={{ bloque: bloque.clave, posicion: i }} />
                   ))}
                 </div>
               </section>
             ) : (
               <RailDescubre key={bloque.clave} titulo={bloque.titulo} nota={bloque.nota}>
-                {bloque.items.map((local) => (
-                  <TarjetaLocalCompacta key={local.id} local={local} />
+                {bloque.items.map((local, i) => (
+                  <TarjetaLocalCompacta key={local.id} local={local} imp={{ bloque: bloque.clave, posicion: i }} />
                 ))}
               </RailDescubre>
             ),
@@ -283,6 +329,12 @@ function Descubre() {
       {!hayMas ? (
         <Suspense fallback={null}>
           <PieDePagina />
+        </Suspense>
+      ) : null}
+
+      {DEBUG_RANKING ? (
+        <Suspense fallback={null}>
+          <DepuracionRanking resultado={resultado} perfil={perfil} />
         </Suspense>
       ) : null}
 

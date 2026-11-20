@@ -1,0 +1,79 @@
+/* Panel de depuración del ranking. Solo en desarrollo: no necesita ser bonito,
+   sí legible en los dos temas. */
+
+.dbg-ranking {
+  position: fixed;
+  left: 12px;
+  bottom: 96px;
+  z-index: 100000;
+  font: 12px/1.35 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color: var(--fonts-color-primary);
+}
+
+.dbg-ranking-boton {
+  padding: 6px 10px;
+  border: 1px solid var(--primary-color);
+  border-radius: 999px;
+  background: var(--background-color-secondary);
+  color: var(--primary-texto, var(--primary-color));
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dbg-ranking-panel {
+  position: fixed;
+  inset: 12px 12px 140px;
+  overflow: auto;
+  padding: 12px 14px;
+  border: 1px solid rgb(var(--tinte) / calc(0.15 * var(--tinte-fuerza)));
+  border-radius: 14px;
+  background: var(--background-color-secondary);
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.4);
+}
+
+.dbg-ranking-panel section + section {
+  margin-top: 14px;
+}
+
+.dbg-ranking-panel h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: var(--primary-texto, var(--primary-color));
+}
+
+.dbg-ranking-panel h3 small {
+  color: var(--fonts-color-primary-weak);
+  font-weight: 400;
+}
+
+.dbg-ranking-panel p {
+  margin: 2px 0;
+}
+
+.dbg-ranking-panel ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dbg-ranking-panel li {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: 8px;
+  padding: 4px 0;
+  border-top: 1px solid rgb(var(--tinte) / calc(0.06 * var(--tinte-fuerza)));
+}
+
+.dbg-ranking-panel small {
+  display: block;
+  color: var(--fonts-color-primary-weak);
+}
+
+.dbg-pos {
+  color: var(--fonts-color-primary-weak);
+}
+
+.dbg-num {
+  text-align: right;
+}

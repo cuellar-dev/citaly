@@ -4,6 +4,7 @@ import BotonFavorito from '../Favorito/BotonFavorito.jsx'
 import Foto from '../Foto/Foto.jsx'
 import { useTurnoFoto } from '../Descubre/colaFotos.js'
 import { comodidadesDe, desdeTexto, estadoApertura, fraseDeLocal, notaLocal } from '../../utils/descubre.js'
+import { atributosImpresion } from '../../hooks/useImpresiones.js'
 import './tarjetalocal.css'
 
 /* Tarjeta de un lugar en Descubre. Cuenta CÓMO ES el sitio, no empuja a
@@ -26,7 +27,7 @@ function TarjetaLocal(local) {
   const relleno = `${(Math.min(5, Math.max(0, nota)) / 5) * 100}%`
 
   return (
-    <article className="tarjeta-wrap">
+    <article className="tarjeta-wrap" {...atributosImpresion(id, local.imp)}>
       <Link to={`/local/${id}`} className="tarjeta-link" aria-label={`Ver ${localName}`}>
         <div className="tarjeta">
           <div className="tarjeta-foto tema-oscuro-fijo foto-marco">

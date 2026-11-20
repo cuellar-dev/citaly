@@ -23,7 +23,8 @@
 }
 
 .foto-marco:has(.foto[data-estado='lista']),
-.foto-marco:has(.foto[data-estado='error']) {
+.foto-marco:has(.foto[data-estado='error']),
+.foto-marco:has(.foto-vacia) {
   animation: none;
   background-image: none;
 }
@@ -55,6 +56,20 @@
 
 .foto-marco:not(:has(.foto[data-estado='lista'])) .foto-velo {
   opacity: 0;
+}
+
+/* Local sin fotos: fondo quieto (nada que esperar) con un icono tenue. */
+.foto-vacia {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgb(var(--tinte) / calc(0.3 * var(--tinte-fuerza)));
+}
+
+.tema-oscuro-fijo .foto-vacia,
+.foto-marco.tema-oscuro-fijo .foto-vacia {
+  color: rgb(255 255 255 / 0.28);
 }
 
 .esqueleto {
