@@ -179,6 +179,14 @@
   white-space: nowrap;
 }
 
+/* "Cancelada" en el rojo de marca (#c53f3f) daba 3.7:1 sobre el fondo
+   oscuro con texto de 10.5 px (WCAG pide 4.5:1). Un 25% de blanco lo lleva a
+   ~5:1 sin dejar de leerse como rojo. Solo en oscuro: sobre el crema del
+   tema claro el rojo original ya cumple y aclararlo lo empeoraría. */
+:root:not([data-tema='claro']) .cita-dueno--cancelada .cita-dueno-estado {
+  color: color-mix(in srgb, var(--close-color, #c53f3f) 75%, white);
+}
+
 .cita-dueno--atendida .cita-dueno-estado {
   color: color-mix(in srgb, var(--primary-texto, #00c2ad) 70%, transparent);
 }
