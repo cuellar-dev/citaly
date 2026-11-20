@@ -15,7 +15,7 @@ const AGENDA_VACIA = { dias: [], fechas: [], primeraReservable: null, sinHuecos:
  * cerraba hoy la pantalla marcaba igual un día inservible; ahora, mientras el
  * usuario no toque nada, se usa el primer día con hueco de verdad.
  */
-export function useReserva(local, citas = []) {
+export function useReserva(local, citas = [], { completasDe } = {}) {
   const [hoy, setHoy] = useState(() => startOfToday())
   const [ahora, setAhora] = useState(() => new Date())
   const [fechaSeleccionada, setFechaSeleccionada] = useState(null)
@@ -53,8 +53,10 @@ export function useReserva(local, citas = []) {
       hoy,
       ahora,
       tomadasDe: (fecha) => horasYaReservadas(citas, localId, fecha),
+      /* Locales de mesas: horas en las que no queda mesa para el grupo. */
+      completasDe,
     })
-  }, [local, localId, hoy, ahora, citas])
+  }, [local, localId, hoy, ahora, citas, completasDe])
 
   const dia = diaEnUso(agenda, fechaSeleccionada)
 

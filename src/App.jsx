@@ -15,6 +15,7 @@ import {
   CompletarLocal,
   Descubre,
   DetalleLocal,
+  EditorPlano,
   Favoritos,
   MiNegocio,
   MisCitas,
@@ -34,6 +35,11 @@ import { PaginaEsqueleto } from './components/Esqueletos/Esqueletos.jsx'
 function CompletarLocalPage() {
   const { id } = useParams()
   return <CompletarLocal key={id} />
+}
+
+function EditorPlanoPage() {
+  const { id } = useParams()
+  return <EditorPlano key={id} />
 }
 
 function ReservarConLugarPage() {
@@ -82,6 +88,8 @@ function App() {
           path="/negocio/completar/:id"
           element={<PantallaCompleta><CompletarLocalPage /></PantallaCompleta>}
         />
+        {/* El editor de la sala de un local de mesas: a pantalla completa. */}
+        <Route path="/negocio/plano/:id" element={<PantallaCompleta><EditorPlanoPage /></PantallaCompleta>} />
         {/* Sobre nosotros también va a pantalla completa: es un viaje, no una tabla.
             Su espera es la noche fija de la página (#121413 en los dos temas). */}
         <Route

@@ -1,10 +1,10 @@
 import { UsersRound } from 'lucide-react'
 import TarjetaCita, { DatoCita } from '../CitaCard/TarjetaCita.jsx'
 import MapaMesas from '../MapaMesas/MapaMesas.jsx'
-import { MESAS_MAPA } from '../../data/mesasMapa.js'
 
-/* Tarjeta de una reserva de mesa. Lleva el plano del local con la mesa marcada,
-   salvo que sea una reserva de grupo: ahí no hay mesa que marcar todavía. */
+/* Tarjeta de una reserva de mesa. Lleva el plano del local con la mesa (o
+   las mesas juntas) marcada. Las reservas de grupo antiguas, sin mesa,
+   enseñan el aviso de "juntan las mesas al llegar". */
 function CitaLugar({
   lugar,
   wasa,
@@ -12,6 +12,8 @@ function CitaLugar({
   coste,
   estadoReserva = 0,
   mesaId,
+  mesaIds,
+  plano,
   mesaCodigo,
   mesaUbicacion,
   capacidad,
@@ -27,10 +29,8 @@ function CitaLugar({
   pasada = false,
   proxima = false,
 }) {
-  const mesaReservada =
-    mesaId != null
-      ? MESAS_MAPA.find((m) => m.id === mesaId) ?? null
-      : MESAS_MAPA.find((m) => m.codigo === mesaCodigo) ?? null
+  const ids = mesaIds?.length ? mesaIds : mesaId != null ? [mesaId] : []
+  const mesaReservada = ids.length ? { id: ids[0], ids, junta: ids.length > 1 } : null
 
   return (
     <TarjetaCita
@@ -81,7 +81,7 @@ function CitaLugar({
             role="img"
             aria-label={`Plano del local, mesa ${mesaCodigo ?? ''} marcada`}
           >
-            <MapaMesas mesaSeleccionada={mesaReservada} onMesaClick={() => {}} soloLectura />
+            <MapaMesas plano={plano} mesaSeleccionada={mesaReservada} soloLectura />
           </div>
         </>
       )}

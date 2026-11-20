@@ -1,12 +1,14 @@
 import { MESAS_MAPA } from '../data/mesasMapa.js'
+import { mesasDelPlano, planoDeLocal } from '../plano/local.js'
 
 /* Locales de mesas (restaurantes, bares, terrazas…).
 
-   El plano es el mismo dibujo para todos (data/mesasMapa.js). Lo que el dueño
-   puede cambiar de cada mesa va en `local.mesas`, por id:
-     { id, capacidad, ubicacion, online }
-   online = false → la mesa existe, pero no se reserva por Citaly: se guarda
-   para quien llega sin reserva.
+   Las mesas salen del PLANO del local (src/plano/): el que dibujó el dueño
+   con el editor, o el de siempre si aún no lo hizo. Cada mesa lleva:
+     capacidad          la normal (cómoda)
+     capMin / capMax    el rango completo (solo lo sabe el dueño)
+     online = false     la mesa existe, pero no se reserva por Citaly: se
+                        guarda para quien llega sin reserva ("solo en el local").
 
    Y lo que se cobra va en `local.reservaMesa`, igual para todas las mesas:
      cobro:          'gratis' | 'precio'
@@ -29,30 +31,17 @@ export function reservaMesaDe(local) {
   return { ...RESERVA_MESA_BASE, ...(local?.reservaMesa ?? {}) }
 }
 
-/** Las mesas del plano con lo que el dueño cambió encima. */
+/** Las mesas del local, sacadas de su plano. */
 export function mesasDeLocal(local) {
-  const cambios = new Map((local?.mesas ?? []).map((m) => [m.id, m]))
-  return MESAS_MAPA.map((base) => {
-    const propio = cambios.get(base.id) ?? {}
-    return {
-      ...base,
-      capacidad: Number(propio.capacidad) || base.capacidad,
-      ubicacion: propio.ubicacion ?? base.ubicacion,
-      online: propio.online ?? true,
-    }
-  })
-}
-
-/** Lo que el dueño guarda de cada mesa (sin lo del dibujo). */
-export function mesasParaGuardar(mesas) {
-  return mesas.map(({ id, capacidad, ubicacion, online }) => ({ id, capacidad, ubicacion, online }))
+  return mesasDelPlano(planoDeLocal(local))
 }
 
 /** Lo que paga quien reserva una mesa: { precio, consumoMinimo }. */
 export function cobroDeMesa(local, mesa) {
   if (!local?.reservaMesa) {
-    /* Locales sin configurar: lo que trae cada mesa del plano. */
-    return { precio: Number(mesa?.precio) || 0, consumoMinimo: Number(mesa?.consumoMinimo) || 0 }
+    /* Locales de demo sin configurar: lo que traía cada mesa del plano de siempre. */
+    const base = MESAS_MAPA.find((m) => m.id === mesa?.id)
+    return { precio: Number(base?.precio) || 0, consumoMinimo: Number(base?.consumoMinimo) || 0 }
   }
   const r = reservaMesaDe(local)
   return r.cobro === 'precio'

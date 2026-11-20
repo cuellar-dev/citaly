@@ -165,3 +165,14 @@ Los servicios de `src/services/` son la frontera: las pantallas no tocan `localS
 - **Enlaces de tarjeta con `aria-label`** ("Ver Al Medio"): Lighthouse avisa de que el nombre accesible no incluye todo el texto visible (`label-content-name-mismatch`, peso 0 en la nota). La solución buena es el patrón "enlace estirado" (el enlace solo en el título y un `::after` que cubre la tarjeta). Afecta a `TarjetaLocal`, `TarjetaLocalCompacta`, `HeroeLocal` y `TarjetaFavorito`, con sus estilos de hover; queda para una ronda de accesibilidad.
 - **Contraste en el tema claro.** Los arreglos de contraste se comprobaron en el tema oscuro (el que mide Lighthouse por defecto). El tema claro necesita su propia revisión: algunos grises con transparencia sobre el crema no llegan a 4.5:1.
 - **Merchant Copy** (fuente de "Sobre nosotros"): su licencia es solo para uso personal y no comercial, y prohíbe modificarla. No se convirtió a WOFF2. Antes de lanzar: pedir licencia al autor o cambiarla por una monoespaciada libre (Courier Prime, Space Mono, IBM Plex Mono).
+
+## Plano de la sala (editor de mesas)
+
+Hoy el plano se guarda en el navegador (ficha del local). Para el backend:
+
+- `PUT /api/local/:id/plano` y `GET` dentro del local: guardar el JSON del plano tal cual (`version`, `tamano`, `forma`, `pisos`, `piezas`, `juntas`). Validar en el servidor con las mismas reglas que `src/plano/modelo.js` (`validarPlano`): lista blanca de tipos, enteros acotados, textos limpios, límites (3 pisos, 150 piezas, 80 mesas, 40 juntas).
+- Tabla `mesas`: añadir `cap_min`, `cap_normal`, `cap_max` (nullable), `online`, `rasgos`, `piso`. Los ids de mesa no cambian (m-1…m-7 en los locales viejos).
+- Juntas: `{id, mesas: [ids], cap}`. Cuentan como una sola reserva para el precio.
+- Reservas: guardar `mesaIds` (una o varias mesas).
+- `GET /api/local/:id/mesas-ocupadas?fecha&hora`: ids ocupados, para pintar el mapa y marcar horas completas.
+- No borrar una mesa con reservas futuras (el front ya lo bloquea; el servidor también debería).

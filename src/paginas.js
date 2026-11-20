@@ -29,6 +29,7 @@ const cargadores = {
   auth: () => import('./pages/Auth.jsx'),
   nuevoLocal: () => import('./pages/NuevoLocal.jsx'),
   completarLocal: () => import('./pages/CompletarLocal.jsx'),
+  editorPlano: () => import('./plano/editor/EditorPlano.jsx'),
   nosotros: () => import('./pages/Nosotros.jsx'),
 }
 
@@ -49,6 +50,7 @@ export const Opinion = lazy(cargadores.opinion)
 export const Auth = lazy(cargadores.auth)
 export const NuevoLocal = lazy(cargadores.nuevoLocal)
 export const CompletarLocal = lazy(cargadores.completarLocal)
+export const EditorPlano = lazy(cargadores.editorPlano)
 export const Nosotros = lazy(cargadores.nosotros)
 
 /* Ruta de la app → página. Solo las que tiene sentido adelantar. */

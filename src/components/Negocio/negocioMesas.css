@@ -8,7 +8,6 @@
 }
 
 .mesas-plano .mapa-mesas-container {
-  height: 210px;
   background: rgb(var(--tinte) / calc(0.03 * var(--tinte-fuerza)));
 }
 
@@ -150,7 +149,6 @@
 }
 
 .sala-turno .mapa-mesas-container {
-  height: 190px;
   padding: 6px;
 }
 
@@ -214,4 +212,41 @@
   justify-content: center;
   gap: 4px 12px;
   border-radius: 14px;
+}
+
+/* Botón para abrir el editor de la sala. */
+.mesas-editar-sala {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Mínimo / cómoda / apretados de una mesa. */
+.mesas-rango-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.mesas-rango-fila + .mesas-rango-fila {
+  border-top: 1px solid rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+}
+
+.mesas-rango-etiqueta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.mesas-rango-etiqueta small {
+  color: var(--fonts-color-primary-weak);
+  font-size: 12px;
+  font-weight: 600;
 }

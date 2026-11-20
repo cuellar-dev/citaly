@@ -1,6 +1,7 @@
 import { differenceInMinutes, format, isBefore, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { getLocalById } from '../services/locales.js'
+import { planoDeLocal } from '../plano/local.js'
 
 function fechaHoraCita(cita) {
   return parse(`${cita.fecha} ${cita.horario}`, 'yyyy-MM-dd HH:mm', new Date())
@@ -115,6 +116,9 @@ export function propsDesdeCita(cita) {
       minimoPersonas: cita.minimoPersonas ?? null,
       personas: cita.personas ?? null,
       mesaId: cita.mesa?.id,
+      /* Mesas juntas: todas las que ocupa la reserva. */
+      mesaIds: cita.mesa?.ids ?? null,
+      plano: local?.lugar ? planoDeLocal(local) : undefined,
       mesaCodigo: cita.mesa?.codigo,
       mesaUbicacion: cita.mesa?.ubicacion,
       capacidad: cita.mesa?.capacidad,

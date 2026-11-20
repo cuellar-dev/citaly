@@ -3,6 +3,8 @@ import MapaMesas from '../MapaMesas/MapaMesas.jsx'
 import { CANCELADA, PENDIENTE } from '../../utils/estadosCita.js'
 import { aMinutos, horaAmPm, turnosDelDia } from '../../utils/fichaLocal.js'
 import { mesasDeLocal } from '../../utils/mesas.js'
+import { planoDeLocal } from '../../plano/local.js'
+import { mesasDeReserva } from '../../plano/reserva.js'
 import './negocioMesas.css'
 
 /* La sala de un turno, vista desde arriba: qué mesas están cogidas a esa
@@ -32,14 +34,17 @@ function SalaTurno({ local, citas, ahora, esHoy }) {
   const turno = turnos.includes(elegido) ? elegido : turnos[0]
   if (turno == null) return null
 
-  const activas = citas.filter((c) => c.estadoReserva !== CANCELADA && c.mesaId)
+  const activas = citas.filter((c) => c.estadoReserva !== CANCELADA && mesasDeReserva(c).length)
   const delTurno = activas.filter((c) => c.horario === hhmm(turno))
-  const porMesa = new Map(delTurno.map((c) => [c.mesaId, c]))
+  /* Una reserva de mesas juntas ocupa todas sus mesas. */
+  const porMesa = new Map(delTurno.flatMap((c) => mesasDeReserva(c).map((id) => [id, c])))
   const mesas = mesasDeLocal(local).map((m) => {
     const reserva = porMesa.get(m.id)
     const estado = reserva ? (reserva.estadoReserva === PENDIENTE ? 'pendiente' : 'ocupado') : m.online ? 'disponible' : 'calle'
     return { ...m, estado }
   })
+  /* Las pendientes de confirmar se marcan en amarillo ("Por confirmar"). */
+  const pendientes = mesas.filter((m) => m.estado === 'pendiente').map((m) => m.id)
   const personas = delTurno.reduce((t, c) => t + (c.personas ?? 0), 0)
   const ahoraMin = ahora.getHours() * 60 + ahora.getMinutes()
 
@@ -72,7 +77,12 @@ function SalaTurno({ local, citas, ahora, esHoy }) {
 
       <div className="mapa-mesas-container">
         <div className="mapa-mesas-viewport">
-          <MapaMesas mesas={mesas} soloLectura />
+          <MapaMesas
+            plano={planoDeLocal(local)}
+            mesas={mesas}
+            mesaSeleccionada={pendientes.length ? { id: pendientes[0], ids: pendientes } : null}
+            soloLectura
+          />
         </div>
       </div>
 
@@ -101,7 +111,13 @@ function SalaTurno({ local, citas, ahora, esHoy }) {
             .sort((a, b) => aMinutos(a.horario) - aMinutos(b.horario))
             .map((c) => (
               <li key={c.id} className={c.estadoReserva === PENDIENTE ? 'sala-turno-quienes--pendiente' : undefined}>
-                <b>{mesas.find((m) => m.id === c.mesaId)?.codigo.replace('MESA-', 'M')}</b> {String(c.cliente).split(' ')[0]} · {c.personas}
+                <b>
+                  {mesasDeReserva(c)
+                    .map((id) => mesas.find((m) => m.id === id)?.codigo)
+                    .filter(Boolean)
+                    .join(' + ')}
+                </b>{' '}
+                {String(c.cliente).split(' ')[0]} · {c.personas}
               </li>
             ))}
         </ul>

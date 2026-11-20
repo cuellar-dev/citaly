@@ -21,8 +21,9 @@ export function generarHorarios(apertura, cierre, intervaloMinutos) {
  * en lugar de encontrarse una rejilla a medias sin explicación.
  *
  * libre | pasada (hoy, ya dieron) | ocupada (el usuario ya reservó esa hora aquí)
+ *       | completa (locales de mesas: a esa hora no queda mesa para su grupo)
  */
-export function horariosDelDia(local, fecha, { ahora = new Date(), tomadas = [] } = {}) {
+export function horariosDelDia(local, fecha, { ahora = new Date(), tomadas = [], completas = [] } = {}) {
   const todas = generarHorarios(
     local.horarioApertura,
     local.horarioCierre,
@@ -35,6 +36,7 @@ export function horariosDelDia(local, fecha, { ahora = new Date(), tomadas = [] 
       return { hora, estado: 'pasada' }
     }
     if (tomadas.includes(hora)) return { hora, estado: 'ocupada' }
+    if (completas.includes(hora)) return { hora, estado: 'completa' }
     return { hora, estado: 'libre' }
   })
 }
@@ -51,13 +53,14 @@ export function hayHueco(horas) {
  * la pantalla marcaba igualmente un día que no se podía usar. Ahora se empieza
  * en el primer día con al menos una hora libre.
  */
-export function agendaDelLocal(local, { hoy, ahora = new Date(), diasAMostrar = 14, tomadasDe } = {}) {
+export function agendaDelLocal(local, { hoy, ahora = new Date(), diasAMostrar = 14, tomadasDe, completasDe } = {}) {
   const abiertos = fechasDisponiblesLocal(hoy, local.dias ?? [], diasAMostrar)
 
   const dias = abiertos.map((fecha) => {
     const horas = horariosDelDia(local, fecha, {
       ahora,
       tomadas: tomadasDe ? tomadasDe(fecha) : [],
+      completas: completasDe ? completasDe(fecha) : [],
     })
     return { fecha, horas, reservable: hayHueco(horas) }
   })

@@ -264,52 +264,59 @@
   background: color-mix(in srgb, var(--background-color, #121413) 70%, transparent);
 }
 
-.tarjeta-cita-mapa .mapa-mesas-svg {
-  display: block;
-  width: 100%;
-  height: auto;
+/* El plano en el recibo, a una tinta: todo en gris de ticket y la mesa (o
+   mesas) reservada en el color del estado de la cita (--tono). */
+.tarjeta-cita-mapa .plano {
+  max-height: 220px;
 }
 
-.tarjeta-cita-mapa .mapa-fondo {
+.tarjeta-cita-mapa .plano-suelo {
   fill: transparent;
 }
 
-.tarjeta-cita-mapa .mapa-detalle {
-  fill: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 35%, transparent);
+.tarjeta-cita-mapa .pz-fondo,
+.tarjeta-cita-mapa .pz-zona,
+.tarjeta-cita-mapa .pz-suelo-entrada,
+.tarjeta-cita-mapa .pz-cristal {
+  fill: transparent;
 }
 
-.tarjeta-cita-mapa .mapa-detalle-borde {
-  fill: transparent;
-  stroke: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 35%, transparent);
-  stroke-width: 1;
-}
-
-.tarjeta-cita-mapa .mesa .mesa-forma {
-  fill: transparent;
+.tarjeta-cita-mapa .pz-tinta,
+.tarjeta-cita-mapa .plano-contorno,
+.tarjeta-cita-mapa .pz-zona-borde {
   stroke: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 45%, transparent);
-  stroke-width: 1.1;
-  transition: none;
 }
 
-.tarjeta-cita-mapa .mesa--ocupado .mesa-forma {
-  stroke-dasharray: 2.5 2;
-  opacity: 0.7;
-}
-
-.tarjeta-cita-mapa .mesa .mesa-etiqueta {
-  fill: var(--fonts-color-primary-weak, #bdbaba);
-}
-
-.tarjeta-cita-mapa .mesa--seleccionada .mesa-forma {
-  fill: var(--tono);
-  stroke: var(--tono);
-  stroke-width: 1.5;
+.tarjeta-cita-mapa .plano-pieza--mesa .pz-tinta {
+  stroke: color-mix(in srgb, var(--fonts-color-primary-weak, #bdbaba) 55%, transparent);
   stroke-dasharray: none;
+}
+
+.tarjeta-cita-mapa .pz-rotulo,
+.tarjeta-cita-mapa .pz-zona-nombre {
+  fill: var(--fonts-color-primary-weak, #bdbaba);
   opacity: 1;
 }
 
-.tarjeta-cita-mapa .mesa--seleccionada .mesa-etiqueta {
+.tarjeta-cita-mapa .pz-silla {
+  fill: transparent;
+  opacity: 0.6;
+}
+
+.tarjeta-cita-mapa .plano-mesa--elegida .pz-fondo {
+  fill: var(--tono);
+}
+
+.tarjeta-cita-mapa .plano-mesa--elegida .pz-tinta {
+  stroke: var(--tono);
+}
+
+.tarjeta-cita-mapa .plano-mesa--elegida .pz-rotulo {
   fill: var(--fonts-color-secondary, #121413);
+}
+
+.tarjeta-cita-mapa .plano-union {
+  stroke: var(--tono);
 }
 
 /* ---------- Total + sello ---------- */

@@ -62,8 +62,17 @@
   cursor: not-allowed;
 }
 
+/* No queda mesa para tu grupo a esa hora: apagada y con un trazo, sin
+   confundirse con "ya pasó". */
+.selector-horario-item--completa {
+  opacity: 0.45;
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
 .selector-horario-item--pasada:active,
-.selector-horario-item--ocupada:active {
+.selector-horario-item--ocupada:active,
+.selector-horario-item--completa:active {
   transform: none;
 }
 

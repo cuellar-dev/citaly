@@ -1,40 +1,53 @@
 import { useState } from 'react'
-import { ChevronRight, Footprints, Minus, Plus } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { ChevronRight, Footprints, Minus, PencilRuler, Plus } from 'lucide-react'
 import MapaMesas from '../../MapaMesas/MapaMesas.jsx'
 import ServiciosLocal from '../../DetalleLocal/ServiciosLocal.jsx'
 import { duracionTexto } from '../../../utils/fichaLocal.js'
 import {
   TOLERANCIAS,
   mesasDeLocal,
-  mesasParaGuardar,
   ofertaMesas,
   reservaMesaDe,
   textoCobroMesa,
 } from '../../../utils/mesas.js'
 import { Dato, Seccion } from './piezas.jsx'
+import { planoDeLocal, tienePlanoPropio } from '../../../plano/local.js'
+import { LIMITES, RASGOS, validarPlano, zonaDe } from '../../../plano/modelo.js'
+import { maxPersonas } from '../../../plano/reserva.js'
 import '../modalCatalogo.css'
 import '../negocioMesas.css'
 
 /* Hojas del dueño de un local de mesas:
    - mesas:       el plano y la lista. Tocar una mesa abre su ficha.
-   - mesa:        capacidad, dónde está y si se reserva por Citaly.
+   - mesa:        nombre, personas (mínimo, cómoda, apretados), cómo es y
+                  si se reserva por Citaly. El sitio en la sala se cambia en el
+                  editor (/negocio/plano/:id).
    - reservaMesa: cuánto cuesta reservar (lo mismo para todas las mesas). */
 
-const UBICACIONES = ['Junto a la ventana', 'Salón principal', 'Terraza', 'Junto a la barra', 'Junto a la entrada', 'En la esquina']
 const CONSUMOS = [0, 500, 1000, 1500, 2000]
-const MAX_CAPACIDAD = 12
 
 function mesasConEstado(local) {
   return mesasDeLocal(local).map((m) => ({ ...m, estado: m.online ? 'disponible' : 'calle' }))
 }
 
+/** "2 a 4 personas (hasta 6 apretados)" */
+function textoCapacidad(m) {
+  const base = m.capMin === m.capacidad ? `${m.capacidad}` : `${m.capMin} a ${m.capacidad}`
+  const tope = m.capMax > m.capacidad ? ` (hasta ${m.capMax} apretados)` : ''
+  return `${base} ${m.capacidad === 1 ? 'persona' : 'personas'}${tope}`
+}
+
 /* ---------- El plano ---------- */
 
 function ListaMesas({ local, onNavegar }) {
+  const navigate = useNavigate()
+  const plano = planoDeLocal(local)
   const mesas = mesasConEstado(local)
   const online = mesas.filter((m) => m.online)
   const asientos = mesas.reduce((t, m) => t + m.capacidad, 0)
-  const abrir = (mesa) => onNavegar({ tipo: 'mesa', id: mesa.id, titulo: mesa.codigo.replace('-', ' ') })
+  const abrir = (mesa) => onNavegar({ tipo: 'mesa', id: mesa.id, titulo: mesa.codigo })
+  const propio = tienePlanoPropio(local)
 
   return (
     <div className="modal-negocio-stack">
@@ -47,7 +60,7 @@ function ListaMesas({ local, onNavegar }) {
       <div className="mesas-plano" data-entra>
         <div className="mapa-mesas-container">
           <div className="mapa-mesas-viewport">
-            <MapaMesas mesas={mesas} editable onMesaClick={abrir} />
+            <MapaMesas plano={plano} mesas={mesas} editable onMesaClick={abrir} />
           </div>
         </div>
         <div className="mapa-mesas-leyenda-container">
@@ -60,20 +73,38 @@ function ListaMesas({ local, onNavegar }) {
             <p className="mapa-mesas-leyenda-texto">Solo en el local</p>
           </div>
         </div>
-        <p className="modal-negocio-nota">Toca una mesa en el plano para cambiarla.</p>
+        <p className="modal-negocio-nota">Toca una mesa para cambiar sus personas o quién la puede coger.</p>
       </div>
+
+      <button
+        type="button"
+        className="modal-negocio-accion-principal mesas-editar-sala"
+        data-entra
+        onClick={() => navigate(`/negocio/plano/${local.id}?volver=negocio`)}
+      >
+        <PencilRuler size={18} strokeWidth={2.3} aria-hidden="true" />
+        {propio ? 'Editar mi sala' : 'Dibujar mi sala'}
+      </button>
+      {!propio && (
+        <p className="modal-negocio-nota" data-entra>
+          Ahora tienes el plano de ejemplo. Dibuja el tuyo: mesas, barra, baños, terraza y hasta tres pisos.
+        </p>
+      )}
 
       <ul className="catalogo-lista" data-entra>
         {mesas.map((m) => (
           <li key={m.id}>
             <button type="button" className="catalogo-fila" onClick={() => abrir(m)}>
-              <span className={`mesas-ficha-forma mesas-ficha-forma--${m.tipo}${m.online ? '' : ' mesas-ficha-forma--calle'}`} aria-hidden="true">
+              <span
+                className={`mesas-ficha-forma mesas-ficha-forma--${m.tipo === 'mesa-redonda' ? 'circulo' : 'rectangulo'}${m.online ? '' : ' mesas-ficha-forma--calle'}`}
+                aria-hidden="true"
+              >
                 {m.capacidad}
               </span>
               <span className="catalogo-fila-textos">
-                <span className="catalogo-fila-titulo">{m.codigo.replace('-', ' ')}</span>
+                <span className="catalogo-fila-titulo">{m.codigo}</span>
                 <span className="catalogo-fila-meta">
-                  {m.capacidad} {m.capacidad === 1 ? 'asiento' : 'asientos'} · {m.ubicacion}
+                  {textoCapacidad(m)} · {m.ubicacion}
                 </span>
                 {!m.online && (
                   <span className="catalogo-quienes mesas-calle">
@@ -87,98 +118,133 @@ function ListaMesas({ local, onNavegar }) {
           </li>
         ))}
       </ul>
-      <p className="modal-negocio-nota" data-entra>
-        El dibujo del plano es el mismo para todos por ahora. Lo que cambias aquí es lo que tiene cada mesa.
-      </p>
     </div>
   )
 }
 
 /* ---------- Una mesa ---------- */
 
+function Paso({ etiqueta, valor, min, max, onCambiar, ayuda }) {
+  return (
+    <div className="mesas-rango-fila">
+      <span className="mesas-rango-etiqueta">
+        {etiqueta}
+        {ayuda && <small>{ayuda}</small>}
+      </span>
+      <div className="catalogo-paso">
+        <button type="button" aria-label={`${etiqueta}: una menos`} disabled={valor <= min} onClick={() => onCambiar(valor - 1)}>
+          <Minus size={18} strokeWidth={2.5} />
+        </button>
+        <output className="catalogo-paso-valor" aria-live="polite">
+          {valor}
+        </output>
+        <button type="button" aria-label={`${etiqueta}: una más`} disabled={valor >= max} onClick={() => onCambiar(valor + 1)}>
+          <Plus size={18} strokeWidth={2.5} />
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function FormMesa({ local, id, onGuardar, onNavegar }) {
-  const mesas = mesasDeLocal(local)
-  const actual = mesas.find((m) => m.id === id)
+  const plano = planoDeLocal(local)
+  const actual = plano.piezas.find((p) => p.id === id)
   const [form, setForm] = useState(() => ({
-    capacidad: actual?.capacidad ?? 2,
-    ubicacion: actual?.ubicacion ?? '',
+    nombre: actual?.nombre ?? '',
+    min: actual?.cap?.min ?? 1,
+    normal: actual?.cap?.normal ?? 2,
+    max: actual?.cap?.max ?? actual?.cap?.normal ?? 2,
     online: actual?.online ?? true,
+    rasgos: actual?.rasgos ?? [],
   }))
   const cambiar = (campo, valor) => setForm((f) => ({ ...f, [campo]: valor }))
 
   if (!actual) return null
 
-  const otrasOnline = mesas.filter((m) => m.id !== id && m.online).length
+  const otrasOnline = plano.piezas.filter((p) => p.id !== id && p.cap && p.online).length
+  const nombre = form.nombre.trim()
   let error = null
-  if (!form.ubicacion.trim()) error = 'Di dónde está la mesa: ayuda al cliente a elegir.'
+  if (!nombre) error = 'Ponle nombre a la mesa (por ejemplo «Mesa 4»).'
+  else if (plano.piezas.some((p) => p.id !== id && p.cap && p.nombre === nombre)) error = 'Ya hay otra mesa con ese nombre.'
   else if (!form.online && otrasOnline === 0) error = 'Deja al menos una mesa que se pueda reservar por Citaly.'
+
+  /* Los tres números siempre en orden: mínimo ≤ cómoda ≤ apretados. */
+  const ponerNormal = (n) => setForm((f) => ({ ...f, normal: n, min: Math.min(f.min, n), max: Math.max(f.max, n) }))
+  const ponerMin = (n) => setForm((f) => ({ ...f, min: Math.min(n, f.normal) }))
+  const ponerMax = (n) => setForm((f) => ({ ...f, max: Math.max(n, f.normal) }))
+  const alternarRasgo = (r) =>
+    cambiar('rasgos', form.rasgos.includes(r) ? form.rasgos.filter((x) => x !== r) : [...form.rasgos, r])
 
   const guardar = (e) => {
     e.preventDefault()
     if (error) return
-    const siguiente = mesas.map((m) => (m.id === id ? { ...m, ...form, ubicacion: form.ubicacion.trim() } : m))
-    onGuardar({ mesas: mesasParaGuardar(siguiente) }, { tipo: 'mesas' })
+    const siguiente = {
+      ...plano,
+      piezas: plano.piezas.map((p) =>
+        p.id === id
+          ? {
+              ...p,
+              nombre,
+              cap: { min: form.min, normal: form.normal, max: form.max > form.normal ? form.max : null },
+              online: form.online,
+              rasgos: form.rasgos,
+            }
+          : p,
+      ),
+    }
+    onGuardar({ plano: validarPlano(siguiente) }, { tipo: 'mesas' })
   }
 
-  const previa = mesasConEstado(local).map((m) =>
-    m.id === id ? { ...m, capacidad: form.capacidad, estado: form.online ? 'disponible' : 'calle' } : m,
-  )
+  const zona = zonaDe(plano, actual)
 
   return (
     <form className="modal-negocio-stack" onSubmit={guardar} noValidate>
       <div className="mesas-plano" data-entra>
         <div className="mapa-mesas-container">
           <div className="mapa-mesas-viewport">
-            <MapaMesas mesas={previa} mesaSeleccionada={actual} soloLectura />
+            <MapaMesas plano={plano} mesas={mesasConEstado(local)} mesaSeleccionada={{ id }} soloLectura />
           </div>
         </div>
       </div>
 
-      <Seccion titulo="Asientos">
-        <div className="catalogo-paso">
-          <button
-            type="button"
-            aria-label="Un asiento menos"
-            disabled={form.capacidad <= 1}
-            onClick={() => cambiar('capacidad', Math.max(1, form.capacidad - 1))}
-          >
-            <Minus size={18} strokeWidth={2.5} />
-          </button>
-          <output className="catalogo-paso-valor" aria-live="polite">
-            {form.capacidad} {form.capacidad === 1 ? 'persona' : 'personas'}
-          </output>
-          <button
-            type="button"
-            aria-label="Un asiento más"
-            disabled={form.capacidad >= MAX_CAPACIDAD}
-            onClick={() => cambiar('capacidad', Math.min(MAX_CAPACIDAD, form.capacidad + 1))}
-          >
-            <Plus size={18} strokeWidth={2.5} />
-          </button>
-        </div>
-      </Seccion>
-
-      <Seccion titulo="Dónde está">
+      <Seccion titulo="Nombre">
         <label className="modal-negocio-campo">
-          <span>Ubicación</span>
+          <span className="sr-only">Nombre de la mesa</span>
           <input
             className="modal-negocio-input"
-            value={form.ubicacion}
-            maxLength={32}
-            placeholder="Junto a la ventana"
-            onChange={(e) => cambiar('ubicacion', e.target.value)}
+            value={form.nombre}
+            maxLength={LIMITES.nombre}
+            placeholder="Mesa 4"
+            onChange={(e) => cambiar('nombre', e.target.value)}
           />
         </label>
-        <div className="modal-negocio-opciones" role="group" aria-label="Ubicaciones habituales">
-          {UBICACIONES.map((u) => (
+        <p className="modal-negocio-nota">
+          {zona ? `Está en la zona «${zona}».` : 'No está dentro de ninguna zona.'} La zona y el sitio se cambian al editar
+          la sala.
+        </p>
+      </Seccion>
+
+      <Seccion titulo="Cuántas personas">
+        <Paso etiqueta="Cómoda" ayuda="Lo normal en esta mesa" valor={form.normal} min={1} max={LIMITES.capacidad} onCambiar={ponerNormal} />
+        <Paso etiqueta="Mínimo" ayuda="Menos gente no la coge" valor={form.min} min={1} max={form.normal} onCambiar={ponerMin} />
+        <Paso etiqueta="Apretados" ayuda="El tope si no queda otra" valor={form.max} min={form.normal} max={LIMITES.capacidad} onCambiar={ponerMax} />
+        <p className="modal-negocio-nota">
+          El cliente no ve estos números: solo ve las mesas que le sirven. Si no queda ninguna cómoda para su grupo, le
+          ofrecemos las que admiten apretarse.
+        </p>
+      </Seccion>
+
+      <Seccion titulo="Cómo es">
+        <div className="modal-negocio-opciones" role="group" aria-label="Cómo es la mesa">
+          {RASGOS.map((r) => (
             <button
-              key={u}
+              key={r.id}
               type="button"
               className="modal-negocio-chip modal-negocio-chip--verde"
-              aria-pressed={form.ubicacion === u}
-              onClick={() => cambiar('ubicacion', u)}
+              aria-pressed={form.rasgos.includes(r.id)}
+              onClick={() => alternarRasgo(r.id)}
             >
-              {u}
+              {r.nombre}
             </button>
           ))}
         </div>
@@ -241,7 +307,7 @@ function FormReservaMesa({ local, onGuardar }) {
     gruposGrandes: form.gruposGrandes,
   }
   const previa = ofertaMesas({ ...local, reservaMesa: limpio }, Number(local.intervaloMinutos) || 60)
-  const mayor = Math.max(...mesasDeLocal(local).filter((m) => m.online).map((m) => m.capacidad))
+  const tope = maxPersonas(planoDeLocal(local))
 
   const guardar = (e) => {
     e.preventDefault()
@@ -338,19 +404,10 @@ function FormReservaMesa({ local, onGuardar }) {
         </p>
       </Seccion>
 
-      <Seccion titulo="Grupos grandes" extra={`Más de ${mayor}`}>
-        <div className="modal-negocio-segmentado modal-negocio-segmentado--tono mesas-segmentado--dos" role="group" aria-label="Grupos más grandes que la mesa mayor">
-          <button type="button" aria-pressed={form.gruposGrandes} onClick={() => cambiar('gruposGrandes', true)}>
-            Juntamos mesas
-          </button>
-          <button type="button" aria-pressed={!form.gruposGrandes} onClick={() => cambiar('gruposGrandes', false)}>
-            No aceptamos
-          </button>
-        </div>
+      <Seccion titulo="Grupos" extra={`Hasta ${tope}`}>
         <p className="modal-negocio-nota">
-          {form.gruposGrandes
-            ? `Un grupo de más de ${mayor} puede reservar igual; las mesas las juntáis al llegar.`
-            : `El cliente solo puede reservar hasta ${mayor} personas.`}
+          Los grupos grandes reservan mesas juntas: las que marcas como unibles al editar la sala. Así el cliente elige
+          dónde se sienta y no hay que cuadrar nada al llegar.
         </p>
       </Seccion>
 

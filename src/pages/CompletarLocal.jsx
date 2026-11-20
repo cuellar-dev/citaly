@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { Camera, Info, MapPinned, Plus, Star, Trash2, X } from 'lucide-react'
+import { Camera, Info, MapPinned, PencilRuler, Plus, Star, Trash2, X } from 'lucide-react'
 import Asistente from '../components/NuevoLocal/Asistente.jsx'
 import MapaPin from '../components/NuevoLocal/MapaPin.jsx'
 import MapaMesas from '../components/MapaMesas/MapaMesas.jsx'
@@ -11,6 +11,7 @@ import { actualizarMiLocal, getMiLocal, guardarSeleccion } from '../services/mis
 import { COMODIDADES, DIAS, aMinutos, horarioTexto, nuevoId } from '../utils/fichaLocal.js'
 import { comprimirFoto, errorDeFoto } from '../utils/imagenes.js'
 import { RESERVA_MESA_BASE, TOLERANCIAS } from '../utils/mesas.js'
+import { planoDeLocal, tienePlanoPropio } from '../plano/local.js'
 import { MAX, errorDescripcion, errorPrecio, errorServicioNombre, limpiar } from '../utils/validarLocal.js'
 
 /* Completar el local, segundo formulario: ya está aprobado y ahora se pide
@@ -680,12 +681,25 @@ function CompletarLocal() {
             <div className="campo">
               <span className="campo-label">Tu sala</span>
               <p className="campo-ayuda">
-                Empiezas con este plano de 7 mesas. Desde Mi Negocio → Mesas cambias las sillas de cada una y cuáles se
-                reservan. Pronto podrás dibujar tu propia sala.
+                {tienePlanoPropio(local)
+                  ? 'Así la verán tus clientes al reservar. Puedes cambiarla cuando quieras, también desde Mi Negocio.'
+                  : 'Dibuja tu sala: dónde está cada mesa, la barra, los baños… Tus clientes elegirán dónde sentarse. Son unos minutos y Taly te guía.'}
               </p>
               <div className="sala-muestra">
-                <MapaMesas soloLectura />
+                <MapaMesas plano={planoDeLocal(local)} soloLectura />
               </div>
+              <button
+                type="button"
+                className="sala-boton"
+                onClick={() => {
+                  /* Lo escrito en este paso se guarda antes de ir al editor. */
+                  if (!erroresDelPaso(paso, datos, tipoId).length) guardar(paso)
+                  navigate(`/negocio/plano/${id}?volver=completar`)
+                }}
+              >
+                <PencilRuler size={18} strokeWidth={2.3} aria-hidden="true" />
+                {tienePlanoPropio(local) ? 'Editar mi sala' : 'Diseñar mi sala'}
+              </button>
             </div>
           </>
         )}
@@ -831,24 +845,24 @@ function CompletarLocal() {
               {datos.urls.map((u, i) => {
                 const portada = (datos.url || datos.urls[0]) === u
                 return (
-                  <div className={`foto${portada ? ' foto--portada' : ''}`} key={i}>
+                  <div className={`fotol${portada ? ' fotol--portada' : ''}`} key={i}>
                     <button
                       type="button"
-                      className="foto-elegir"
+                      className="fotol-elegir"
                       aria-label={portada ? `Foto ${i + 1}, es la portada` : `Usar la foto ${i + 1} de portada`}
                       aria-pressed={portada}
                       onClick={() => cambiar('url', u)}
                     >
                       <img src={u} alt="" />
                       {portada && (
-                        <span className="foto-sello">
+                        <span className="fotol-sello">
                           <Star size={12} strokeWidth={2.8} aria-hidden="true" /> Portada
                         </span>
                       )}
                     </button>
                     <button
                       type="button"
-                      className="foto-quitar"
+                      className="fotol-quitar"
                       aria-label={`Quitar la foto ${i + 1}`}
                       onClick={() => {
                         setDatos((d) => ({ ...d, urls: d.urls.filter((_, j) => j !== i), url: d.url === u ? '' : d.url }))
@@ -860,7 +874,7 @@ function CompletarLocal() {
                 )
               })}
               {datos.urls.length < MAX_FOTOS && (
-                <button type="button" className="foto foto--subir" onClick={() => archivoRef.current?.click()} disabled={subiendo}>
+                <button type="button" className="fotol fotol--subir" onClick={() => archivoRef.current?.click()} disabled={subiendo}>
                   <Camera size={24} strokeWidth={2.1} aria-hidden="true" />
                   <span>{subiendo ? 'Subiendo…' : 'Añadir fotos'}</span>
                 </button>

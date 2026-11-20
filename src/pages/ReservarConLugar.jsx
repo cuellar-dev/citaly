@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Navigate, useNavigate, useParams } from 'react-router-dom'
 import { format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
-import { CalendarDays, LayoutGrid, Users, UsersRound } from 'lucide-react'
+import { CalendarDays, LayoutGrid, Users } from 'lucide-react'
 import IconoWhatsApp from '../components/IconoWhatsApp/IconoWhatsApp.jsx'
 import { getLocalById } from '../services/locales.js'
-import { cobroDeMesa, mesasDeLocal, reservaMesaDe } from '../utils/mesas.js'
+import { cobroDeMesa, reservaMesaDe } from '../utils/mesas.js'
 import { useCitas } from '../hooks/useCitas.js'
 import { useReserva } from '../hooks/useReserva.js'
 import ReservaShell, {
@@ -15,16 +15,31 @@ import ReservaShell, {
   VacioReserva,
 } from '../components/Reserva/ReservaShell.jsx'
 import PasoFechaHora from '../components/Reserva/PasoFechaHora.jsx'
-import MapaMesas from '../components/MapaMesas/MapaMesas.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
+import VisorPlano, { LeyendaPlano } from '../plano/VisorPlano.jsx'
+import FichaMesa, { OpcionesJuntas } from '../plano/FichaMesa.jsx'
+import { planoDeLocal } from '../plano/local.js'
+import { mesasDe, zonaDe } from '../plano/modelo.js'
+import { estadosMesas, maxPersonas, mesasOcupadas, opcionesParaGrupo } from '../plano/reserva.js'
+import { reservasMesaDemo } from '../data/reservasMesaDemo.js'
+import { generarHorarios } from '../utils/reservaHorarios.js'
 import '../components/Reserva/reserva.css'
 
-const PANEL_MESA_MS = 4000
-const GRUPO = 'grupo'
+/* Reservar mesa. Orden: cuántos van → día y hora → la mesa.
+
+   La hora va ANTES que la mesa: qué mesas (o qué mesas juntas) están libres
+   depende de la hora. Así el plano enseña la disponibilidad de verdad, y en
+   la agenda las horas sin sitio para el grupo salen como "completas".
+
+   Para un grupo se ofrece, por este orden y solo el primer nivel que tenga
+   algo (ver plano/reserva.js): mesa cómoda → mesa apretada → mesas juntas.
+   El cliente no ve los rangos de cada mesa; solo ve qué puede coger. */
 
 function formatearPrecio(precio) {
   return precio === 0 ? 'GRATIS' : `${precio} CUP`
 }
+
+const TOPE_BOTONES = 20
 
 function ReservarConLugar() {
   const { id } = useParams()
@@ -32,37 +47,37 @@ function ReservarConLugar() {
   const navigate = useNavigate()
   const { citas, agregarCita } = useCitas()
 
-  /* Todos los hooks antes de cualquier return: useReserva aguanta local nulo. */
-  const reserva = useReserva(local, citas)
+  const plano = useMemo(() => (local ? planoDeLocal(local) : null), [local])
+  /* Reservas del local para saber qué mesas están cogidas a cada hora: hoy,
+     las de demo más las del propio usuario. Con backend:
+     GET /api/local/:id/mesas-ocupadas (ver docs/pendientes-backend.md). */
+  const reservasLocal = useMemo(() => {
+    if (!local?.lugar) return []
+    const propias = citas.filter((c) => c.localId === id)
+    return [...reservasMesaDemo(local), ...propias]
+  }, [local, citas, id])
+
   const [personas, setPersonas] = useState(null)
-  const [mesaSeleccionada, setMesaSeleccionada] = useState(null)
-  const [mesaActiva, setMesaActiva] = useState(null)
-  const [panelVisible, setPanelVisible] = useState(false)
-  /* null | 'mesa' | 'grupo': guarda QUÉ se reservó, porque al confirmar se
-     limpian personas y mesa y la pantalla de éxito ya no podría saberlo. */
-  const [confirmada, setConfirmada] = useState(null)
-  const panelRef = useRef(null)
+  /* { tipo: 'mesa' | 'junta', id } */
+  const [seleccion, setSeleccion] = useState(null)
+  const [confirmada, setConfirmada] = useState(false)
   const refPersonas = useRef(null)
   const refMesa = useRef(null)
   const refFecha = useRef(null)
 
-  useEffect(() => {
-    if (!mesaActiva || !panelVisible) return undefined
+  /* Horas en las que no queda nada para este grupo: la agenda las apaga. */
+  const completasDe = useCallback(
+    (fecha) => {
+      if (!personas || !plano) return []
+      const dia = format(fecha, 'yyyy-MM-dd')
+      const horas = generarHorarios(local.horarioApertura, local.horarioCierre, local.intervaloMinutos)
+      return horas.filter((h) => !opcionesParaGrupo(plano, personas, mesasOcupadas(reservasLocal, dia, h)).nivel)
+    },
+    [personas, plano, reservasLocal, local],
+  )
 
-    const ocultar = () => setPanelVisible(false)
-    const timerAuto = setTimeout(ocultar, PANEL_MESA_MS)
-    const cerrarAlClick = (e) => {
-      if (panelRef.current?.contains(e.target)) return
-      ocultar()
-    }
-    const timerClick = setTimeout(() => document.addEventListener('click', cerrarAlClick), 0)
-
-    return () => {
-      clearTimeout(timerAuto)
-      clearTimeout(timerClick)
-      document.removeEventListener('click', cerrarAlClick)
-    }
-  }, [mesaActiva, panelVisible])
+  /* Todos los hooks antes de cualquier return: useReserva aguanta local nulo. */
+  const reserva = useReserva(local, citas, { completasDe })
 
   if (local && !local.lugar) {
     return <Navigate to={`/local/${id}/reservar-cita`} replace />
@@ -88,12 +103,8 @@ function ReservarConLugar() {
       <section className="reserva reserva--centrada">
         <TalyMomento
           escena="confirmacion"
-          titulo={confirmada === 'grupo' ? '¡Grupo reservado!' : '¡Mesa reservada!'}
-          texto={
-            confirmada === 'grupo'
-              ? `Tu hora en ${local.localName} ya está guardada. Las mesas las juntan ellos al llegar.`
-              : `Tu mesa en ${local.localName} ya está guardada. Taly la tendrá lista en Mis citas.`
-          }
+          titulo="¡Mesa reservada!"
+          texto={`Tu sitio en ${local.localName} ya está guardado. Taly lo tendrá listo en Mis citas.`}
           accion="Ver mis citas"
           onAccion={() => navigate('/citas')}
           accionSecundaria="Seguir explorando"
@@ -103,81 +114,93 @@ function ReservarConLugar() {
     )
   }
 
-  /* Las mesas con lo que el dueño cambió: las que guarda para la calle se
-     ven en el plano, pero no se pueden coger. */
-  const mesasLocal = mesasDeLocal(local).map((m) => (m.online ? m : { ...m, estado: 'calle' }))
-  const hayCalle = mesasLocal.some((m) => m.estado === 'calle')
-  /* La mesa más grande que se puede reservar. A partir de ahí hay que juntar
-     mesas, y eso se acuerda con el local, no se reserva desde aquí. */
-  const MAX_PERSONAS = Math.max(...mesasLocal.filter((m) => m.online).map((m) => m.capacidad))
+  const tope = maxPersonas(plano)
   const ajustes = reservaMesaDe(local)
   const configurado = Boolean(local.reservaMesa)
-  const esGrupo = personas === GRUPO
+  const mesas = mesasDe(plano)
+  const porId = new Map(mesas.map((m) => [m.id, m]))
 
-  function elegirPersonas(cantidad) {
-    setPersonas(cantidad)
-    /* Un grupo grande no va a una mesa suelta; y si la mesa marcada ya no da
-       para tanta gente, también se suelta. */
-    setMesaSeleccionada((prev) =>
-      cantidad !== GRUPO && prev && prev.capacidad >= cantidad ? prev : null,
-    )
-    setMesaActiva(null)
-    setPanelVisible(false)
+  const dia = reserva.fecha ? format(reserva.fecha, 'yyyy-MM-dd') : null
+  const ocupadas = dia && reserva.horario ? mesasOcupadas(reservasLocal, dia, reserva.horario) : new Set()
+  const hayHora = Boolean(reserva.horario)
+  const opciones = opcionesParaGrupo(plano, personas, ocupadas)
+  const estados = estadosMesas(plano, opciones, ocupadas, Boolean(personas && hayHora))
+
+  /* La selección solo vale si sigue entre las opciones de ahora (cambiar de
+     hora o de grupo puede dejarla fuera). Derivado, sin efectos. */
+  const juntaElegida =
+    seleccion?.tipo === 'junta' ? opciones.juntas.find((j) => j.id === seleccion.id) ?? null : null
+  const mesaElegida =
+    seleccion?.tipo === 'mesa' && opciones.nivel !== 'juntas' && opciones.mesas.includes(seleccion.id)
+      ? porId.get(seleccion.id)
+      : null
+  const elegidas = juntaElegida ? juntaElegida.mesas : mesaElegida ? [mesaElegida.id] : []
+  const mesasElegidas = elegidas.map((x) => porId.get(x)).filter(Boolean)
+  const hayMesa = elegidas.length > 0
+
+  function elegirPersonas(n) {
+    setPersonas(n)
+    setSeleccion(null)
   }
 
-  function alPulsarMesa(mesa) {
-    if (!personas || esGrupo) return
-    if (mesa.estado === 'ocupado' || mesa.estado === 'no-cabe' || mesa.estado === 'calle') return
-    if (mesa.capacidad < personas) return
-    setMesaActiva(mesa)
-    setPanelVisible(true)
-    setMesaSeleccionada(mesa)
+  function tocarMesa(idMesa) {
+    if (opciones.nivel === 'juntas') {
+      /* Tocar una mesa elige unas juntas que la incluyan; si ya estaba en
+         las elegidas y hay otra opción con ella, pasa a la siguiente. */
+      const conEsta = opciones.juntas.filter((j) => j.mesas.includes(idMesa))
+      if (!conEsta.length) return
+      const actual = conEsta.findIndex((j) => j.id === juntaElegida?.id)
+      setSeleccion({ tipo: 'junta', id: conEsta[(actual + 1) % conEsta.length].id })
+      return
+    }
+    if (opciones.mesas.includes(idMesa)) setSeleccion({ tipo: 'mesa', id: idMesa })
   }
 
   // ---- pasos -------------------------------------------------------------
 
-  const hechos = {
-    personas: personas != null,
-    /* Con grupo grande no hay mesa que marcar, pero el paso cuenta como
-       resuelto: la reserva se hace igual y las mesas las juntan en el local. */
-    mesa: esGrupo || mesaSeleccionada != null,
-    fecha: reserva.horario != null,
-  }
+  const hechos = { personas: personas != null, fecha: hayHora, mesa: hayMesa }
   const pasos = [
     { id: 'personas', label: 'Personas', completo: hechos.personas },
-    { id: 'mesa', label: 'Mesa', completo: hechos.mesa },
     { id: 'fecha', label: 'Día y hora', completo: hechos.fecha },
+    { id: 'mesa', label: 'Mesa', completo: hechos.mesa },
   ]
   const pasoActivo = pasos.findIndex((p) => !p.completo)
   const todoListo = pasoActivo === -1
 
   const mensaje = !hechos.personas
-    ? 'Dinos cuántos van y te enseñamos las mesas que caben'
-    : !hechos.mesa
-      ? 'Toca en el plano la mesa que más te guste'
-      : !hechos.fecha
-        ? 'Escoge el día y la hora'
+    ? 'Dinos cuántos van y te enseñamos lo que hay'
+    : !hechos.fecha
+      ? 'Escoge el día y la hora'
+      : !hechos.mesa
+        ? opciones.nivel === 'juntas'
+          ? 'Elige qué mesas te juntan'
+          : 'Toca en el plano la mesa que más te guste'
         : 'Todo listo, ya puedes confirmar'
 
   const falta = !hechos.personas
     ? 'Falta decir cuántos van'
-    : !hechos.mesa
-      ? 'Falta elegir la mesa'
-      : !hechos.fecha
-        ? 'Falta elegir la hora'
+    : !hechos.fecha
+      ? 'Falta elegir la hora'
+      : !hechos.mesa
+        ? 'Falta elegir la mesa'
         : null
 
+  const nombreElegida = mesasElegidas.map((m) => m.nombre).join(' + ')
+  const zonaElegida = mesasElegidas[0] ? zonaDe(plano, mesasElegidas[0]) || mesasElegidas[0].nota : null
+
   const resumenGuia = []
-  if (esGrupo) resumenGuia.push(`Más de ${MAX_PERSONAS}`)
-  else if (personas) resumenGuia.push(`${personas} ${personas === 1 ? 'persona' : 'personas'}`)
-  if (mesaSeleccionada?.codigo) resumenGuia.push(mesaSeleccionada.codigo)
+  if (personas) resumenGuia.push(`${personas} ${personas === 1 ? 'persona' : 'personas'}`)
   if (reserva.horario && reserva.fecha) {
     resumenGuia.push(`${format(reserva.fecha, 'EEE d', { locale: es })} · ${reserva.horario}`)
   }
+  if (hayMesa) resumenGuia.push(nombreElegida)
 
   const anclas = { personas: refPersonas, mesa: refMesa, fecha: refFecha }
-  const irAPaso = (idPaso) =>
-    anclas[idPaso]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const irAPaso = (idPaso) => anclas[idPaso]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+
+  /* Varias mesas juntas cuentan como UNA reserva: un solo cobro (hoy gratis). */
+  const cobro = hayMesa ? cobroDeMesa(local, mesasElegidas[0]) : { precio: 0, consumoMinimo: 0 }
+  const consumo = hayMesa && cobro.precio === 0 && cobro.consumoMinimo ? `${cobro.consumoMinimo} CUP a consumir` : null
 
   function confirmar() {
     if (!todoListo) return
@@ -188,30 +211,24 @@ function ReservarConLugar() {
       localNombre: local.localName,
       fecha: format(reserva.fecha, 'yyyy-MM-dd'),
       horario: reserva.horario,
-      /* Grupo grande: la reserva se guarda igual, sin mesa concreta. El local
-         junta mesas al llegar, y la cita queda marcada para que se vea. */
-      grupoGrande: esGrupo,
-      minimoPersonas: esGrupo ? MAX_PERSONAS : null,
-      mesa: esGrupo
-        ? null
-        : {
-            id: mesaSeleccionada.id,
-            codigo: mesaSeleccionada.codigo,
-            capacidad: mesaSeleccionada.capacidad,
-            ubicacion: mesaSeleccionada.ubicacion,
-          },
-      precioReserva: esGrupo ? 0 : cobroDeMesa(local, mesaSeleccionada).precio,
-      consumoMinimo: esGrupo ? null : cobroDeMesa(local, mesaSeleccionada).consumoMinimo || null,
-      personas: esGrupo ? null : personas,
+      mesa: {
+        id: elegidas[0],
+        /* Mesas juntas: todas las que ocupa. */
+        ids: elegidas.length > 1 ? elegidas : undefined,
+        codigo: nombreElegida,
+        capacidad: juntaElegida ? juntaElegida.cap.normal : mesaElegida.cap.normal,
+        ubicacion: zonaElegida,
+      },
+      precioReserva: cobro.precio,
+      consumoMinimo: cobro.consumoMinimo || null,
+      personas,
       estadoReserva: 0,
       creadaEn: new Date().toISOString(),
     })
     setPersonas(null)
-    setMesaSeleccionada(null)
-    setMesaActiva(null)
-    setPanelVisible(false)
+    setSeleccion(null)
     reserva.reiniciarFechaYHora()
-    setConfirmada(esGrupo ? 'grupo' : 'mesa')
+    setConfirmada(true)
   }
 
   const fechaTexto =
@@ -225,16 +242,24 @@ function ReservarConLugar() {
         ? format(reserva.fecha, "EEE d 'de' MMM", { locale: es })
         : null
 
-  const cobro = mesaSeleccionada ? cobroDeMesa(local, mesaSeleccionada) : { precio: 0, consumoMinimo: 0 }
-  const precioMesa = cobro.precio
-  const consumo = mesaSeleccionada && precioMesa === 0 && cobro.consumoMinimo ? `${cobro.consumoMinimo} CUP a consumir` : null
+  const botones = Math.min(tope, TOPE_BOTONES)
+  const sinNada = personas && hayHora && !opciones.nivel
+  const whatsapp = local.whatsapp ? `https://wa.me/${String(local.whatsapp).replace(/\D/g, '')}` : null
+
+  const leyenda = [
+    { id: 'libre', texto: opciones.nivel === 'juntas' ? 'Libre' : 'Para ti' },
+    ...(opciones.nivel === 'juntas' ? [{ id: 'opcion', texto: 'Se juntan' }] : []),
+    { id: 'ocupada', texto: 'Ocupada' },
+    { id: 'elegida', texto: 'La tuya' },
+    ...(mesas.some((m) => !m.online) ? [{ id: 'local', texto: 'Solo en el local' }] : []),
+  ]
 
   return (
     <ReservaShell
       volverA={`/local/${id}`}
       volverTexto={local.localName}
       titulo="Reservar mesa"
-      subtitulo={`Elige puesto, día y hora en ${local.localName}.`}
+      subtitulo={`Elige cuántos van, la hora y tu mesa en ${local.localName}.`}
       guia={{
         pasos,
         pasoActual: todoListo ? pasos.length : pasoActivo,
@@ -246,9 +271,9 @@ function ReservarConLugar() {
       barra={
         <BarraConfirmar
           etiqueta="Reserva"
-          valor={esGrupo ? 'GRATIS' : mesaSeleccionada ? formatearPrecio(precioMesa) : '—'}
-          nota={esGrupo ? 'Mesas a juntar' : consumo}
-          texto={esGrupo ? 'Reservar para el grupo' : 'Confirmar mesa'}
+          valor={hayMesa ? formatearPrecio(cobro.precio) : '—'}
+          nota={consumo}
+          texto={juntaElegida ? 'Reservar las mesas' : 'Confirmar mesa'}
           falta={falta}
           onConfirmar={confirmar}
         />
@@ -259,16 +284,12 @@ function ReservarConLugar() {
         numero={1}
         icono={Users}
         titulo="¿Cuántos van?"
-        descripcion={
-          configurado && !ajustes.gruposGrandes
-            ? `Hasta ${MAX_PERSONAS} personas por reserva. Te dejamos elegir solo entre las mesas con sitio para todos.`
-            : 'Te dejamos elegir solo entre las mesas con sitio para todos.'
-        }
+        descripcion={`De 1 a ${tope} personas. Te enseñamos solo lo que os sirve.`}
         hecho={hechos.personas}
         activo={pasoActivo === 0}
       >
         <div className="reserva-personas" role="group" aria-label="Cantidad de personas">
-          {Array.from({ length: MAX_PERSONAS }, (_, i) => i + 1).map((n) => (
+          {Array.from({ length: botones }, (_, i) => i + 1).map((n) => (
             <button
               key={n}
               type="button"
@@ -279,118 +300,29 @@ function ReservarConLugar() {
               {n}
             </button>
           ))}
-          {(!configurado || ajustes.gruposGrandes) && (
-            <button
-              type="button"
-              className={`reserva-persona reserva-persona--grupo${
-                esGrupo ? ' reserva-persona--activa' : ''
-              }`}
-              aria-pressed={esGrupo}
-              aria-label={`Más de ${MAX_PERSONAS} personas`}
-              onClick={() => elegirPersonas(GRUPO)}
-            >
-              +{MAX_PERSONAS}
-            </button>
-          )}
         </div>
-      </BloqueReserva>
-
-      <BloqueReserva
-        anclaRef={refMesa}
-        numero={2}
-        icono={LayoutGrid}
-        titulo="La mesa"
-        descripcion={
-          esGrupo
-            ? 'Un grupo así no cabe en una sola mesa.'
-            : personas
-              ? `Mesas para ${personas} ${personas === 1 ? 'persona' : 'personas'} o más.`
-              : 'Dinos primero cuántos van y se encienden las mesas que caben.'
-        }
-        hecho={hechos.mesa}
-        activo={pasoActivo === 1}
-        vacio={
-          esGrupo ? (
-            <VacioReserva
-              icono={UsersRound}
-              titulo="Mesas a juntar en el local"
-              texto={`La mesa más grande es de ${MAX_PERSONAS}. Puedes reservar igual: guardamos tu hora y en ${local.localName} juntan las mesas al llegar. Si quieres adelantarlo, escríbeles.`}
-            >
-              {local.whatsapp ? (
-                <a
-                  className="reserva-vacio-accion"
-                  href={`https://wa.me/${String(local.whatsapp).replace(/\D/g, '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <IconoWhatsApp size={16} />
-                  Escribirles por WhatsApp
-                </a>
-              ) : null}
-            </VacioReserva>
-          ) : null
-        }
-      >
-        <div className={`mapa-mesas-container${personas ? '' : ' mapa-mesas-container--apagado'}`}>
-          <div className="mapa-mesas-viewport">
-            <MapaMesas
-              mesas={mesasLocal}
-              mesaSeleccionada={mesaSeleccionada}
-              onMesaClick={alPulsarMesa}
-              capacidadMinima={personas ?? 0}
-            />
-          </div>
-          {mesaActiva && (
-            <div
-              ref={panelRef}
-              className={`mesa-info-panel mesa-info-panel--${mesaActiva.estado}${
-                panelVisible ? '' : ' mesa-info-panel--ocultando'
-              }`}
-              onTransitionEnd={(e) => {
-                if (e.propertyName === 'opacity' && !panelVisible) setMesaActiva(null)
-              }}
-              style={{ top: `${mesaActiva.posicion.y + 30}px`, left: `${mesaActiva.posicion.x}px` }}
-            >
-              <p className="mesa-info-panel-codigo">{mesaActiva.codigo}</p>
-              <div className="mesa-info-panel-datos-div">
-                <p className="mesa-info-panel-dato">{mesaActiva.ubicacion}</p>
-                <div className="mesa-info-panel-dato-separador" />
-                <p className="mesa-info-panel-dato">{mesaActiva.capacidad} asientos</p>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="mapa-mesas-leyenda-container">
-          <div className="mapa-mesas-leyenda">
-            <div className="mapa-mesas-leyenda-swatch mapa-mesas-leyenda-swatch--disponible" />
-            <p className="mapa-mesas-leyenda-texto">Libre</p>
-          </div>
-          <div className="mapa-mesas-leyenda">
-            <div className="mapa-mesas-leyenda-swatch mapa-mesas-leyenda-swatch--ocupado" />
-            <p className="mapa-mesas-leyenda-texto">Ocupada</p>
-          </div>
-          <div className="mapa-mesas-leyenda">
-            <div className="mapa-mesas-leyenda-swatch mapa-mesas-leyenda-swatch--seleccionado" />
-            <p className="mapa-mesas-leyenda-texto">La tuya</p>
-          </div>
-          {hayCalle && (
-            <div className="mapa-mesas-leyenda">
-              <div className="mapa-mesas-leyenda-swatch mapa-mesas-leyenda-swatch--calle" />
-              <p className="mapa-mesas-leyenda-texto">En el local</p>
-            </div>
-          )}
-        </div>
+        {whatsapp && (
+          <p className="reserva-nota-grupo">
+            ¿Sois más de {botones}?{' '}
+            <a href={whatsapp} target="_blank" rel="noopener noreferrer">
+              <IconoWhatsApp size={14} /> Escríbeles
+            </a>
+          </p>
+        )}
       </BloqueReserva>
 
       <BloqueReserva
         anclaRef={refFecha}
-        numero={3}
+        numero={2}
         icono={CalendarDays}
         titulo="Día y hora"
-        descripcion="Solo te mostramos los días en que abren y con hueco libre."
+        descripcion={
+          personas
+            ? 'Las horas apagadas no tienen sitio para tu grupo.'
+            : 'Solo te mostramos los días en que abren y con hueco libre.'
+        }
         hecho={hechos.fecha}
-        activo={pasoActivo === 2}
+        activo={pasoActivo === 1}
       >
         <PasoFechaHora
           agenda={reserva.agenda}
@@ -401,36 +333,82 @@ function ReservarConLugar() {
         />
       </BloqueReserva>
 
+      <BloqueReserva
+        anclaRef={refMesa}
+        numero={3}
+        icono={LayoutGrid}
+        titulo={opciones.nivel === 'juntas' ? 'Tus mesas' : 'La mesa'}
+        descripcion={
+          !personas || !hayHora
+            ? 'Con el grupo y la hora, se encienden las mesas que os sirven.'
+            : opciones.nivel === 'juntas'
+              ? `No hay una mesa sola para ${personas}, pero el local junta estas. Elige las que prefieras.`
+              : `Mesas libres a las ${reserva.horario} para ${personas} ${personas === 1 ? 'persona' : 'personas'}.`
+        }
+        hecho={hechos.mesa}
+        activo={pasoActivo === 2}
+        vacio={
+          sinNada ? (
+            <VacioReserva
+              icono={LayoutGrid}
+              titulo="A esa hora no queda sitio"
+              texto={`No hay mesa libre para ${personas} a las ${reserva.horario}. Prueba otra hora o escríbeles.`}
+            >
+              {whatsapp && (
+                <a className="reserva-vacio-accion" href={whatsapp} target="_blank" rel="noopener noreferrer">
+                  <IconoWhatsApp size={16} />
+                  Escribirles por WhatsApp
+                </a>
+              )}
+            </VacioReserva>
+          ) : null
+        }
+      >
+        <VisorPlano
+          plano={plano}
+          estados={estados}
+          elegidas={elegidas}
+          unir={Boolean(juntaElegida)}
+          onMesa={tocarMesa}
+          apagado={!personas || !hayHora}
+          titulo={`Plano de ${local.localName}`}
+        >
+          <LeyendaPlano items={leyenda} />
+        </VisorPlano>
+
+        {opciones.nivel === 'juntas' && hayHora && (
+          <OpcionesJuntas
+            juntas={opciones.juntas}
+            porId={porId}
+            elegida={juntaElegida?.id}
+            onElegir={(idJunta) => setSeleccion({ tipo: 'junta', id: idJunta })}
+            zonaDe={(m) => (m ? zonaDe(plano, m) || m.nota : null)}
+          />
+        )}
+
+        <FichaMesa mesas={mesasElegidas} zona={zonaElegida} personas={personas} />
+      </BloqueReserva>
+
       <BloqueReserva numero={4} titulo="Resumen" hecho={todoListo} activo={todoListo}>
         <ResumenReserva
           filas={[
             {
               etiqueta: 'Personas',
-              valor: esGrupo
-                ? `Más de ${MAX_PERSONAS}`
-                : personas
-                  ? `${personas} ${personas === 1 ? 'persona' : 'personas'}`
-                  : null,
-            },
-            {
-              etiqueta: 'Mesa',
-              valor: esGrupo
-                ? 'A cuadrar con el local'
-                : mesaSeleccionada
-                  ? `${mesaSeleccionada.codigo} · ${mesaSeleccionada.capacidad} asientos`
-                  : null,
-              nota: esGrupo ? 'Juntan mesas según disponibilidad' : mesaSeleccionada?.ubicacion,
+              valor: personas ? `${personas} ${personas === 1 ? 'persona' : 'personas'}` : null,
             },
             { etiqueta: 'Cuándo', valor: fechaTexto },
             {
+              etiqueta: juntaElegida ? 'Mesas' : 'Mesa',
+              valor: hayMesa ? nombreElegida : null,
+              nota: juntaElegida ? `Juntas${zonaElegida ? ` · ${zonaElegida}` : ''}` : zonaElegida,
+            },
+            {
               etiqueta: 'Reserva',
-              valor: mesaSeleccionada ? formatearPrecio(precioMesa) : '—',
+              valor: hayMesa ? formatearPrecio(cobro.precio) : '—',
               nota: consumo,
               fuerte: true,
             },
-            ...(configurado
-              ? [{ etiqueta: 'Si llegas tarde', valor: `Te guardan la mesa ${ajustes.tolerancia} min` }]
-              : []),
+            ...(configurado ? [{ etiqueta: 'Si llegas tarde', valor: `Te guardan la mesa ${ajustes.tolerancia} min` }] : []),
           ]}
         />
       </BloqueReserva>

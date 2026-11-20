@@ -1008,7 +1008,7 @@ select.campo-input:disabled {
   gap: 8px;
 }
 
-.foto {
+.fotol {
   position: relative;
   aspect-ratio: 1;
   overflow: hidden;
@@ -1016,7 +1016,7 @@ select.campo-input:disabled {
   background: var(--background-color-secondary, #1e2221);
 }
 
-.foto-elegir {
+.fotol-elegir {
   display: block;
   width: 100%;
   height: 100%;
@@ -1026,19 +1026,19 @@ select.campo-input:disabled {
   cursor: pointer;
 }
 
-.foto-elegir img {
+.fotol-elegir img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.foto--portada {
+.fotol--portada {
   outline: 3px solid var(--primary-color, #00c2ad);
   outline-offset: -3px;
 }
 
-.foto-sello {
+.fotol-sello {
   position: absolute;
   bottom: 6px;
   left: 6px;
@@ -1053,7 +1053,7 @@ select.campo-input:disabled {
   font-weight: 800;
 }
 
-.foto-quitar {
+.fotol-quitar {
   position: absolute;
   top: 5px;
   right: 5px;
@@ -1068,7 +1068,7 @@ select.campo-input:disabled {
   cursor: pointer;
 }
 
-.foto--subir {
+.fotol--subir {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1080,7 +1080,30 @@ select.campo-input:disabled {
   cursor: pointer;
 }
 
-.foto--subir:disabled {
+.fotol--subir:disabled {
   cursor: progress;
   opacity: 0.6;
+}
+/* Botón para abrir el editor de la sala desde el paso de reservas. */
+.sala-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 10px;
+  border: 1.5px solid var(--primary-color);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-texto);
+  font-family: var(--font-familyPrincipal);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sala-boton:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }

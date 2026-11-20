@@ -7,6 +7,7 @@ import './selectorHorario.css'
 const TITULO = {
   pasada: 'Esa hora ya pasó',
   ocupada: 'Ya tienes una reserva a esta hora aquí',
+  completa: 'A esa hora no queda mesa para tu grupo',
 }
 
 function SelectorHorario({ horas, horarioSeleccionado, onSeleccionar }) {
@@ -24,7 +25,7 @@ function SelectorHorario({ horas, horarioSeleccionado, onSeleccionar }) {
             aria-pressed={activo}
             aria-label={`${hora}${estado === 'pasada' ? ', ya pasó' : ''}${
               estado === 'ocupada' ? ', ya reservada por ti' : ''
-            }`}
+            }${estado === 'completa' ? ', no queda mesa para tu grupo' : ''}`}
             className={`selector-horario-item selector-horario-item--${estado}${
               activo ? ' selector-horario-item--activo' : ''
             }`}

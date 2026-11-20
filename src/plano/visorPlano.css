@@ -1,0 +1,270 @@
+.visor-plano {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.visor-leyenda-sillas {
+  font-weight: bold;
+}
+
+.visor-plano-marco {
+  position: relative;
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
+  border-radius: 20px;
+  background: var(--background-color-secondary, #1e2221);
+  padding: 10px;
+  overflow: hidden;
+}
+
+.visor-plano-lienzo {
+  display: flex;
+  justify-content: center;
+  /* La altura la pide la forma del plano; con tope para que en un móvil no
+     se coma la pantalla entera. */
+  max-height: 60dvh;
+}
+
+/* Ancho completo y alto por proporción; si el plano es muy alto, se topa y
+   el viewBox lo centra dentro (preserveAspectRatio "meet"). */
+.visor-plano-lienzo>.plano {
+  max-height: 60dvh;
+}
+
+.visor-plano-lienzo--sube {
+  animation: visor-sube 0.26s var(--ease-out, ease-out);
+}
+
+.visor-plano-lienzo--baja {
+  animation: visor-baja 0.26s var(--ease-out, ease-out);
+}
+
+@keyframes visor-sube {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes visor-baja {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+}
+
+.visor-plano--apagado .visor-plano-lienzo {
+  opacity: 0.45;
+  filter: saturate(0.6);
+  transition: opacity 0.3s ease;
+}
+
+.visor-plano-grande {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  border-radius: 12px;
+  background: var(--background-color-another, #252926);
+  color: var(--fonts-color-primary);
+  cursor: pointer;
+}
+
+.visor-plano-grande:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ---------- pisos ---------- */
+
+.visor-pisos {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.visor-piso {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+  min-height: 44px;
+  padding: 6px 14px;
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  border-radius: 14px;
+  background: transparent;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.visor-piso--activo {
+  border-color: color-mix(in srgb, var(--primary-color) 60%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+}
+
+.visor-piso-libres {
+  color: var(--fonts-color-primary-weak);
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.visor-piso:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* ---------- leyenda ---------- */
+
+.visor-leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyPrincipal);
+  font-size: 12.5px;
+}
+
+.visor-leyenda li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.visor-leyenda-silla {
+  width: 10px;
+  height: 6px;
+  border-radius: 2px;
+  border: 1px solid rgb(var(--tinte) / calc(0.3 * var(--tinte-fuerza)));
+  background: rgb(var(--tinte) / calc(0.16 * var(--tinte-fuerza)));
+}
+
+.visor-leyenda-muestra {
+  width: 14px;
+  height: 14px;
+  border-radius: 5px;
+  border: 1.5px solid var(--primary-texto);
+  background: color-mix(in srgb, var(--primary-color) 24%, transparent);
+}
+
+.visor-leyenda-muestra--ocupada {
+  border-color: rgb(var(--tinte) / 0.3);
+  background: rgb(var(--tinte) / 0.12);
+}
+
+.visor-leyenda-muestra--elegida {
+  border-color: var(--fonts-color-secondary, #121413);
+  background: var(--yellow-color, #ffd166);
+}
+
+.visor-leyenda-muestra--local {
+  border-style: dashed;
+  background: transparent;
+}
+
+.visor-leyenda-muestra--opcion {
+  border-color: var(--yellow-texto, #ffd166);
+  border-style: dashed;
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 20%, transparent);
+}
+
+/* ---------- a pantalla completa ---------- */
+
+.vista-grande {
+  position: fixed;
+  inset: 0;
+  z-index: 100001;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  background: var(--background-color, #121413);
+}
+
+.vista-grande-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vista-grande-titulo {
+  margin: 0;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyDrink);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.vista-grande-cerrar,
+.vista-grande-zoom button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  border-radius: 14px;
+  background: var(--background-color-secondary, #1e2221);
+  color: var(--fonts-color-primary);
+  cursor: pointer;
+}
+
+.vista-grande-zona {
+  flex: 1;
+  width: 100% !important;
+  min-height: 0;
+  border-radius: 20px;
+  background: var(--background-color-secondary, #1e2221);
+}
+
+.vista-grande-contenido {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.vista-grande-contenido>.plano {
+  max-height: 100%;
+}
+
+.vista-grande-zoom {
+  position: absolute;
+  right: 20px;
+  bottom: max(48px, calc(env(safe-area-inset-bottom) + 40px));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vista-grande-pista {
+  margin: 0;
+  text-align: center;
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyPrincipal);
+  font-size: 12.5px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .visor-plano-lienzo--sube,
+  .visor-plano-lienzo--baja {
+    animation: none;
+  }
+}

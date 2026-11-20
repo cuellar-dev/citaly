@@ -1,0 +1,160 @@
+.ficha-mesa {
+  display: flex;
+  margin-top: 10px;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  border: 1.5px solid color-mix(in srgb, var(--yellow-color, #ffd166) 55%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 9%, var(--background-color-secondary, #1e2221));
+  animation: ficha-mesa-entra 0.28s var(--ease-out, ease-out);
+}
+
+.ficha-mesa-icono {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: var(--yellow-color, #ffd166);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.ficha-mesa-cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ficha-mesa-nombre {
+  margin: 0;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyDrink);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.ficha-mesa-linea {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin: 0;
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ficha-mesa-linea span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ficha-mesa-nota {
+  margin: 0;
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13px;
+}
+
+.ficha-mesa-rasgos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ficha-mesa-rasgos li {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@keyframes ficha-mesa-entra {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* ---------- opciones de mesas juntas ---------- */
+
+.opciones-juntas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.opcion-junta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1.5px dashed color-mix(in srgb, var(--yellow-texto, #ffd166) 55%, transparent);
+  border-radius: 16px;
+  background: transparent;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.opcion-junta svg {
+  color: var(--yellow-texto, #ffd166);
+}
+
+.opcion-junta--elegida {
+  border-style: solid;
+  border-color: var(--yellow-color, #ffd166);
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 14%, transparent);
+}
+
+.opcion-junta-nombre {
+  flex: 1;
+}
+
+.opcion-junta-zona {
+  color: var(--fonts-color-primary-weak);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.opcion-junta:focus-visible {
+  outline: 2px solid var(--yellow-color, #ffd166);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ficha-mesa {
+    animation: none;
+  }
+}
+
+/* "¿Sois más? Escríbeles" bajo los botones de personas. */
+.reserva-nota-grupo {
+  margin: 10px 0 0;
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13px;
+}
+
+.reserva-nota-grupo a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--primary-texto);
+  font-weight: 700;
+  text-decoration: none;
+}

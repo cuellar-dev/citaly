@@ -1,0 +1,357 @@
+/* El plano a tinta. Los colores salen de las variables de la app, así que
+   sirve igual en el tema oscuro (tinta clara sobre noche) y en el claro
+   (tinta oscura sobre papel crema): --tinte cambia solo con el tema.
+
+   Los trazos no escalan (vector-effect): un plano grande o pequeño, en el
+   móvil o a pantalla completa, tiene siempre la misma pluma fina. */
+
+.plano {
+  --plano-tinta: rgb(var(--tinte) / calc(0.62 * var(--tinte-fuerza)));
+  --plano-tinta-suave: rgb(var(--tinte) / calc(0.3 * var(--tinte-fuerza)));
+  --plano-relleno: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
+  --plano-relleno-fuerte: rgb(var(--tinte) / calc(0.13 * var(--tinte-fuerza)));
+  --plano-libre: color-mix(in srgb, var(--primary-color) 24%, transparent);
+  --plano-libre-tinta: var(--primary-texto);
+  --plano-elegida: var(--yellow-color, #ffd166);
+
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* En el editor el suelo deja desplazar la página con el dedo; las piezas no:
+   al tocarlas se arrastran. */
+.plano--editar {
+  touch-action: pan-y pinch-zoom;
+}
+
+.plano--editar .plano-pieza {
+  touch-action: none;
+}
+
+.plano path,
+.plano rect,
+.plano circle,
+.plano ellipse {
+  vector-effect: non-scaling-stroke;
+}
+
+/* ---------- el local ---------- */
+
+.plano-suelo {
+  fill: color-mix(in srgb, var(--background-color-secondary, #1e2221) 90%, rgb(var(--tinte)) 10%);
+}
+
+.plano-contorno {
+  fill: none;
+  stroke: var(--plano-tinta);
+  stroke-width: 2.2px;
+  stroke-linejoin: round;
+}
+
+.plano-rejilla {
+  fill: rgb(var(--tinte) / calc(0.22 * var(--tinte-fuerza)));
+}
+
+.plano-rayas {
+  stroke: rgb(var(--tinte) / calc(0.16 * var(--tinte-fuerza)));
+  stroke-width: 1px;
+}
+
+.plano-recorte-texto {
+  fill: rgb(var(--tinte) / calc(0.42 * var(--tinte-fuerza)));
+  font-family: var(--font-familyPrincipal);
+  font-weight: 700;
+}
+
+/* ---------- trazos comunes ---------- */
+
+.pz-tinta {
+  fill: none;
+  stroke: var(--plano-tinta);
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.25s ease;
+}
+
+.pz-fondo {
+  fill: var(--plano-relleno);
+  transition: fill 0.25s ease;
+}
+
+.pz-fondo--fuerte {
+  fill: var(--plano-relleno-fuerte);
+}
+
+.pz-fondo--suave {
+  fill: rgb(var(--tinte) / calc(0.04 * var(--tinte-fuerza)));
+}
+
+.pz-detalle {
+  fill: none;
+  stroke: var(--plano-tinta-suave);
+  stroke-width: 1.2px;
+  stroke-linecap: round;
+}
+
+.pz-detalle--punteado {
+  stroke-dasharray: 2 4;
+}
+
+.pz-detalle--puerta {
+  stroke-dasharray: 3 3;
+}
+
+.pz-rayado {
+  stroke: rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  stroke-width: 1px;
+}
+
+.pz-rotulo {
+  fill: rgb(var(--tinte) / calc(0.9 * var(--tinte-fuerza)));
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.pz-rotulo--fuera {
+  fill: rgb(var(--tinte) / calc(0.62 * var(--tinte-fuerza)));
+  font-family: var(--font-familyPrincipal);
+}
+
+.pz-icono {
+  fill: var(--plano-tinta-suave);
+  stroke: var(--plano-tinta-suave);
+  stroke-width: 1px;
+}
+
+.pz-flecha {
+  fill: none;
+  stroke: var(--yellow-texto, #ffd166);
+  stroke-width: 1.8px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pz-suelo-entrada {
+  fill: color-mix(in srgb, var(--yellow-color, #ffd166) 16%, transparent);
+}
+
+.pz-cristal {
+  fill: color-mix(in srgb, var(--primary-color) 22%, transparent);
+}
+
+.pz-pared {
+  fill: var(--plano-tinta);
+  stroke: var(--plano-tinta);
+  stroke-width: 1px;
+}
+
+.pz-placa {
+  fill: var(--background-color-secondary, #1e2221);
+  opacity: 0.85;
+}
+
+.pz-planta ellipse {
+  fill: color-mix(in srgb, var(--primary-color) 45%, transparent);
+  stroke: var(--plano-tinta-suave);
+  stroke-width: 1px;
+}
+
+.pz-maceta {
+  fill: color-mix(in srgb, var(--yellow-color, #ffd166) 30%, transparent);
+}
+
+.pz-zona {
+  fill: color-mix(in srgb, var(--primary-color) 7%, transparent);
+}
+
+.pz-zona-borde {
+  fill: none;
+  stroke: color-mix(in srgb, var(--primary-texto) 50%, transparent);
+  stroke-width: 1.3px;
+  stroke-dasharray: 5 4;
+}
+
+.pz-zona-nombre {
+  fill: var(--primary-texto);
+  font-family: var(--font-familyPrincipal);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* ---------- mesas ---------- */
+
+.plano-pieza--mesa .pz-fondo {
+  fill: var(--plano-libre);
+}
+
+.plano-pieza--mesa .pz-tinta {
+  stroke: var(--plano-libre-tinta);
+  stroke-width: 1.7px;
+}
+
+.pz-silla,
+.pz-taburete {
+  fill: rgb(var(--tinte) / calc(0.16 * var(--tinte-fuerza)));
+  stroke: var(--plano-tinta-suave);
+  stroke-width: 1px;
+  transition: fill 0.25s ease;
+}
+
+.pz-banco {
+  fill: rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
+}
+
+/* Ocupada o no es para tu grupo: se apaga, sin desaparecer. */
+.plano-mesa--ocupada .pz-fondo,
+.plano-mesa--nocabe .pz-fondo,
+.plano-mesa--apagada .pz-fondo {
+  fill: rgb(var(--tinte) / calc(0.05 * var(--tinte-fuerza)));
+}
+
+.plano-mesa--ocupada .pz-tinta,
+.plano-mesa--nocabe .pz-tinta,
+.plano-mesa--apagada .pz-tinta {
+  stroke: var(--plano-tinta-suave);
+}
+
+.plano-mesa--ocupada .pz-rotulo,
+.plano-mesa--nocabe .pz-rotulo,
+.plano-mesa--apagada .pz-rotulo,
+.plano-mesa--ocupada .pz-silla,
+.plano-mesa--nocabe .pz-silla,
+.plano-mesa--apagada .pz-silla {
+  opacity: 0.4;
+}
+
+.plano-mesa--ocupada .pz-fondo {
+  fill: rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+}
+
+/* Solo en el local: trazo discontinuo, sin relleno. */
+.plano-mesa--local .pz-fondo {
+  fill: transparent;
+}
+
+.plano-mesa--local .pz-tinta {
+  stroke: color-mix(in srgb, var(--primary-texto) 70%, transparent);
+  stroke-dasharray: 4 3;
+}
+
+/* Mesas que se pueden juntar para el grupo. */
+.plano-mesa--opcion .pz-fondo {
+  fill: color-mix(in srgb, var(--plano-elegida) 20%, transparent);
+}
+
+.plano-mesa--opcion .pz-tinta {
+  stroke: var(--yellow-texto, #ffd166);
+  stroke-dasharray: 5 3;
+}
+
+/* La que eligió el cliente. */
+.plano-mesa--elegida .pz-fondo {
+  fill: var(--plano-elegida);
+}
+
+.plano-mesa--elegida .pz-tinta {
+  stroke: var(--fonts-color-secondary, #121413);
+  stroke-dasharray: none;
+  stroke-width: 2px;
+}
+
+.plano-mesa--elegida .pz-rotulo {
+  fill: var(--fonts-color-secondary, #121413);
+  opacity: 1;
+}
+
+.plano-mesa--elegida .pz-silla {
+  fill: color-mix(in srgb, var(--plano-elegida) 55%, transparent);
+  opacity: 1;
+}
+
+.plano-union {
+  fill: none;
+  stroke: var(--plano-elegida);
+  stroke-width: 2.4px;
+  stroke-dasharray: 2 5;
+  stroke-linecap: round;
+}
+
+/* ---------- tocar ---------- */
+
+.plano-toque {
+  fill: transparent;
+}
+
+.plano-pieza--tocable {
+  cursor: pointer;
+  outline: none;
+}
+
+.plano-pieza--tocable:focus-visible .pz-tinta,
+.plano--editar .plano-pieza:focus-visible .pz-tinta {
+  stroke: var(--plano-elegida);
+  stroke-width: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .plano-pieza--tocable:hover .pz-fondo {
+    fill: color-mix(in srgb, var(--primary-color) 38%, transparent);
+  }
+
+  .plano-pieza--tocable.plano-mesa--elegida:hover .pz-fondo {
+    fill: var(--plano-elegida);
+  }
+}
+
+/* ---------- editor ---------- */
+
+.plano--editar .plano-pieza {
+  cursor: grab;
+  outline: none;
+}
+
+.plano--editar .plano-pieza:active {
+  cursor: grabbing;
+}
+
+.plano-seleccion {
+  fill: none;
+  stroke: var(--plano-elegida);
+  stroke-width: 2px;
+  stroke-dasharray: 6 4;
+  pointer-events: none;
+}
+
+.plano-pieza--problema .pz-tinta,
+.plano-pieza--problema .pz-pared {
+  stroke: var(--rosa, #ef476f);
+  stroke-width: 2.4px;
+}
+
+.plano-icono {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* En la paleta el nombre ya va debajo del icono: sin rótulos dentro. */
+.plano-icono .pz-rotulo,
+.plano-icono .pz-zona-nombre {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pz-tinta,
+  .pz-fondo,
+  .pz-silla {
+    transition: none;
+  }
+}

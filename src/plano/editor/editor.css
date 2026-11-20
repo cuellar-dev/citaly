@@ -1,0 +1,657 @@
+/* El editor de la sala. Vive dentro del Asistente (pantalla a foco), así
+   que hereda su cabecera, su barra de progreso y a Taly abajo. Todo lo que
+   se toca mide al menos 44 px. */
+
+.editor-plano {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 12px;
+}
+
+.editor-plano--centrado {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.ed-nota {
+  margin: 0;
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ed-nota--aviso {
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 12%, transparent);
+  color: var(--fonts-color-primary);
+}
+
+.ed-aviso {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--rosa, #ef476f) 14%, transparent);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ed-subtitulo {
+  margin: 8px 0 0;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyDrink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ed-borrador {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ed-borrador button {
+  border: 0;
+  background: transparent;
+  color: var(--primary-texto);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- botones comunes ---------- */
+
+.ed-boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
+  border-radius: 14px;
+  background: var(--background-color-another, #252926);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ed-boton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ed-boton--peligro {
+  color: var(--rosa, #ef476f);
+}
+
+.ed-boton--principal {
+  width: 100%;
+  border: 0;
+  background: var(--primary-color);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.ed-boton:focus-visible,
+.ed-paleta-pieza:focus-visible,
+.ed-opcion:focus-visible,
+.ed-plantilla:focus-visible,
+.ed-chips button:focus-visible,
+.ed-segmentado button:focus-visible,
+.ed-paso-control button:focus-visible,
+.ed-cruceta button:focus-visible,
+.ed-historial button:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.ed-segmentado {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 16px;
+  background: var(--background-color-another, #252926);
+}
+
+.ed-segmentado button {
+  flex: 1;
+  min-height: 40px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ed-segmentado button[aria-pressed='true'] {
+  background: var(--primary-color);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.ed-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ed-chips button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ed-chips button[aria-pressed='true'] {
+  border-color: var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+  color: var(--primary-texto);
+}
+
+.ed-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyPrincipal);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.ed-campo input {
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid rgb(var(--tinte) / calc(0.16 * var(--tinte-fuerza)));
+  border-radius: 12px;
+  background: var(--background-color, #121413);
+  color: var(--fonts-color-primary);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ed-campo input:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 1px;
+}
+
+/* ---------- paso con − y + ---------- */
+
+.ed-paso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ed-paso-etiqueta {
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.ed-paso-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 14px;
+  background: var(--background-color-another, #252926);
+  padding: 3px;
+}
+
+.ed-paso-control button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--fonts-color-primary);
+  cursor: pointer;
+}
+
+.ed-paso-control button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ed-paso-control output {
+  min-width: 86px;
+  text-align: center;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+/* ---------- plantillas y opciones ---------- */
+
+.ed-plantillas,
+.ed-opciones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ed-opciones {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ed-opciones--formas {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ed-plantilla,
+.ed-opcion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 44px;
+  padding: 10px;
+  border: 1.5px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  border-radius: 18px;
+  background: var(--background-color-secondary, #1e2221);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.ed-plantilla:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.ed-plantilla[aria-checked='true'],
+.ed-opcion[aria-pressed='true'] {
+  border-color: var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 12%, var(--background-color-secondary, #1e2221));
+}
+
+.ed-plantilla strong,
+.ed-opcion strong {
+  font-size: 14px;
+}
+
+.ed-plantilla small,
+.ed-opcion small {
+  color: var(--fonts-color-primary-weak);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.ed-plantilla-dibujo,
+.ed-forma-dibujo {
+  display: block;
+  width: 100%;
+  margin-bottom: 4px;
+  pointer-events: none;
+}
+
+.ed-opcion--forma {
+  align-items: center;
+  text-align: center;
+}
+
+.ed-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ed-grupo legend {
+  margin-bottom: 8px;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyDrink);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.ed-pisos-nombres {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ed-lienzo-mini {
+  padding: 10px;
+  border-radius: 18px;
+  background: var(--background-color-secondary, #1e2221);
+}
+
+/* ---------- el lienzo ---------- */
+
+.ed-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+}
+
+.ed-historial {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.ed-historial button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  border-radius: 14px;
+  background: var(--background-color-another, #252926);
+  color: var(--fonts-color-primary);
+  cursor: pointer;
+}
+
+.ed-historial button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.ed-lienzo {
+  padding: 8px;
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
+  border-radius: 20px;
+  background: var(--background-color-secondary, #1e2221);
+}
+
+.lienzo > .plano {
+  max-height: 58dvh;
+}
+
+.lienzo--arrastrando {
+  cursor: grabbing;
+}
+
+/* ---------- paleta ---------- */
+
+.ed-paleta {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: 8px;
+}
+
+.ed-paleta-pieza {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-height: 84px;
+  padding: 10px 6px 8px;
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  border-radius: 16px;
+  background: var(--background-color-secondary, #1e2221);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-out, ease-out), border-color 0.2s ease;
+}
+
+.ed-paleta-pieza:active {
+  transform: scale(0.95);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ed-paleta-pieza:hover {
+    border-color: color-mix(in srgb, var(--primary-color) 55%, transparent);
+  }
+}
+
+.ed-paleta-icono {
+  display: block;
+  width: 44px;
+  height: 44px;
+}
+
+/* ---------- herramientas de la pieza elegida ---------- */
+
+.ed-herramientas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  border: 1.5px solid color-mix(in srgb, var(--yellow-color, #ffd166) 45%, transparent);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 6%, var(--background-color-secondary, #1e2221));
+  animation: ed-entra 0.22s var(--ease-out, ease-out);
+}
+
+.ed-herramientas-titulo {
+  margin: 0;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyDrink);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.ed-herramientas-titulo small {
+  color: var(--fonts-color-primary-weak);
+  font-family: var(--font-familyPrincipal);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.ed-herramientas-fila {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ed-herramientas-fila--botones {
+  flex-flow: row wrap;
+  align-items: center;
+}
+
+.ed-cruceta {
+  display: inline-flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.ed-cruceta button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 44px;
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  border-radius: 12px;
+  background: var(--background-color-another, #252926);
+  color: var(--fonts-color-primary);
+  cursor: pointer;
+}
+
+.ed-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
+}
+
+/* ---------- juntar ---------- */
+
+.ed-juntar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ed-sugerencias {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ed-sugerencia {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1.5px dashed color-mix(in srgb, var(--yellow-texto, #ffd166) 50%, transparent);
+  border-radius: 16px;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.ed-sugerencia button {
+  flex-shrink: 0;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--yellow-color, #ffd166);
+  color: var(--fonts-color-secondary, #121413);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ed-juntas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ed-junta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  border-radius: 16px;
+  background: var(--background-color-secondary, #1e2221);
+}
+
+.ed-junta-nombre {
+  margin: 0;
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ed-junta .ed-boton {
+  align-self: flex-start;
+}
+
+/* ---------- revisar ---------- */
+
+.ed-problemas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ed-problema {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-left: 4px solid var(--yellow-color, #ffd166);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 9%, transparent);
+  color: var(--fonts-color-primary);
+  font-family: var(--font-familyPrincipal);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.ed-problema--bloquea {
+  border-left-color: var(--rosa, #ef476f);
+  background: color-mix(in srgb, var(--rosa, #ef476f) 10%, transparent);
+}
+
+.ed-problema button {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgb(var(--tinte) / calc(0.16 * var(--tinte-fuerza)));
+  border-radius: 10px;
+  background: transparent;
+  color: var(--fonts-color-primary);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@keyframes ed-entra {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (max-width: 380px) {
+  .ed-opciones {
+    grid-template-columns: 1fr;
+  }
+
+  .ed-opciones--formas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ed-cruceta {
+    margin-left: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ed-herramientas {
+    animation: none;
+  }
+
+  .ed-paleta-pieza {
+    transition: none;
+  }
+}
