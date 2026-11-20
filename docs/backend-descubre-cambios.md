@@ -31,6 +31,7 @@ Fecha: 20 de noviembre de 2026. Hechos desde el lado del frontend para que la pa
 | 12 | `Utils/eventosDescubre.test.js` | **Nuevo** | 5 pruebas (`node --test`). |
 | 13 | `Jobs/Ranking.js` | Modificado | El job también recalcula el resumen de todos los locales. |
 | 14 | `App.js` | Modificado | CORS: añade `localhost:5174` y `localhost:4173` (solo desarrollo). |
+| 15 | `Models/LocalExposicionModel.js` | Modificado (2ª ronda) | "Estuvo arriba" = solo la primera pantalla (héroe, y 3 primeros de `abiertos` y `antojo-1`). Ver "Segunda ronda". |
 
 ---
 
@@ -207,6 +208,50 @@ No hay base de datos ni `node_modules` en el backend, así que:
 - `src/utils/ranking/exposicion.js`: suma la exposición global del backend a la del usuario (solo lo anterior al inicio del día, para que el orden no se mueva).
 
 Para usarlo: crear `.env` (o `.env.development.local`) con `VITE_API_URL=http://localhost:1234` (el puerto del backend) y arrancar los dos.
+
+---
+
+## Segunda ronda (20 nov 2026, tarde)
+
+Un solo cambio más en el backend, al revisar bugs de Descubre. **Tampoco se tocó `Database/`.**
+
+### 15. `Models/LocalExposicionModel.js`: qué cuenta como "estuvo arriba"
+
+**El bug:** `ultima_vez_top` contaba como "arriba" los 3 primeros de **cualquier** bloque. Descubre ahora tiene muchos bloques ("Más lugares" en trozos de 5 hasta el final de la página), y los 3 primeros de un trozo del fondo también contaban. Un local visto muy abajo perdía "novedad" al día siguiente como si hubiera estado en el héroe.
+
+**Ahora:** solo la primera pantalla. Una **vista** en el héroe (cualquier posición), o en las posiciones 0-2 de la fila de abiertos (`abiertos`) o de la primera lista (`antojo-1`). Es la misma regla que el front (`src/utils/ranking/exposicion.js`, `BLOQUES_ARRIBA`); si se cambia en un sitio hay que cambiarla en el otro.
+
+Antes (tras la primera ronda):
+
+```sql
+MAX(i.creado_en) FILTER (
+    WHERE i.tipo = 'vista'
+    AND (i.bloque = 'heroe' OR i.posicion < 3)
+),
+```
+
+Después:
+
+```sql
+MAX(i.creado_en) FILTER (
+    WHERE i.tipo = 'vista'
+    AND (
+        i.bloque = 'heroe'
+        OR (i.bloque IN ('abiertos', 'antojo-1') AND i.posicion < 3)
+    )
+),
+```
+
+Probado otra vez contra Postgres (PGlite con las 11 migraciones): una vista en el héroe marca `ultima_vez_top`; `node --check` sin errores.
+
+### Nombres de bloque que manda el front (para `impresiones.bloque`)
+
+Por si se quiere analizar en la BD: `heroe`, `abiertos`, `antojo-1`, `antojo-2`, `descubrir`, `mejores`, `cerca`, `guardaste`, `nuevos`, `capricho`, `mesa`, `cuidado`, `tarde`, `rutina`, `baratos` y `mas-1`, `mas-2`… Todos cumplen la validación `[w-]{1,40}` de `Utils/eventosDescubre.js`.
+
+### Lo que el front resolvió sin tocar el backend
+
+- **Todos los locales del seed salían como "nuevos"** (`fecha_alta` = el día que se cargaron). Ahora el front solo considera nuevo un local con **menos de 30 días y 3 opiniones o menos**: el arranque en frío es no tener opiniones. No hace falta cambiar la BD.
+- **La ubicación del usuario** para "Cerca de ti" se queda en el móvil y **no se manda nunca al backend**: no hace falta ningún endpoint.
 
 ---
 

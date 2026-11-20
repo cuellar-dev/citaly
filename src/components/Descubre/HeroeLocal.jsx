@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { distanciaATi } from '../../utils/distancia.js'
+import { getUbicacion } from '../../services/ubicacion.js'
 import { MapPin, Star } from 'lucide-react'
 import BotonFavorito from '../Favorito/BotonFavorito.jsx'
 import Foto from '../Foto/Foto.jsx'
@@ -66,9 +68,10 @@ function HeroeLocal({ local, etiqueta = 'El de hoy', prioridad = false, cargar =
               {cantidad > 0 ? <small>({cantidad})</small> : null}
             </span>
             <span>{local.categoria}</span>
-            {local.metros ? (
+            {distanciaATi(local, getUbicacion()) ? (
               <span className="heroe-local-lejos">
-                <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />A {local.metros} m
+                <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />
+                {distanciaATi(local, getUbicacion())}
               </span>
             ) : null}
           </p>

@@ -1,0 +1,82 @@
+/* Llamada "Cerca de ti": tarjeta ancha con Taly y un botón. */
+.llamada-cerca {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid rgb(var(--tinte) / calc(0.08 * var(--tinte-fuerza)));
+  border-radius: 20px;
+  background: var(--tarjeta-fondo);
+  text-align: left;
+}
+
+.llamada-cerca-taly {
+  width: 56px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.llamada-cerca-textos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.llamada-cerca h2 {
+  margin: 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.llamada-cerca p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.llamada-cerca-error {
+  color: var(--rojo-texto, #ff8a80) !important;
+}
+
+.llamada-cerca-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  margin-top: 4px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.14s var(--ease-out, ease-out);
+}
+
+.llamada-cerca-boton:active {
+  transform: scale(0.97);
+}
+
+.llamada-cerca-boton:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.llamada-cerca-boton:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .llamada-cerca-boton {
+    transition: none;
+  }
+}

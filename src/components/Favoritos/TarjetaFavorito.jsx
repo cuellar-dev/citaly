@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { distanciaATi } from '../../utils/distancia.js'
+import { getUbicacion } from '../../services/ubicacion.js'
 import { MapPin, Star } from 'lucide-react'
 import BotonFavorito from '../Favorito/BotonFavorito.jsx'
 import { estadoApertura, fraseDeLocal, notaLocal } from '../../utils/descubre.js'
@@ -17,7 +19,8 @@ import './tarjetaFavorito.css'
    cinta, hasta que te vayas. Así un toque sin querer se arregla con otro. */
 
 function TarjetaFavorito({ local, indice = 0, quitada = false }) {
-  const { id, localName, categoria, metros, url } = local
+  const { id, localName, categoria, url } = local
+  const lejos = distanciaATi(local, getUbicacion())
   const { nota, cantidad } = notaLocal(local)
   const puertas = estadoApertura(local)
   const frase = fraseDeLocal(local)
@@ -61,11 +64,11 @@ function TarjetaFavorito({ local, indice = 0, quitada = false }) {
 
           <p className="fav-meta">
             <span>{categoria}</span>
-            {metros ? (
+            {lejos ? (
               <>
                 <span className="fav-meta-punto" aria-hidden="true" />
                 <span className="fav-meta-lejos">
-                  <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />A {metros} m
+                  <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />{lejos}
                 </span>
               </>
             ) : null}

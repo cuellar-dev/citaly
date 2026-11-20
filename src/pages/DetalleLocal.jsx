@@ -1,4 +1,6 @@
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { distanciaATi } from '../utils/distancia.js'
+import { getUbicacion } from '../services/ubicacion.js'
 import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { ArrowLeft } from 'lucide-react'
@@ -137,7 +139,9 @@ function DetalleLocal() {
   const cifras = [
     oferta.length ? { valor: desde ?? 'Gratis', label: desde ? etiquetaDesde : 'Reserva' } : null,
     oferta.length ? { valor: oferta.length, label: etiquetaCuenta(tipo, oferta.length) } : null,
-    local.metros ? { valor: `${local.metros} m`, label: 'Distancia' } : null,
+    distanciaATi(local, getUbicacion())
+      ? { valor: distanciaATi(local, getUbicacion()).replace(/^A /, ''), label: 'De ti' }
+      : null,
   ].filter(Boolean)
 
   /* Solo opina quien ya tuvo una cita confirmada aquí (hoy o antes). */

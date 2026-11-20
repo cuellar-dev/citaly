@@ -155,6 +155,16 @@
   padding: 13px 14px 14px;
 }
 
+/* "Nuevo en Citaly", "Porque te gustan los bares"…: una línea, color de marca. */
+.tarjeta-motivo {
+  margin: 0 0 -4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--primary-texto, #00c2ad);
+  text-align: left;
+}
+
 .tarjeta-nota {
   display: flex;
   align-items: center;

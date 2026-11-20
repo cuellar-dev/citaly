@@ -1,4 +1,6 @@
 import { ChevronRight, Star } from 'lucide-react'
+import { distanciaATi } from '../../utils/distancia.js'
+import { getUbicacion } from '../../services/ubicacion.js'
 import { estadoApertura, notaLocal } from '../../utils/descubre.js'
 import Foto from '../Foto/Foto.jsx'
 
@@ -27,10 +29,10 @@ function LocalHorizontal({ local, onClick }) {
             <Star size={11} strokeWidth={2.6} aria-hidden="true" />
             {nota ? nota.toFixed(1) : '—'}
           </span>
-          {local.metros ? (
+          {distanciaATi(local, getUbicacion()) ? (
             <>
               <span className="local-horizontal-punto" aria-hidden="true" />
-              <span>A {local.metros} m</span>
+              <span>{distanciaATi(local, getUbicacion())}</span>
             </>
           ) : null}
         </span>

@@ -6,8 +6,13 @@
    ver una tarjeta cambiaría su novedad al instante y el orden se movería
    mientras el usuario mira, que es justo lo que la semilla evita. */
 
-/* "Arriba": el héroe o los 3 primeros de cualquier bloque. */
-const esTop = (e) => e.bloque === 'heroe' || Number(e.posicion) < 3
+/* "Arriba" = la primera pantalla: el héroe entero, y los 3 primeros de la
+   fila de abiertos y de la primera lista. Antes contaban los 3 primeros de
+   CUALQUIER bloque, también los del fondo de la página, y un local visto muy
+   abajo perdía novedad como si hubiera estado en el héroe. La misma regla está
+   en el backend (LocalExposicionModel). */
+export const BLOQUES_ARRIBA = new Set(['abiertos', 'antojo-1'])
+const esTop = (e) => e.bloque === 'heroe' || (BLOQUES_ARRIBA.has(e.bloque) && Number(e.posicion) < 3)
 
 export function exposicionDe(eventos, antesDe) {
   const limite = antesDe ? new Date(antesDe).getTime() : Infinity

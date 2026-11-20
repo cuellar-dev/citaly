@@ -10,7 +10,7 @@ import './tarjetaLocalCompacta.css'
 /* Versión de bolsillo para los carruseles. Solo lo que se lee de un vistazo
    mientras deslizas: foto, nombre, nota y si está abierto. */
 
-function TarjetaLocalCompacta({ local, distancia = null, imp }) {
+function TarjetaLocalCompacta({ local, distancia = null, etiqueta = null, imp }) {
   const { nota } = notaLocal(local)
   const puertas = estadoApertura(local)
   /* En Descubre la foto espera su turno (colaFotos.js); fuera, carga normal. */
@@ -38,6 +38,7 @@ function TarjetaLocalCompacta({ local, distancia = null, imp }) {
         ) : null}
         <span className="local-compacto-velo foto-velo" aria-hidden="true" />
         {puertas.abierto ? <span className="local-compacto-abierto">Abierto</span> : null}
+        {etiqueta ? <span className="local-compacto-etiqueta">{etiqueta}</span> : null}
         {distancia ? (
           <span className="local-compacto-distancia">
             <MapPin size={10} strokeWidth={2.6} aria-hidden="true" />

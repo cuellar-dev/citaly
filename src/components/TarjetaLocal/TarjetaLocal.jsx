@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { distanciaATi } from '../../utils/distancia.js'
+import { getUbicacion } from '../../services/ubicacion.js'
 import { MapPin, Quote, Star } from 'lucide-react'
 import BotonFavorito from '../Favorito/BotonFavorito.jsx'
 import Foto from '../Foto/Foto.jsx'
@@ -13,7 +15,9 @@ import './tarjetalocal.css'
    urgencia de venta. */
 
 function TarjetaLocal(local) {
-  const { id, localName, categoria, metros, url, direccion } = local
+  const { id, localName, categoria, url, direccion } = local
+  /* Distancia real a ti, solo si compartiste tu ubicación (services/ubicacion.js). */
+  const lejos = distanciaATi(local, getUbicacion())
   const { nota, cantidad, estimada } = notaLocal(local)
   const puertas = estadoApertura(local)
   const comodidades = comodidadesDe(local, 3)
@@ -55,11 +59,11 @@ function TarjetaLocal(local) {
               <h2>{localName}</h2>
               <p className="tarjeta-meta">
                 <span>{categoria}</span>
-                {metros ? (
+                {lejos ? (
                   <>
                     <span className="tarjeta-punto" aria-hidden="true" />
                     <span className="tarjeta-lejos">
-                      <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />A {metros} m
+                      <MapPin size={12} strokeWidth={2.4} aria-hidden="true" />{lejos}
                     </span>
                   </>
                 ) : null}
@@ -68,6 +72,8 @@ function TarjetaLocal(local) {
           </div>
 
           <div className="tarjeta-cuerpo">
+            {/* Por qué te sale (utils/ranking/motivos.js). Solo si hay uno claro. */}
+            {local.motivo ? <p className="tarjeta-motivo">{local.motivo}</p> : null}
             <div className="tarjeta-nota">
               <span className="tarjeta-estrellas" aria-hidden="true">
                 <span className="tarjeta-estrellas-fondo">

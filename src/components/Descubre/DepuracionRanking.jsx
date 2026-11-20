@@ -11,7 +11,7 @@ const pct = (n) => `${Math.round(n * 100)}%`
 
 function Fila({ c, i }) {
   const d = c.desglose
-  const marcas = [c.cuota && 'cuota', c.exploracion && 'explora', c.nuevo && 'nuevo'].filter(Boolean)
+  const marcas = [c.cuota && 'cuota', c.exploracion && 'explora', c.nuevo && 'nuevo', d.franja && 'franja'].filter(Boolean)
   return (
     <li>
       <span className="dbg-pos">{i + 1}</span>
@@ -81,7 +81,7 @@ function DepuracionRanking({ resultado, perfil }) {
                 {b.clave} <small>{b.titulo}</small>
               </h3>
               <ol>
-                {b.puntuados.map((c, i) => (
+                {(b.puntuados ?? []).map((c, i) => (
                   <Fila key={c.local.id} c={c} i={i} />
                 ))}
               </ol>

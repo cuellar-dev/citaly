@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { metrosATi } from '../utils/distancia.js'
+import { getUbicacion } from '../services/ubicacion.js'
 import { ArrowLeft, Clock, Footprints, Search, SlidersHorizontal, Trophy, X } from 'lucide-react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import TarjetaLocal from '../components/TarjetaLocal/TarjetaLocal.jsx'
@@ -104,10 +106,15 @@ function Busqueda() {
 
     /* "Te pudieran gustar": del mismo tipo que lo que estás mirando. Si no hay
        búsqueda, los más cercanos, que es la otra razón natural para ir. */
+    /* Cerca de verdad solo si compartiste tu ubicación (services/ubicacion.js);
+       antes ordenaba por un campo `metros` fijo que no sabía dónde estás. */
+    const ubicacion = getUbicacion()
     const categoriasVistas = new Set(resultados.map((l) => l.categoria))
     const afines = categoriasVistas.size
       ? libres().filter((local) => categoriasVistas.has(local.categoria))
-      : [...libres()].sort((a, b) => (Number(a.metros) || 0) - (Number(b.metros) || 0))
+      : ubicacion
+        ? [...libres()].sort((a, b) => (metrosATi(a, ubicacion) ?? Infinity) - (metrosATi(b, ubicacion) ?? Infinity))
+        : libres()
 
     const parecidos = tomar(afines, 6)
 
@@ -129,7 +136,7 @@ function Busqueda() {
       {
         id: 'parecidos',
         icono: Footprints,
-        eyebrow: categoriasVistas.size ? 'Del mismo estilo' : 'A un paso',
+        eyebrow: categoriasVistas.size ? 'Del mismo estilo' : ubicacion ? 'A un paso' : 'Para seguir mirando',
         titulo: 'Te pudieran gustar',
         locales: parecidos,
       },

@@ -109,11 +109,11 @@ const comodidadesPorCategoria = {
 
 /* Opiniones de relleno para los locales nuevos, según lo que son. Se reparten
    por id para que dos locales de la misma categoría no digan lo mismo. */
-const NOMBRES_OPINION = [
+export const NOMBRES_OPINION = [
   'Yoandri Pérez', 'Mailén Cruz', 'Alejandro Rivas', 'Dayami Hernández', 'Raidel Gómez',
   'Yaima Suárez', 'Osmany Díaz', 'Lisandra Morales', 'Ernesto Valdés', 'Yanet Ramos',
 ]
-const OPINIONES_POR_CATEGORIA = {
+export const OPINIONES_POR_CATEGORIA = {
   'Cafetería': ['El café sale en su punto y el sitio es tranquilo.', 'Buen desayuno y atención rápida.', 'Ideal para conversar un rato sin ruido.', 'Los dulces de la casa son lo mejor.'],
   'Restaurante': ['Comida abundante y bien sazonada.', 'Nos atendieron muy bien, volveremos.', 'El ambiente es familiar y los precios, justos.', 'Reservamos para seis y todo salió perfecto.'],
   'Bar': ['Buena música y tragos bien servidos.', 'Ambiente alegre, los fines de semana se llena.', 'El mojito es de los mejores del pueblo.', 'Atención amable y sitio limpio.'],

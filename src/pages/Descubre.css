@@ -254,6 +254,59 @@
    lista vertical): una retícula idéntica se vuelve predecible y el ojo deja
    de buscar. */
 
+/* Atajos (Todo, Comer, Cuidarte…): una fila de píldoras que se desliza. */
+.descubre-atajos {
+  display: flex;
+  gap: 8px;
+  margin: -6px 0 18px;
+  padding: 2px 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.descubre-atajos::-webkit-scrollbar {
+  display: none;
+}
+
+.descubre-atajo {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 15px;
+  border: 1px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--fonts-color-primary, #f0f0f0);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background-color 0.18s var(--ease-out, ease-out),
+    border-color 0.18s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
+}
+
+.descubre-atajo:active {
+  transform: scale(0.96);
+}
+
+.descubre-atajo--activo {
+  border-color: var(--primary-color, #00c2ad);
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+}
+
+.descubre-atajo:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .descubre-atajo {
+    transition: none;
+  }
+}
+
 .descubre-secciones {
   display: flex;
   flex-direction: column;

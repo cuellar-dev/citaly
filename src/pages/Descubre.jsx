@@ -20,7 +20,9 @@ import LlamadaOpinion from '../components/Ayuda/LlamadaOpinion.jsx'
 import { ListaEsqueleto } from '../components/Esqueletos/Esqueletos.jsx'
 import { getAllLocales } from '../services/locales.js'
 import { getFavoritos, FAVORITOS_EVENTO } from '../services/favoritos.js'
-import { construirDescubre } from '../utils/ranking/index.js'
+import { ATAJOS, construirDescubre } from '../utils/ranking/index.js'
+import { UBICACION_EVENTO, getUbicacion } from '../services/ubicacion.js'
+import LlamadaCerca from '../components/Descubre/LlamadaCerca.jsx'
 import { construirPerfil } from '../utils/ranking/perfil.js'
 import { conExposicionGlobal, exposicionDe } from '../utils/ranking/exposicion.js'
 import { inicioDelDia, semillaDelDia } from '../utils/ranking/semilla.js'
@@ -161,6 +163,17 @@ function Descubre() {
   /* Semilla del orden: por persona y día. Sin cuenta real todavía, la persona
      es el id anónimo de este navegador (services/identidad.js). */
   const semilla = useMemo(() => semillaDelDia(getAnonimoId(), ahora), [ahora])
+
+  /* Dónde estás, solo si lo activaste con "Ver lo que tengo cerca". */
+  const [ubicacion, setUbicacion] = useState(getUbicacion)
+  useEffect(() => {
+    const sync = () => setUbicacion(getUbicacion())
+    window.addEventListener(UBICACION_EVENTO, sync)
+    return () => window.removeEventListener(UBICACION_EVENTO, sync)
+  }, [])
+
+  /* Atajo de arriba (Comer, Cuidarte…): rehace el feed solo con eso. */
+  const [atajo, setAtajo] = useState(null)
   const resultado = useMemo(
     () =>
       construirDescubre({
@@ -170,12 +183,19 @@ function Descubre() {
         semilla,
         exposicion,
         favoritos,
+        ubicacion,
+        atajo,
       }),
-    [locales, perfil, ahora, semilla, exposicion, favoritos],
+    [locales, perfil, ahora, semilla, exposicion, favoritos, ubicacion, atajo],
   )
-  const { heroLista, abiertos, bloques } = resultado
+  const { heroLista, abiertos, bloques, motivos } = resultado
 
   const [cuantosBloques, setCuantosBloques] = useState(BLOQUES_INICIALES)
+  /* Con otro atajo el feed es otro: se vuelve a empezar por arriba. */
+  const elegirAtajo = (id) => {
+    setAtajo((actual) => (actual === id ? null : id))
+    setCuantosBloques(BLOQUES_INICIALES)
+  }
   const hayMas = cuantosBloques < bloques.length
   const mostrarMas = useCallback(
     () => setCuantosBloques((n) => Math.min(n + BLOQUES_POR_TANDA, bloques.length)),
@@ -309,13 +329,36 @@ function Descubre() {
           <h1>{saludo.titulo}</h1>
         </div>
 
+        {/* Atajos: el feed entero solo con un tipo de sitio. */}
+        <div className="descubre-atajos" role="group" aria-label="Ver solo">
+          <button
+            type="button"
+            className={`descubre-atajo${atajo === null ? ' descubre-atajo--activo' : ''}`}
+            aria-pressed={atajo === null}
+            onClick={() => elegirAtajo(null)}
+          >
+            Todo
+          </button>
+          {ATAJOS.map((a) => (
+            <button
+              key={a.id}
+              type="button"
+              className={`descubre-atajo${atajo === a.id ? ' descubre-atajo--activo' : ''}`}
+              aria-pressed={atajo === a.id}
+              onClick={() => elegirAtajo(a.id)}
+            >
+              {a.etiqueta}
+            </button>
+          ))}
+        </div>
+
         <div className="descubre-secciones" ref={seccionesRef}>
           {cargando ? <ListaEsqueleto cantidad={3} texto="Buscando lugares…" /> : null}
           {fuente.estado === 'vacio' ? (
             <p className="descubre-vacio">Todavía no hay lugares en tu zona. Vuelve pronto.</p>
           ) : null}
 
-          <CarruselHeroe locales={heroLista} />
+          <CarruselHeroe locales={heroLista} motivos={motivos} />
 
           {abiertos.length > 0 && (
             <RailDescubre titulo="Puedes ir ahora mismo" nota={`${abiertos.length} abiertos`}>
@@ -326,7 +369,9 @@ function Descubre() {
           )}
 
           {bloques.slice(0, cuantosBloques).map((bloque) =>
-            bloque.tipo === 'lista' ? (
+            bloque.tipo === 'cerca-cta' ? (
+              <LlamadaCerca key={bloque.clave} titulo={bloque.titulo} taly={bloque.taly} />
+            ) : bloque.tipo === 'lista' ? (
               <section className="descubre-lista" key={bloque.clave}>
                 {bloque.titulo && (
                   <header className="descubre-lista-cabecera">
@@ -336,14 +381,24 @@ function Descubre() {
                 )}
                 <div className="descubre-lista-items">
                   {bloque.items.map((local, i) => (
-                    <TarjetaLocal key={local.id} {...local} imp={{ bloque: bloque.clave, posicion: i }} />
+                    <TarjetaLocal
+                      key={local.id}
+                      {...local}
+                      motivo={motivos.get(local.id)}
+                      imp={{ bloque: bloque.clave, posicion: i }}
+                    />
                   ))}
                 </div>
               </section>
             ) : (
-              <RailDescubre key={bloque.clave} titulo={bloque.titulo} nota={bloque.nota}>
+              <RailDescubre key={bloque.clave} titulo={bloque.titulo} nota={bloque.nota} taly={bloque.taly}>
                 {bloque.items.map((local, i) => (
-                  <TarjetaLocalCompacta key={local.id} local={local} imp={{ bloque: bloque.clave, posicion: i }} />
+                  <TarjetaLocalCompacta
+                    key={local.id}
+                    local={local}
+                    etiqueta={bloque.etiquetas?.[local.id]}
+                    imp={{ bloque: bloque.clave, posicion: i }}
+                  />
                 ))}
               </RailDescubre>
             ),

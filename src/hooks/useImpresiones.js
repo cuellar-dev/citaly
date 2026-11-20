@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { enviarPendientes, getImpresiones, registrarEventos } from '../services/impresiones.js'
 
 /* Registra qué tarjetas de Descubre se ven y cuáles se tocan.
@@ -33,12 +33,17 @@ const datosDe = (el) => ({
 /** `clave` cambia cuando entran tarjetas nuevas (scroll infinito): se re-observa.
     `semilla` (la del día) viaja con cada evento para poder analizar el orden. */
 export function useImpresiones(raizRef, clave, { semilla } = {}) {
+  /* Lo ya contado en esta visita a Descubre. Vive fuera del efecto: el efecto
+     se rehace cada vez que el scroll infinito trae tarjetas nuevas y, con el
+     Set dentro, volvía a contar como vistas nuevas las que ya estaban en
+     pantalla. */
+  const vistasRef = useRef(new Set())
   useEffect(() => {
     const raiz = raizRef.current
     if (!raiz || typeof IntersectionObserver === 'undefined') return undefined
 
     const cola = []
-    const vistas = new Set()
+    const vistas = vistasRef.current
     const relojes = new Map()
     const vaciar = () => {
       registrarEventos(cola.splice(0))

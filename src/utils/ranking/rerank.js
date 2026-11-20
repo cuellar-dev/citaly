@@ -1,3 +1,4 @@
+import { notaDeComentarios } from '../fichaLocal.js'
 import { aleatorioCon, hashTexto } from './semilla.js'
 
 /* Paso 8 — Re-ranking (sección 12): lo que una puntuación no capta.
@@ -42,7 +43,12 @@ export function unoPorCategoria(ordenados, cuantos) {
 /* 12.2 Exploración ε-greedy: en cada hueco se tira un dado (con semilla, nunca
    Math.random). Con probabilidad ε = riesgo del bloque se coge el candidato
    MENOS mostrado en vez del mejor puntuado. Así un local bueno que aún nadie
-   ha visto tiene su oportunidad. */
+   ha visto tiene su oportunidad.
+
+   Solo se explora entre la mitad de arriba de lo que queda (un local malo no
+   salta por sorteo) y, si varios están igual de poco vistos (un usuario nuevo:
+   todos con 0), se elige uno al azar con el mismo dado. Antes se cogía el
+   primero del empate, que era el mejor puntuado: no exploraba nada. */
 export function llenarConExploracion(
   ordenados,
   huecos,
@@ -63,8 +69,10 @@ export function llenarConExploracion(
     let explora = false
     if (riesgo > 0 && dado() < riesgo && pendientes.length > 1) {
       const vistas = (c) => exposicion?.get(c.local.id)?.vistas ?? 0
-      const minimo = Math.min(...pendientes.map(vistas))
-      i = pendientes.findIndex((c) => vistas(c) === minimo)
+      const mitad = pendientes.slice(0, Math.max(2, Math.ceil(pendientes.length / 2)))
+      const minimo = Math.min(...mitad.map(vistas))
+      const empatados = mitad.map((c, j) => (vistas(c) === minimo ? j : -1)).filter((j) => j >= 0)
+      i = empatados[Math.floor(dado() * empatados.length)]
       explora = i !== 0
     }
     const [elegido] = pendientes.splice(i, 1)
@@ -76,12 +84,19 @@ export function llenarConExploracion(
 
 /* 12.3 Arranque en frío: un local recién dado de alta no tiene opiniones, así
    que la nota bayesiana lo deja en la media y nunca subiría. Se le guardan
-   huecos protegidos durante sus primeros 30 días. */
+   huecos protegidos durante sus primeros 30 días.
+
+   Además tiene que tener pocas opiniones (3 o menos): el arranque en frío es
+   justo eso, no tener opiniones. Un local con 10 opiniones ya no lo necesita,
+   aunque su fecha de alta sea reciente (pasa con los datos de prueba del
+   backend, donde todos tienen la fecha del día en que se cargaron). */
 export const DIAS_NUEVO = 30
+const MAX_OPINIONES_NUEVO = 3
 
 export function esNuevo(local, ahora) {
   const alta = local.fechaAlta ?? local.aprobadoEn
   if (!alta) return false
+  if (notaDeComentarios(local).cantidad > MAX_OPINIONES_NUEVO) return false
   const dias = (ahora.getTime() - new Date(alta).getTime()) / 86400000
   return dias >= 0 && dias < DIAS_NUEVO
 }

@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
+import { distanciaATi } from '../../utils/distancia.js'
+import { getUbicacion } from '../../services/ubicacion.js'
 import gsap from 'gsap'
 import { Link } from 'react-router-dom'
 import { ArrowLeft, Share2, Star } from 'lucide-react'
@@ -171,10 +173,10 @@ function HeroLocal({ local, fotos, estado, nota, cantidad, onCompartir, onAbrirF
           ) : (
             <span className="local-hero-nuevo">Nuevo en Citaly</span>
           )}
-          {local.metros ? (
+          {distanciaATi(local, getUbicacion()) ? (
             <>
               <span aria-hidden="true">·</span>
-              <span>A {local.metros} m</span>
+              <span>{distanciaATi(local, getUbicacion())}</span>
             </>
           ) : null}
         </p>

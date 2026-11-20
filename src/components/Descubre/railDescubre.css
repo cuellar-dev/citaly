@@ -44,3 +44,21 @@
 .rail-descubre-pista::-webkit-scrollbar {
   display: none;
 }
+/* Taly comentando la fila: una línea, pequeña, sin robar protagonismo. */
+.rail-descubre-taly {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -4px 0 0;
+  padding: 0 2px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+  text-align: left;
+}
+
+.rail-descubre-taly img {
+  width: 22px;
+  height: auto;
+  flex-shrink: 0;
+}

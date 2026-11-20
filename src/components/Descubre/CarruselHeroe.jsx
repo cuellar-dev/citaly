@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import HeroeLocal from './HeroeLocal.jsx'
 import { ColaFotosContext } from './colaFotos.js'
-import { estaAbierto } from '../../utils/fichaLocal.js'
 import { conexionHolgada } from '../../paginas.js'
 import './carruselHeroe.css'
 
@@ -27,7 +26,7 @@ function prefiereQuieto() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function CarruselHeroe({ locales = [] }) {
+function CarruselHeroe({ locales = [], motivos }) {
   const cola = useContext(ColaFotosContext)
   const [indice, setIndice] = useState(0)
   const [pausado, setPausado] = useState(false)
@@ -109,7 +108,10 @@ function CarruselHeroe({ locales = [] }) {
             >
               <HeroeLocal
                 local={local}
-                etiqueta={estaAbierto(local) ? 'Abierto ahora' : 'El mejor valorado'}
+                /* Por qué está aquí (utils/ranking/motivos.js); si no hay un motivo
+                   claro, una etiqueta neutra. Antes decía "El mejor valorado"
+                   aunque no lo fuera, y "Abierto ahora" repetía la píldora de al lado. */
+                etiqueta={motivos?.get(local.id) ?? 'Destacado hoy'}
                 prioridad={i === 0}
                 cargar={debeCargar(i)}
                 alListo={() => alListo(i)}

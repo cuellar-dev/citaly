@@ -1,4 +1,6 @@
 import { useId, useState } from 'react'
+import { distanciaATi } from '../../utils/distancia.js'
+import { getUbicacion } from '../../services/ubicacion.js'
 import { ChevronDown, ChevronRight, Clock, MapPin, Phone } from 'lucide-react'
 import IconoWhatsApp from '../IconoWhatsApp/IconoWhatsApp.jsx'
 import { DIAS, codigoDia, digitos, horarioDeLocal } from '../../utils/fichaLocal.js'
@@ -34,7 +36,7 @@ function InfoLocal({ local, estado }) {
       <span className="local-info-textos">
         <span className="local-info-titulo">{local.direccion}</span>
         <span className="local-info-valor">
-          {local.metros ? `A ${local.metros} m de ti · ` : ''}
+          {distanciaATi(local, getUbicacion()) ? `${distanciaATi(local, getUbicacion())} de ti · ` : ''}
           {conPunto ? 'cómo llegar' : 'abrir en Maps'}
         </span>
       </span>

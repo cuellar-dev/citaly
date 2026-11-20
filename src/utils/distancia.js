@@ -26,6 +26,19 @@ export function textoDistancia(metros) {
   return `${(km < 10 ? km.toFixed(1) : Math.round(km)).toString().replace('.', ',')} km`
 }
 
+/** Metros del usuario (`ubicacion`, de services/ubicacion.js) al local, o null. */
+export function metrosATi(local, ubicacion) {
+  if (!ubicacion || !tienePunto(local)) return null
+  return distanciaMetros(ubicacion, { lat: Number(local.lat), lng: Number(local.lng) })
+}
+
+/** "A 1,2 km" desde donde está el usuario, o null si no se sabe dónde está.
+    Sustituye al campo `metros` de la demo, que era un número fijo inventado. */
+export function distanciaATi(local, ubicacion) {
+  const metros = metrosATi(local, ubicacion)
+  return metros == null ? null : `A ${textoDistancia(metros)}`
+}
+
 /**
  * Los locales más cercanos a `local`, del más cerca al más lejos, cada uno con
  * su distancia en metros: [{ local, metros }]. Deja fuera al propio local, a
