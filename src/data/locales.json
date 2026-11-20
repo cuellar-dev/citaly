@@ -4,6 +4,8 @@
     "localName": "Al Medio",
     "categoria": "Restaurante",
     "metros": "100",
+    "lat": 21.95256,
+    "lng": -79.46476,
     "url": "https://plus.unsplash.com/premium_photo-1661883237884-263e8de8869b?q=80&w=889&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "urls": [
       "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -119,6 +121,8 @@
     "localName": "Sara",
     "categoria": "Peluquería",
     "metros": "400",
+    "lat": 22.08127,
+    "lng": -79.50333,
     "url": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "urls": [
       "https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -229,6 +233,8 @@
     "localName": "Itaka",
     "categoria": "Bar",
     "metros": "100",
+    "lat": 21.93293,
+    "lng": -79.4416,
     "url": "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=735&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     "urls": [
       "https://images.unsplash.com/photo-1597290282695-edc43d0e7129?q=80&w=1175&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -330,6 +336,8 @@
     "localName": "Grano y Nube",
     "categoria": "Cafetería",
     "metros": "60",
+    "lat": 21.92742,
+    "lng": -79.44283,
     "url": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800&auto=format&fit=crop",
@@ -425,6 +433,8 @@
     "localName": "El Rincón del Café",
     "categoria": "Cafetería",
     "metros": "197",
+    "lat": 21.9536,
+    "lng": -79.46152,
     "url": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800&auto=format&fit=crop",
@@ -528,6 +538,8 @@
     "localName": "Café del Parque",
     "categoria": "Cafetería",
     "metros": "334",
+    "lat": 22.07962,
+    "lng": -79.50196,
     "url": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=800&auto=format&fit=crop",
@@ -623,6 +635,8 @@
     "localName": "Sabor Criollo",
     "categoria": "Restaurante",
     "metros": "471",
+    "lat": 21.92802,
+    "lng": -79.44548,
     "url": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800&auto=format&fit=crop",
@@ -732,6 +746,8 @@
     "localName": "La Terraza de la Abuela",
     "categoria": "Restaurante",
     "metros": "608",
+    "lat": 21.92958,
+    "lng": -79.44191,
     "url": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800&auto=format&fit=crop",
@@ -833,6 +849,8 @@
     "localName": "Fogón Habanero",
     "categoria": "Restaurante",
     "metros": "745",
+    "lat": 22.07919,
+    "lng": -79.49652,
     "url": "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=800&auto=format&fit=crop",
@@ -942,6 +960,8 @@
     "localName": "Son y Ron",
     "categoria": "Bar",
     "metros": "882",
+    "lat": 21.93048,
+    "lng": -79.43948,
     "url": "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop",
@@ -1036,6 +1056,8 @@
     "localName": "La Bodeguita 23",
     "categoria": "Bar",
     "metros": "1019",
+    "lat": 21.92729,
+    "lng": -79.4444,
     "url": "https://images.unsplash.com/photo-1543007630-9710e4a00a20?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=800&auto=format&fit=crop",
@@ -1138,6 +1160,8 @@
     "localName": "Navaja de Oro",
     "categoria": "Barbería",
     "metros": "1156",
+    "lat": 21.95714,
+    "lng": -79.46323,
     "url": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=800&auto=format&fit=crop",
@@ -1231,6 +1255,8 @@
     "localName": "Caballero Fino",
     "categoria": "Barbería",
     "metros": "1293",
+    "lat": 22.08042,
+    "lng": -79.50363,
     "url": "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?q=80&w=800&auto=format&fit=crop",
@@ -1332,6 +1358,8 @@
     "localName": "Estilo y Tijera",
     "categoria": "Peluquería",
     "metros": "1430",
+    "lat": 21.92982,
+    "lng": -79.44042,
     "url": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?q=80&w=800&auto=format&fit=crop",
@@ -1425,6 +1453,8 @@
     "localName": "Glam Studio",
     "categoria": "Peluquería",
     "metros": "1567",
+    "lat": 21.91909,
+    "lng": -79.43102,
     "url": "https://images.unsplash.com/photo-1595476108010-b4d1f102b1b1?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1634449571010-02389ed0f9b0?q=80&w=800&auto=format&fit=crop",
@@ -1539,6 +1569,8 @@
     "localName": "Esmalte Perfecto",
     "categoria": "Uñas",
     "metros": "1704",
+    "lat": 22.07832,
+    "lng": -79.50195,
     "url": "https://images.unsplash.com/photo-1604654894610-df63bc536371?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1632345031435-8727f6897d53?q=80&w=800&auto=format&fit=crop",
@@ -1632,6 +1664,8 @@
     "localName": "Diva Nails",
     "categoria": "Uñas",
     "metros": "101",
+    "lat": 21.93099,
+    "lng": -79.44014,
     "url": "https://images.unsplash.com/photo-1604654894610-df63bc536371?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1632345031435-8727f6897d53?q=80&w=800&auto=format&fit=crop",
@@ -1733,6 +1767,8 @@
     "localName": "Fuerza Total",
     "categoria": "Gimnasio",
     "metros": "238",
+    "lat": 21.95546,
+    "lng": -79.46558,
     "url": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop",
@@ -1835,6 +1871,8 @@
     "localName": "Energym",
     "categoria": "Gimnasio",
     "metros": "375",
+    "lat": 22.07815,
+    "lng": -79.49814,
     "url": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?q=80&w=800&auto=format&fit=crop",
@@ -1980,6 +2018,8 @@
     "localName": "Verde Vivo",
     "categoria": "Comida saludable",
     "metros": "512",
+    "lat": 21.92869,
+    "lng": -79.4427,
     "url": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
@@ -2074,6 +2114,8 @@
     "localName": "Bowl and Co",
     "categoria": "Comida saludable",
     "metros": "649",
+    "lat": 21.93103,
+    "lng": -79.44181,
     "url": "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop",
@@ -2176,6 +2218,8 @@
     "localName": "Mirador Azul",
     "categoria": "Terraza",
     "metros": "786",
+    "lat": 21.92101,
+    "lng": -79.42726,
     "url": "https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop",
@@ -2270,6 +2314,8 @@
     "localName": "Sunset Deck",
     "categoria": "Terraza",
     "metros": "923",
+    "lat": 21.93216,
+    "lng": -79.44249,
     "url": "https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=800&auto=format&fit=crop",
@@ -2372,6 +2418,8 @@
     "localName": "Oasis Urbano",
     "categoria": "Spa",
     "metros": "1060",
+    "lat": 21.9595,
+    "lng": -79.46269,
     "url": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=800&auto=format&fit=crop",
@@ -2466,6 +2514,8 @@
     "localName": "Serenity Spa",
     "categoria": "Spa",
     "metros": "1197",
+    "lat": 22.08123,
+    "lng": -79.50316,
     "url": "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=800&auto=format&fit=crop",
@@ -2568,6 +2618,8 @@
     "localName": "Taller Creativo",
     "categoria": "Arte y talleres",
     "metros": "1334",
+    "lat": 22.07782,
+    "lng": -79.50097,
     "url": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?q=80&w=800&auto=format&fit=crop",
@@ -2663,6 +2715,8 @@
     "localName": "GamePoint",
     "categoria": "Ocio",
     "metros": "1471",
+    "lat": 21.92984,
+    "lng": -79.44452,
     "url": "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop",
@@ -2756,406 +2810,12 @@
     ]
   },
   {
-    "id": "clinica-dental-sonrie",
-    "localName": "Clínica Dental Sonríe",
-    "categoria": "Dentista",
-    "metros": "1608",
-    "url": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=800&auto=format&fit=crop",
-    "urls": [
-      "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?q=80&w=800&auto=format&fit=crop"
-    ],
-    "horario": "8AM - 4PM",
-    "horarioApertura": "08:00",
-    "horarioCierre": "16:00",
-    "intervaloMinutos": 30,
-    "dias": [
-      "l",
-      "m",
-      "x",
-      "j",
-      "v"
-    ],
-    "points": "4.7",
-    "direccion": "Centro, Sancti Spiritus",
-    "telefono": "+53 41 154343",
-    "whatsapp": "+53 5892101",
-    "descripcion": "Clínica dental con atención general y estética: limpieza, extracciones y blanqueamiento con cita.",
-    "iconos": [
-      {
-        "id": "parking"
-      },
-      {
-        "id": "snow"
-      },
-      {
-        "id": "no-cigarrete"
-      },
-      {
-        "id": "transfer"
-      }
-    ],
-    "opiniones": 3,
-    "lugar": false,
-    "servicios": [
-      {
-        "id": "consulta",
-        "nombre": "Consulta",
-        "precio": 500,
-        "duracion": 30
-      },
-      {
-        "id": "limpieza",
-        "nombre": "Limpieza dental",
-        "precio": 1200,
-        "duracion": 45
-      },
-      {
-        "id": "extraccion",
-        "nombre": "Extracción",
-        "precio": 900,
-        "duracion": 40
-      },
-      {
-        "id": "blanqueamiento",
-        "nombre": "Blanqueamiento",
-        "precio": 3500,
-        "duracion": 60
-      }
-    ],
-    "comentarios": [
-      {
-        "id": "1",
-        "nombre": "Dayana Ruiz",
-        "fecha": "2026-03-02",
-        "calificacion": 5,
-        "comentario": "Muy profesional y sin dolor. Explican todo antes de empezar.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
-      },
-      {
-        "id": "2",
-        "nombre": "Pavel Díaz",
-        "fecha": "2026-03-15",
-        "calificacion": 5,
-        "comentario": "Limpieza rápida y la clínica muy higiénica.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
-      },
-      {
-        "id": "3",
-        "nombre": "Aylen Mesa",
-        "fecha": "2026-03-28",
-        "calificacion": 4,
-        "comentario": "Buen trato, aunque la cita se atrasó un poco.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
-      }
-    ]
-  },
-  {
-    "id": "odontocenter",
-    "localName": "OdontoCenter",
-    "categoria": "Dentista",
-    "metros": "1745",
-    "url": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=800&auto=format&fit=crop",
-    "urls": [
-      "https://images.unsplash.com/photo-1609840114035-3c981b782dfe?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1629909613654-28e377c37b09?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1606811841689-23dfddce3e95?q=80&w=800&auto=format&fit=crop"
-    ],
-    "horario": "8AM - 4PM",
-    "horarioApertura": "08:00",
-    "horarioCierre": "16:00",
-    "intervaloMinutos": 30,
-    "dias": [
-      "l",
-      "m",
-      "x",
-      "j",
-      "v"
-    ],
-    "points": "4.3",
-    "direccion": "Kilo 12, Sancti Spiritus",
-    "telefono": "+53 41 156096",
-    "whatsapp": "+53 5895072",
-    "descripcion": "Clínica dental con atención general y estética: limpieza, extracciones y blanqueamiento con cita.",
-    "iconos": [
-      {
-        "id": "parking"
-      },
-      {
-        "id": "snow"
-      },
-      {
-        "id": "no-cigarrete"
-      },
-      {
-        "id": "transfer"
-      }
-    ],
-    "opiniones": 4,
-    "lugar": false,
-    "servicios": [
-      {
-        "id": "consulta",
-        "nombre": "Consulta",
-        "precio": 500,
-        "duracion": 30
-      },
-      {
-        "id": "limpieza",
-        "nombre": "Limpieza dental",
-        "precio": 1200,
-        "duracion": 45
-      },
-      {
-        "id": "extraccion",
-        "nombre": "Extracción",
-        "precio": 900,
-        "duracion": 40
-      },
-      {
-        "id": "blanqueamiento",
-        "nombre": "Blanqueamiento",
-        "precio": 3500,
-        "duracion": 60
-      }
-    ],
-    "comentarios": [
-      {
-        "id": "1",
-        "nombre": "Héctor Lima",
-        "fecha": "2026-03-15",
-        "calificacion": 5,
-        "comentario": "Limpieza rápida y la clínica muy higiénica.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
-      },
-      {
-        "id": "2",
-        "nombre": "Nuria Paz",
-        "fecha": "2026-03-28",
-        "calificacion": 4,
-        "comentario": "Buen trato, aunque la cita se atrasó un poco.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
-      },
-      {
-        "id": "3",
-        "nombre": "Yosvany Morales",
-        "fecha": "2026-04-09",
-        "calificacion": 3,
-        "comentario": "Correcto, pero los precios de estética son altos.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
-      },
-      {
-        "id": "4",
-        "nombre": "Lisandra Pérez",
-        "fecha": "2026-04-21",
-        "calificacion": 5,
-        "comentario": "Muy profesional y sin dolor. Explican todo antes de empezar.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
-      }
-    ]
-  },
-  {
-    "id": "patitas-felices",
-    "localName": "Patitas Felices",
-    "categoria": "Veterinaria",
-    "metros": "142",
-    "url": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=800&auto=format&fit=crop",
-    "urls": [
-      "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?q=80&w=800&auto=format&fit=crop"
-    ],
-    "horario": "8AM - 6PM",
-    "horarioApertura": "08:00",
-    "horarioCierre": "18:00",
-    "intervaloMinutos": 30,
-    "dias": [
-      "l",
-      "m",
-      "x",
-      "j",
-      "v",
-      "s"
-    ],
-    "points": "4.0",
-    "direccion": "Parque central, Cabaiguan",
-    "telefono": "+53 41 157849",
-    "whatsapp": "+53 5898043",
-    "descripcion": "Clínica veterinaria con consultas, vacunación, peluquería canina y cirugía menor.",
-    "iconos": [
-      {
-        "id": "parking"
-      },
-      {
-        "id": "snow"
-      },
-      {
-        "id": "transfer"
-      }
-    ],
-    "opiniones": 3,
-    "lugar": false,
-    "servicios": [
-      {
-        "id": "consulta-general",
-        "nombre": "Consulta general",
-        "precio": 400,
-        "duracion": 30
-      },
-      {
-        "id": "vacunacion",
-        "nombre": "Vacunación",
-        "precio": 600,
-        "duracion": 20
-      },
-      {
-        "id": "bano-peluqueria",
-        "nombre": "Baño y peluquería",
-        "precio": 800,
-        "duracion": 60
-      },
-      {
-        "id": "cirugia-menor",
-        "nombre": "Cirugía menor",
-        "precio": 2500,
-        "duracion": 90
-      }
-    ],
-    "comentarios": [
-      {
-        "id": "1",
-        "nombre": "Lisandra Pérez",
-        "fecha": "2026-03-28",
-        "calificacion": 4,
-        "comentario": "Buen servicio de baño, quedó precioso.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
-      },
-      {
-        "id": "2",
-        "nombre": "Ernesto Báez",
-        "fecha": "2026-04-09",
-        "calificacion": 3,
-        "comentario": "Atención correcta, aunque esperamos bastante.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
-      },
-      {
-        "id": "3",
-        "nombre": "María Rodríguez",
-        "fecha": "2026-04-21",
-        "calificacion": 5,
-        "comentario": "Trataron a mi perro con mucho cariño. Volveré sin duda.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
-      }
-    ]
-  },
-  {
-    "id": "vetcare",
-    "localName": "VetCare",
-    "categoria": "Veterinaria",
-    "metros": "279",
-    "url": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?q=80&w=800&auto=format&fit=crop",
-    "urls": [
-      "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?q=80&w=800&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?q=80&w=800&auto=format&fit=crop"
-    ],
-    "horario": "8AM - 6PM",
-    "horarioApertura": "08:00",
-    "horarioCierre": "18:00",
-    "intervaloMinutos": 30,
-    "dias": [
-      "l",
-      "m",
-      "x",
-      "j",
-      "v",
-      "s"
-    ],
-    "points": "4.3",
-    "direccion": "Colon, Sancti Spiritus",
-    "telefono": "+53 41 159602",
-    "whatsapp": "+53 5901014",
-    "descripcion": "Clínica veterinaria con consultas, vacunación, peluquería canina y cirugía menor.",
-    "iconos": [
-      {
-        "id": "parking"
-      },
-      {
-        "id": "snow"
-      },
-      {
-        "id": "transfer"
-      }
-    ],
-    "opiniones": 4,
-    "lugar": false,
-    "servicios": [
-      {
-        "id": "consulta-general",
-        "nombre": "Consulta general",
-        "precio": 400,
-        "duracion": 30
-      },
-      {
-        "id": "vacunacion",
-        "nombre": "Vacunación",
-        "precio": 600,
-        "duracion": 20
-      },
-      {
-        "id": "bano-peluqueria",
-        "nombre": "Baño y peluquería",
-        "precio": 800,
-        "duracion": 60
-      },
-      {
-        "id": "cirugia-menor",
-        "nombre": "Cirugía menor",
-        "precio": 2500,
-        "duracion": 90
-      }
-    ],
-    "comentarios": [
-      {
-        "id": "1",
-        "nombre": "Carlos López",
-        "fecha": "2026-04-09",
-        "calificacion": 3,
-        "comentario": "Atención correcta, aunque esperamos bastante.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
-      },
-      {
-        "id": "2",
-        "nombre": "Ana García",
-        "fecha": "2026-04-21",
-        "calificacion": 5,
-        "comentario": "Trataron a mi perro con mucho cariño. Volveré sin duda.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1527980965255-d3b416303d12?q=80&w=200&auto=format&fit=crop"
-      },
-      {
-        "id": "3",
-        "nombre": "Jorge Martínez",
-        "fecha": "2026-05-03",
-        "calificacion": 5,
-        "comentario": "La veterinaria explica todo con calma y paciencia.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
-      },
-      {
-        "id": "4",
-        "nombre": "Sofía Pérez",
-        "fecha": "2026-01-10",
-        "calificacion": 4,
-        "comentario": "Buen servicio de baño, quedó precioso.",
-        "imagenPerfil": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop"
-      }
-    ]
-  },
-  {
     "id": "tinta-negra-studio",
     "localName": "Tinta Negra Studio",
     "categoria": "Tatuajes",
     "metros": "416",
+    "lat": 21.92834,
+    "lng": -79.44188,
     "url": "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?q=80&w=800&auto=format&fit=crop",
@@ -3252,6 +2912,8 @@
     "localName": "Aguja Sagrada",
     "categoria": "Tatuajes",
     "metros": "553",
+    "lat": 22.07707,
+    "lng": -79.49921,
     "url": "https://images.unsplash.com/photo-1565058379802-bbe93b2f703a?q=80&w=800&auto=format&fit=crop",
     "urls": [
       "https://images.unsplash.com/photo-1611501275019-9b5cda994e8d?q=80&w=800&auto=format&fit=crop",

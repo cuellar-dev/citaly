@@ -716,6 +716,9 @@ function MiNegocio() {
 
   const ubicar = ({ lat, lng }) => {
     actualizarMiLocal(idLocal, { lat, lng })
+    /* Los locales de ejemplo no son del usuario: su punto se guarda como
+       cambio de ficha, igual que ocultarlos. */
+    saveFicha(idLocal, { lat, lng })
     recargar()
     setVersion((v) => v + 1)
   }

@@ -63,6 +63,18 @@ function ZonaLocal({ local, esEjemplo, onOcultar, onEliminar, onUbicar }) {
         </button>
       )}
 
+      {!falta && (
+        <button type="button" className="zona-local-fila" onClick={() => abrir('mapa')}>
+          <span className="zona-local-icono zona-local-icono--verde">
+            <MapPinned size={17} strokeWidth={2.2} aria-hidden="true" />
+          </span>
+          <span className="zona-local-textos">
+            <strong>{local.lat != null ? 'Cambiar su posición en el mapa' : 'Marcar su posición en el mapa'}</strong>
+            <span>Mueve el pin hasta la puerta. Con eso calculamos qué locales le quedan cerca.</span>
+          </span>
+        </button>
+      )}
+
       {local.oculto ? (
         <button type="button" className="zona-local-fila" onClick={() => abrir('mostrar')}>
           <span className="zona-local-icono zona-local-icono--verde">
@@ -190,7 +202,11 @@ function ZonaLocal({ local, esEjemplo, onOcultar, onEliminar, onUbicar }) {
 
         {modal === 'mapa' && (
           <div className="modal-negocio-stack">
-            <p className="zona-local-explica">Toca el mapa justo en la puerta, o arrastra el pin hasta ella.</p>
+            <p className="zona-local-explica">
+              {local.lat != null
+                ? 'Este es el punto de ahora. Toca el mapa en la puerta, o arrastra el pin hasta ella.'
+                : 'Toca el mapa justo en la puerta, o arrastra el pin hasta ella.'}
+            </p>
             <MapaPin
               centro={municipio ? { lat: municipio.lat, lng: municipio.lng, zoom: 15 } : { lat: 21.6, lng: -79.4, zoom: 6 }}
               valor={punto}

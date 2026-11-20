@@ -1,4 +1,4 @@
-.navbar{
+.navbar {
   /* Un color por seccion. Cambia solo estos cuatro para repintar toda la barra. */
   --nav-color-descubre: var(--primary-color);
   --nav-color-citas: var(--yellow-color);
@@ -20,11 +20,13 @@
   position: sticky;
   bottom: 0;
   z-index: 99999;
-  margin: 0;
+  /* Al llegar a su ancho máximo, la barra se centra en la pantalla. */
+  margin: 0 auto;
   padding: 10px 0;
+  max-width: 500px;
 }
 
-.navbar-pista{
+.navbar-pista {
   display: grid;
   grid-template-columns: repeat(var(--nav-total, 4), 1fr);
   position: relative;
@@ -32,7 +34,7 @@
 }
 
 /* Capa que se desliza (GSAP mueve xPercent). Solo transforms: va al compositor. */
-.navbar-indicador{
+.navbar-indicador {
   position: absolute;
   top: 0;
   left: 0;
@@ -45,7 +47,7 @@
 }
 
 /* Pildora plana detras del icono */
-.navbar-indicador-pill{
+.navbar-indicador-pill {
   position: absolute;
   top: 0;
   width: var(--nav-pill-ancho);
@@ -55,7 +57,7 @@
 }
 
 /* Linea de luz en el borde superior de la barra, acompaña a la pildora */
-.navbar-indicador-luz{
+.navbar-indicador-luz {
   position: absolute;
   top: -10px;
   width: 44px;
@@ -65,7 +67,7 @@
   box-shadow: 0 3px 12px color-mix(in srgb, var(--nav-color-activo) 60%, transparent);
 }
 
-.navbar-enlace{
+.navbar-enlace {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -78,10 +80,12 @@
   -webkit-tap-highlight-color: transparent;
   transition: color 0.35s ease;
 }
-.navbar-enlace.active{
+
+.navbar-enlace.active {
   color: var(--nav-color);
 }
-.navbar-enlace:focus-visible{
+
+.navbar-enlace:focus-visible {
   outline: 2px solid var(--nav-color);
   outline-offset: -2px;
   border-radius: 14px;
@@ -89,27 +93,30 @@
 
 /* GSAP anima el translateY de .navbar-icono; el :active va en la capa interna
    para que el inline style de GSAP no lo pise. */
-.navbar-icono{
+.navbar-icono {
   width: var(--nav-pill-ancho);
   height: var(--nav-pill-alto);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.navbar-icono-pulsa{
+
+.navbar-icono-pulsa {
   display: flex;
   transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.navbar-enlace:active .navbar-icono-pulsa{
+
+.navbar-enlace:active .navbar-icono-pulsa {
   transform: scale(0.86);
 }
-.navbar-icono svg{
+
+.navbar-icono svg {
   width: 22px;
   height: 22px;
   display: block;
 }
 
-.navbar-etiqueta{
+.navbar-etiqueta {
   margin: 0;
   font-size: 10px;
   font-weight: 600;
@@ -132,18 +139,23 @@
   border-top: 1px solid rgb(var(--tinte) / 0.07);
   box-shadow: 0 -6px 20px rgb(var(--sombra) / 0.08);
 }
+
 :root[data-tema='claro'] .navbar-enlace {
   color: color-mix(in srgb, var(--fonts-color-primary) 72%, transparent);
 }
+
 :root[data-tema='claro'] .navbar-enlace.active {
   color: var(--nav-icono-activo);
 }
+
 :root[data-tema='claro'] .navbar-enlace:focus-visible {
   outline-color: var(--nav-icono-activo);
 }
+
 :root[data-tema='claro'] .navbar-indicador-pill {
   background-color: var(--nav-color-activo);
 }
+
 /* El brillo de la línea superior quedaba como un bloque oscuro saliendo de
    la barra: de día es más fino y apenas sombreado. */
 :root[data-tema='claro'] .navbar-indicador-luz {

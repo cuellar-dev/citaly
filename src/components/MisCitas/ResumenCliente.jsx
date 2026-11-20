@@ -44,8 +44,6 @@ const TU_SITIO = {
   Peluquería: 'Tu peluquería',
   Barbería: 'Tu barbería',
   Uñas: 'Tu sitio de uñas',
-  Dentista: 'Tu dentista',
-  Veterinaria: 'Tu veterinaria',
 }
 
 function haceCuanto(fecha) {

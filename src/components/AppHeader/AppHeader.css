@@ -3,7 +3,8 @@
   top: 0;
   z-index: 100;
   width: 100%;
-  padding: max(12px, env(safe-area-inset-top)) 20px 14px;
+  /* Solo alto: 8 px arriba y abajo (antes 12 y 14). Lo de dentro no cambia. */
+  padding: max(8px, env(safe-area-inset-top)) 20px 8px;
   /* Degradado en vez de un bloque plano con línea: arranca más oscuro que
      antes y muere exactamente en el fondo de la app, así el header deja de
      tener un corte y se funde con la página. Por eso ya no hay border-bottom:

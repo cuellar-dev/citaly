@@ -8,7 +8,7 @@ import { esCitaPasada } from './citasVista.js'
 
 /* Modo «confianza» de docs/descubre-ranking.md: se busca uno y se queda.
    Interno, nunca se enseña esta palabra al usuario. */
-const CATEGORIAS_CONFIANZA = new Set(['Peluquería', 'Barbería', 'Uñas', 'Dentista', 'Veterinaria'])
+const CATEGORIAS_CONFIANZA = new Set(['Peluquería', 'Barbería', 'Uñas'])
 
 const DIAS = ['domingos', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábados']
 

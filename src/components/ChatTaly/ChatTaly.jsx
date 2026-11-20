@@ -10,7 +10,7 @@ import './chatTaly.css'
 const CLAVE = 'citaly_chat_taly'
 const SUGERENCIAS = [
   'Busco barbería para mañana',
-  '¿Qué dentistas hay?',
+  '¿Qué spas hay?',
   'Quiero hacerme las uñas',
   '¿Qué puedes hacer?',
 ]

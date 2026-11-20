@@ -1,0 +1,12 @@
+/* La fila sangra hasta el borde de la pantalla (el cuerpo de la ficha lleva
+   16 px de margen) para que la tarjeta cortada del final invite a deslizar. */
+.detalle-local-cercanos .rail-descubre-pista {
+  margin-inline: -16px;
+  padding-inline: 18px;
+  /* Sin esto el encaje del scroll pega la primera tarjeta al borde. */
+  scroll-padding-inline: 18px;
+}
+
+.detalle-local-cercanos .rail-descubre-cabecera h2 {
+  font-size: 1.35rem;
+}

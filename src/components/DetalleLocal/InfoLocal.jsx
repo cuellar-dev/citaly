@@ -18,8 +18,8 @@ const NOMBRE_DIA = {
   d: 'Domingo',
 }
 
-/* Lo práctico, al final: cuándo abren, cómo llegar, cómo hablarles y qué
-   comodidades tiene el sitio. */
+/* Lo práctico: cuándo abren, qué comodidades tiene el sitio (wifi, parqueo…,
+   lo que más pesa al decidir ir), cómo llegar y cómo hablarles. */
 function InfoLocal({ local, estado }) {
   const comodidades = comodidadesDe(local, Infinity)
   /* Si el dueño marcó su puerta en el mapa, se enseña el mapa de verdad y
@@ -49,6 +49,20 @@ function InfoLocal({ local, estado }) {
   return (
     <div className="local-info">
       <HorarioLocal local={local} estado={estado} />
+
+      {comodidades.length ? (
+        <div className="local-info-bloque">
+          <h3 className="local-info-subtitulo">Comodidades</h3>
+          <ul className="local-comodidades">
+            {comodidades.map(({ id, label, Icono }) => (
+              <li key={id} className="local-comodidad">
+                <Icono size={17} aria-hidden="true" />
+                {label}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       <div className="local-info-bloque">
         <h3 className="local-info-subtitulo">Cómo llegar</h3>
@@ -115,19 +129,6 @@ function InfoLocal({ local, estado }) {
         </div>
       </div>
 
-      {comodidades.length ? (
-        <div className="local-info-bloque">
-          <h3 className="local-info-subtitulo">Comodidades</h3>
-          <ul className="local-comodidades">
-            {comodidades.map(({ id, label, Icono }) => (
-              <li key={id} className="local-comodidad">
-                <Icono size={17} aria-hidden="true" />
-                {label}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
     </div>
   )
 }

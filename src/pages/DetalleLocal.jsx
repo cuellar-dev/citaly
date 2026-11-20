@@ -15,6 +15,7 @@ import PlanesPrecio from '../components/PlanesPrecio/PlanesPrecio.jsx'
 import { ofertaMesas } from '../utils/mesas.js'
 import OpinionesLocal from '../components/DetalleLocal/OpinionesLocal.jsx'
 import InfoLocal from '../components/DetalleLocal/InfoLocal.jsx'
+import LocalesCercanos from '../components/DetalleLocal/LocalesCercanos.jsx'
 import BarraReservaLocal from '../components/DetalleLocal/BarraReservaLocal.jsx'
 import AvisoBreve from '../components/DetalleLocal/AvisoBreve.jsx'
 import { TrazoCosido } from '../components/DetalleLocal/Tinta.jsx'
@@ -261,6 +262,8 @@ function DetalleLocal() {
           </h2>
           <InfoLocal local={local} estado={estado} />
         </section>
+
+        <LocalesCercanos local={local} style={{ '--i': 4 }} />
       </div>
 
       <BarraReservaLocal

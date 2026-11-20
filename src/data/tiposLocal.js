@@ -11,14 +11,14 @@ export const TIPOS = [
     nombre: 'Citas',
     Icono: CalendarClock,
     corto: 'El cliente viene a una hora a que le hagas algo.',
-    paraQuien: 'Peluquerías, barberías, uñas, spa, dentistas, veterinarias, tatuajes, talleres…',
+    paraQuien: 'Peluquerías, barberías, uñas, spa, tatuajes, talleres…',
     comoFunciona: [
       'Pones tus servicios con su precio y lo que tardan (un corte, 30 min).',
       'El cliente elige servicio, día y hora libre de tu agenda.',
       'Tú aceptas o rechazas cada cita desde Mi Negocio.',
     ],
     pista: '¿Atiendes a una persona detrás de otra? Este es el tuyo.',
-    categorias: ['Peluquería', 'Barbería', 'Uñas', 'Spa', 'Dentista', 'Veterinaria', 'Tatuajes', 'Arte y talleres'],
+    categorias: ['Peluquería', 'Barbería', 'Uñas', 'Spa', 'Tatuajes', 'Arte y talleres'],
   },
   {
     id: 'mesa',
