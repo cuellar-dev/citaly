@@ -1,12 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import HeroeLocal from './HeroeLocal.jsx'
+import { ColaFotosContext } from './colaFotos.js'
 import { estaAbierto } from '../../utils/fichaLocal.js'
+import { conexionHolgada } from '../../paginas.js'
 import './carruselHeroe.css'
 
 /* El héroe de Descubre, ahora en carrusel: los mismos 5 mejores lugares con
-   EXACTAMENTE el estilo del héroe de siempre, deslizándose solos cada 6 s.
+   EXACTAMENTE el estilo del héroe de siempre, deslizándose solos cada 4 s.
    No se toca HeroeLocal; solo se envuelve. La sombra del héroe la lleva el
-   viewport (que recorta los slides vecinos), así se ve igual que el héroe único. */
+   viewport (que recorta los slides vecinos), así se ve igual que el héroe único.
+
+   Fotos:
+   - La primera se pide nada más entrar, con prioridad (es el LCP).
+   - La siguiente se adelanta cuando la cola de Descubre llega a la fase 2
+     (ya cargaron el héroe y las primeras tarjetas: ver colaFotos.js). Hay
+     4 s hasta el primer salto, tiempo de sobra para que llegue.
+   - El carrusel NO salta a una diapositiva cuya foto no ha llegado: espera
+     a que llegue. Así nunca se ve el esqueleto en mitad del pase.
+   - Con ahorro de datos o conexión lenta no pasa solo (ni adelanta fotos):
+     se cambia con los puntos y cada foto baja al pedirla. */
 
 const PASO_MS = 4000
 
@@ -16,9 +28,10 @@ function prefiereQuieto() {
 }
 
 function CarruselHeroe({ locales = [] }) {
+  const cola = useContext(ColaFotosContext)
   const [indice, setIndice] = useState(0)
   const [pausado, setPausado] = useState(false)
-  const quieto = prefiereQuieto()
+  const [autoplay] = useState(() => !prefiereQuieto() && conexionHolgada())
   const total = locales.length
 
   /* El índice vuelve a cero si cambia la lista y se queda fuera de rango. */
@@ -26,37 +39,50 @@ function CarruselHeroe({ locales = [] }) {
     if (indice >= total) setIndice(0)
   }, [total, indice])
 
-  /* Un temporizador que se re-arma tras cada cambio (manual o automático): así
-     tocar un punto reinicia la cuenta de 6 s en vez de saltar enseguida. */
+  const activo = Math.min(indice, Math.max(total - 1, 0))
+
+  /* Diapositivas con la foto ya en pantalla, y la que espera para entrar.
+     Refs y no estado: no cambian lo que se pinta, solo cuándo se salta. */
+  const cargadasRef = useRef(new Set())
+  const esperandoRef = useRef(null)
+  const pausadoRef = useRef(pausado)
   useEffect(() => {
-    if (quieto || pausado || total <= 1) return
+    pausadoRef.current = pausado
+  }, [pausado])
+
+  /* Un temporizador que se re-arma tras cada cambio (manual o automático): así
+     tocar un punto reinicia la cuenta en vez de saltar enseguida. Si la
+     siguiente aún no tiene foto, se queda esperando a que llegue. */
+  useEffect(() => {
+    if (!autoplay || pausado || total <= 1) return undefined
     const id = window.setTimeout(() => {
-      setIndice((i) => (i + 1) % total)
+      const siguiente = (activo + 1) % total
+      if (cargadasRef.current.has(siguiente)) setIndice(siguiente)
+      else esperandoRef.current = siguiente
     }, PASO_MS)
     return () => window.clearTimeout(id)
-  }, [indice, total, pausado, quieto])
+  }, [activo, total, pausado, autoplay])
 
-  /* Fotos del carrusel: al entrar solo se pide la primera (con prioridad, es
-     lo primero que se ve). La siguiente se adelanta cuando la página terminó
-     de cargar, para no robarle ancho de banda a la primera; y desde ahí,
-     siempre la que viene después de la que se ve. Las demás no se piden
-     hasta que tocan: con mala conexión son ~100 KB menos al abrir. */
-  const [paginaLista, setPaginaLista] = useState(false)
-  useEffect(() => {
-    if (document.readyState === 'complete') {
-      const id = window.setTimeout(() => setPaginaLista(true), 300)
-      return () => window.clearTimeout(id)
-    }
-    const alCargar = () => setPaginaLista(true)
-    window.addEventListener('load', alCargar, { once: true })
-    return () => window.removeEventListener('load', alCargar)
-  }, [])
+  const alListo = useCallback(
+    (i) => {
+      cargadasRef.current.add(i)
+      if (i === 0) cola?.avisarHeroe()
+      if (esperandoRef.current === i && !pausadoRef.current) {
+        esperandoRef.current = null
+        setIndice(i)
+      }
+    },
+    [cola],
+  )
 
-  const activo = Math.min(indice, Math.max(total - 1, 0))
   /* Lo más lejos que se ha llegado: lo ya visto no se vuelve a descargar. */
   const [vistoHasta, setVistoHasta] = useState(0)
   if (activo > vistoHasta) setVistoHasta(activo)
-  const cargarHasta = Math.max(vistoHasta, activo) + (paginaLista ? 1 : 0)
+
+  /* ¿Se puede adelantar ya la siguiente? Fuera de Descubre (sin cola), sí. */
+  const adelantar = autoplay && (!cola || cola.fase >= 2)
+  const siguiente = (activo + 1) % Math.max(total, 1)
+  const debeCargar = (i) => i === 0 || i <= vistoHasta || (adelantar && i === siguiente)
 
   if (!total) return null
 
@@ -85,7 +111,8 @@ function CarruselHeroe({ locales = [] }) {
                 local={local}
                 etiqueta={estaAbierto(local) ? 'Abierto ahora' : 'El mejor valorado'}
                 prioridad={i === 0}
-                cargar={i <= cargarHasta}
+                cargar={debeCargar(i)}
+                alListo={() => alListo(i)}
               />
             </div>
           ))}
@@ -102,7 +129,10 @@ function CarruselHeroe({ locales = [] }) {
               aria-selected={i === activo}
               aria-label={`Ver ${local.localName}`}
               className={`carrusel-heroe-punto${i === activo ? ' carrusel-heroe-punto--on' : ''}`}
-              onClick={() => setIndice(i)}
+              onClick={() => {
+                esperandoRef.current = null
+                setIndice(i)
+              }}
             />
           ))}
         </div>

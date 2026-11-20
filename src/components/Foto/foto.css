@@ -28,6 +28,35 @@
   background-image: none;
 }
 
+/* Cajas de foto con texto blanco encima (héroe, tarjetas, rails): llevan
+   .tema-oscuro-fijo. Su esqueleto es un fondo oscuro sólido con un brillo
+   muy suave. Antes el fondo era semitransparente (sobre el crema del tema
+   claro quedaba casi blanco y el texto no se leía) y el brillo blanco
+   pasaba por encima del velo oscuro: se veía como una mancha rara. */
+.foto-marco.tema-oscuro-fijo,
+.tema-oscuro-fijo .foto-marco {
+  background-color: #1e2221;
+  background-image: linear-gradient(
+    100deg,
+    transparent 25%,
+    rgb(255 255 255 / 0.045) 50%,
+    transparent 75%
+  );
+  background-size: 260% 100%;
+  animation-duration: 1.8s;
+}
+
+/* El velo (degradado que oscurece la foto para leer el texto) solo tiene
+   sentido CON foto: mientras carga, el fondo ya es oscuro. Entra junto a
+   la foto. Cada componente marca su velo con .foto-velo. */
+.foto-marco .foto-velo {
+  transition: opacity 0.35s ease;
+}
+
+.foto-marco:not(:has(.foto[data-estado='lista'])) .foto-velo {
+  opacity: 0;
+}
+
 .esqueleto {
   border-radius: 10px;
 }
@@ -62,7 +91,8 @@
     animation: none;
   }
 
-  .foto {
+  .foto,
+  .foto-marco .foto-velo {
     transition: none;
   }
 }

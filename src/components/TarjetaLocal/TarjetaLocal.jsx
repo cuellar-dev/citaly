@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { MapPin, Quote, Star } from 'lucide-react'
 import BotonFavorito from '../Favorito/BotonFavorito.jsx'
 import Foto from '../Foto/Foto.jsx'
+import { useTurnoFoto } from '../Descubre/colaFotos.js'
 import { comodidadesDe, desdeTexto, estadoApertura, fraseDeLocal, notaLocal } from '../../utils/descubre.js'
 import './tarjetalocal.css'
 
@@ -17,6 +18,8 @@ function TarjetaLocal(local) {
   const comodidades = comodidadesDe(local, 3)
   const frase = fraseDeLocal(local)
   const desde = desdeTexto(local)
+  /* En Descubre la foto espera su turno (colaFotos.js); fuera, carga normal. */
+  const turno = useTurnoFoto(id)
 
   /* Relleno proporcional de verdad. Antes estaba fijo en 85% para cualquier
      nota entre 4 y 5, así que un 4.0 y un 5.0 se pintaban iguales. */
@@ -28,8 +31,18 @@ function TarjetaLocal(local) {
         <div className="tarjeta">
           <div className="tarjeta-foto tema-oscuro-fijo foto-marco">
             {/* Caja 16:11 de hasta 420 px de ancho. */}
-            <Foto src={url} anchos={[400, 640]} calidad={70} proporcion={11 / 16} sizes="(max-width: 452px) calc(100vw - 32px), 420px" />
-            <span className="tarjeta-velo" aria-hidden="true" />
+            {turno.puede ? (
+              <Foto
+                src={url}
+                anchos={[400, 640]}
+                calidad={70}
+                proporcion={11 / 16}
+                sizes="(max-width: 452px) calc(100vw - 32px), 420px"
+                carga={turno.carga}
+                alListo={turno.alListo}
+              />
+            ) : null}
+            <span className="tarjeta-velo foto-velo" aria-hidden="true" />
 
             <span className={`tarjeta-puertas${puertas.abierto ? ' tarjeta-puertas--abierto' : ''}`}>
               <span className="tarjeta-puertas-punto" aria-hidden="true" />

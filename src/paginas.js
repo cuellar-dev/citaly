@@ -83,7 +83,7 @@ export function precargarRuta(ruta) {
 /* ¿Merece la pena gastar datos adelantando páginas? En Cuba los datos móviles
    se pagan: con "ahorro de datos" o conexión lenta, solo se descarga lo que
    la persona pide (al tocar). */
-function conexionHolgada() {
+export function conexionHolgada() {
   const c = navigator.connection
   if (!c) return true
   if (c.saveData) return false

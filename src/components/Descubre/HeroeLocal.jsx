@@ -11,9 +11,10 @@ import './heroeLocal.css'
 
    `prioridad`: es la foto más grande de la primera pantalla (la que Lighthouse
    mide como LCP); se pide antes que nada. `cargar`: en el carrusel, las
-   diapositivas que aún no tocan no piden su foto (ver CarruselHeroe). */
+   diapositivas que aún no tocan no piden su foto (ver CarruselHeroe).
+   `alListo`: avisa al carrusel cuando la foto llegó (o falló). */
 
-function HeroeLocal({ local, etiqueta = 'El de hoy', prioridad = false, cargar = true }) {
+function HeroeLocal({ local, etiqueta = 'El de hoy', prioridad = false, cargar = true, alListo }) {
   if (!local) return null
 
   const { nota, cantidad } = notaLocal(local)
@@ -38,9 +39,10 @@ function HeroeLocal({ local, etiqueta = 'El de hoy', prioridad = false, cargar =
             sizes="(max-width: 452px) calc(100vw - 32px), 420px"
             prioridad={prioridad}
             carga="eager"
+            alListo={alListo}
           />
         ) : null}
-        <span className="heroe-local-velo" aria-hidden="true" />
+        <span className="heroe-local-velo foto-velo" aria-hidden="true" />
 
         <div className="heroe-local-arriba">
           <span className="heroe-local-etiqueta">{etiqueta}</span>

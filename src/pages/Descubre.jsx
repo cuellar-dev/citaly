@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowRight, Search, SlidersHorizontal, X } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import TarjetaLocal from '../components/TarjetaLocal/TarjetaLocal.jsx'
@@ -10,6 +10,12 @@ import FondoDescubre from '../components/Descubre/FondoDescubre.jsx'
 import CarruselHeroe from '../components/Descubre/CarruselHeroe.jsx'
 import RailDescubre from '../components/Descubre/RailDescubre.jsx'
 import TarjetaLocalCompacta from '../components/Descubre/TarjetaLocalCompacta.jsx'
+import {
+  ColaFotosContext,
+  ESPERA_HEROE_MS,
+  ESPERA_PRIMERAS_MS,
+  PRIMERAS,
+} from '../components/Descubre/colaFotos.js'
 import LlamadaOpinion from '../components/Ayuda/LlamadaOpinion.jsx'
 import { ListaEsqueleto } from '../components/Esqueletos/Esqueletos.jsx'
 import { getAllLocales } from '../services/locales.js'
@@ -101,6 +107,38 @@ function Descubre() {
   )
   const centinelaRef = useScrollInfinito({ hayMas, alLlegar: mostrarMas, clave: cuantosBloques })
 
+  /* Cola de fotos (colaFotos.js): héroe → primeras tarjetas → segunda foto
+     del héroe y el resto. Las "primeras" son las que se ven justo debajo del
+     héroe: hasta 2 del rail de abiertos y el resto de la lista "Cerca de ti". */
+  const primeras = useMemo(() => {
+    const ids = abiertos.slice(0, 2).map((l) => l.id)
+    const lista = bloques.find((b) => b.tipo === 'lista')
+    for (const l of lista?.items ?? []) {
+      if (ids.length >= PRIMERAS) break
+      ids.push(l.id)
+    }
+    return new Set(ids)
+  }, [abiertos, bloques])
+
+  const [fase, setFase] = useState(0)
+  const cargadasRef = useRef(new Set())
+  const avisarHeroe = useCallback(() => setFase((f) => Math.max(f, 1)), [])
+  const avisar = useCallback(
+    (id) => {
+      cargadasRef.current.add(id)
+      if ([...primeras].every((p) => cargadasRef.current.has(p))) setFase((f) => Math.max(f, 2))
+    },
+    [primeras],
+  )
+  /* Topes: una foto lenta o rota no bloquea a las siguientes. */
+  useEffect(() => {
+    if (fase >= 2) return undefined
+    const espera = fase === 0 ? ESPERA_HEROE_MS : primeras.size ? ESPERA_PRIMERAS_MS : 0
+    const id = window.setTimeout(() => setFase((f) => Math.max(f, fase + 1)), espera)
+    return () => window.clearTimeout(id)
+  }, [fase, primeras])
+  const cola = useMemo(() => ({ fase, primeras, avisar, avisarHeroe }), [fase, primeras, avisar, avisarHeroe])
+
   const saludo = saludoDeLaHora(hora)
   /* La lupa solo busca algo escrito: vacía no lleva a ningún sitio. */
   const hayTexto = query.trim().length > 0
@@ -110,6 +148,7 @@ function Descubre() {
   const aplicarFiltros = () => navigate('/buscar', { state: { filtros } })
 
   return (
+    <ColaFotosContext.Provider value={cola}>
     <section className="descubre">
       <FondoDescubre />
 
@@ -257,6 +296,7 @@ function Descubre() {
         />
       )}
     </section>
+    </ColaFotosContext.Provider>
   )
 }
 

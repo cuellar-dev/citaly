@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef } from 'react'
 import { admiteCors, fotoSrcSet, fotoUrl } from '../../utils/fotos.js'
 import './foto.css'
 
@@ -11,16 +12,19 @@ import './foto.css'
    - Esqueleto: mientras carga, el contenedor con clase .foto-marco brilla;
      la foto entra con un fundido. data-estado="lista" | "error" lo pone el
      propio <img>, sin re-render de React.
-   - CORS: a los hosts que lo admiten se les pide sin cookies (ver fotos.js). */
+   - CORS: a los hosts que lo admiten se les pide sin cookies (ver fotos.js).
+   - `alListo`: se llama UNA vez cuando la foto termina (cargada o con error),
+     también si ya estaba en caché. Lo usa la cola de Descubre (colaFotos.js). */
 
 function marcar(img, estado) {
   if (img && img.dataset.estado !== estado) img.dataset.estado = estado
 }
 
-/* Si la foto ya estaba en caché, `load` pudo dispararse antes de que React
-   enganchara el evento: se mira al montar. */
-function alMontar(img) {
-  if (img?.complete) marcar(img, img.naturalWidth > 0 ? 'lista' : 'error')
+/* Avisa a quien espera esta foto, una sola vez por elemento. */
+function avisarUnaVez(img, alListo) {
+  if (!img || img.dataset.avisada) return
+  img.dataset.avisada = ''
+  alListo?.()
 }
 
 function Foto({
@@ -40,8 +44,22 @@ function Foto({
   className = '',
   onLoad,
   onError,
+  alListo,
   ...resto
 }) {
+  const alListoRef = useRef(alListo)
+  useEffect(() => {
+    alListoRef.current = alListo
+  })
+
+  /* Si la foto ya estaba en caché, `load` pudo dispararse antes de que React
+     enganchara el evento: se mira al montar. */
+  const alMontar = useCallback((img) => {
+    if (!img?.complete) return
+    marcar(img, img.naturalWidth > 0 ? 'lista' : 'error')
+    avisarUnaVez(img, alListoRef.current)
+  }, [])
+
   if (!src) return null
 
   const srcSet = anchos ? fotoSrcSet(src, anchos, { calidad, proporcion, caras }) : undefined
@@ -63,10 +81,12 @@ function Foto({
       className={`foto ${className}`.trim()}
       onLoad={(e) => {
         marcar(e.currentTarget, 'lista')
+        avisarUnaVez(e.currentTarget, alListoRef.current)
         onLoad?.(e)
       }}
       onError={(e) => {
         marcar(e.currentTarget, 'error')
+        avisarUnaVez(e.currentTarget, alListoRef.current)
         onError?.(e)
       }}
       {...resto}
