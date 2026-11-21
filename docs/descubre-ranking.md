@@ -4,7 +4,7 @@ Documento de diseño. Recoge la conversación completa sobre **qué local se le 
 
 **Esto no es** una especificación de implementación ni código acordado. Es el razonamiento cerrado, las decisiones tomadas y lo que queda pendiente, para poder sentarse a construirlo sin volver a discutirlo todo.
 
-Estado (20-11-2026): **implementado en el frontend (fase 1)**, en `src/utils/ranking/`. Cambio respecto a este documento: estar abierto ahora pesa poco en el orden (Luis): sirve para la fila "Puedes ir ahora mismo", no para subir locales. Para ver por qué sale cada local: `?debug=ranking` en desarrollo. Pendiente: promociones (paso 9), envío de impresiones al backend, geolocalización y lealtad por profesional.
+Estado (20-11-2026): **implementado en el frontend (fase 1)**, en `src/utils/ranking/`. Cambio respecto a este documento: estar abierto ahora pesa poco en el orden (Luis): sirve para la fila "Puedes ir ahora mismo", no para subir locales. Para ver por qué sale cada local: `?debug=ranking` en desarrollo. En la consola, con Descubre abierto: `descubreDebug()` (tabla de todos los locales con sus puntos), `descubreDebug.comparar("son y ron", "patio azul")` (qué factor dio la ventaja), `descubreDebug.bloques()` y `descubreDebug.texto()` / `.copiar()` (todo en JSON para mandarlo). Código: `src/utils/ranking/diagnostico.js`. Calidad (21-11-2026): se mide ENTRE el peor y el mejor local que hay (0 a 1), no sobre toda la escala de 1 a 5★; antes un 5★ con 3 opiniones superaba a un 4,6★ con 30 en el 16 % de los días por culpa del temblor. Pendiente: promociones (paso 9), envío de impresiones al backend, geolocalización y lealtad por profesional.
 
 ---
 

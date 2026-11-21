@@ -46,6 +46,18 @@
     linear-gradient(180deg, rgb(var(--fondo-rgb) / 0.2) 0%, rgb(var(--fondo-rgb) / 0.7) 55%, var(--background-color) 100%);
 }
 
+/* En modo claro el velo se afloja. La cabecera es .tema-oscuro-fijo (el texto
+   va en blanco sobre la foto), así que --fondo-rgb aquí dentro es el negro de
+   siempre, y el degradado acababa en negro opaco: sobre el papel crema de la
+   página se veía exageradamente oscuro. Se mantiene algo de velo para que el
+   texto blanco se lea, pero la foto respira, y abajo ya no cierra en negro: de
+   la transición a la página se encarga la nube. */
+:root[data-tema='claro'] .cabecera-negocio-identidad::before {
+  background:
+    radial-gradient(120% 70% at 50% 30%, rgb(var(--fondo-rgb) / 0.12) 0%, rgb(var(--fondo-rgb) / 0.42) 70%),
+    linear-gradient(180deg, rgb(var(--fondo-rgb) / 0.05) 0%, rgb(var(--fondo-rgb) / 0.3) 55%, rgb(var(--fondo-rgb) / 0.62) 100%);
+}
+
 .cabecera-negocio-identidad > * {
   position: relative;
   z-index: 1;

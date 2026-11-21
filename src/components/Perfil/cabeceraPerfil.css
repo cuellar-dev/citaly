@@ -73,7 +73,11 @@
   );
 }
 
-.cabecera-perfil > *:not(.marco-perfil):not(.cabecera-perfil-fondo) {
+/* La nube (.tinta-nube) se queda fuera de esta regla: es absoluta y va pegada
+   al borde de abajo, de lado a lado. Con "relative" se quedaba dentro del
+   padding (18 px menos de ancho por lado y 52 px por encima del borde), cosa
+   que en modo claro, donde la nube es del color del papel, se veía claramente. */
+.cabecera-perfil > *:not(.marco-perfil):not(.cabecera-perfil-fondo):not(.tinta-nube) {
   position: relative;
   z-index: 1;
 }

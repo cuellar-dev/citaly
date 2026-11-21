@@ -190,6 +190,16 @@ function Descubre() {
   )
   const { heroLista, abiertos, bloques, motivos } = resultado
 
+  /* Solo en desarrollo: deja `descubreDebug()` en la consola para saber por qué
+     cada local salió donde salió (utils/ranking/diagnostico.js). */
+  useEffect(() => {
+    if (!import.meta.env.DEV) return
+    import('../utils/ranking/diagnostico.js').then((m) => {
+      m.instalar()
+      m.registrar({ locales, resultado, perfil, ahora, semilla, exposicion, ubicacion, atajo })
+    })
+  }, [locales, resultado, perfil, ahora, semilla, exposicion, ubicacion, atajo])
+
   const [cuantosBloques, setCuantosBloques] = useState(BLOQUES_INICIALES)
   /* Con otro atajo el feed es otro: se vuelve a empezar por arriba. */
   const elegirAtajo = (id) => {
