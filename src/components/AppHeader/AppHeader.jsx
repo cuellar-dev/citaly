@@ -50,6 +50,29 @@ function CampanaNotis({ children }) {
   )
 }
 
+/* Nubes de plumón regadas por todo el header, SOLO en móvil (en PC se quedan
+   en el rincón de Taly). Son las mismas del rincón (misma forma y tinta), en
+   poca cantidad y casi transparentes: dan cielo sin competir con el texto.
+   [x, y, escala] en un viewBox de 400 × 70. */
+const NUBE =
+  'M44 196 C26 196 21 176 39 171 C38 151 69 147 78 162 C91 145 123 150 124 171 C144 168 151 189 130 194 Z'
+const NUBES_HEADER = [
+  [14, 9, 0.32],
+  [140, 36, 0.2],
+  [228, 7, 0.3],
+  [318, 33, 0.24],
+]
+
+function NubesHeader() {
+  return (
+    <svg className="app-header-nubes" viewBox="0 0 400 70" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      {NUBES_HEADER.map(([x, y, e]) => (
+        <path key={x} d={NUBE} transform={`translate(${x} ${y}) scale(${e}) translate(-21 -147)`} />
+      ))}
+    </svg>
+  )
+}
+
 /* Compartir la app: la función vive en services/compartir.js porque el pie
    de página también la usa. Al volver con algo compartido salen las gracias. */
 
@@ -81,7 +104,8 @@ function AppHeader() {
     const iconos = iconosRef.current
     if (!header || !textos || !iconos) return undefined
     const medir = () => {
-      const libre = iconos.getBoundingClientRect().left - textos.getBoundingClientRect().right - 12
+      /* 22 px de aire entre el título y el rincón (antes 12: se sentía pegado). */
+      const libre = iconos.getBoundingClientRect().left - textos.getBoundingClientRect().right - 22
       header.style.setProperty('--iconos-ancho', `${iconos.offsetWidth}px`)
       header.style.setProperty('--rincon-ancho', `${Math.round(Math.min(Math.max(libre, 80), 150))}px`)
       /* Lo que mide el header, para que lo pegajoso de cada página se pegue debajo. */
@@ -103,6 +127,7 @@ function AppHeader() {
 
   return (
     <header className="app-header" ref={headerRef}>
+      <NubesHeader />
       <div className="app-header-inner" ref={textosRef}>
         <Logotipo className="app-header-brand" />
         <h1 className="app-header-title">{title}</h1>

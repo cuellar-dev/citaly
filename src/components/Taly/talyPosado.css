@@ -58,3 +58,11 @@
     width: 33px;
   }
 }
+
+/* El rincón no se corta en seco por la izquierda: la loma aparece poco a poco.
+   Antes el svg se recortaba con un borde vertical pegado al título. La yerba de
+   delante queda a la derecha y no lleva fundido. */
+.rincon-taly:not(.rincon-taly--delante) {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 34%);
+  mask-image: linear-gradient(to right, transparent 0, #000 34%);
+}

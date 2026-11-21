@@ -334,6 +334,10 @@ function Descubre() {
           )}
         </div>
 
+        {/* Saludo y atajos sobre un velo suave: el fondo dibujado (ramas, nubes,
+            chispas) pasa por detrás y cansaba para leer. El velo va del saludo
+            hasta el héroe. */}
+        <div className="descubre-intro">
         <div className="descubre-heading">
           <span className="eyebrow">{saludo.eyebrow}</span>
           <h1>{saludo.titulo}</h1>
@@ -360,6 +364,7 @@ function Descubre() {
               {a.etiqueta}
             </button>
           ))}
+        </div>
         </div>
 
         <div className="descubre-secciones" ref={seccionesRef}>

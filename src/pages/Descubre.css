@@ -402,3 +402,26 @@
 .descubre-opinion {
   margin: 28px 0 8px;
 }
+
+/* Velo suave tras el saludo y los atajos, hasta el héroe: --fondo-rgb es el
+   color de la página (oscuro o crema). Aparece y se va de forma gradual, sin
+   borde. */
+.descubre-intro {
+  position: relative;
+  isolation: isolate;
+}
+
+.descubre-intro::before {
+  content: '';
+  position: absolute;
+  inset: -34px 0 -14px;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--fondo-rgb) / 0) 0%,
+    rgb(var(--fondo-rgb) / 0.8) 20%,
+    rgb(var(--fondo-rgb) / 0.8) 80%,
+    rgb(var(--fondo-rgb) / 0) 100%
+  );
+}
