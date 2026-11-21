@@ -76,8 +76,8 @@ Contexto: noviembre 2026, tras la ronda de mejoras de Lighthouse (rutas cargadas
 | Siembra de citas y suscripciones de ejemplo | `src/main.jsx` (`seedCitasIfEmpty`, `sembrarDemoExtra`) | Borrar al conectar `/me/citas`. |
 | Citas del cliente (Mis citas) | `src/services/misCitas.js`, `misCitasApi.js`, `hooks/useMisCitas.js` | Ya listo: con `VITE_API_URL` lee del backend. Faltan rutas y campos: `docs/backend-mis-citas.md`. |
 | Locales (`locales.json`, `localesDemo.js`) | `src/services/locales.js` | Pasar a `GET /locales/:id` y al feed paginado (punto 2). |
-| Usuario fijo `u-laura-mendez` | `src/services/sesion.js` | Sale de la sesión real (`/me`). |
-| Auth falsa | `src/services/auth.js` | Hay `TODO` con el sitio exacto. |
+| Usuario fijo `u-laura-mendez` | `src/services/sesion.js` | Perfil, entrar y registrarse ya usan la sesión real con `VITE_API_URL` (`docs/backend-auth-cambios.md`). Siguen con Laura Mi negocio, opiniones y socios. |
+| Auth | `src/services/auth.js` | Ya conectada a Better Auth. Lo que falta configurar en el servidor: `docs/backend-auth-cambios.md`, sección «Guía para el backend». |
 
 Los servicios de `src/services/` son la frontera: las pantallas no tocan `localStorage` directamente (con alguna excepción menor). Cambiando el cuerpo de esas funciones por llamadas a la API, la UI no debería enterarse, salvo por lo síncrono → asíncrono del punto 2.
 

@@ -96,3 +96,41 @@
     transform: none;
   }
 }
+
+/* Aviso de cuenta (confirmar correo, error al guardar). */
+.perfil-aviso-cuenta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 16px 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--fonts-color-primary, #f0f0f0);
+  background: color-mix(in srgb, #f2c14e 14%, transparent);
+  border: 1px solid color-mix(in srgb, #f2c14e 50%, transparent);
+}
+
+.perfil-aviso-cuenta--suave {
+  background: var(--background-color-secondary, #1e2221);
+  border-color: rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
+}
+
+.perfil-aviso-cuenta span {
+  flex: 1;
+}
+
+.perfil-aviso-cuenta button {
+  flex: none;
+  min-height: 36px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}

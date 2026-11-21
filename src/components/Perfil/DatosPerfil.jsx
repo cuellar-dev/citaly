@@ -338,7 +338,7 @@ function DatosPerfil({ dueno, onSesion }) {
               <Switch activo={false} disabled label="Verificación en dos pasos" onChange={() => { }} />
             </div>
           </li>
-          <Fila Icono={Shield} titulo="Sesiones activas" valor="Solo este dispositivo" />
+          <Fila Icono={Shield} titulo="Sesiones activas" valor="Míralas en «Cerrar sesión» → Dispositivos" />
         </ul>
       </section>
 

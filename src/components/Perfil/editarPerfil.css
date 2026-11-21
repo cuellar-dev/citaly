@@ -51,3 +51,9 @@
   font-weight: 700;
   color: var(--peligro-texto);
 }
+
+.editar-perfil-nota {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}

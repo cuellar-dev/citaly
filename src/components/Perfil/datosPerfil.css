@@ -621,3 +621,136 @@
     padding-inline: 14px;
   }
 }
+
+/* ---------- Borrar la cuenta ---------- */
+
+.perfil-borrar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfil-borrar-titulo {
+  margin: 0;
+  font-weight: 800;
+  color: var(--peligro-texto);
+}
+
+.perfil-borrar-lista {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.perfil-borrar-botones {
+  display: flex;
+  gap: 10px;
+}
+
+.perfil-borrar-no,
+.perfil-borrar-si {
+  flex: 1;
+  min-height: 46px;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.perfil-borrar-no {
+  border: 1px solid rgb(var(--tinte) / calc(0.16 * var(--tinte-fuerza)));
+  background: transparent;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.perfil-borrar-si {
+  border: 0;
+  background: var(--peligro-texto);
+  color: #fff;
+}
+
+.perfil-borrar-si:disabled,
+.perfil-borrar-no:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ---------- Contraseña, correo y dispositivos ---------- */
+
+.perfil-seguridad-titulo {
+  margin: 0;
+  font-weight: 800;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.perfil-seguridad-si {
+  flex: 1;
+  min-height: 46px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--primary-color, #00c2ad);
+  color: var(--fonts-color-secondary, #121413);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.perfil-seguridad-si:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.perfil-seguridad-hecho {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--primary-texto, #00c2ad);
+}
+
+.perfil-dispositivos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.perfil-dispositivos li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: var(--background-color-secondary, #1e2221);
+}
+
+.perfil-dispositivo-textos {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.perfil-dispositivo-textos small {
+  font-size: 12px;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.perfil-dispositivos button {
+  flex: none;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--peligro-texto) 55%, transparent);
+  background: transparent;
+  color: var(--peligro-texto);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}

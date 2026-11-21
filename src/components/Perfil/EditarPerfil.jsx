@@ -13,7 +13,9 @@ function handleLimpio(texto) {
     .replace(/[^a-z0-9._]/g, '')
 }
 
-function EditarPerfil({ usuario, onGuardar }) {
+/* correoFijo: con cuenta real el correo es la llave de la cuenta y no se
+   cambia desde aquí (cambiarlo exige confirmar el nuevo por correo). */
+function EditarPerfil({ usuario, onGuardar, correoFijo = false }) {
   const archivoRef = useRef(null)
   const [form, setForm] = useState(() => ({
     nombre: usuario.nombre ?? '',
@@ -149,8 +151,15 @@ function EditarPerfil({ usuario, onGuardar }) {
               type="email"
               className="modal-negocio-input"
               value={form.correo}
+              readOnly={correoFijo}
+              aria-describedby={correoFijo ? 'correo-fijo-nota' : undefined}
               onChange={(e) => cambiar('correo', e.target.value)}
             />
+            {correoFijo && (
+              <small id="correo-fijo-nota" className="editar-perfil-nota">
+                Es el correo con el que entras. Por ahora no se puede cambiar.
+              </small>
+            )}
           </label>
         </Seccion>
 
