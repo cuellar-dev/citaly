@@ -3,21 +3,40 @@
    posicionamiento y el contenido viaja por encima (z-index del contenido). */
 
 .fondo-descubre {
+  /* La zona ocupa TODO el contenido de Descubre, de arriba hasta donde
+     empieza el pie. El cuadro con el cielo y el árbol va pegajoso (sticky):
+     acompaña al scroll y, al llegar al final de la zona, se queda quieto y se
+     va con la página, así que nunca invade el pie ni se corta a mitad. */
   position: absolute;
-  top: 0;
-  /* Centrado con el contenido (.descubre-contenido: 520 px, centrado). Con
-     left: 0 se quedaba pegado a la izquierda en pantallas anchas. */
-  left: 0;
-  right: 0;
-  margin-inline: auto;
-  z-index: 0;
-  width: 100%;
-  max-width: 520px;
-  height: 100dvh;
+  inset: 0;
+  z-index: -1;
   pointer-events: none;
+}
+
+.fondo-descubre-cuadro {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100dvh;
   opacity: .8;
-  overflow: hidden;
-  position: fixed;
+}
+
+/* El mismo degradado de la entrada: abajo el cielo se funde con el fondo de
+   la app, y de ahí empieza el pie. La zona es más alta que el cuadro, así que
+   esto solo se ve cuando el cuadro llega al final. */
+.fondo-descubre::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 38dvh;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--background-color) 55%, transparent) 35%,
+    color-mix(in srgb, var(--background-color) 92%, transparent) 65%,
+    var(--background-color) 82%,
+    var(--background-color) 100%
+  );
 }
 
 .fondo-descubre svg {
@@ -37,5 +56,8 @@
   --fd-estrella: #2aa795;
   --fd-nube: #2aa795;
   --fd-arbol: #24433d;
+}
+
+:root[data-tema='claro'] .fondo-descubre-cuadro {
   opacity: 0.9;
 }

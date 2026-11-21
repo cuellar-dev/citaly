@@ -49,7 +49,16 @@
 /* En el tema claro el salto del papel a la noche es mayor: el fundido es
    más largo para que no quede una franja turbia. */
 :root[data-tema='claro'] .pie::before {
-  height: 34svh;
+  /* Corto y con curva: el papel crema y la noche, mezclados a partes iguales,
+     dan un gris turbio. Mejor un fundido breve que apenas roza la escena. */
+  height: 16svh;
+  background: linear-gradient(
+    to bottom,
+    var(--fondo-pagina) 0%,
+    color-mix(in srgb, var(--fondo-pagina) 45%, transparent) 38%,
+    color-mix(in srgb, var(--fondo-pagina) 12%, transparent) 72%,
+    transparent 100%
+  );
 }
 
 /* ---------- Escena ---------- */

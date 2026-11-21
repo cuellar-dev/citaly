@@ -239,3 +239,26 @@
     max-width: 520px;
   }
 }
+
+/* Aviso tras una acción (no se pudo guardar, queda en este dispositivo…). */
+.citas-aviso {
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: var(--fonts-color-primary, #f3f3f3);
+  border: 1px solid color-mix(in srgb, currentColor 20%, transparent);
+}
+
+.citas-aviso--error {
+  background: color-mix(in srgb, #ff5d73 16%, transparent);
+  border-color: color-mix(in srgb, #ff5d73 55%, transparent);
+}
+
+.citas-aviso--aviso {
+  background: color-mix(in srgb, #f2c14e 14%, transparent);
+  border-color: color-mix(in srgb, #f2c14e 50%, transparent);
+}

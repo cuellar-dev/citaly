@@ -74,6 +74,7 @@ Contexto: noviembre 2026, tras la ronda de mejoras de Lighthouse (rutas cargadas
 | Qué | Dónde | Qué hacer |
 |---|---|---|
 | Siembra de citas y suscripciones de ejemplo | `src/main.jsx` (`seedCitasIfEmpty`, `sembrarDemoExtra`) | Borrar al conectar `/me/citas`. |
+| Citas del cliente (Mis citas) | `src/services/misCitas.js`, `misCitasApi.js`, `hooks/useMisCitas.js` | Ya listo: con `VITE_API_URL` lee del backend. Faltan rutas y campos: `docs/backend-mis-citas.md`. |
 | Locales (`locales.json`, `localesDemo.js`) | `src/services/locales.js` | Pasar a `GET /locales/:id` y al feed paginado (punto 2). |
 | Usuario fijo `u-laura-mendez` | `src/services/sesion.js` | Sale de la sesión real (`/me`). |
 | Auth falsa | `src/services/auth.js` | Hay `TODO` con el sitio exacto. |

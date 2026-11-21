@@ -7,7 +7,6 @@ import CaraRating, { COLORES_PUNTUACION, ETIQUETAS_PUNTUACION } from '../CaraRat
 import TarjetaLocalCompacta from '../Descubre/TarjetaLocalCompacta.jsx'
 import { FAVORITOS_EVENTO, getFavoritos } from '../../services/favoritos.js'
 import { getLocalById } from '../../services/locales.js'
-import { publicarOpinion } from '../../services/opiniones.js'
 import Foto from '../Foto/Foto.jsx'
 import { estadisticasCliente, sitiosFijos, ultimasCitas } from '../../utils/resumenCitas.js'
 import './resumenCliente.css'
@@ -62,7 +61,8 @@ function SitioFijo({ fijo }) {
   const { local, veces, ultima, deSiempre } = fijo
   const ids = deSiempre.map((s) => s.id).join(',')
   const destino = `/local/${local.id}/reservar-cita${ids ? `?servicio=${encodeURIComponent(ids)}` : ''}`
-  const precios = new Map((local.servicios ?? []).map((s) => [s.id, Number(s.precio) || 0]))
+  /* Precio actual del catálogo; sin catálogo, el de la última vez. */
+  const precios = new Map((local.servicios ?? deSiempre).map((s) => [s.id, Number(s.precio) || 0]))
   const total = deSiempre.reduce((t, s) => t + (precios.get(s.id) ?? 0), 0)
   const nota = [...fijo.idas].reverse().find((c) => c.opinion)?.opinion?.puntuacion
 
@@ -177,13 +177,12 @@ const SELLOS = {
   nofue: { texto: 'No fuiste', Icono: X },
 }
 
-function UltimaCita({ cita, onActualizar }) {
+function UltimaCita({ cita, onAsistencia, onOpinar, onOmitirOpinion }) {
   const [editando, setEditando] = useState(false)
   const [recien, setRecien] = useState(false)
 
   const publicar = (opinion) => {
-    publicarOpinion(cita, opinion)
-    onActualizar(cita.id, { opinion: { ...opinion, en: new Date().toISOString() }, opinionOmitida: false })
+    onOpinar(cita, opinion)
     setEditando(false)
     setRecien(true)
   }
@@ -198,11 +197,11 @@ function UltimaCita({ cita, onActualizar }) {
       <div className="ultima-asistencia">
         <p className="ultima-pregunta">¿Fuiste al final?</p>
         <div className="ultima-botones">
-          <button type="button" className="ultima-boton ultima-boton--no" onClick={() => onActualizar(cita.id, { asistencia: 'no' })}>
+          <button type="button" className="ultima-boton ultima-boton--no" onClick={() => onAsistencia(cita, 'no')}>
             <X size={16} strokeWidth={2.6} aria-hidden="true" />
             No fui
           </button>
-          <button type="button" className="ultima-boton ultima-boton--si" onClick={() => onActualizar(cita.id, { asistencia: 'si' })}>
+          <button type="button" className="ultima-boton ultima-boton--si" onClick={() => onAsistencia(cita, 'si')}>
             <Check size={16} strokeWidth={2.6} aria-hidden="true" />
             Sí, fui
           </button>
@@ -213,7 +212,7 @@ function UltimaCita({ cita, onActualizar }) {
     cuerpo = (
       <div className="ultima-resultado">
         <span>No cuenta en tus números ni te pedimos opinión.</span>
-        <button type="button" className="ultima-enlace" onClick={() => onActualizar(cita.id, { asistencia: null })}>
+        <button type="button" className="ultima-enlace" onClick={() => onAsistencia(cita, null)}>
           <Undo2 size={14} strokeWidth={2.4} aria-hidden="true" />
           Deshacer
         </button>
@@ -224,7 +223,7 @@ function UltimaCita({ cita, onActualizar }) {
       <FormOpinion
         inicial={cita.opinion}
         textoCancelar={editando ? 'Cancelar' : 'Ahora no'}
-        onCancelar={() => (editando ? setEditando(false) : onActualizar(cita.id, { opinionOmitida: true }))}
+        onCancelar={() => (editando ? setEditando(false) : onOmitirOpinion(cita, true))}
         onPublicar={publicar}
       />
     )
@@ -283,7 +282,7 @@ function UltimaCita({ cita, onActualizar }) {
 
 /* ---------- Todo junto ---------- */
 
-function ResumenCliente({ citas, onActualizarCita }) {
+function ResumenCliente({ citas, onAsistencia, onOpinar, onOmitirOpinion }) {
   const [favoritos, setFavoritos] = useState(getFavoritos)
 
   useEffect(() => {
@@ -335,7 +334,7 @@ function ResumenCliente({ citas, onActualizarCita }) {
           <h3>Tus últimas citas</h3>
           <ul className="ultimas">
             {ultimas.map((c) => (
-              <UltimaCita key={c.id} cita={c} onActualizar={onActualizarCita} />
+              <UltimaCita key={c.id} cita={c} onAsistencia={onAsistencia} onOpinar={onOpinar} onOmitirOpinion={onOmitirOpinion} />
             ))}
           </ul>
         </div>

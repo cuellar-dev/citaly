@@ -80,6 +80,7 @@ function chispa(x, y, s) {
 function FondoDescubre() {
   return (
     <div className="fondo-descubre" aria-hidden="true">
+      <div className="fondo-descubre-cuadro">
       <svg viewBox="0 0 400 820" preserveAspectRatio="xMidYMin slice" focusable="false">
         <defs>
           {/* Temblor de pulso: el mismo recurso de taly-a-mano para que el
@@ -137,6 +138,7 @@ function FondoDescubre() {
           ))}
         </g>
       </svg>
+      </div>
     </div>
   )
 }

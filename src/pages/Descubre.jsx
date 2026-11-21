@@ -263,9 +263,9 @@ function Descubre() {
   return (
     <ColaFotosContext.Provider value={cola}>
     <section className="descubre">
-      <FondoDescubre />
-
       <div className="descubre-contenido">
+        <FondoDescubre />
+
         <div className={`descubre-search-wrap${buscadorOculto ? ' descubre-search-wrap--oculto' : ''}`}>
           <form
             className="descubre-search"

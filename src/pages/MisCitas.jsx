@@ -9,8 +9,8 @@ import SuscripcionesCliente from '../components/MisCitas/SuscripcionesCliente.js
 import ResumenCliente from '../components/MisCitas/ResumenCliente.jsx'
 import { actualizarSuscripcion, getSuscripciones } from '../services/storage.js'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
-import { useCitas } from '../hooks/useCitas.js'
-import { CANCELADA, CONFIRMADA } from '../utils/estadosCita.js'
+import { ListaEsqueleto } from '../components/Esqueletos/Esqueletos.jsx'
+import { useMisCitas } from '../hooks/useMisCitas.js'
 import { esCitaDeLugar, esCitaPasada, propsDesdeCita } from '../utils/citasVista.js'
 import './misCitas.css'
 
@@ -22,7 +22,8 @@ function MisCitas() {
   const [accion, setAccion] = useState(null)
   const [todasPasadas, setTodasPasadas] = useState(false)
   const [suscripciones, setSuscripciones] = useState(getSuscripciones)
-  const { citas, actualizarCita } = useCitas()
+  const { citas, estado, aviso, recargar, voyPaAlla, cancelar, marcarAsistencia, publicarOpinion, omitirOpinion } =
+    useMisCitas()
   const navigate = useNavigate()
   const esProximas = vista === 'proximas'
   const ahora = new Date()
@@ -40,24 +41,18 @@ function MisCitas() {
 
   const cerrarAccion = () => setAccion(null)
 
-  const confirmarAccion = () => {
+  const confirmarAccion = async () => {
     if (!accion) return
-    const ahoraIso = new Date().toISOString()
-    if (accion.tipo === 'cancelar') {
-      actualizarCita(accion.citaId, {
-        estadoReserva: CANCELADA,
-        canceladaEn: ahoraIso,
-        canceladaPor: 'cliente',
-      })
-      setVista('pasadas')
-    } else {
-      actualizarCita(accion.citaId, {
-        estadoReserva: CONFIRMADA,
-        voyPaAlla: true,
-        voyPaAllaEn: ahoraIso,
-      })
-    }
+    const cita = citas.find((c) => c.id === accion.citaId)
+    const { tipo } = accion
     cerrarAccion()
+    if (!cita) return
+    if (tipo === 'cancelar') {
+      /* Solo salta a Pasadas si el servidor la aceptó; si no, se queda donde está. */
+      if (await cancelar(cita)) setVista('pasadas')
+    } else {
+      await voyPaAlla(cita)
+    }
   }
 
   const citasVista = citas
@@ -120,7 +115,23 @@ function MisCitas() {
         </button>
       </div>
 
-      {!hayCitas ? (
+      {aviso && (
+        <p className={`citas-aviso citas-aviso--${aviso.tono}`} role={aviso.tono === 'error' ? 'alert' : 'status'}>
+          {aviso.texto}
+        </p>
+      )}
+
+      {estado === 'cargando' ? (
+        <ListaEsqueleto cantidad={2} texto='Cargando tus citas…' />
+      ) : estado === 'error' && !hayCitas ? (
+        <TalyMomento
+          escena='vacio'
+          titulo='No pudimos cargar tus citas'
+          texto='Revisa tu conexión e inténtalo de nuevo. Tus citas siguen guardadas.'
+          accion='Reintentar'
+          onAccion={() => recargar()}
+        />
+      ) : !hayCitas ? (
         <TalyMomento
           escena={esProximas ? 'vacio' : 'hero'}
           pose={esProximas ? undefined : 'mira-abajo'}
@@ -151,7 +162,14 @@ function MisCitas() {
       {/* Debajo de las citas: lo que no es una cita suelta. */}
       <div className="mis-extra">
         <SuscripcionesCliente suscripciones={suscripciones} onCambiar={cambiarSuscripcion} />
-        <ResumenCliente citas={citas} onActualizarCita={actualizarCita} />
+        {estado === 'listo' && (
+          <ResumenCliente
+            citas={citas}
+            onAsistencia={marcarAsistencia}
+            onOpinar={publicarOpinion}
+            onOmitirOpinion={omitirOpinion}
+          />
+        )}
       </div>
       <ModalAccionCita accion={accion} onConfirmar={confirmarAccion} onCerrar={cerrarAccion} />
     </section>

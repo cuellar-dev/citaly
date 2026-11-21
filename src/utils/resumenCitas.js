@@ -54,6 +54,16 @@ export function estadisticasCliente(citas, ahora = new Date()) {
   }
 }
 
+/* El local de una cita. En demo sale del catálogo local; con backend, mientras
+   la ficha del local no se pida aparte, la propia cita trae lo mínimo
+   (categoría y foto) y `servicios: null` quiere decir «catálogo desconocido». */
+function localDeCita(cita, getLocal) {
+  const local = getLocal(cita.localId)
+  if (local) return local
+  if (!cita.categoria) return null
+  return { id: cita.localId, localName: cita.localNombre, categoria: cita.categoria, url: cita.localFoto ?? '', servicios: null }
+}
+
 /* Un sitio es «fijo» (docs/descubre-ranking.md, 7.3): dos idas al mismo
    local de confianza. La nota manda: si lo valoró con 1–3 no es su sitio
    aunque haya vuelto. 4, 5 o sin nota cuentan como fijo. */
@@ -68,17 +78,17 @@ export function sitiosFijos(citas, getLocal, ahora = new Date()) {
     })
 
   const fijos = []
-  porLocal.forEach((idas, localId) => {
+  porLocal.forEach((idas) => {
     if (idas.length < 2) return
-    const local = getLocal(localId)
+    const local = localDeCita(idas[idas.length - 1], getLocal)
     if (!local || !CATEGORIAS_CONFIANZA.has(local.categoria)) return
     const notas = idas.map((c) => c.opinion?.puntuacion).filter(Boolean)
     const ultimaNota = notas[notas.length - 1]
     if (ultimaNota && ultimaNota <= 3) return
     const ultima = idas[idas.length - 1]
     /* «Lo de siempre»: lo que se hizo la última vez y el local sigue ofreciendo. */
-    const ofrece = new Set((local.servicios ?? []).map((s) => s.id))
-    const deSiempre = (ultima.servicios ?? []).filter((s) => ofrece.has(s.id))
+    const ofrece = local.servicios ? new Set(local.servicios.map((s) => s.id)) : null
+    const deSiempre = (ultima.servicios ?? []).filter((s) => !ofrece || ofrece.has(s.id))
     fijos.push({ local, veces: idas.length, ultima, deSiempre, idas })
   })
   return fijos.sort((a, b) => instante(b.ultima) - instante(a.ultima))
