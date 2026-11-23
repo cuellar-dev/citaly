@@ -1,8 +1,7 @@
 import { format } from 'date-fns'
 import { getLocalById } from './locales.js'
-import { getPerfiles, saveFicha } from './storage.js'
-import { getUsuarioById } from './usuarios.js'
-import { USUARIO_ACTUAL_ID } from './sesion.js'
+import { saveFicha } from './storage.js'
+import { cuentaActual } from './sesion.js'
 
 /* La opinión que el cliente deja desde Mis citas se publica en la ficha del
    local, la primera de la lista. Si la edita, se reemplaza la misma. */
@@ -21,7 +20,9 @@ function nombreParaOpiniones(nombre) {
 export function publicarOpinion(cita, { puntuacion, texto }) {
   const local = getLocalById(cita.localId)
   if (!local) return false
-  const usuario = { ...getUsuarioById(USUARIO_ACTUAL_ID), ...getPerfiles()[USUARIO_ACTUAL_ID] }
+  /* Sin sesión no se opina. La opinión sale con el nombre de la cuenta. */
+  const usuario = cuentaActual()
+  if (!usuario) return false
   const id = `op-${cita.id}`
   const opinion = {
     id,

@@ -33,9 +33,11 @@ function SinLocal({ simulado = false, onVolver }) {
         <Link to="/negocio/nuevo" className="perfil-auth-entrar">
           Crear mi local
         </Link>
-        <button type="button" className="perfil-auth-registro" onClick={onVolver}>
-          Volver a Mi Negocio
-        </button>
+        {onVolver && (
+          <button type="button" className="perfil-auth-registro" onClick={onVolver}>
+            Volver a Mi Negocio
+          </button>
+        )}
       </div>
       {simulado && <p className="sin-local-nota">Era un local de ejemplo: no se ha borrado nada de verdad.</p>}
     </section>

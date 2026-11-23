@@ -160,3 +160,13 @@
     padding-inline: 12px;
   }
 }
+
+/* Fallo al publicar una opinión en el servidor (con backend). */
+.detalle-local-aviso-error {
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.85rem;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--peligro-texto) 14%, transparent);
+  color: var(--peligro-texto);
+  font-size: 0.9rem;
+}

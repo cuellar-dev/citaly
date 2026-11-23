@@ -1,7 +1,17 @@
-import { USUARIO_ACTUAL_ID } from './sesion.js'
+import { idUsuarioActual } from './sesion.js'
+import { hayApi } from './api.js'
+import { borrarLocalApi, cargarMisLocalesApi, crearLocalApi, guardarCambiosApi, subirFotosDeCambios } from './localesApi.js'
 import { banderasDeTipo } from '../data/tiposLocal.js'
 import { getMunicipio, getProvincia } from '../data/cuba.js'
 import { claveNombre, limpiar } from '../utils/validarLocal.js'
+
+/* Con VITE_API_URL los locales viven en el backend. Esta lista de
+   localStorage pasa a ser una copia (para pintar al momento y para las
+   funciones síncronas): se rellena con sincronizarMisLocales() y cada cambio
+   se guarda aquí y se manda al servidor por detrás, en orden. Si el servidor
+   falla, se avisa con el evento ERROR_GUARDAR_EVENTO. */
+export const MIS_LOCALES_EVENTO = 'citaly:mis-locales'
+export const ERROR_GUARDAR_EVENTO = 'citaly:error-guardar'
 
 /* Los locales que crea el usuario. Hoy viven en localStorage; mañana esto
    es una tabla `locales` con `dueno_id` apuntando a la cuenta de Citaly.
@@ -67,12 +77,14 @@ function escribir(lista) {
   }
 }
 
-export function getMisLocales(duenoId = USUARIO_ACTUAL_ID) {
-  return leer().filter((l) => l.duenoId === duenoId)
+/* Los locales son de la cuenta con la sesión abierta. Sin sesión, ninguno. */
+export function getMisLocales(duenoId = idUsuarioActual()) {
+  return duenoId ? leer().filter((l) => l.duenoId === duenoId) : []
 }
 
 export function getMiLocal(id) {
-  return leer().find((l) => l.id === id && l.duenoId === USUARIO_ACTUAL_ID) ?? null
+  const yo = idUsuarioActual()
+  return yo ? (leer().find((l) => l.id === id && l.duenoId === yo) ?? null) : null
 }
 
 /* Los que ya pueden ver los clientes. */
@@ -112,8 +124,86 @@ export function nombreRepetido(nombre, provincia, municipio, todos = []) {
 
 export class ErrorLimite extends Error {}
 
+/* ---------- Backend ---------- */
+
+function avisarCambio() {
+  window.dispatchEvent(new Event(MIS_LOCALES_EVENTO))
+}
+
+function avisarError(error) {
+  window.dispatchEvent(
+    new CustomEvent(ERROR_GUARDAR_EVENTO, {
+      detail: { mensaje: error?.message || 'No se pudo guardar en el servidor.', code: error?.code },
+    }),
+  )
+}
+
+/** Trae del servidor los locales de la cuenta y los deja en la copia local. */
+export async function sincronizarMisLocales() {
+  const yo = idUsuarioActual()
+  if (!hayApi || !yo) return getMisLocales()
+  const delServidor = (await cargarMisLocalesApi()).map((l) => ({ ...l, propio: true, duenoId: yo }))
+  escribir([...leer().filter((l) => l.duenoId !== yo), ...delServidor])
+  avisarCambio()
+  return delServidor
+}
+
+/* Los cambios se mandan uno detrás de otro, en el orden en que se hicieron. */
+let cola = Promise.resolve()
+
+function mandarCambios(id, cambios) {
+  cola = cola
+    .then(async () => {
+      const conFotos = await subirFotosDeCambios(id, cambios)
+      const respuesta = await guardarCambiosApi(id, conFotos)
+      /* Las fotos ya son URLs de Cloudinary y los servicios nuevos tienen id
+         del servidor: se apuntan en la copia para no volver a subirlos. */
+      const arreglo = {}
+      if (conFotos.urls !== cambios.urls) arreglo.urls = conFotos.urls
+      if (conFotos.url !== cambios.url) arreglo.url = conFotos.url
+      if (Array.isArray(respuesta?.servicios) && cambios.servicios) {
+        arreglo.servicios = respuesta.servicios.map((s) => ({
+          id: s.id,
+          nombre: s.nombre,
+          precio: Number(s.precio) || 0,
+          duracion: Number(s.duracion_minutos) || 0,
+        }))
+      }
+      if (Object.keys(arreglo).length) {
+        escribir(leer().map((l) => (l.id === id ? { ...l, ...arreglo } : l)))
+        avisarCambio()
+      }
+    })
+    .catch(avisarError)
+  return cola
+}
+
+/** Espera a que el servidor tenga todo lo que se guardó (para no adelantarse). */
+export const esperarGuardado = () => cola
+
 /** Crea el local en revisión. Lanza ErrorLimite si la cuenta llegó al tope. */
-export function crearMiLocal(datos) {
+export async function crearMiLocal(datos) {
+  if (!hayApi) return crearMiLocalDemo(datos)
+  const yo = idUsuarioActual()
+  if (!yo) throw new Error('Inicia sesión para crear tu local.')
+  const local = crearMiLocalDemo(datos, { soloArmar: true })
+  let creado
+  try {
+    creado = await crearLocalApi(local)
+  } catch (error) {
+    if (error.code === 'LIMITE_LOCALES' || error.code === 'LIMITE_REVISION') throw new ErrorLimite(error.message)
+    throw error
+  }
+  /* La respuesta de crear no trae el nombre de la categoría: se queda el elegido. */
+  const final = { ...local, ...creado, categoria: creado.categoria || local.categoria, propio: true, duenoId: yo }
+  escribir([...leer().filter((l) => l.id !== final.id), final])
+  avisarCambio()
+  return final
+}
+
+function crearMiLocalDemo(datos, { soloArmar = false } = {}) {
+  const yo = idUsuarioActual()
+  if (!yo) throw new Error('Inicia sesión para crear tu local.')
   const mios = getMisLocales()
   if (mios.length >= MAX_LOCALES) throw new ErrorLimite(`Ya tienes ${MAX_LOCALES} locales, que es el máximo por cuenta. Escríbenos si necesitas más.`)
   if (mios.filter((l) => l.estado === 'revision').length >= MAX_EN_REVISION)
@@ -123,7 +213,7 @@ export function crearMiLocal(datos) {
   const local = {
     id: nuevoId(),
     propio: true,
-    duenoId: USUARIO_ACTUAL_ID,
+    duenoId: yo,
     estado: 'revision',
     completado: false,
     pasoCompletar: 0,
@@ -162,18 +252,34 @@ export function crearMiLocal(datos) {
     opiniones: 0,
     comentarios: [],
   }
+  if (soloArmar) return local
   if (!escribir([...leer(), local])) throw new Error('El navegador no tiene sitio para guardarlo. Libera espacio y vuelve a probar.')
   return local
 }
 
 export function actualizarMiLocal(id, cambios) {
+  const yo = idUsuarioActual()
   const lista = leer()
-  if (!lista.some((l) => l.id === id && l.duenoId === USUARIO_ACTUAL_ID)) return false
-  return escribir(lista.map((l) => (l.id === id ? { ...l, ...cambios } : l)))
+  if (!yo || !lista.some((l) => l.id === id && l.duenoId === yo)) return false
+  const ok = escribir(lista.map((l) => (l.id === id ? { ...l, ...cambios } : l)))
+  /* Con backend, aunque la copia no quepa (fotos grandes), el servidor sí lo guarda. */
+  if (hayApi) {
+    mandarCambios(id, cambios)
+    return true
+  }
+  return ok
 }
 
+/** Con backend es asíncrona y lanza si el servidor no deja (p. ej. tiene citas). */
 export function borrarMiLocal(id) {
-  return escribir(leer().filter((l) => !(l.id === id && l.duenoId === USUARIO_ACTUAL_ID)))
+  const yo = idUsuarioActual()
+  if (!yo) return false
+  if (!hayApi) return escribir(leer().filter((l) => !(l.id === id && l.duenoId === yo)))
+  return borrarLocalApi(id).then(() => {
+    escribir(leer().filter((l) => !(l.id === id && l.duenoId === yo)))
+    avisarCambio()
+    return true
+  })
 }
 
 export function aprobarMiLocal(id) {
@@ -182,6 +288,9 @@ export function aprobarMiLocal(id) {
 
 /* En la demo: lo que lleva en revisión más del tiempo de mentira, aprobado. */
 export function revisarAprobaciones(ahora = Date.now()) {
+  /* Con backend aprueba una persona (o, en desarrollo, el propio servidor):
+     lo nuevo llega con sincronizarMisLocales(). */
+  if (hayApi) return false
   const lista = leer()
   let cambio = false
   const nueva = lista.map((l) => {

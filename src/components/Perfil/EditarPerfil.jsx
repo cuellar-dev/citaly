@@ -2,7 +2,8 @@ import { useRef, useState } from 'react'
 import { Camera } from 'lucide-react'
 import { Seccion } from '../Negocio/modales/piezas.jsx'
 import { fotoCuadrada, iniciales } from '../../utils/fichaLocal.js'
-import RecortarFoto, { archivoDeFotoValido } from './RecortarFoto.jsx'
+import RecortarFoto from './RecortarFoto.jsx'
+import { archivoDeFotoValido } from '../../utils/fotoValida.js'
 import './editarPerfil.css'
 
 function handleLimpio(texto) {

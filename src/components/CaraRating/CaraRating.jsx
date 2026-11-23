@@ -1,20 +1,5 @@
 import './caraRating.css'
-
-export const COLORES_PUNTUACION = {
-  1: 'rgba(255, 0, 0, 0.674)',
-  2: 'rgba(255, 128, 0, 0.685)',
-  3: '#ffd166ad',
-  4: 'rgba(183, 255, 81, 0.696)',
-  5: 'rgba(68, 252, 58, 0.575)',
-}
-
-export const ETIQUETAS_PUNTUACION = {
-  1: 'Pésimo servicio',
-  2: 'Mal servicio',
-  3: 'Neutral',
-  4: 'Buen servicio',
-  5: 'Excelente servicio',
-}
+import { COLORES_PUNTUACION, ETIQUETAS_PUNTUACION } from '../../utils/puntuacion.js'
 
 function CaraRating({ nivel = 0, size = 22, className = '' }) {
   const activo = nivel >= 1 && nivel <= 5

@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, Compass } from 'lucide-react'
 import TarjetaFavorito from '../components/Favoritos/TarjetaFavorito.jsx'
 import Taly from '../components/Taly/Taly.jsx'
-import { getLocalById } from '../services/locales.js'
+import { cargarLocal, getLocalById } from '../services/locales.js'
+import { hayApi } from '../services/api.js'
 import { FAVORITOS_EVENTO, getFavoritos } from '../services/favoritos.js'
 import { estadoApertura } from '../utils/descubre.js'
 import './favoritos.css'
@@ -41,13 +42,30 @@ function Favoritos() {
     }
   }, [])
 
+  /* Con backend, un favorito que aún no se ha visto en esta visita (un local
+     nuevo, otro dispositivo) se pide al servidor; al llegar se repinta. */
+  const [traidos, setTraidos] = useState(0)
+  useEffect(() => {
+    if (!hayApi) return undefined
+    const faltan = vistos.filter((id) => !getLocalById(id))
+    if (!faltan.length) return undefined
+    let vivo = true
+    Promise.allSettled(faltan.map((id) => cargarLocal(id))).then(() => {
+      if (vivo) setTraidos((n) => n + 1)
+    })
+    return () => {
+      vivo = false
+    }
+  }, [vistos])
+
   const locales = useMemo(
     () =>
       vistos
         .map((id) => getLocalById(id))
         .filter(Boolean)
         .map((local) => ({ local, abierto: estadoApertura(local).abierto })),
-    [vistos],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [vistos, traidos],
   )
 
   const guardados = locales.filter(({ local }) => vivos.includes(local.id))

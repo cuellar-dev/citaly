@@ -1,0 +1,256 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 760" width="400" height="760" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Taly con gafas de sol escribe muy serio en un papel con un lápiz en llamas que flota">
+  <title>Taly escribe fuego (animado)</title>
+
+  <style>
+    /* Estilo plano, como las animaciones de Duolingo: formas sólidas sin
+       contorno, una sombra plana por pieza y movimiento elástico.
+       Taly, con gafas de sol y cara de concentración, escribe sin parar
+       con un lápiz en llamas que flota junto a su ala. Las líneas salen
+       ardiendo y se enfrían; cuando la hoja se llena, sale volando.
+       Es de noche: la única luz es la del lápiz en llamas.
+       Bucle de 7 s; el lápiz y las llamas van a su ritmo. */
+
+    /* asiente al ritmo */
+    .cabeza { transform-origin: 205px 250px; animation: asiente 1.5s ease-in-out infinite; }
+    @keyframes asiente {
+      0%, 100% { transform: rotate(0deg) translateY(0); }
+      50%      { transform: rotate(5deg) translateY(4px); }
+    }
+    .cuerpo { transform-origin: 200px 420px; animation: bota 1.5s ease-in-out infinite; }
+    @keyframes bota {
+      0%, 100% { transform: scale(1, 1); }
+      50%      { transform: scale(1.012, .985); }
+    }
+
+    /* ala y lápiz se mueven juntos: parece que lo sujeta */
+    .mano { animation: escribe .75s ease-in-out infinite; }
+    @keyframes escribe {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      25%      { transform: translate(5px, -2px) rotate(1.5deg); }
+      50%      { transform: translate(9px, 1px) rotate(0deg); }
+      75%      { transform: translate(4px, -1px) rotate(-1.5deg); }
+    }
+
+    /* llamas: tres capas que tiemblan a destiempo */
+    .llama { transform-box: fill-box; transform-origin: 50% 100%; }
+    .llama-1 { animation: llama-a .55s ease-in-out infinite alternate; }
+    .llama-2 { animation: llama-b .46s ease-in-out infinite alternate; }
+    .llama-3 { animation: llama-a .38s ease-in-out infinite alternate-reverse; }
+    @keyframes llama-a {
+      from { transform: scale(1, 1) skewX(0deg); }
+      to   { transform: scale(.92, 1.14) skewX(-6deg); }
+    }
+    @keyframes llama-b {
+      from { transform: scale(1.05, .95) skewX(4deg); }
+      to   { transform: scale(.95, 1.1) skewX(-4deg); }
+    }
+
+    /* las líneas salen al rojo y se enfrían a tinta */
+    .linea { stroke-dasharray: 120; stroke-dashoffset: 120; animation: linea 7s linear infinite; }
+    .l2 { animation-name: linea-2; }
+    .l3 { animation-name: linea-3; }
+    .l4 { animation-name: linea-4; }
+    @keyframes linea {
+      0%       { stroke-dashoffset: 120; stroke: #FF7A1A; opacity: 1; }
+      18%      { stroke-dashoffset: 0; stroke: #FF7A1A; }
+      34%, 74% { stroke-dashoffset: 0; stroke: #2B3A38; opacity: 1; }
+      80%, 100% { stroke-dashoffset: 0; stroke: #2B3A38; opacity: 0; }
+    }
+    @keyframes linea-2 {
+      0%, 18%  { stroke-dashoffset: 120; stroke: #FF7A1A; opacity: 1; }
+      36%      { stroke-dashoffset: 0; stroke: #FF7A1A; }
+      52%, 74% { stroke-dashoffset: 0; stroke: #2B3A38; opacity: 1; }
+      80%, 100% { stroke-dashoffset: 0; stroke: #2B3A38; opacity: 0; }
+    }
+    @keyframes linea-3 {
+      0%, 36%  { stroke-dashoffset: 120; stroke: #FF7A1A; opacity: 1; }
+      54%      { stroke-dashoffset: 0; stroke: #FF7A1A; }
+      66%, 74% { stroke-dashoffset: 0; stroke: #2B3A38; opacity: 1; }
+      80%, 100% { stroke-dashoffset: 0; stroke: #2B3A38; opacity: 0; }
+    }
+    @keyframes linea-4 {
+      0%, 54%  { stroke-dashoffset: 120; stroke: #FF7A1A; opacity: 1; }
+      72%      { stroke-dashoffset: 0; stroke: #FF7A1A; }
+      76%      { stroke-dashoffset: 0; stroke: #2B3A38; opacity: 1; }
+      80%, 100% { stroke-dashoffset: 0; stroke: #2B3A38; opacity: 0; }
+    }
+
+    /* la hoja llena sale volando */
+    .vuela { opacity: 0; transform-box: fill-box; transform-origin: center; animation: vuela 7s ease-in infinite; }
+    @keyframes vuela {
+      0%, 76%  { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(1); }
+      78%      { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
+      100%     { opacity: 0; transform: translate(-190px, -300px) rotate(-70deg) scale(.6); }
+    }
+
+    .calendario { transform-origin: 92px 70px; animation: calendario 3.2s ease-in-out infinite; }
+    @keyframes calendario {
+      0%, 100% { transform: rotate(-3deg); }
+      50%      { transform: rotate(3deg); }
+    }
+
+    /* la luz del fuego tiembla un poco, como las llamas */
+    .luz { animation: luz .5s ease-in-out infinite alternate; }
+    @keyframes luz {
+      from { opacity: .8; }
+      to   { opacity: 1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+      .linea { stroke-dashoffset: 0; stroke: #2B3A38; }
+      .vuela { opacity: 0; }
+    }
+  </style>
+
+  <defs>
+    <!-- de noche: todo a oscuras salvo alrededor del lápiz en llamas -->
+    <radialGradient id="oscuridad" gradientUnits="userSpaceOnUse" cx="342" cy="330" r="430">
+      <stop offset="0" stop-color="#050C0B" stop-opacity="0"/>
+      <stop offset=".16" stop-color="#050C0B" stop-opacity=".05"/>
+      <stop offset=".42" stop-color="#050C0B" stop-opacity=".62"/>
+      <stop offset="1" stop-color="#050C0B" stop-opacity=".9"/>
+    </radialGradient>
+    <!-- la luz naranja que echa el fuego sobre lo que tiene cerca -->
+    <radialGradient id="luzFuego" gradientUnits="userSpaceOnUse" cx="342" cy="330" r="230">
+      <stop offset="0" stop-color="#FF8A2A" stop-opacity=".42"/>
+      <stop offset=".5" stop-color="#FF6A1A" stop-opacity=".14"/>
+      <stop offset="1" stop-color="#FF6A1A" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- la habitación -->
+  <rect width="400" height="760" fill="#17423C"/>
+  <circle cx="330" cy="120" r="150" fill="#1B4C45"/>
+  <circle cx="40" cy="330" r="110" fill="#1B4C45"/>
+
+  <!-- toda la escena sube 40: abajo queda el frente del pupitre, donde va la tarjeta con el texto -->
+  <g transform="translate(0 -40)">
+
+  <!-- el calendario de la pared, con un día marcado -->
+  <g class="calendario">
+    <rect x="89" y="64" width="6" height="12" rx="3" fill="#0E2E2A"/>
+    <rect x="46" y="76" width="96" height="92" rx="12" fill="#0F3631"/>
+    <rect x="42" y="72" width="96" height="92" rx="12" fill="#F7F2E6"/>
+    <path d="M42 84 C42 77 47 72 54 72 L126 72 C133 72 138 77 138 84 L138 94 L42 94 Z" fill="#EF476F"/>
+    <g fill="#C9C1AF">
+      <rect x="54" y="104" width="12" height="10" rx="3"/><rect x="72" y="104" width="12" height="10" rx="3"/><rect x="90" y="104" width="12" height="10" rx="3"/><rect x="108" y="104" width="12" height="10" rx="3"/>
+      <rect x="54" y="122" width="12" height="10" rx="3"/><rect x="72" y="122" width="12" height="10" rx="3"/><rect x="108" y="122" width="12" height="10" rx="3"/>
+      <rect x="54" y="140" width="12" height="10" rx="3"/><rect x="72" y="140" width="12" height="10" rx="3"/><rect x="90" y="140" width="12" height="10" rx="3"/><rect x="108" y="140" width="12" height="10" rx="3"/>
+    </g>
+    <circle cx="96" cy="127" r="10" fill="none" stroke="#FFD166" stroke-width="4"/>
+  </g>
+
+  <!-- Taly, sentado detrás del pupitre -->
+  <g class="cuerpo">
+    <g transform="translate(10 107) scale(.95)">
+      <!-- cuerpo: base, sombra plana detrás y barriga -->
+      <path d="M175 85 C215 68 246 94 249 134 C252 166 286 186 304 226 C324 278 286 328 200 330 C114 334 78 282 98 226 C116 180 150 162 152 126 C152 106 160 92 175 85 Z" fill="#4FD8C4"/>
+      <path d="M152 126 C150 162 116 180 98 226 C84 268 98 304 132 322 C112 292 110 252 128 214 C140 188 156 168 160 140 Z" fill="#2FBDA8"/>
+      <path d="M205 214 C256 210 304 236 296 286 C288 328 236 336 190 326 C232 306 244 256 205 214 Z" fill="#BDF4E8"/>
+      <!-- brillo plano de la cabeza -->
+      <path d="M182 92 C198 86 214 88 226 98 C214 96 196 96 184 100 Z" fill="#8FEBDD"/>
+    </g>
+
+    <!-- la cabeza: copete, pico, gafas y ceño -->
+    <g class="cabeza">
+      <g transform="translate(10 107) scale(.95)">
+        <path d="M168 92 C156 70 160 52 174 42 C178 58 188 62 192 76 C198 62 206 58 214 56 C214 72 204 84 196 92 Z" fill="#FFD166"/>
+        <path d="M174 42 C178 58 188 62 192 76 L184 86 C180 72 172 60 174 42 Z" fill="#F0B93E"/>
+        <!-- pico -->
+        <path d="M244 110 C268 110 292 120 302 134 C284 148 262 152 245 148 Z" fill="#FFD166"/>
+        <path d="M245 134 L300 134 C284 148 262 152 245 148 Z" fill="#F0B93E"/>
+        <!-- patilla de las gafas hacia atrás -->
+        <path d="M200 118 L168 112" stroke="#0E2E2A" stroke-width="5" stroke-linecap="round"/>
+        <!-- gafas de sol -->
+        <path d="M198 108 L250 106 C254 106 256 109 255 113 L250 132 C248 138 244 140 238 140 L212 140 C204 140 199 135 198 128 Z" fill="#0E2E2A"/>
+        <path d="M255 112 L266 110" stroke="#0E2E2A" stroke-width="5" stroke-linecap="round"/>
+        <!-- reflejo de la luz en el cristal: una franja, nada de destellos -->
+        <path d="M212 112 L226 112 L214 134 L206 134 C204 132 204 128 205 126 Z" fill="#FFFFFF" opacity=".22"/>
+        <!-- ceño: concentradísimo -->
+        <path d="M196 96 L252 102" stroke="#0E2E2A" stroke-width="7" stroke-linecap="round"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- el pupitre: tablero, canto y frente con cajón -->
+  <rect x="-10" y="404" width="420" height="70" rx="10" fill="#F0B070"/>
+  <rect x="-10" y="464" width="420" height="20" fill="#D9934F"/>
+  <rect x="-10" y="484" width="420" height="330" fill="#C27F3F"/>
+  <rect x="140" y="510" width="120" height="44" rx="10" fill="#B0702F"/>
+  <rect x="186" y="526" width="28" height="10" rx="5" fill="#E8A863"/>
+
+  <!-- papeles ya escritos, apilados a la izquierda -->
+  <g>
+    <path d="M40 432 L128 422 L136 448 L46 458 Z" fill="#E7E0D0"/>
+    <path d="M44 424 L132 414 L140 440 L50 450 Z" fill="#FFFDF6"/>
+    <path d="M58 428 L118 421 M60 436 L124 429" stroke="#BDB5A3" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- la hoja en la que escribe -->
+  <path d="M182 432 L320 418 L334 456 L192 470 Z" fill="#E7E0D0"/>
+  <path d="M180 424 L318 410 L332 448 L190 462 Z" fill="#FFFDF6"/>
+  <g fill="none" stroke-width="3.5" stroke-linecap="round">
+    <path class="linea l1" d="M198 428 L300 418"/>
+    <path class="linea l2" d="M200 436 L304 426"/>
+    <path class="linea l3" d="M203 444 L308 434"/>
+    <path class="linea l4" d="M206 452 L280 445"/>
+  </g>
+
+  <!-- la hoja llena que sale volando -->
+  <g class="vuela">
+    <path d="M180 424 L318 410 L332 448 L190 462 Z" fill="#FFFDF6"/>
+    <path d="M198 428 L300 418 M200 436 L304 426 M203 444 L308 434 M206 452 L280 445" stroke="#2B3A38" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- se apaga la luz: solo alumbra el fuego -->
+  <rect x="-20" y="0" width="440" height="820" fill="url(#oscuridad)"/>
+  <rect class="luz" x="-20" y="0" width="440" height="820" fill="url(#luzFuego)"/>
+
+  <!-- el ala y el lápiz en llamas, que van juntos -->
+  <g class="mano">
+    <!-- ala estirada hacia el lápiz -->
+    <path d="M132 292 C140 266 196 268 244 290 C274 304 298 324 310 348 C288 356 250 352 212 342 C164 330 126 318 132 292 Z" fill="#2AA795"/>
+    <path d="M150 290 C176 282 216 290 248 306 C222 304 190 300 160 302 C150 302 146 296 150 290 Z" fill="#3CBFAA"/>
+    <path d="M196 330 C232 336 268 342 300 346" stroke="#228C7C" stroke-width="5" stroke-linecap="round"/>
+    <!-- la misma oscuridad sobre el ala, y su lado cerca del fuego, encendido -->
+    <path d="M132 292 C140 266 196 268 244 290 C274 304 298 324 310 348 C288 356 250 352 212 342 C164 330 126 318 132 292 Z" fill="url(#oscuridad)"/>
+    <path class="luz" d="M132 292 C140 266 196 268 244 290 C274 304 298 324 310 348 C288 356 250 352 212 342 C164 330 126 318 132 292 Z" fill="url(#luzFuego)"/>
+
+    <!-- el fuego, que nace del lápiz: la base redondeada queda detrás de su
+         cuerpo y las lenguas suben derechas. Tres capas que tiemblan a destiempo. -->
+    <g class="fuego">
+      <path class="llama llama-1" d="M314 394 C298 372 302 344 316 322 C320 304 310 290 314 266 C326 280 333 290 336 300 C340 284 346 268 348 248 C362 272 372 298 366 330 C372 322 376 314 378 304 C388 330 380 362 362 376 C348 388 330 398 314 394 Z" fill="#FF4B2B"/>
+      <g transform="translate(338 386) scale(.74) translate(-338 -386)">
+        <path class="llama llama-2" d="M314 394 C298 372 302 344 316 322 C320 304 310 290 314 266 C326 280 333 290 336 300 C340 284 346 268 348 248 C362 272 372 298 366 330 C372 322 376 314 378 304 C388 330 380 362 362 376 C348 388 330 398 314 394 Z" fill="#FF9F1C"/>
+      </g>
+      <g transform="translate(336 388) scale(.46) translate(-336 -388)">
+        <path class="llama llama-3" d="M314 394 C298 372 302 344 316 322 C320 304 310 290 314 266 C326 280 333 290 336 300 C340 284 346 268 348 248 C362 272 372 298 366 330 C372 322 376 314 378 304 C388 330 380 362 362 376 C348 388 330 398 314 394 Z" fill="#FFE066"/>
+      </g>
+    </g>
+
+    <!-- el lápiz: la punta toca la hoja; nadie lo sujeta, pero escribe -->
+    <g transform="translate(300 420) rotate(28)">
+      <!-- cuerpo -->
+      <rect x="-9" y="-112" width="18" height="84" fill="#FFD166"/>
+      <rect x="-9" y="-112" width="6" height="84" fill="#FFE39A"/>
+      <rect x="3" y="-112" width="6" height="84" fill="#F0B93E"/>
+      <!-- casquillo y goma -->
+      <rect x="-10" y="-124" width="20" height="14" fill="#B9C4C1"/>
+      <rect x="-9" y="-140" width="18" height="18" rx="6" fill="#EF476F"/>
+      <!-- punta de madera y mina -->
+      <path d="M-9 -28 L9 -28 L0 -4 Z" fill="#F6D7A7"/>
+      <path d="M-3.5 -14 L3.5 -14 L0 -4 Z" fill="#2B3A38"/>
+      <!-- la punta, todavía al rojo -->
+      <circle cx="0" cy="-5" r="3" fill="#FF7A1A"/>
+    </g>
+    <!-- una lengüita en la punta del lápiz, por delante, como si escribiera con fuego -->
+    <g transform="translate(306 404) scale(.26) translate(-338 -386)">
+      <path class="llama llama-2" d="M314 394 C298 372 302 344 316 322 C320 304 310 290 314 266 C326 280 333 290 336 300 C340 284 346 268 348 248 C362 272 372 298 366 330 C372 322 376 314 378 304 C388 330 380 362 362 376 C348 388 330 398 314 394 Z" fill="#FF9F1C"/>
+      <g transform="translate(338 386) scale(.6) translate(-338 -386)">
+        <path class="llama llama-1" d="M314 394 C298 372 302 344 316 322 C320 304 310 290 314 266 C326 280 333 290 336 300 C340 284 346 268 348 248 C362 272 372 298 366 330 C372 322 376 314 378 304 C388 330 380 362 362 376 C348 388 330 398 314 394 Z" fill="#FFE066"/>
+      </g>
+    </g>
+  </g>
+  </g>
+</svg>

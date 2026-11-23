@@ -270,6 +270,85 @@ Además, ya **no** se puede poner una foto por `POST /api/auth/update-user`: ant
 
 ---
 
+## Tercera ronda (23 nov 2026): las pantallas usan la cuenta real
+
+Solo front; **no se tocó el backend**. Antes, aunque alguien se registrara, Mi negocio, crear local, opiniones y notificaciones seguían a nombre de Laura (`USUARIO_ACTUAL_ID`). Ahora, con `VITE_API_URL`, todo es de la cuenta con la sesión abierta.
+
+| Archivo | Qué cambia |
+| --- | --- |
+| `src/services/sesion.js` | `idUsuarioActual()` y `cuentaActual()`: la cuenta de ahora, de forma síncrona, para los servicios. |
+| `src/components/RequiereSesion/RequiereSesion.jsx` | **Nuevo.** Envuelve las pantallas que necesitan cuenta. Espera a que la sesión cargue, y sin ella manda a `/auth?volver=…`. Si no hay conexión con el backend, enseña "Reintentar" en vez de echar a alguien que sí tiene sesión. |
+| `src/App.jsx` | Con cuenta obligatoria: reservar (mesa, cita y suscripción), Mis citas, Mi negocio, crear y completar local, plano y notificaciones. |
+| `src/services/misLocales.js` | Los locales son de `idUsuarioActual()`, no de Laura. Sin sesión, ninguno. `crearMiLocal` lanza error si no hay cuenta. |
+| `src/pages/MiNegocio.jsx` | Con cuenta real **no hay locales de ejemplo**: solo los de esa cuenta, o "Crear mi local". En demo, igual que antes. |
+| `src/services/opiniones.js` | La opinión sale con el nombre de la cuenta; sin sesión no se opina. |
+| `src/pages/Perfil.jsx`, `DatosPerfil.jsx` | "Dueño de un local" muestra el primer local propio. El resumen de citas inventado de la demo se sustituye por un aviso a Mis citas. |
+| `NuevoLocal.jsx`, `Notificaciones.jsx` | Correo y nombre salen de la cuenta. |
+
+**Probado** (backend de pruebas): sin sesión, `/citas` y `/negocio` llevan a `/auth?volver=…` y al entrar vuelven a donde iban. Dos cuentas con locales en el mismo navegador: cada una ve **solo los suyos**. Un local nuevo queda con el `duenoId` de la sesión. En demo (sin `VITE_API_URL`) todo sigue igual, y al "cerrar sesión" las mismas pantallas piden entrar.
+
+**Sigue siendo local (se arregla al conectar cada parte):**
+- Los locales creados se guardan en el navegador, **no en el backend** (siguiente paso, con las rutas `/api/local` ya existentes).
+- Las notificaciones son datos de demo de Laura: un usuario real verá avisos que no son suyos.
+- Citas reservadas, favoritos y suscripciones se guardan en el navegador **sin separar por cuenta**: dos cuentas en el mismo navegador comparten esos datos hasta que se conecten.
+
+---
+
+### 23 nov 2026, más tarde: pantallas cuando falta la cuenta o el local
+
+Solo front. **El backend no se tocó** (rama `nosotros/panel-dueno` sin cambios).
+
+- **Mi Negocio sin sesión** ya no lleva directo a `/auth`: explica que hace falta entrar para crear o ver tu local, con "Iniciar sesión" y "Registrarse" (vuelven a Mi Negocio). Taly nuevo, de **plastilina**, mira una llave que flota y el candado de su local (`src/components/Taly/taly-plastilina-llave.svg`).
+- **Mi Negocio con sesión pero sin local:** "Abre tu local en Citaly" y el botón "Crear mi local". Taly de plastilina escribe el nombre en el cartel de su local con un lápiz que flota, y el toldo se despliega (`taly-plastilina-cartel.svg`).
+- **Mis citas sin sesión:** fondo a pantalla completa, estilo plano tipo Duolingo: Taly con gafas de sol escribe muy serio con un lápiz en llamas que flota junto a su ala (`taly-escribe-fuego.svg`). Abajo, una tarjeta con el texto y los botones.
+- `RequiereSesion` acepta `sinSesion`: la pantalla que se enseña en vez de llevar a `/auth`. Las demás pantallas con cuenta (reservar, crear local, notificaciones) siguen llevando a `/auth?volver=…`.
+- Componentes en `src/components/SinSesion/`. Las tres animaciones se paran si el móvil pide reducir el movimiento.
+
+---
+
+## Registro de cambios del backend (rama `nosotros/panel-dueno`)
+
+Aquí va **todo** lo que se toca en `backend-citaly-main`, con fecha, estado y cómo dejarlo de verdad. Regla: cada cambio se commitea en la rama `nosotros/panel-dueno` (nunca en `main`) y se anota aquí el mismo día.
+
+Estado a 23 nov 2026: la rama no tiene commits propios; todo lo de abajo ya está en `main` (commit `f33ce2c`, subido el 23 nov). `pnpm-lock.yaml` aparece modificado solo porque pnpm añade `@pnpm/exe`: **no se commitea**.
+
+| Fecha | Cambio | Dónde | Estado | Tipo |
+| --- | --- | --- | --- | --- |
+| 21 nov | Better Auth completo: contraseñas, correo, Google, sesión, borrado | `Config/auth.js` | En `main` | Definitivo |
+| 21 nov | Config centralizada (orígenes, URLs, Google, correo, SSL) | `Config/entorno.js` | En `main` | Definitivo |
+| 21 nov | Correos en español (verificar, recuperar, cambiar correo) | `Utils/correo.js` | En `main` | Definitivo |
+| 21 nov | Borrado de cuenta sin romper citas | `Services/CuentaService.js` | En `main` | Definitivo |
+| 21 nov | Foto de perfil a Cloudinary con firma | `Services/FotoPerfilService.js`, `Controller/UsuariosController.js`, `Routes/UsuariosRouter.js` | En `main` | Definitivo |
+| 21 nov | Errores con el formato de la API | `Middlewares/authMiddleware.js` | En `main` | Definitivo |
+| 21 nov | Teléfono validado en `PATCH /api/usuarios/me` | `Services/UsuariosServices.js` | En `main` | Definitivo |
+| 21 nov | Descubre: resumen, eventos, categorías, recálculo de notas | `Models/*`, `Services/DescubreServices.js`, `Routes/DescubreRouter.js`, `Jobs/Ranking.js` | En `main` | Definitivo |
+| 21 nov | CORS y `trust proxy` desde la configuración | `App.js` | En `main` | Definitivo |
+| 21 nov | `DATABASE_SSL=false` para Postgres local | `Config/db.js` | En `main` | **Solo pruebas** |
+| 21 nov | Caché de sesión en cookie **apagada** (una sesión cerrada vale al instante) | `Config/auth.js` | En `main` | Definitivo (seguridad) |
+| 21 nov | Límite de intentos solo en producción o con `AUTH_RATE_LIMIT=true` | `Config/auth.js` | En `main` | **Solo pruebas** |
+
+### Cambios de prueba: cómo dejarlos de verdad
+
+Estos no son de producción: sirven para probar en local y hay que ajustarlos al desplegar.
+
+1. **`DATABASE_SSL=false`** (`Config/db.js`, `Config/entorno.js`). Sirve para un Postgres local sin SSL.
+   - En producción **no** se pone: Neon exige SSL, y sin él la conexión viaja sin cifrar.
+   - Para probar en local, el script `scripts/probar-local.ps1` (en el front) lo pone solo para ese proceso.
+2. **`AUTH_RATE_LIMIT=true`** (`Config/auth.js`). Activa el límite de intentos fuera de producción.
+   - En producción se activa solo (`NODE_ENV=production`). No hay que hacer nada.
+   - Antes de dar el límite por bueno en producción, probar con `NODE_ENV=production` localmente.
+3. **Orígenes `localhost:517x` y `localhost:4173`** (`Config/entorno.js`). Solo se añaden si `NODE_ENV` no es `production`.
+   - En producción basta con `FRONTEND_URL` y `FRONTEND_ORIGINS` (ver la guía de `.env`).
+
+### Antes de llevar a producción
+
+- Comprobar que `NODE_ENV=production` está puesto y que `DATABASE_SSL` no aparece.
+- Comprobar que `AUTH_RATE_LIMIT` no está puesto (o da igual: en producción el límite está activo de todas formas).
+- Comprobar que `pnpm-lock.yaml` no se ha colado en un commit.
+- Cualquier cambio nuevo en el backend: commit en `nosotros/panel-dueno`, una línea nueva en esta tabla, y la fecha.
+
+---
+
 ## Lo que queda pendiente (y por qué no se hizo)
 
 - **Verificación en dos pasos**: Better Auth tiene el plugin `twoFactor`, pero necesita una tabla nueva (`twoFactor`) y una columna en `"user"`. Eso es una migración en `Database/`, y esa decisión es del socio. Cuando se quiera, `npx @better-auth/cli generate` sobre `Config/auth.js` con el plugin genera el SQL.
@@ -1524,3 +1603,43 @@ export default class FotoPerfilService {
  #   Orígenes autorizados: FRONTEND_URL
  #   URI de redirección:  BETTER_AUTH_URL/api/auth/callback/google
 ```
+
+### 23 nov 2026: panel del dueño, reservas y opiniones contra el backend
+
+Rama `nosotros/panel-dueno` del backend. Migración nueva: `012PanelDueno.sql`.
+
+| Qué | Dónde |
+| --- | --- |
+| Locales con `estado` (revision/aprobado/rechazado), `tipo`, `completado`, `oculto` y `ficha` (JSON con lo que no tiene columna: municipio, reserva de mesa, planes, plano, fotos) | migración 012, `LocalesModel`, `localServices` |
+| `GET /api/local/mios`, `PATCH /api/local/:id/aprobar` (agente+), `PUT /api/local/:id` acepta `horario`, `servicios`, `amenidades` | `LocalRouter`, `LocalController` |
+| Crear local: id lo pone el servidor, nace en revisión, topes 5 locales / 2 en revisión, categoría por nombre | `localServices.createLocalWithDetails` |
+| Descubre y `GET /api/local` solo enseñan aprobados, completos y no ocultos | `DescubreModel`, `LocalesModel` |
+| Cita de servicios sin profesional (una por local, día y hora) | `DisponibilidadService`, índice `citas_local_horario_sin_profesional_idx` |
+| `GET /api/local/:id/horas-ocupadas?desde=&hasta=` | `DisponibilidadRouter` |
+| Listas de citas con nombre del local/cliente, servicios y opinión; `?page=` ya funciona | `CitasModel`, `CitasController` |
+| `PATCH /api/citas/:id/usuario/asistencia` y columna `asistio` | `CitasService`, migración 012 |
+| Pendientes de más de 15 min → canceladas (`cancelada_por = 'tiempo'`), job cada minuto | `Jobs/index.js` (`iniciarCaducidadCitas`), `Server.js` |
+| Opinión ligada a la cita (`citaId`): solo cita propia y confirmada, una por cita; se puede opinar solo con estrellas | `OpinionesService`, `OpinionesModel` |
+| Fechas `DATE` salen como texto `YYYY-MM-DD` | `Config/db.js` |
+| Avisos con `ambito` (personal/negocio) y estado de la cita | `NotificacionesModel` |
+
+Front: `src/services/localesApi.js`, `citasNegocio.js`, `reservasApi.js`, `hooks/useLocal.js`; con `VITE_API_URL` Mi Negocio, crear/completar local, reservar cita, Mis citas, ficha, opiniones, favoritos y notificaciones usan el backend. Sin `VITE_API_URL`, la demo sigue igual.
+
+**Sigue en el navegador:** reservas de mesa y suscripciones (no hay ruta en el backend), cliente «express» del dueño, plano de la sala (se guarda en `ficha`, pero las mesas no van a la tabla `mesas`).
+
+**Probar en local:** `probar-local.ps1` pone `LOCALES_AUTOAPROBAR_SEG=20` (solo fuera de producción). La base de pruebas aplica ahora las migraciones nuevas sola y acepta 40 conexiones (con 10 cortaba).
+
+### 23 nov 2026, más tarde: arreglos de la revisión del backend
+
+| Bug (de `docs/revision-backend.md`) | Arreglo |
+| --- | --- |
+| 8. Registrar dos veces una foto borraba la buena en Cloudinary | Si ya estaba registrada se devuelve la existente; solo se borra de Cloudinary si de verdad falló (`MediaService`) |
+| 9. Validaciones salían como 500 | `validaciones.js` usa `crearError` (400) y `manejarError` trata un `Error` a secas de los modelos como 400 |
+| 10. Los 500 no se registraban | `responderError` los escribe con su traza |
+| 11 y 14. Servicios cortados a 10 y con inactivos | `GET /api/servicios/:localId` y la ficha dan todos los activos |
+| 12. Sin máquina de estados ni fechas pasadas | Local acepta 0→1 (dentro de 15 min), cliente confirma 1→2, cliente cancela en 0/1, local cancela en 0/1/2; no se reserva en el pasado (`CitasService`) |
+| Nuevo: recordatorios 5 h antes | La hora de la cita se interpreta en `America/Havana` (`Utils/horaLocal.js`, `ZONA_HORARIA` para cambiarla) |
+| Nuevo: ficha de un local en revisión visible por enlace | Solo la ven su dueño y encargados (`GET /api/local/:id` con `optionalAuth`) |
+| 16. Código a medias | Quitado `ServiciosServices.addImagenToServicio` (usaba variables que no existían) |
+
+Siguen pendientes, por ser más grandes o decisión del socio: 13 (reserva de mesas), 17 (`bloqueos_agenda`, `preferencias`, `mesas` sin uso), 18–21 (formatos de error, configuración fija, `.env.example`, tests, nombres).

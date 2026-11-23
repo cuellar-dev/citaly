@@ -1,5 +1,6 @@
 import { hayApi, urlApi } from './api.js'
 import { getUsuarioById } from './usuarios.js'
+import { getPerfiles } from './storage.js'
 
 /* Cuenta con la que se usa la app mientras no hay login de verdad
    (la misma que enseña Mi Perfil). Las pantallas de la demo (Mi negocio,
@@ -54,6 +55,21 @@ function desdeBackend(datos) {
     verificado: Boolean(u.emailVerified),
     telefono: '',
   }
+}
+
+/** Id de la cuenta con la sesión abierta, o null. Síncrono: las pantallas que
+ *  lo usan van detrás de RequiereSesion, que espera a que la sesión cargue. */
+export function idUsuarioActual() {
+  return estado.usuario?.id ?? null
+}
+
+/** La cuenta de ahora con sus ajustes. En la demo se mezclan los cambios
+ *  hechos en Mi perfil (guardados en este navegador); con backend manda lo
+ *  que dice el servidor. */
+export function cuentaActual() {
+  const cuenta = estado.usuario
+  if (!cuenta) return null
+  return hayApi ? cuenta : { ...cuenta, ...getPerfiles()[cuenta.id] }
 }
 
 /** Pregunta al backend quién es. Se reutiliza la petición si ya va de camino. */

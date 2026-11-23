@@ -19,8 +19,10 @@ import EstadoAprobado from '../components/Negocio/MiLocal/EstadoAprobado.jsx'
 import EstadoRevision from '../components/Negocio/MiLocal/EstadoRevision.jsx'
 import SelectorMisLocales from '../components/Negocio/MiLocal/SelectorMisLocales.jsx'
 import SinLocal from '../components/Negocio/MiLocal/SinLocal.jsx'
+import NegocioSinLocal from '../components/SinSesion/NegocioSinLocal.jsx'
 import ZonaLocal from '../components/Negocio/MiLocal/ZonaLocal.jsx'
-import { actualizarMiLocal, borrarMiLocal, getMisLocales, guardarSeleccion, leerSeleccion, revisarAprobaciones } from '../services/misLocales.js'
+import { ERROR_GUARDAR_EVENTO, MIS_LOCALES_EVENTO, actualizarMiLocal, borrarMiLocal, getMisLocales, guardarSeleccion, leerSeleccion, revisarAprobaciones, sincronizarMisLocales } from '../services/misLocales.js'
+import { PaginaEsqueleto } from '../components/Esqueletos/Esqueletos.jsx'
 import { reservasMesaDemo } from '../data/reservasMesaDemo.js'
 import { mesasDeLocal } from '../utils/mesas.js'
 import ContenidoModalNegocio from '../components/Negocio/modales/ContenidoModalNegocio.jsx'
@@ -28,7 +30,9 @@ import ModalNegocioShell from '../components/Negocio/ModalNegocioShell.jsx'
 import ResumenNegocio from '../components/Negocio/ResumenNegocio.jsx'
 import TiraDias from '../components/Negocio/TiraDias.jsx'
 import { DIAS_ADELANTE, DIAS_ATRAS, citasNegocioDemo } from '../data/citasNegocioDemo.js'
+import { hayApi } from '../services/api.js'
 import { getLocalById } from '../services/locales.js'
+import { aceptarCitaApi, cargarCitasDelLocal, rechazarCitaApi } from '../services/citasNegocio.js'
 import { saveFicha } from '../services/storage.js'
 import { minutosHastaCita, textoEnCita } from '../utils/citasVista.js'
 import { CANCELADA, CONFIRMADA, PENDIENTE, POR_TI, caducarPendientes, textoEstadoReserva } from '../utils/estadosCita.js'
@@ -290,14 +294,37 @@ function NegocioAgenda({ idLocal, cabeceraExtra }) {
   const [modalAbierto, setModalAbierto] = useState(false)
   const listaRef = useRef(null)
 
+  /* Con backend, el local propio enseña sus citas de verdad, y se vuelven a
+     pedir cada 30 s (llegan reservas nuevas mientras el dueño mira). */
+  const conServidor = hayApi && Boolean(local?.propio)
+  const [errorCitas, setErrorCitas] = useState(null)
+
   useEffect(() => {
+    let vivo = true
+    const traer = () => {
+      if (!conServidor) return
+      cargarCitasDelLocal(idLocal)
+        .then((lista) => {
+          if (!vivo) return
+          setCitas(caducarPendientes(lista))
+          setErrorCitas(null)
+        })
+        .catch((error) => {
+          if (vivo) setErrorCitas(error?.message || 'No se pudieron traer las citas.')
+        })
+    }
+    traer()
     const tick = () => {
-      setCitas((prev) => caducarPendientes(prev))
+      if (conServidor) traer()
+      else setCitas((prev) => caducarPendientes(prev))
       setReloj(new Date())
     }
     const id = setInterval(tick, 30000)
-    return () => clearInterval(id)
-  }, [])
+    return () => {
+      vivo = false
+      clearInterval(id)
+    }
+  }, [conServidor, idLocal])
 
   /* El resumen de arriba (siguiente, ocupación, estimado) es siempre de hoy.
      La lista de abajo es del día elegido. */
@@ -369,12 +396,22 @@ function NegocioAgenda({ idLocal, cabeceraExtra }) {
     setModalAbierto(true)
   }
   const cerrarModal = useCallback(() => setModalAbierto(false), [])
-  const cambiarEstado = (id, estadoReserva) =>
+  /* Se pinta al momento; con backend, si el servidor no deja, se deshace. */
+  const cambiarEstado = (id, estadoReserva) => {
+    const antes = citas.find((c) => c.id === id)
     setCitas((prev) => prev.map((c) => (c.id === id ? { ...c, estadoReserva } : c)))
+    if (!conServidor || !antes) return
+    const llamada = estadoReserva === CANCELADA ? rechazarCitaApi(idLocal, id) : aceptarCitaApi(idLocal, id)
+    llamada.catch((error) => {
+      setCitas((prev) => prev.map((c) => (c.id === id ? { ...c, estadoReserva: antes.estadoReserva } : c)))
+      setErrorCitas(error?.message || 'No se pudo cambiar la cita.')
+    })
+  }
 
-  /* Devuelve false si el navegador no tiene sitio (pasa con muchas fotos). */
+  /* Devuelve false si el navegador no tiene sitio (pasa con muchas fotos).
+     Con backend, el local propio se guarda en el servidor (misLocales). */
   const guardarFicha = (cambios) => {
-    const guardado = saveFicha(idLocal, cambios)
+    const guardado = local?.propio && hayApi ? actualizarMiLocal(idLocal, cambios) : saveFicha(idLocal, cambios)
     if (guardado) setLocal((prev) => ({ ...prev, ...cambios }))
     return guardado
   }
@@ -458,6 +495,14 @@ function NegocioAgenda({ idLocal, cabeceraExtra }) {
     <>
       <div className="negocio-tablero">
       {cabeceraExtra}
+      {errorCitas && (
+        <p className="mi-local-oculto" role="alert">
+          <span>{errorCitas}</span>
+          <button type="button" onClick={() => setErrorCitas(null)}>
+            Entendido
+          </button>
+        </p>
+      )}
       <CabeceraNegocio
         nombre={local.localName}
         url={local.url}
@@ -663,12 +708,55 @@ function MiNegocio() {
     return getMisLocales()
   })
   const [ejemplo, setEjemplo] = useState(leerEjemplo)
-  const [seleccion, setSeleccion] = useState(() => leerSeleccion() ?? { tipo: 'demo', id: leerEjemplo() })
+  /* Con cuenta real no hay locales «de ejemplo»: solo los de esa cuenta. Se
+     abre el que estaba mirando (si sigue siendo suyo) o el primero. */
+  const [seleccion, setSeleccion] = useState(() => {
+    const guardada = leerSeleccion()
+    if (!hayApi) return guardada ?? { tipo: 'demo', id: leerEjemplo() }
+    const mios = getMisLocales()
+    if (guardada?.tipo === 'propio' && mios.some((l) => l.id === guardada.id)) return guardada
+    return { tipo: 'propio', id: mios[0]?.id ?? null }
+  })
   const [fuera, setFuera] = useState(null) // null | { simulado }
   /* Sube al ocultar/mostrar o guardar el punto: el panel vuelve a leer el local. */
   const [version, setVersion] = useState(0)
+  /* Con backend: hasta que llega la lista del servidor no se decide nada
+     (si no, una cuenta con local vería un instante «Crea tu local»). */
+  const [sincronizado, setSincronizado] = useState(!hayApi)
+  const [errorServidor, setErrorServidor] = useState(null)
 
-  const propio = seleccion.tipo === 'propio' ? misLocales.find((l) => l.id === seleccion.id) : null
+  useEffect(() => {
+    if (!hayApi) return undefined
+    let vivo = true
+    const alCambiar = () => {
+      if (vivo) setMisLocales(getMisLocales())
+    }
+    const alFallar = (e) => {
+      if (vivo) setErrorServidor(e.detail?.mensaje ?? 'No se pudo guardar en el servidor.')
+    }
+    window.addEventListener(MIS_LOCALES_EVENTO, alCambiar)
+    window.addEventListener(ERROR_GUARDAR_EVENTO, alFallar)
+    sincronizarMisLocales()
+      .catch((error) => {
+        if (vivo) setErrorServidor(error?.message || 'No se pudo hablar con el servidor.')
+      })
+      .finally(() => {
+        if (vivo) {
+          setMisLocales(getMisLocales())
+          setSincronizado(true)
+        }
+      })
+    return () => {
+      vivo = false
+      window.removeEventListener(MIS_LOCALES_EVENTO, alCambiar)
+      window.removeEventListener(ERROR_GUARDAR_EVENTO, alFallar)
+    }
+  }, [])
+
+  const propio =
+    seleccion.tipo === 'propio'
+      ? (misLocales.find((l) => l.id === seleccion.id) ?? (hayApi ? (misLocales[0] ?? null) : null))
+      : null
   const actual = EJEMPLOS.find((e) => e.id === ejemplo) ?? EJEMPLOS[0]
   const idLocal = propio?.id ?? actual.idLocal
   const tipoPanel = propio ? propio.tipo : actual.tipo
@@ -693,6 +781,12 @@ function MiNegocio() {
   }
 
   const volverAEjemplos = () => {
+    if (hayApi) {
+      const primero = getMisLocales()[0]?.id ?? null
+      if (primero) guardarSeleccion({ tipo: 'propio', id: primero })
+      setSeleccion({ tipo: 'propio', id: primero })
+      return
+    }
     const s = { tipo: 'demo', id: ejemplo }
     guardarSeleccion(s)
     setSeleccion(s)
@@ -723,9 +817,18 @@ function MiNegocio() {
     setVersion((v) => v + 1)
   }
 
-  const eliminar = () => {
+  const eliminar = async () => {
     if (propio) {
-      borrarMiLocal(propio.id)
+      try {
+        await borrarMiLocal(propio.id)
+      } catch (error) {
+        setErrorServidor(
+          error?.code === 'RELATED_RESOURCE_CONFLICT'
+            ? 'No se puede eliminar un local que ya tiene citas. Puedes ocultarlo para que nadie lo vea.'
+            : error?.message || 'No se pudo eliminar. Prueba otra vez.',
+        )
+        return
+      }
       recargar()
       volverAEjemplos()
       setFuera({ simulado: false })
@@ -733,6 +836,23 @@ function MiNegocio() {
       setFuera({ simulado: true })
     }
     window.scrollTo({ top: 0 })
+  }
+
+  if (!sincronizado) {
+    return (
+      <section className="negocio" aria-label="Mi Negocio" aria-busy="true">
+        <PaginaEsqueleto />
+      </section>
+    )
+  }
+
+  /* Cuenta real sin ningún local: lo primero es crear el suyo. */
+  if (hayApi && !propio && !fuera) {
+    return (
+      <section className="negocio" aria-label="Mi Negocio">
+        <NegocioSinLocal />
+      </section>
+    )
   }
 
   if (fuera) {
@@ -745,8 +865,16 @@ function MiNegocio() {
 
   const cabeceraExtra = (
     <>
+      {errorServidor && (
+        <p className="mi-local-oculto" role="alert">
+          <span>{errorServidor}</span>
+          <button type="button" onClick={() => setErrorServidor(null)}>
+            Entendido
+          </button>
+        </p>
+      )}
       <SelectorMisLocales locales={misLocales} activo={propio?.id} onElegir={elegirPropio} />
-      <SwitchEjemplo activo={propio ? null : actual.id} onCambiar={elegirEjemplo} />
+      {!hayApi && <SwitchEjemplo activo={propio ? null : actual.id} onCambiar={elegirEjemplo} />}
       {local?.oculto && (!propio || propio.completado) && (
         <p className="mi-local-oculto" role="status">
           <EyeOff size={17} strokeWidth={2.3} aria-hidden="true" />

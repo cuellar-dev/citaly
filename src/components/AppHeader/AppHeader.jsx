@@ -1,12 +1,13 @@
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAppHeader } from '../../hooks/useAppHeader.js'
-import { Ellipsis, Plus, ClipboardClock, Bell } from 'lucide-react'
+import { Ellipsis, Bell } from 'lucide-react'
 import MenuTablas from './MenuTablas.jsx'
 import GraciasCompartir from './GraciasCompartir.jsx'
 import TalyPosado from '../Taly/TalyPosado.jsx'
 import Logotipo from '../Logotipo/Logotipo.jsx'
-import { contarSinLeer } from '../../services/notificaciones.js'
+import { NOTIS_EVENTO, contarSinLeer, sincronizarNotis } from '../../services/notificaciones.js'
+import { hayApi } from '../../services/api.js'
 import { compartirCitaly } from '../../services/compartir.js'
 import './AppHeader.css'
 
@@ -32,6 +33,21 @@ function getHeaderIcons(title) {
    render del header, que ya se repinta al cambiar de ruta: al volver de
    Notificaciones baja solo. */
 function CampanaNotis({ children }) {
+  /* Con backend, los avisos nuevos llegan del servidor: se piden al montar y
+     cada minuto, y al llegar se repinta el contador. */
+  const [, setVersion] = useState(0)
+  useEffect(() => {
+    if (!hayApi) return undefined
+    const repintar = () => setVersion((v) => v + 1)
+    window.addEventListener(NOTIS_EVENTO, repintar)
+    const pedirNotis = () => sincronizarNotis().catch(() => {})
+    pedirNotis()
+    const reloj = setInterval(pedirNotis, 60000)
+    return () => {
+      window.removeEventListener(NOTIS_EVENTO, repintar)
+      clearInterval(reloj)
+    }
+  }, [])
   const sinLeer = contarSinLeer()
   const texto = sinLeer > 9 ? '9+' : String(sinLeer)
   return (

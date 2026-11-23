@@ -30,6 +30,9 @@ import {
 } from './paginas.js'
 import ErrorPagina from './components/ErrorPagina/ErrorPagina.jsx'
 import AvisosApp from './components/AvisosApp/AvisosApp.jsx'
+import RequiereSesion from './components/RequiereSesion/RequiereSesion.jsx'
+import NegocioSinSesion from './components/SinSesion/NegocioSinSesion.jsx'
+import CitasSinSesion from './components/SinSesion/CitasSinSesion.jsx'
 import { PaginaEsqueleto } from './components/Esqueletos/Esqueletos.jsx'
 
 function CompletarLocalPage() {
@@ -83,13 +86,19 @@ function App() {
         {/* Auth fuera del Layout: sin navbar ni header, pantalla a foco. */}
         <Route path="/auth" element={<PantallaCompleta><Auth /></PantallaCompleta>} />
         {/* Crear y completar el local: también a foco, un paso cada vez. */}
-        <Route path="/negocio/nuevo" element={<PantallaCompleta><NuevoLocal /></PantallaCompleta>} />
+        <Route
+          path="/negocio/nuevo"
+          element={<RequiereSesion pantallaCompleta><PantallaCompleta><NuevoLocal /></PantallaCompleta></RequiereSesion>}
+        />
         <Route
           path="/negocio/completar/:id"
-          element={<PantallaCompleta><CompletarLocalPage /></PantallaCompleta>}
+          element={<RequiereSesion pantallaCompleta><PantallaCompleta><CompletarLocalPage /></PantallaCompleta></RequiereSesion>}
         />
         {/* El editor de la sala de un local de mesas: a pantalla completa. */}
-        <Route path="/negocio/plano/:id" element={<PantallaCompleta><EditorPlanoPage /></PantallaCompleta>} />
+        <Route
+          path="/negocio/plano/:id"
+          element={<RequiereSesion pantallaCompleta><PantallaCompleta><EditorPlanoPage /></PantallaCompleta></RequiereSesion>}
+        />
         {/* Sobre nosotros también va a pantalla completa: es un viaje, no una tabla.
             Su espera es la noche fija de la página (#121413 en los dos temas). */}
         <Route
@@ -108,14 +117,15 @@ function App() {
           <Route index element={<Descubre />} />
           <Route path="buscar" element={<Busqueda />} />
           <Route path="local/:id" element={<DetalleLocal />} />
-          <Route path="local/:id/reservar" element={<ReservarConLugarPage />} />
-          <Route path="local/:id/reservar-cita" element={<ReservarSinLugarPage />} />
-          <Route path="local/:id/unirse" element={<ReservarSuscripcionPage />} />
-          <Route path="citas" element={<MisCitas />} />
-          <Route path="negocio" element={<MiNegocio />} />
-          <Route path="negocio/compartir" element={<CompartirNegocio />} />
+          {/* Con cuenta: reservar, Mis citas, Mi negocio y avisos. Sin ella, a /auth. */}
+          <Route path="local/:id/reservar" element={<RequiereSesion><ReservarConLugarPage /></RequiereSesion>} />
+          <Route path="local/:id/reservar-cita" element={<RequiereSesion><ReservarSinLugarPage /></RequiereSesion>} />
+          <Route path="local/:id/unirse" element={<RequiereSesion><ReservarSuscripcionPage /></RequiereSesion>} />
+          <Route path="citas" element={<RequiereSesion sinSesion={<CitasSinSesion />}><MisCitas /></RequiereSesion>} />
+          <Route path="negocio" element={<RequiereSesion sinSesion={<NegocioSinSesion />}><MiNegocio /></RequiereSesion>} />
+          <Route path="negocio/compartir" element={<RequiereSesion><CompartirNegocio /></RequiereSesion>} />
           <Route path="perfil" element={<Perfil />} />
-          <Route path="notificaciones" element={<Notificaciones />} />
+          <Route path="notificaciones" element={<RequiereSesion><Notificaciones /></RequiereSesion>} />
           <Route path="favoritos" element={<Favoritos />} />
           <Route path="ayuda" element={<Ayuda />} />
           <Route path="opinion" element={<Opinion />} />

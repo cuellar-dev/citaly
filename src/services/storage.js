@@ -73,10 +73,11 @@ export function getSuscripciones() {
 }
 
 /* Devuelve false si el navegador no tiene sitio para guardar. */
-export function saveSuscripcion(solicitud) {
+export function saveSuscripcion(solicitud, usuarioId) {
   const lista = getSuscripciones().filter((s) => s.id !== solicitud.id)
+  const conDueno = usuarioId ? { usuarioId, ...solicitud } : solicitud
   try {
-    localStorage.setItem(SUSCRIPCIONES_KEY, JSON.stringify([solicitud, ...lista]))
+    localStorage.setItem(SUSCRIPCIONES_KEY, JSON.stringify([conDueno, ...lista]))
     return true
   } catch {
     return false

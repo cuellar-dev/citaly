@@ -3,6 +3,7 @@ import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-
 import { Clock, ReceiptText, Ticket } from 'lucide-react'
 import { getLocalById } from '../services/locales.js'
 import { saveSuscripcion } from '../services/storage.js'
+import { idUsuarioActual } from '../services/sesion.js'
 import { TIPOS_LOCAL, periodoDe, precioPlanTexto, tipoDeLocal } from '../utils/fichaLocal.js'
 import ReservaShell, { BarraConfirmar, BloqueReserva, ResumenReserva } from '../components/Reserva/ReservaShell.jsx'
 import PlanesPrecio from '../components/PlanesPrecio/PlanesPrecio.jsx'
@@ -106,7 +107,7 @@ function ReservarSuscripcion() {
       estado: 0,
       creadaEn: new Date().toISOString(),
     }
-    if (!saveSuscripcion(solicitud)) {
+    if (!saveSuscripcion(solicitud, idUsuarioActual())) {
       setError('No queda espacio en este dispositivo para guardar la solicitud.')
       return
     }

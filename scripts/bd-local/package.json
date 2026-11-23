@@ -1,0 +1,10 @@
+{
+  "name": "bd-local",
+  "private": true,
+  "type": "module",
+  "description": "Postgres local de pruebas para el backend de Citaly (PGlite). Solo desarrollo.",
+  "dependencies": {
+    "@electric-sql/pglite": "0.3.16",
+    "@electric-sql/pglite-socket": "0.0.22"
+  }
+}

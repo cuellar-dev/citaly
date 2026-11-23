@@ -7,9 +7,7 @@ import { FORMAS_LEGALES, TIPOS, getTipo } from '../data/tiposLocal.js'
 import { PROVINCIAS, getMunicipio, getProvincia } from '../data/cuba.js'
 import { getAllLocales } from '../services/locales.js'
 import { ErrorLimite, crearMiLocal, guardarSeleccion, nombreRepetido } from '../services/misLocales.js'
-import { USUARIO_ACTUAL_ID } from '../services/sesion.js'
-import { getUsuarioById } from '../services/usuarios.js'
-import { getPerfiles } from '../services/storage.js'
+import { cuentaActual } from '../services/sesion.js'
 import { anotarEnvio, esperaRestante, textoEspera } from '../utils/limiteEnvios.js'
 import {
   MAX,
@@ -35,8 +33,7 @@ const BORRADOR = 'citaly_borrador_local'
 const ENVIOS = 'citaly_locales_envios'
 
 function correoDeLaCuenta() {
-  const u = { ...getUsuarioById(USUARIO_ACTUAL_ID), ...getPerfiles()[USUARIO_ACTUAL_ID] }
-  return u?.correo ?? ''
+  return cuentaActual()?.correo ?? ''
 }
 
 const VACIO = {
@@ -239,7 +236,7 @@ function NuevoLocal() {
     }
 
     try {
-      const local = crearMiLocal({
+      const local = await crearMiLocal({
         ...datos,
         categoria: categoriaFinal(datos),
         whatsapp: formatoTelefono(datos.whatsapp),

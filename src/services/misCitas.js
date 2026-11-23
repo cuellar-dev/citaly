@@ -1,4 +1,5 @@
 import { hayApi } from './api.js'
+import { idUsuarioActual } from './sesion.js'
 import { ESTADOS_V_KEY, getCitas, saveCitas } from './storage.js'
 import { publicarOpinion as publicarEnFicha } from './opiniones.js'
 import {
@@ -83,6 +84,14 @@ export async function cargarMisCitas() {
   if (!hayApi) return leerCitasLocales()
   const delServidor = await cargarCitasApi()
   const extras = leerExtras()
+  /* Las reservas de mesa aún no tienen ruta en el backend: se guardan en este
+     navegador con el id de la cuenta y se enseñan junto a las del servidor. */
+  const yo = idUsuarioActual()
+  const deEsteDispositivo = yo
+    ? leerCitasLocales()
+        .filter((c) => c.usuarioId === yo && !c.deApi)
+        .map((c) => ({ ...c, soloEnEsteDispositivo: true }))
+    : []
   /* Lo que el servidor ya devuelve manda; el cuaderno solo rellena huecos. */
   const mezcladas = delServidor.map((c) => {
     const e = extras[c.id] ?? {}
@@ -107,7 +116,7 @@ export async function cargarMisCitas() {
   guardarExtras(limpio)
   /* El plazo de 15 min del dueño se ve igual aunque el servidor tarde en
      cancelar: no se guarda, solo se pinta. */
-  return caducarPendientes(mezcladas)
+  return caducarPendientes([...mezcladas, ...deEsteDispositivo])
 }
 
 /* ---------- Escritura ----------
@@ -128,13 +137,16 @@ export function cambiosCancelar() {
   return { estadoReserva: CANCELADA, canceladaEn: new Date().toISOString(), canceladaPor: 'cliente' }
 }
 
+/* Las de este dispositivo (mesas, sin ruta aún en el backend) se guardan aquí. */
+const enServidor = (cita) => hayApi && !cita.soloEnEsteDispositivo
+
 export async function guardarVoyPaAlla(cita, cambios) {
-  if (hayApi) await confirmarCitaApi(cita.id)
+  if (enServidor(cita)) await confirmarCitaApi(cita.id)
   else actualizarLocal(cita.id, cambios)
 }
 
 export async function guardarCancelar(cita, cambios) {
-  if (hayApi) await cancelarCitaApi(cita.id)
+  if (enServidor(cita)) await cancelarCitaApi(cita.id)
   else actualizarLocal(cita.id, cambios)
 }
 
@@ -144,7 +156,7 @@ export function cambiosAsistencia(asistencia) {
 }
 
 export async function guardarAsistencia(cita, asistencia) {
-  if (!hayApi) {
+  if (!enServidor(cita)) {
     actualizarLocal(cita.id, cambiosAsistencia(asistencia))
     return
   }
@@ -164,7 +176,7 @@ export function cambiosOpinion({ puntuacion, texto }) {
 
 export async function guardarOpinion(cita, opinion) {
   const cambios = cambiosOpinion(opinion)
-  if (!hayApi) {
+  if (!enServidor(cita)) {
     publicarEnFicha(cita, opinion)
     actualizarLocal(cita.id, cambios)
     return
@@ -181,6 +193,6 @@ export async function guardarOpinion(cita, opinion) {
 
 /** «Ahora no» a la opinión: preferencia de pantalla, no va al servidor. */
 export function guardarOpinionOmitida(cita, omitida) {
-  if (hayApi) anotar(cita.id, { opinionOmitida: omitida ? true : undefined })
+  if (enServidor(cita)) anotar(cita.id, { opinionOmitida: omitida ? true : undefined })
   else actualizarLocal(cita.id, { opinionOmitida: omitida })
 }

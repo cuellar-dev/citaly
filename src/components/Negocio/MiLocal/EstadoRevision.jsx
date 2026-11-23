@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { Check, Mail, Trash2 } from 'lucide-react'
 import TalyPixel from '../../Ayuda/TalyPixel.jsx'
 import { getTipo } from '../../../data/tiposLocal.js'
-import { SEGUNDOS_REVISION_DEMO, aprobarMiLocal, borrarMiLocal } from '../../../services/misLocales.js'
+import { hayApi } from '../../../services/api.js'
+import { SEGUNDOS_REVISION_DEMO, aprobarMiLocal, borrarMiLocal, sincronizarMisLocales } from '../../../services/misLocales.js'
 import '../../NuevoLocal/asistente.css'
 import './miLocal.css'
 
@@ -20,7 +21,18 @@ function EstadoRevision({ local, onCambio }) {
   const [retirando, setRetirando] = useState(false)
   const tipo = getTipo(local.tipo)
 
+  const [errorRetirar, setErrorRetirar] = useState(null)
+
   useEffect(() => {
+    /* Con backend: se pregunta al servidor cada poco si ya lo aprobaron. */
+    if (hayApi) {
+      const reloj = window.setInterval(() => {
+        sincronizarMisLocales()
+          .then(() => onCambio())
+          .catch(() => {})
+      }, 10000)
+      return () => window.clearInterval(reloj)
+    }
     const reloj = window.setInterval(() => {
       const r = restantes(local)
       setQuedan(r)
@@ -38,9 +50,14 @@ function EstadoRevision({ local, onCambio }) {
     onCambio()
   }
 
-  const retirar = () => {
-    borrarMiLocal(local.id)
-    onCambio({ eliminado: true })
+  const retirar = async () => {
+    setErrorRetirar(null)
+    try {
+      await borrarMiLocal(local.id)
+      onCambio({ eliminado: true })
+    } catch (error) {
+      setErrorRetirar(error?.message || 'No se pudo retirar. Prueba otra vez.')
+    }
   }
 
   return (
@@ -109,20 +126,23 @@ function EstadoRevision({ local, onCambio }) {
         </div>
       </dl>
 
-      <div className="mi-local-demo">
-        <p>
-          <b>Solo en la demo:</b> no hay nadie revisando, así que se aprueba solo en{' '}
-          <span className="mi-local-demo-cuenta">{quedan} s</span>.
-        </p>
-        <button type="button" className="boton-suave boton-suave--verde" onClick={aprobarYa}>
-          <Mail size={16} strokeWidth={2.3} aria-hidden="true" />
-          Aprobar ya
-        </button>
-      </div>
+      {!hayApi && (
+        <div className="mi-local-demo">
+          <p>
+            <b>Solo en la demo:</b> no hay nadie revisando, así que se aprueba solo en{' '}
+            <span className="mi-local-demo-cuenta">{quedan} s</span>.
+          </p>
+          <button type="button" className="boton-suave boton-suave--verde" onClick={aprobarYa}>
+            <Mail size={16} strokeWidth={2.3} aria-hidden="true" />
+            Aprobar ya
+          </button>
+        </div>
+      )}
 
       {retirando ? (
         <div className="mi-local-retirar">
           <p>¿Retiras la solicitud? Se borra lo que enviaste y tendrías que empezar de nuevo.</p>
+          {errorRetirar && <p role="alert">{errorRetirar}</p>}
           <div>
             <button type="button" className="boton-suave" onClick={() => setRetirando(false)}>
               No, déjalo

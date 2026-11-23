@@ -8,6 +8,16 @@ import ListaCitas from '../components/ListaCitas/ListaCitas.jsx'
 import SuscripcionesCliente from '../components/MisCitas/SuscripcionesCliente.jsx'
 import ResumenCliente from '../components/MisCitas/ResumenCliente.jsx'
 import { actualizarSuscripcion, getSuscripciones } from '../services/storage.js'
+import { hayApi } from '../services/api.js'
+import { idUsuarioActual } from '../services/sesion.js'
+
+/* Con backend, solo las solicitudes que hizo esta cuenta (nada de la demo). */
+function misSuscripciones() {
+  const todas = getSuscripciones()
+  if (!hayApi) return todas
+  const yo = idUsuarioActual()
+  return todas.filter((s) => s.usuarioId && s.usuarioId === yo)
+}
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import { ListaEsqueleto } from '../components/Esqueletos/Esqueletos.jsx'
 import { useMisCitas } from '../hooks/useMisCitas.js'
@@ -21,7 +31,7 @@ function MisCitas() {
   const [vista, setVista] = useState('proximas')
   const [accion, setAccion] = useState(null)
   const [todasPasadas, setTodasPasadas] = useState(false)
-  const [suscripciones, setSuscripciones] = useState(getSuscripciones)
+  const [suscripciones, setSuscripciones] = useState(misSuscripciones)
   const { citas, estado, aviso, recargar, voyPaAlla, cancelar, marcarAsistencia, publicarOpinion, omitirOpinion } =
     useMisCitas()
   const navigate = useNavigate()
@@ -69,7 +79,7 @@ function MisCitas() {
 
   const cambiarSuscripcion = (id, cambios) => {
     actualizarSuscripcion(id, cambios)
-    setSuscripciones(getSuscripciones())
+    setSuscripciones(misSuscripciones())
   }
 
   /* Una tarjeta por cita. `proxima` marca la más cercana en Próximas: es la

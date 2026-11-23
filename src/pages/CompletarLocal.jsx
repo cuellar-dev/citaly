@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { Camera, Info, MapPinned, PencilRuler, Plus, Star, Trash2, X } from 'lucide-react'
 import Asistente from '../components/NuevoLocal/Asistente.jsx'
@@ -7,7 +7,9 @@ import MapaMesas from '../components/MapaMesas/MapaMesas.jsx'
 import TalyPixel from '../components/Ayuda/TalyPixel.jsx'
 import { getMunicipio } from '../data/cuba.js'
 import { getTipo } from '../data/tiposLocal.js'
-import { actualizarMiLocal, getMiLocal, guardarSeleccion } from '../services/misLocales.js'
+import { actualizarMiLocal, getMiLocal, guardarSeleccion, sincronizarMisLocales } from '../services/misLocales.js'
+import { hayApi } from '../services/api.js'
+import { PaginaEsqueleto } from '../components/Esqueletos/Esqueletos.jsx'
 import { COMODIDADES, DIAS, aMinutos, horarioTexto, nuevoId } from '../utils/fichaLocal.js'
 import { comprimirFoto, errorDeFoto } from '../utils/imagenes.js'
 import { RESERVA_MESA_BASE, TOLERANCIAS } from '../utils/mesas.js'
@@ -156,7 +158,28 @@ function erroresDelPaso(paso, d, tipo) {
   return e
 }
 
+/* Con backend, el local puede no estar aún en la copia de este navegador
+   (se creó en otro dispositivo, o se acaba de aprobar): se pide primero. */
 function CompletarLocal() {
+  const { id } = useParams()
+  const [listoSync, setListoSync] = useState(() => !hayApi || Boolean(getMiLocal(id)))
+  useEffect(() => {
+    if (listoSync) return undefined
+    let vivo = true
+    sincronizarMisLocales()
+      .catch(() => {})
+      .finally(() => {
+        if (vivo) setListoSync(true)
+      })
+    return () => {
+      vivo = false
+    }
+  }, [listoSync])
+  if (!listoSync) return <PaginaEsqueleto />
+  return <FormularioCompletar key={id} />
+}
+
+function FormularioCompletar() {
   const { id } = useParams()
   const navigate = useNavigate()
   const local = useMemo(() => getMiLocal(id), [id])

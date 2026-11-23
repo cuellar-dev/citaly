@@ -56,10 +56,9 @@ function CarruselHeroe({ locales = [], motivos }) {
     return () => c.removeEventListener('change', alCambiar)
   }, [])
 
-  /* El índice vuelve a cero si cambia la lista y se queda fuera de rango. */
-  useEffect(() => {
-    if (indice >= total) setIndice(0)
-  }, [total, indice])
+  /* El índice vuelve a cero si cambia la lista y se queda fuera de rango.
+     Se ajusta en el render (no en un efecto): React repinta antes de pintar. */
+  if (indice > 0 && indice >= total) setIndice(0)
 
   const activo = Math.min(indice, Math.max(total - 1, 0))
 

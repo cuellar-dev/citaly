@@ -17,6 +17,7 @@ import { FAVORITOS_EVENTO, getFavoritos } from '../../services/favoritos.js'
 import { getAllLocales, getLocalById } from '../../services/locales.js'
 import { horarioDeLocal } from '../../utils/fichaLocal.js'
 import Foto from '../Foto/Foto.jsx'
+import { hayApi } from '../../services/api.js'
 import { statsCitasPerfil } from '../../utils/statsCitasPerfil.js'
 import './datosPerfil.css'
 
@@ -307,7 +308,15 @@ function DatosPerfil({ dueno, onSesion }) {
             valor="Un resumen de tus citas"
             abierto={panel === 'citas'}
             onClick={() => alternar('citas')}
-            panel={<PanelCitas />}
+            panel={
+              hayApi ? (
+                <p style={{ margin: 0, fontSize: 13, lineHeight: 1.5, color: 'var(--fonts-color-primary-weak)' }}>
+                  Tu resumen del año, tus sitios de siempre y tus últimas citas están en Mis citas.
+                </p>
+              ) : (
+                <PanelCitas />
+              )
+            }
           />
           <Fila
             Icono={Heart}

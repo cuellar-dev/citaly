@@ -4,14 +4,24 @@ import './recortarFoto.css'
 
 const MARCO = 280
 const SALIDA = 640
-const FORMATOS = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
-const MAX_BYTES = 8 * 1024 * 1024
 
-export function archivoDeFotoValido(file) {
-  if (!file) return 'No se eligió ninguna imagen.'
-  if (!FORMATOS.includes(file.type)) return 'Usa JPG, PNG, WEBP o GIF.'
-  if (file.size > MAX_BYTES) return 'La imagen pesa más de 8 MB.'
-  return null
+/* La foto no puede dejar hueco dentro del marco: se limita el arrastre. */
+function limitarPos({ w, h }, x, y, s) {
+  const maxX = Math.max(0, (w * s) / 2 - MARCO / 2)
+  const maxY = Math.max(0, (h * s) / 2 - MARCO / 2)
+  return {
+    x: Math.min(maxX, Math.max(-maxX, x)),
+    y: Math.min(maxY, Math.max(-maxY, y)),
+    s,
+  }
+}
+
+/* Acercar o alejar: entre «la foto justo cubre el marco» y 4 veces eso. */
+function zoomPos(nat, pos, factor) {
+  if (!nat.w) return null
+  const piso = Math.max(MARCO / nat.w, MARCO / nat.h)
+  const s = Math.min(piso * 4, Math.max(piso, pos.s * factor))
+  return limitarPos(nat, pos.x, pos.y, s)
 }
 
 function RecortarFoto({ src, onCancelar, onListo }) {
@@ -22,6 +32,11 @@ function RecortarFoto({ src, onCancelar, onListo }) {
   const posRef = useRef({ x: 0, y: 0, s: 1 })
   const [nat, setNat] = useState({ w: 0, h: 0 })
   const [pos, setPos] = useState({ x: 0, y: 0, s: 1 })
+  /* Escape siempre llama al onCancelar más reciente del padre. */
+  const cancelarRef = useRef(onCancelar)
+  useEffect(() => {
+    cancelarRef.current = onCancelar
+  })
 
   useEffect(() => {
     const overflow = document.body.style.overflow
@@ -29,13 +44,16 @@ function RecortarFoto({ src, onCancelar, onListo }) {
     const escena = escenaRef.current
     const rueda = (e) => {
       e.preventDefault()
-      zoom(e.deltaY > 0 ? 0.92 : 1.08)
+      const siguiente = zoomPos(natRef.current, posRef.current, e.deltaY > 0 ? 0.92 : 1.08)
+      if (!siguiente) return
+      posRef.current = siguiente
+      setPos(siguiente)
     }
     escena?.addEventListener('wheel', rueda, { passive: false })
     const alTeclear = (e) => {
       if (e.key !== 'Escape') return
       e.stopImmediatePropagation()
-      onCancelar()
+      cancelarRef.current()
     }
     window.addEventListener('keydown', alTeclear, true)
     return () => {
@@ -55,26 +73,11 @@ function RecortarFoto({ src, onCancelar, onListo }) {
     setPos(siguiente)
   }
 
-  const limitar = (x, y, s) => {
-    const { w, h } = natRef.current
-    const halfW = (w * s) / 2
-    const halfH = (h * s) / 2
-    const maxX = Math.max(0, halfW - MARCO / 2)
-    const maxY = Math.max(0, halfH - MARCO / 2)
-    return {
-      x: Math.min(maxX, Math.max(-maxX, x)),
-      y: Math.min(maxY, Math.max(-maxY, y)),
-      s,
-    }
-  }
+  const limitar = (x, y, s) => limitarPos(natRef.current, x, y, s)
 
-  const zoom = (delta) => {
-    const n = natRef.current
-    if (!n.w) return
-    const piso = Math.max(MARCO / n.w, MARCO / n.h)
-    const p = posRef.current
-    const s = Math.min(piso * 4, Math.max(piso, p.s * delta))
-    const siguiente = limitar(p.x, p.y, s)
+  const zoom = (factor) => {
+    const siguiente = zoomPos(natRef.current, posRef.current, factor)
+    if (!siguiente) return
     posRef.current = siguiente
     setPos(siguiente)
   }

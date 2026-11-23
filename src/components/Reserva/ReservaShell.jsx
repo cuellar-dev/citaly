@@ -123,9 +123,11 @@ export function BarraConfirmar({
   nota,
   texto,
   falta,
+  aviso,
   onConfirmar,
 }) {
   const bloqueada = Boolean(falta)
+  /* aviso: algo salió mal al confirmar (hora cogida, sin conexión). No bloquea. */
 
   return (
     <div className="reserva-barra">
@@ -147,6 +149,10 @@ export function BarraConfirmar({
       {bloqueada ? (
         <p className="reserva-barra-falta" aria-live="polite">
           {falta}
+        </p>
+      ) : aviso ? (
+        <p className="reserva-barra-falta" role="alert">
+          {aviso}
         </p>
       ) : null}
     </div>

@@ -51,3 +51,4 @@ backend-citaly-main/
 
 # Informes de Lighthouse (pesan varios MB; se generan cuando se mide)
 lighthouse/
+scripts/bd-local/datos/

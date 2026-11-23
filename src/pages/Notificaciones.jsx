@@ -7,14 +7,14 @@ import CaraGiratoria from '../components/Notificaciones/CaraGiratoria.jsx'
 import EscenaTendedero from '../components/Notificaciones/EscenaTendedero.jsx'
 import FilaNoti from '../components/Notificaciones/FilaNoti.jsx'
 import { getLocalById } from '../services/locales.js'
-import { borrarNoti, getNotificaciones, marcarLeidas, minutosRestantes, requiereAccion, restaurarNoti } from '../services/notificaciones.js'
-import { getPerfiles } from '../services/storage.js'
-import { getUsuarioById } from '../services/usuarios.js'
+import { NOTIS_EVENTO, borrarNoti, getNotificaciones, marcarLeidas, minutosRestantes, requiereAccion, restaurarNoti, sincronizarNotis } from '../services/notificaciones.js'
+import { hayApi } from '../services/api.js'
+import { getMisLocales } from '../services/misLocales.js'
+import { cuentaActual } from '../services/sesion.js'
 import './notificaciones.css'
 
 /* La misma cuenta de prueba que Perfil: Laura, dueña de Sara. Todavía no se
    comprueba si la cuenta tiene local; el giro sale siempre. */
-const ID_USUARIO = 'u-laura-mendez'
 const ID_LOCAL = 'sara'
 
 /* Las cuentas atrás ("Quedan 9 min") van por minutos; con medio minuto de
@@ -72,8 +72,18 @@ function Notificaciones() {
     return () => clearInterval(id)
   }, [])
 
-  const usuario = { ...getUsuarioById(ID_USUARIO), ...getPerfiles()[ID_USUARIO] }
-  const datosLocal = getLocalById(ID_LOCAL)
+  /* Con backend: los avisos de la cuenta llegan del servidor. */
+  useEffect(() => {
+    if (!hayApi) return undefined
+    const alLlegar = () => setNotis(getNotificaciones())
+    window.addEventListener(NOTIS_EVENTO, alLlegar)
+    sincronizarNotis().catch(() => {})
+    return () => window.removeEventListener(NOTIS_EVENTO, alLlegar)
+  }, [])
+
+  const usuario = cuentaActual() ?? {}
+  /* Con backend, el lado «negocio» es el primer local de la cuenta. */
+  const datosLocal = hayApi ? (getMisLocales()[0] ?? null) : getLocalById(ID_LOCAL)
 
   const persona = {
     nombre: usuario.nombre,

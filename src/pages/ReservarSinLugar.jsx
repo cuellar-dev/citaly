@@ -1,9 +1,12 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { format, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { CalendarDays, Scissors } from 'lucide-react'
-import { getLocalById } from '../services/locales.js'
+import { hayApi } from '../services/api.js'
+import { horasOcupadasApi, reservarServiciosApi } from '../services/reservasApi.js'
+import { useLocal } from '../hooks/useLocal.js'
+import { PaginaEsqueleto } from '../components/Esqueletos/Esqueletos.jsx'
 import { useCitas } from '../hooks/useCitas.js'
 import { useReserva } from '../hooks/useReserva.js'
 import { duracionAMinutos } from '../utils/fichaLocal.js'
@@ -33,20 +36,41 @@ function formatearDemora(minutos) {
 
 function ReservarSinLugar() {
   const { id } = useParams()
-  const local = getLocalById(id)
+  /* Con backend la ficha se pide fresca: trae los servicios con su id real. */
+  const { local, fresco } = useLocal(id)
   const navigate = useNavigate()
-  const { citas, agregarCita } = useCitas()
+  const { citas: citasLocales, agregarCita } = useCitas()
+  /* Con backend, las horas ocupadas son las del servidor (de todos los
+     clientes), no las de este navegador. */
+  const [ocupadas, setOcupadas] = useState([])
+  const [enviando, setEnviando] = useState(false)
+  const [errorEnvio, setErrorEnvio] = useState(null)
+  const [vuelta, setVuelta] = useState(0)
+  useEffect(() => {
+    if (!hayApi) return undefined
+    let vivo = true
+    horasOcupadasApi(id)
+      .then((lista) => {
+        if (vivo) setOcupadas(lista)
+      })
+      .catch(() => {})
+    return () => {
+      vivo = false
+    }
+  }, [id, vuelta])
+  const citas = hayApi ? ocupadas : citasLocales
 
   /* Todos los hooks antes de cualquier return: useReserva aguanta local nulo. */
   const reserva = useReserva(local, citas)
   /* ?servicio=<id> llega desde el "+" de la ficha del local, y
      ?servicio=a,b desde «Repetir» en Mis citas (lo de siempre): esos
-     servicios salen ya marcados. Los que no existan en este local se ignoran. */
+     servicios salen ya marcados. Los que no existan en este local se ignoran.
+     Se recuerdan por NOMBRE: con backend la ficha fresca llega después con
+     otros ids, y lo marcado no debe perderse. */
   const [searchParams] = useSearchParams()
   const [serviciosSeleccionados, setServiciosSeleccionados] = useState(() => {
-    const pedidos = (searchParams.get('servicio') ?? '').split(',').filter(Boolean)
-    const ofrece = new Set((local?.servicios ?? []).map((s) => s.id))
-    return pedidos.filter((p) => ofrece.has(p))
+    const pedidos = new Set((searchParams.get('servicio') ?? '').split(',').filter(Boolean))
+    return (local?.servicios ?? []).filter((s) => pedidos.has(s.id)).map((s) => s.nombre)
   })
   const [confirmada, setConfirmada] = useState(false)
   const refServicios = useRef(null)
@@ -58,6 +82,14 @@ function ReservarSinLugar() {
 
   if (local?.suscripcion) {
     return <Navigate to={`/local/${id}/unirse`} replace />
+  }
+
+  if (!local && !fresco) {
+    return (
+      <section className="reserva reserva--centrada" aria-busy="true">
+        <PaginaEsqueleto />
+      </section>
+    )
   }
 
   if (!local) {
@@ -93,7 +125,7 @@ function ReservarSinLugar() {
 
   const serviciosDisponibles = local.servicios ?? []
   const serviciosElegidos = serviciosDisponibles.filter((s) =>
-    serviciosSeleccionados.includes(s.id),
+    serviciosSeleccionados.includes(s.nombre),
   )
 
   const precioTotal = serviciosElegidos.reduce((sum, s) => sum + (s.precio || 0), 0)
@@ -102,9 +134,9 @@ function ReservarSinLugar() {
     0,
   )
 
-  function alternarServicio(idServicio) {
+  function alternarServicio(nombre) {
     setServiciosSeleccionados((prev) =>
-      prev.includes(idServicio) ? prev.filter((s) => s !== idServicio) : [...prev, idServicio],
+      prev.includes(nombre) ? prev.filter((s) => s !== nombre) : [...prev, nombre],
     )
   }
 
@@ -147,8 +179,34 @@ function ReservarSinLugar() {
   const irAPaso = (idPaso) =>
     anclas[idPaso]?.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 
-  function confirmar() {
-    if (!todoListo) return
+  async function confirmar() {
+    if (!todoListo || enviando) return
+    if (hayApi) {
+      if (!fresco) {
+        setErrorEnvio('Un segundo: estamos trayendo la carta del local.')
+        return
+      }
+      setEnviando(true)
+      setErrorEnvio(null)
+      try {
+        await reservarServiciosApi({
+          localId: id,
+          fecha: format(reserva.fecha, 'yyyy-MM-dd'),
+          horario: reserva.horario,
+          serviciosIds: serviciosElegidos.map((s) => s.id),
+        })
+        setServiciosSeleccionados([])
+        reserva.reiniciarFechaYHora()
+        setConfirmada(true)
+      } catch (error) {
+        /* Alguien cogió esa hora mientras mirabas: se vuelve a pedir la agenda. */
+        if (error?.status === 409) setVuelta((v) => v + 1)
+        setErrorEnvio(error?.message || 'No se pudo guardar la cita. Prueba otra vez.')
+      } finally {
+        setEnviando(false)
+      }
+      return
+    }
     agregarCita({
       id: crypto.randomUUID(),
       esLugar: false,
@@ -203,7 +261,8 @@ function ReservarSinLugar() {
           valor={serviciosElegidos.length ? formatearPrecio(precioTotal) : '—'}
           nota={formatearDemora(demoraMinutos)}
           texto="Confirmar cita"
-          falta={falta}
+          falta={enviando ? 'Guardando tu cita…' : falta}
+          aviso={errorEnvio}
           onConfirmar={confirmar}
         />
       }
@@ -232,8 +291,8 @@ function ReservarSinLugar() {
               key={servicio.id}
               {...servicio}
               marcable
-              seleccionado={serviciosSeleccionados.includes(servicio.id)}
-              onSeleccionar={() => alternarServicio(servicio.id)}
+              seleccionado={serviciosSeleccionados.includes(servicio.nombre)}
+              onSeleccionar={() => alternarServicio(servicio.nombre)}
             />
           ))}
         </ul>

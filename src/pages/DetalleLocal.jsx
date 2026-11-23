@@ -4,7 +4,11 @@ import { getUbicacion } from '../services/ubicacion.js'
 import { useEffect, useMemo, useState } from 'react'
 import { format } from 'date-fns'
 import { ArrowLeft } from 'lucide-react'
-import { getLocalById } from '../services/locales.js'
+import { useLocal } from '../hooks/useLocal.js'
+import { hayApi } from '../services/api.js'
+import { idUsuarioActual } from '../services/sesion.js'
+import { cargarMisCitas, guardarOpinion } from '../services/misCitas.js'
+import { PaginaEsqueleto } from '../components/Esqueletos/Esqueletos.jsx'
 import { saveFicha } from '../services/storage.js'
 import { useCitas } from '../hooks/useCitas.js'
 import { TIPOS_LOCAL, fotosDe, notaDeComentarios, precioPlanTexto, tipoDeLocal } from '../utils/fichaLocal.js'
@@ -43,10 +47,24 @@ function etiquetaCuenta(tipo, n) {
 function DetalleLocal() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [local, setLocal] = useState(() => getLocalById(id))
+  const { local, setLocal, fresco } = useLocal(id)
   const [imagenActiva, setImagenActiva] = useState(null)
   const [comentarioNuevoId, setComentarioNuevoId] = useState(null)
   const { citas } = useCitas()
+  const [citasCuenta, setCitasCuenta] = useState([])
+  const [errorOpinion, setErrorOpinion] = useState(null)
+  useEffect(() => {
+    if (!hayApi || !idUsuarioActual()) return undefined
+    let vivo = true
+    cargarMisCitas()
+      .then((lista) => {
+        if (vivo) setCitasCuenta(lista)
+      })
+      .catch(() => {})
+    return () => {
+      vivo = false
+    }
+  }, [id])
   const { compartir, aviso } = useCompartir(local)
 
   /* ?opinion=<id> llega desde Notificaciones ("respondió a tu opinión"): ese
@@ -99,6 +117,14 @@ function DetalleLocal() {
     [local, tipo],
   )
 
+  if (!local && !fresco) {
+    return (
+      <section className="detalle-local" aria-busy="true">
+        <PaginaEsqueleto />
+      </section>
+    )
+  }
+
   if (!local) {
     return (
       <section className="detalle-local detalle-local--error">
@@ -146,9 +172,18 @@ function DetalleLocal() {
 
   /* Solo opina quien ya tuvo una cita confirmada aquí (hoy o antes). */
   const hoy = format(new Date(), 'yyyy-MM-dd')
-  const puedeOpinar = citas.some(
-    (c) => c.localId === id && c.estadoReserva === CONFIRMADA && c.fecha && c.fecha <= hoy,
+  /* Con backend: las citas de la cuenta, y una opinión por cita (la primera
+     cita confirmada y ya pasada que aún no tenga la suya). */
+  const fuenteCitas = hayApi ? citasCuenta : citas
+  const citaParaOpinar = fuenteCitas.find(
+    (c) =>
+      c.localId === id &&
+      c.estadoReserva === CONFIRMADA &&
+      c.fecha &&
+      c.fecha <= hoy &&
+      !(hayApi && c.opinion),
   )
+  const puedeOpinar = Boolean(citaParaOpinar)
 
   function reservar(servicioId) {
     if (esSuscripcion) {
@@ -164,7 +199,7 @@ function DetalleLocal() {
     navigate(`/local/${id}/reservar-cita${sufijo}`)
   }
 
-  function publicarOpinion({ comentario, calificacion }) {
+  async function publicarOpinion({ comentario, calificacion }) {
     const nuevo = {
       id: crypto.randomUUID(),
       nombre: 'Tú',
@@ -172,12 +207,26 @@ function DetalleLocal() {
       calificacion,
       comentario,
     }
-    const comentarios = [nuevo, ...(local.comentarios ?? [])]
+    const antes = local.comentarios ?? []
+    const comentarios = [nuevo, ...antes]
     const resumen = notaDeComentarios({ comentarios })
     const cambios = { comentarios, points: String(resumen.nota), opiniones: resumen.cantidad }
-    saveFicha(id, cambios)
     setLocal((prev) => ({ ...prev, ...cambios }))
     setComentarioNuevoId(nuevo.id)
+    setErrorOpinion(null)
+    if (!hayApi) {
+      saveFicha(id, cambios)
+      return
+    }
+    try {
+      await guardarOpinion(citaParaOpinar, { puntuacion: calificacion, texto: comentario })
+      setCitasCuenta((lista) =>
+        lista.map((c) => (c.id === citaParaOpinar.id ? { ...c, opinion: { puntuacion: calificacion, texto: comentario } } : c)),
+      )
+    } catch (error) {
+      setLocal((prev) => ({ ...prev, comentarios: antes }))
+      setErrorOpinion(error?.message || 'No se pudo publicar tu opinión. Prueba otra vez.')
+    }
   }
 
   const notaBarra = [cantidad ? `★ ${nota}` : null, estado.texto].filter(Boolean).join(' · ')
@@ -251,6 +300,11 @@ function DetalleLocal() {
             puedeOpinar={puedeOpinar}
             onPublicar={publicarOpinion}
           />
+          {errorOpinion && (
+            <p className="detalle-local-aviso-error" role="alert">
+              {errorOpinion}
+            </p>
+          )}
         </section>
 
         <TrazoCosido pluma={false} />
