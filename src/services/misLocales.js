@@ -1,6 +1,6 @@
 import { idUsuarioActual } from './sesion.js'
 import { hayApi } from './api.js'
-import { borrarLocalApi, cargarMisLocalesApi, crearLocalApi, guardarCambiosApi, subirFotosDeCambios } from './localesApi.js'
+import { borrarLocalApi, cargarMisLocalesApi, cargarOpinionesApi, crearLocalApi, guardarCambiosApi, subirFotosDeCambios } from './localesApi.js'
 import { banderasDeTipo } from '../data/tiposLocal.js'
 import { getMunicipio, getProvincia } from '../data/cuba.js'
 import { claveNombre, limpiar } from '../utils/validarLocal.js'
@@ -142,7 +142,21 @@ function avisarError(error) {
 export async function sincronizarMisLocales() {
   const yo = idUsuarioActual()
   if (!hayApi || !yo) return getMisLocales()
-  const delServidor = (await cargarMisLocalesApi()).map((l) => ({ ...l, propio: true, duenoId: yo }))
+  const previos = leer()
+  const delServidor = []
+  for (const l of await cargarMisLocalesApi()) {
+    /* Las opiniones no vienen en /mios: se piden aparte, solo de los locales que
+       tienen alguna. Si falla, se queda lo que ya había en la copia. */
+    let comentarios = previos.find((p) => p.id === l.id && p.duenoId === yo)?.comentarios ?? l.comentarios
+    if (l.opiniones > 0) {
+      try {
+        comentarios = await cargarOpinionesApi(l.id)
+      } catch {
+        /* sin cambios */
+      }
+    }
+    delServidor.push({ ...l, comentarios, propio: true, duenoId: yo })
+  }
   escribir([...leer().filter((l) => l.duenoId !== yo), ...delServidor])
   avisarCambio()
   return delServidor

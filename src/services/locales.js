@@ -56,9 +56,19 @@ export function recordarLocal(local) {
 export async function cargarLocal(id) {
   if (!hayApi) return getLocalById(id)
   const local = await cargarLocalApi(id)
-  /* Sin opiniones (o si falla) se quedan las de la demo, si las hay. */
-  const opiniones = await cargarOpinionesApi(id).catch(() => [])
-  recordarLocal(opiniones.length ? { ...local, comentarios: opiniones } : local)
+  /* Si las opiniones fallan (un corte, el servidor lento) no es lo mismo que
+     «nadie ha opinado»: se reintenta una vez y, si sigue fallando, se conservan
+     las que ya se tenían. Sin opiniones de verdad se quedan las de la demo. */
+  let opiniones = null
+  for (let intento = 0; intento < 2 && opiniones === null; intento++) {
+    opiniones = await cargarOpinionesApi(id).catch(() => null)
+  }
+  if (opiniones === null) {
+    const previas = remotos.get(id)?.comentarios
+    recordarLocal(previas?.length ? { ...local, comentarios: previas } : local)
+  } else {
+    recordarLocal(opiniones.length ? { ...local, comentarios: opiniones } : local)
+  }
   return remotos.get(id)
 }
 

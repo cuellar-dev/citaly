@@ -28,7 +28,9 @@ export function useLocal(id) {
         if (vivo) setRes({ id, local, fresco: true, error: null })
       })
       .catch((error) => {
-        if (vivo) setRes((r) => (r.id === id ? { ...r, fresco: true, error } : r))
+        /* Si otra carga ya trajo la ficha (p. ej. la primera de React en desarrollo,
+           que se descarta), se usa esa en vez de quedarse con la inicial. */
+        if (vivo) setRes((r) => (r.id === id ? { ...r, local: getLocalById(id) ?? r.local, fresco: true, error } : r))
       })
     return () => {
       vivo = false

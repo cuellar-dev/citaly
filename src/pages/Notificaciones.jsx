@@ -9,7 +9,7 @@ import FilaNoti from '../components/Notificaciones/FilaNoti.jsx'
 import { getLocalById } from '../services/locales.js'
 import { NOTIS_EVENTO, borrarNoti, getNotificaciones, marcarLeidas, minutosRestantes, requiereAccion, restaurarNoti, sincronizarNotis } from '../services/notificaciones.js'
 import { hayApi } from '../services/api.js'
-import { getMisLocales } from '../services/misLocales.js'
+import { useMisLocales } from '../hooks/useMisLocales.js'
 import { cuentaActual } from '../services/sesion.js'
 import './notificaciones.css'
 
@@ -53,6 +53,7 @@ function fijadasDe(lista, ahora) {
 
 function Notificaciones() {
   const navigate = useNavigate()
+  const misLocales = useMisLocales()
   const [notis, setNotis] = useState(getNotificaciones)
   const [lado, setLado] = useState('personal')
   const [ahora, setAhora] = useState(() => new Date())
@@ -83,7 +84,7 @@ function Notificaciones() {
 
   const usuario = cuentaActual() ?? {}
   /* Con backend, el lado «negocio» es el primer local de la cuenta. */
-  const datosLocal = hayApi ? (getMisLocales()[0] ?? null) : getLocalById(ID_LOCAL)
+  const datosLocal = hayApi ? (misLocales[0] ?? null) : getLocalById(ID_LOCAL)
 
   const persona = {
     nombre: usuario.nombre,

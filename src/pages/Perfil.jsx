@@ -14,7 +14,7 @@ import { hayApi } from '../services/api.js'
 import { actualizarCuenta, quitarFotoPerfil, reenviarVerificacion, subirFotoPerfil } from '../services/auth.js'
 import { useSesion } from '../hooks/useSesion.js'
 import { getLocalById } from '../services/locales.js'
-import { getMisLocales } from '../services/misLocales.js'
+import { useMisLocales } from '../hooks/useMisLocales.js'
 import { getPerfiles, savePerfil } from '../services/storage.js'
 import { getUsuarioById } from '../services/usuarios.js'
 import { fotoCuadrada } from '../utils/fichaLocal.js'
@@ -46,6 +46,7 @@ function usuarioDesdeCuenta(cuenta) {
 
 function Perfil() {
   const { estado, usuario: cuenta } = useSesion()
+  const misLocales = useMisLocales()
   /* Lo editado se apunta aquí para pintar al momento, sin esperar al servidor. */
   const [editado, setEditado] = useState(null)
   const [fotoAbierta, setFotoAbierta] = useState(false)
@@ -59,7 +60,7 @@ function Perfil() {
   const base = usuarioDesdeCuenta(cuenta)
   const usuario = base && editado?.id === base.id ? { ...base, ...editado.cambios } : base
   /* Demo: Laura es dueña de Sara. Con cuenta real, su primer local propio. */
-  const dueno = hayApi ? (getMisLocales()[0] ?? null) : getLocalById(ID_LOCAL_DUENO)
+  const dueno = hayApi ? (misLocales[0] ?? null) : getLocalById(ID_LOCAL_DUENO)
 
   const guardar = async (cambios) => {
     setEditado({ id: usuario.id, cambios: { ...editado?.cambios, ...cambios } })

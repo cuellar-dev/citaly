@@ -190,7 +190,7 @@ function FichaLocal({ local, onEditar, onOpiniones, onCatalogo }) {
         alAbrir: onOpiniones,
         Icono: MessageSquareQuote,
         titulo: 'Opiniones',
-        valor: `${opiniones} opiniones`,
+        valor: `${opiniones} ${opiniones === 1 ? 'opinión' : 'opiniones'}`,
         extra: opiniones > 0 && (
           <span className="ficha-local-nota">
             <Star size={13} strokeWidth={2} fill="currentColor" aria-hidden="true" />
