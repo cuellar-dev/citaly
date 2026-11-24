@@ -1,9 +1,9 @@
 /* Pantallas para cuando falta algo: sin sesión (Mi Negocio, Mis citas) o
    con sesión pero sin local. */
 
-/* La plastilina tiene volumen y color propios: se ve entera, no velada
-   como las ilustraciones a tinta, y un poco más grande. */
-.taly-momento--plastilina .taly-momento-figura--ilustracion {
+/* Las escenas de Mi Negocio (llave y cartel) se ven enteras, no veladas,
+   y un poco más grandes: igual que la del local cerrado. */
+.taly-momento--grande .taly-momento-figura--ilustracion {
   width: min(300px, 78vw);
   opacity: 1;
 }

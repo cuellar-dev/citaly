@@ -1,0 +1,225 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Taly, dibujado a mano, mira cómo un lápiz que flota escribe el cartel de su local nuevo y el toldo se despliega">
+  <title>Taly pinta su local (a mano, animado)</title>
+
+  <style>
+    /* Mismo trazo que el Taly dormido de Perfil; mismas proporciones y
+       animación que la antigua versión de plastilina. Taly mira cómo un
+       lápiz que flota escribe el cartel en blanco de su local; cuando acaba,
+       el toldo se desenrolla y Taly da un saltito. Bucle de 5 s. */
+
+    .brocha { animation: brocha 5s ease-in-out infinite; }
+    @keyframes brocha {
+      0%, 6%    { transform: translate(0, 0) rotate(-6deg); }
+      14%       { transform: translate(28px, -4px) rotate(0deg); }
+      24%       { transform: translate(62px, 4px) rotate(-8deg); }
+      34%       { transform: translate(96px, -4px) rotate(0deg); }
+      44%       { transform: translate(130px, 4px) rotate(-8deg); }
+      54%, 60%  { transform: translate(166px, -2px) rotate(-3deg); }
+      76%       { transform: translate(80px, -30px) rotate(-24deg); }
+      92%, 100% { transform: translate(0, 0) rotate(-6deg); }
+    }
+
+    .pintura { stroke-dasharray: 260; animation: pintura 5s ease-in-out infinite; }
+    @keyframes pintura {
+      0%, 6%    { stroke-dashoffset: 260; opacity: 1; }
+      56%, 88%  { stroke-dashoffset: 0; opacity: 1; }
+      96%, 100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+
+    .toldo { transform-origin: 265px 196px; animation: toldo 5s ease-in-out infinite; }
+    @keyframes toldo {
+      0%, 58%   { transform: scaleY(.12); }
+      70%       { transform: scaleY(1.06); }
+      75%, 88%  { transform: scaleY(1); }
+      98%, 100% { transform: scaleY(.12); }
+    }
+
+    .cuerpo-taly { transform-origin: 200px 360px; animation: salta 5s ease-in-out infinite; }
+    @keyframes salta {
+      0%, 66%, 100% { transform: translateY(0) scale(1, 1); }
+      70%           { transform: translateY(0) scale(1.05, .93); }
+      76%           { transform: translateY(-14px) scale(.96, 1.06); }
+      82%           { transform: translateY(0) scale(1.04, .95); }
+      86%           { transform: translateY(0) scale(1, 1); }
+    }
+
+    .cabeza { transform-origin: 200px 170px; animation: cabeza 5s ease-in-out infinite; }
+    @keyframes cabeza {
+      0%, 100% { transform: rotate(-6deg); }
+      30%      { transform: rotate(-9deg) translateY(-2px); }
+      56%      { transform: rotate(-4deg); }
+    }
+
+    .pupila { animation: pupila 5s ease-in-out infinite; }
+    @keyframes pupila {
+      0%, 6%, 100% { transform: translate(2px, -5px); }
+      56%          { transform: translate(4px, -5px); }
+      70%, 88%     { transform: translate(3px, -1px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+      .pintura { stroke-dashoffset: 0; }
+      .toldo { transform: scaleY(1); }
+    }
+  </style>
+
+  <defs>
+    <!-- Temblor de pulso, fijo. La caja del filtro es todo el lienzo: si fuera
+         la de cada forma, recortaría el grosor del trazo (la llave se cortaba). -->
+    <filter id="pulso" filterUnits="userSpaceOnUse" x="-10" y="-10" width="420" height="420">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="ruido"/>
+      <feDisplacementMap in="SourceGraphic" in2="ruido" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <path id="cuerpo" d="M175 85 C215 68 246 94 249 134 C252 166 286 186 304 226 C324 278 286 328 200 330 C114 334 78 282 98 226 C116 180 150 162 152 126 C152 106 160 92 175 85 Z"/>
+    <path id="ala" d="M134 204 C166 182 218 198 236 240 C220 284 160 290 128 256 C118 238 120 218 134 204 Z"/>
+    <clipPath id="dentroCuerpo"><use href="#cuerpo"/></clipPath>
+
+    <path id="formaToldo" d="M150 196 L380 196 L384 226 C378.1 236 366.1 236 360.2 226 C354.3 236 342.3 236 336.4 226 C330.4 236 318.5 236 312.6 226 C306.7 236 294.8 236 288.8 226 C282.9 236 270.9 236 265.0 226 C259.1 236 247.1 236 241.2 226 C235.3 236 223.3 236 217.4 226 C211.5 236 199.5 236 193.6 226 C187.7 236 175.7 236 169.8 226 C163.8 236 151.9 236 146.0 226 Z"/>
+    <clipPath id="dentroToldo"><use href="#formaToldo"/></clipPath>
+  </defs>
+
+  <!-- suelo, a garabato -->
+  <g filter="url(#pulso)" stroke-linecap="round" fill="none">
+    <path d="M14 364 C110 370 260 368 390 362" stroke="#0E2E2A" stroke-opacity=".28" stroke-width="5"/>
+    <path d="M40 374 C140 379 250 378 360 372" stroke="#0E2E2A" stroke-opacity=".14" stroke-width="4"/>
+  </g>
+
+  <!-- el local nuevo: escaparate a la izquierda y la puerta a la derecha, con su margen.
+       Puerta de 84 × 176 (casi 1:2, como una de verdad); 22 de separación entre los dos y 18 de margen al borde -->
+  <g filter="url(#pulso)" stroke-linecap="round" stroke-linejoin="round">
+    <!-- fachada -->
+    <rect x="136" y="30" width="258" height="332" rx="14" transform="translate(4 3)" fill="#F2EBDD"/>
+    <rect x="136" y="30" width="258" height="332" rx="14" fill="none" stroke="#0E2E2A" stroke-width="4"/>
+    <!-- ladrillos sueltos -->
+    <g stroke="#0E2E2A" stroke-opacity=".22" stroke-width="3" fill="none">
+      <path d="M150 132 l16 0 M368 140 l14 0 M150 316 l14 0 M156 250 l10 0 M180 336 l14 0"/>
+    </g>
+
+    <!-- escaparate -->
+    <rect x="186" y="196" width="84" height="94" rx="10" transform="translate(3 2)" fill="#BDF4E8"/>
+    <path d="M197 208 L217 226 M210 206 L240 234" stroke="#FFFFFF" stroke-width="4"/>
+    <rect x="186" y="196" width="84" height="94" rx="10" fill="none" stroke="#0E2E2A" stroke-width="4"/>
+
+    <!-- puerta -->
+    <rect x="292" y="186" width="84" height="176" rx="36" transform="translate(3 2)" fill="#2AA795"/>
+    <rect x="292" y="186" width="84" height="176" rx="36" fill="none" stroke="#0E2E2A" stroke-width="4"/>
+    <circle cx="363" cy="278" r="5.5" fill="#FFD166" stroke="#0E2E2A" stroke-width="3"/>
+
+    <!-- el cartel, en blanco: aquí va el nombre del local -->
+    <rect x="150" y="48" width="230" height="58" rx="10" transform="translate(4 3)" fill="#FFFDF7"/>
+    <rect x="150" y="48" width="230" height="58" rx="10" fill="none" stroke="#0E2E2A" stroke-width="4"/>
+  </g>
+
+  <!-- lo que escribe el lápiz, centrado en el cartel -->
+  <g filter="url(#pulso)">
+    <path class="pintura" d="M184 78 C194 64 202 92 212 78 C222 64 230 92 240 78 C250 64 258 92 268 78 C278 64 286 92 296 78 C306 64 314 92 324 78 C334 64 342 92 352 78" fill="none" stroke="#0E2E2A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- el toldo, a lo ancho del cartel: un rollo arriba que se desenrolla -->
+  <g filter="url(#pulso)" stroke-linecap="round" stroke-linejoin="round">
+    <g transform="translate(0 -76)">
+      <g class="toldo">
+        <g transform="translate(4 3)">
+          <use href="#formaToldo" fill="#4FD8C4"/>
+          <g clip-path="url(#dentroToldo)" fill="#FFD166"><rect x="169.8" y="190" width="23.8" height="50"/><rect x="217.4" y="190" width="23.8" height="50"/><rect x="265.0" y="190" width="23.8" height="50"/><rect x="312.6" y="190" width="23.8" height="50"/><rect x="360.2" y="190" width="23.8" height="50"/></g>
+        </g>
+        <use href="#formaToldo" fill="none" stroke="#0E2E2A" stroke-width="4" vector-effect="non-scaling-stroke"/>
+      </g>
+      <!-- el rollo -->
+      <rect x="146" y="188" width="238" height="14" rx="7" transform="translate(3 2)" fill="#2AA795"/>
+      <rect x="146" y="188" width="238" height="14" rx="7" fill="none" stroke="#0E2E2A" stroke-width="3.5"/>
+    </g>
+  </g>
+
+  <!-- la sombra de Taly, a garabato -->
+  <g filter="url(#pulso)" stroke-linecap="round" fill="none">
+    <path d="M58 360 C90 365 140 365 176 359" stroke="#0E2E2A" stroke-opacity=".25" stroke-width="5"/>
+  </g>
+
+  <!-- Taly -->
+  <g filter="url(#pulso)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <g transform="translate(-38 70) scale(.78)">
+      <g class="cuerpo-taly">
+
+        <!-- patas -->
+        <g stroke="#0E2E2A" stroke-width="13">
+          <path d="M180 326 L178 356 M178 356 L160 364 M178 356 L194 365"/>
+          <path d="M226 327 L228 356 M228 356 L210 365 M228 356 L244 364"/>
+        </g>
+        <g stroke="#FFD166" stroke-width="6">
+          <path d="M180 326 L178 356 M178 356 L160 364 M178 356 L194 365"/>
+          <path d="M226 327 L228 356 M228 356 L210 365 M228 356 L244 364"/>
+        </g>
+
+        <!-- relleno del cuerpo, desfasado del contorno como pintado a mano -->
+        <g transform="translate(4 3)">
+          <use href="#cuerpo" fill="#4FD8C4"/>
+          <g clip-path="url(#dentroCuerpo)">
+            <path d="M205 214 C256 210 304 236 296 286 C288 328 236 336 190 326 C232 306 244 256 205 214 Z" fill="#BDF4E8"/>
+            <g stroke="#8FE0D0" stroke-width="4">
+              <path d="M240 250 l9 3 M254 266 l9 2 M232 276 l9 3 M250 289 l9 1 M232 300 l9 2 M262 248 l8 4"/>
+            </g>
+            <g stroke="#2FBDA8" stroke-width="4">
+              <path d="M120 232 l-3 9 M108 255 l-2 9 M118 282 l2 8 M136 304 l4 7"/>
+              <path d="M176 100 l8 3 M194 90 l9 1 M212 94 l8 3 M170 124 l7 -2 M168 148 l4 7 M188 168 l7 3"/>
+              <path d="M268 206 l-4 8 M284 228 l-6 6 M292 252 l-8 4"/>
+            </g>
+          </g>
+        </g>
+
+        <!-- contorno del cuerpo, repasado dos veces -->
+        <use href="#cuerpo" stroke="#0E2E2A" stroke-width="5"/>
+        <g stroke="#0E2E2A" stroke-width="2" stroke-opacity=".45" transform="translate(-2 -2) rotate(.6 200 200)">
+          <use href="#cuerpo"/>
+        </g>
+
+        <!-- el ala, abierta hacia el lápiz como si lo guiara -->
+        <g transform="rotate(-24 150 228)">
+          <g transform="translate(4 3)">
+            <use href="#ala" fill="#2AA795"/>
+            <g stroke="#4FD8C4" stroke-width="4">
+              <path d="M148 218 C172 208 200 214 216 232"/>
+              <path d="M142 236 C168 228 194 234 214 248"/>
+              <path d="M144 254 C166 250 188 256 202 266"/>
+            </g>
+          </g>
+          <use href="#ala" stroke="#0E2E2A" stroke-width="4"/>
+        </g>
+
+        <!-- cabeza: copete, pico y ojo mirando arriba -->
+        <g class="cabeza">
+          <path transform="translate(4 3)" d="M168 92 C156 70 160 52 174 42 C178 58 188 62 192 76 C198 62 206 58 214 56 C214 72 204 84 196 92 Z" fill="#FFD166"/>
+          <path d="M168 92 C156 70 160 52 174 42 C178 58 188 62 192 76 C198 62 206 58 214 56 C214 72 204 84 196 92" stroke="#0E2E2A" stroke-width="4"/>
+
+          <path transform="translate(4 3)" d="M246 112 C268 112 290 122 300 134 C282 146 262 150 247 146 Z" fill="#FFD166"/>
+          <path d="M246 112 C268 112 290 122 300 134 C282 146 262 150 247 146" stroke="#0E2E2A" stroke-width="4"/>
+          <path d="M250 134 C266 134 282 134 298 134" stroke="#0E2E2A" stroke-width="3"/>
+
+          <circle cx="224" cy="120" r="12" fill="#F2EBDD" stroke="#0E2E2A" stroke-width="3.5"/>
+          <g class="pupila">
+            <circle cx="226" cy="122" r="5.5" fill="#0E2E2A"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- el lápiz, flotando: nadie lo sujeta, pero escribe el nombre del local
+       con la punta; la goma queda hacia Taly -->
+  <g filter="url(#pulso)" stroke-linejoin="round">
+    <g transform="translate(184 78)">
+      <g class="brocha">
+        <g transform="rotate(-60)" stroke="#0E2E2A" stroke-width="3">
+          <rect x="-8" y="-106" width="16" height="16" rx="5" fill="#EF476F"/>
+          <rect x="-9" y="-92" width="18" height="11" rx="2" fill="#C9D3D1"/>
+          <rect x="-8" y="-81" width="16" height="59" fill="#FFD166"/>
+          <path d="M-2 -78 L-2 -26" stroke="#F0B93E" stroke-width="3" stroke-linecap="round"/>
+          <path d="M-8 -22 L8 -22 L3 -9 L-3 -9 Z" fill="#F2EBDD"/>
+          <path d="M-3 -9 L3 -9 L0 0 Z" fill="#0E2E2A"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
