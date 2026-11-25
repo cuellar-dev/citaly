@@ -189,14 +189,16 @@
   gap: 6px;
 }
 
-.local-hero-estado,
-.local-hero-categoria {
+/* Una sola fila incluso a 360px: chips compactos; la categoría va en la
+   línea de la nota, bajo el nombre. */
+.local-hero-estado {
   display: inline-flex;
   align-items: center;
-  padding: 5px 11px;
+  padding: 5px 10px;
   border-radius: 999px;
   font-family: var(--font-familyPrincipal);
-  font-size: 12px;
+  font-size: 11.5px;
+  white-space: nowrap;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -218,13 +220,14 @@
   align-items: center;
   gap: 5px;
   min-height: 26px;
-  padding: 4px 11px;
+  padding: 4px 10px;
+  white-space: nowrap;
   border: 1px solid color-mix(in srgb, var(--yellow-texto, #ffd166) 55%, transparent);
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.45);
   color: var(--yellow-texto, #ffd166);
   font-family: var(--font-familyPrincipal);
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 700;
   line-height: 1.2;
   cursor: pointer;
@@ -271,12 +274,6 @@
 .local-hero-estado-detalle {
   font-weight: 600;
   opacity: 0.85;
-}
-
-.local-hero-categoria {
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid rgb(var(--tinte) / calc(0.14 * var(--tinte-fuerza)));
-  color: var(--fonts-color-primary);
 }
 
 .local-hero-nombre {

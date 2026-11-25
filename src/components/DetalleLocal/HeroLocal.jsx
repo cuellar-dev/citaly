@@ -156,10 +156,11 @@ function HeroLocal({ local, fotos, estado, nota, cantidad, onCompartir, onAbrirF
         <div className="local-hero-chips">
           <span className={`local-hero-estado${estado.abierto ? ' local-hero-estado--abierto' : ''}`}>
             {estado.texto}
-            {estado.detalle ? <span className="local-hero-estado-detalle"> · {estado.detalle}</span> : null}
+            {estado.detalle ? (
+              <span className="local-hero-estado-detalle"> · {estado.detalle.replace(/^abre a las /, 'abre ')}</span>
+            ) : null}
           </span>
           {!estado.abierto && estado.detalle ? <BotonAvisoApertura local={local} /> : null}
-          {local.categoria ? <span className="local-hero-categoria">{local.categoria}</span> : null}
         </div>
         <h1 className="local-hero-nombre">{local.localName}</h1>
         <p className="local-hero-meta">
@@ -175,6 +176,12 @@ function HeroLocal({ local, fotos, estado, nota, cantidad, onCompartir, onAbrirF
           ) : (
             <span className="local-hero-nuevo">Nuevo en Citaly</span>
           )}
+          {local.categoria ? (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{local.categoria}</span>
+            </>
+          ) : null}
           {distanciaATi(local, getUbicacion()) ? (
             <>
               <span aria-hidden="true">·</span>

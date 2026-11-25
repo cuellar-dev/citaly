@@ -31,10 +31,11 @@ function BotonAvisoApertura({ local }) {
       type="button"
       className={`local-hero-avisame${activo ? ' local-hero-avisame--activo' : ''}`}
       aria-pressed={activo}
+      aria-label={activo ? 'Te avisaremos cuando abra. Tocar para quitar el aviso' : 'Avísame cuando abra'}
       onClick={alternar}
     >
       <Icono size={13} strokeWidth={2.4} aria-hidden="true" />
-      <span aria-live="polite">{activo ? 'Te avisaremos' : 'Avísame cuando abra'}</span>
+      <span aria-live="polite">{activo ? 'Te avisaremos' : 'Avísame'}</span>
     </button>
   )
 }
