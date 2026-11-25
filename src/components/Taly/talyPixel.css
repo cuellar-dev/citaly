@@ -1,0 +1,72 @@
+/* Taly pixel art (TalyPixel.jsx). Todo a saltos de píxel: steps(), nunca
+   movimiento suave. 1 píxel del sprite = 2 px de pantalla. */
+
+.taly-pixel {
+  display: inline-block;
+  transform: translateX(var(--taly-x, 0));
+  image-rendering: pixelated;
+}
+
+.taly-pixel-svg {
+  display: block;
+  overflow: visible;
+}
+
+/* Respira: el cuerpo sube un píxel y vuelve; las patas se quedan en el
+   suelo (nacen dentro del cuerpo, así que no se abre hueco). */
+.taly-pixel-cuerpo {
+  animation: taly-pixel-respira 1.6s steps(1, end) infinite;
+}
+
+@keyframes taly-pixel-respira {
+  0%,
+  55% {
+    transform: translateY(0);
+  }
+  56%,
+  100% {
+    transform: translateY(-1px);
+  }
+}
+
+/* Dormido: la misma respiración, pero el doble de lenta. */
+.taly-pixel--dormido .taly-pixel-cuerpo {
+  animation-duration: 3.2s;
+}
+
+/* Salto al tocar Reservar: sube en tres golpes, cae en dos. */
+.taly-pixel--saltando .taly-pixel-svg {
+  animation: taly-pixel-salta 0.42s steps(1, end);
+}
+
+@keyframes taly-pixel-salta {
+  0% {
+    translate: 0 0;
+  }
+  15% {
+    translate: 0 -4px;
+  }
+  30% {
+    translate: 0 -8px;
+  }
+  50% {
+    translate: 0 -10px;
+  }
+  70% {
+    translate: 0 -6px;
+  }
+  85% {
+    translate: 0 -2px;
+  }
+  100% {
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .taly-pixel-cuerpo,
+  .taly-pixel--dormido .taly-pixel-cuerpo,
+  .taly-pixel--saltando .taly-pixel-svg {
+    animation: none;
+  }
+}

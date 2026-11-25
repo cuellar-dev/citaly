@@ -20,6 +20,7 @@ const TONOS = {
   porCaducar: 'mostaza',
   pausa: 'mostaza',
   aceptada: 'verde',
+  abre: 'verde',
   confirmo: 'verde',
   lleno: 'verde',
   resumen: 'verde',

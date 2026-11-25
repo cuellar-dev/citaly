@@ -1,0 +1,284 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Taly, dibujado a mano, da toques con el ala a una campana amarilla que cuelga a su lado">
+  <title>Taly con la campana (a mano, animado)</title>
+
+  <style>
+    /* Mismo trazo que el Taly de la llave. Taly levanta el ala y le da dos
+       toques a la campana: cierra el ojo en cada toque, el copete salta, la
+       campana se balancea (el badajo va con retraso) y salen ondas de sonido
+       a garabato. Bucle de 4 s. */
+
+    .ala-toca { transform-origin: 282px 240px; animation: ala-toca 4s ease-in-out infinite; }
+    @keyframes ala-toca {
+      0%, 12%, 100% { transform: rotate(62deg); }
+      21%           { transform: rotate(-1deg); }
+      23%           { transform: rotate(1deg); }
+      29%           { transform: rotate(16deg); }
+      36%           { transform: rotate(-1deg); }
+      38%           { transform: rotate(1deg); }
+      50%           { transform: rotate(62deg); }
+    }
+
+    .campana { transform-origin: 292px 26px; animation: campana 4s ease-in-out infinite; }
+    @keyframes campana {
+      0%, 21%, 100% { transform: rotate(0deg); }
+      27%           { transform: rotate(-7deg); }
+      34%           { transform: rotate(2deg); }
+      41%           { transform: rotate(-8deg); }
+      50%           { transform: rotate(5deg); }
+      58%           { transform: rotate(-3deg); }
+      66%           { transform: rotate(1.5deg); }
+      74%           { transform: rotate(0deg); }
+    }
+
+    /* Dentro de la campana: (0, 196) es el centro de su boca. */
+    .badajo { transform-origin: 0px 196px; animation: badajo 4s ease-in-out infinite; }
+    @keyframes badajo {
+      0%, 23%, 100% { transform: rotate(0deg); }
+      29%           { transform: rotate(16deg); }
+      36%           { transform: rotate(-10deg); }
+      43%           { transform: rotate(18deg); }
+      52%           { transform: rotate(-12deg); }
+      61%           { transform: rotate(7deg); }
+      70%           { transform: rotate(-3deg); }
+      80%           { transform: rotate(0deg); }
+    }
+
+    .onda { transform-box: fill-box; opacity: 0; animation: onda 4s ease-out infinite; }
+    .onda--der { transform-origin: 0% 50%; }
+    .onda--izq { transform-origin: 100% 50%; }
+    .onda--2 { animation-delay: .12s; }
+    @keyframes onda {
+      0%, 22%   { opacity: 0; transform: scale(.55); }
+      26%       { opacity: 1; transform: scale(1); }
+      34%       { opacity: 0; transform: scale(1.25); }
+      37%       { opacity: 0; transform: scale(.55); }
+      41%       { opacity: 1; transform: scale(1); }
+      54%, 100% { opacity: 0; transform: scale(1.3); }
+    }
+
+    .cuerpo-taly { transform-origin: 200px 360px; animation: aplasta 4s ease-in-out infinite; }
+    @keyframes aplasta {
+      0%, 16%, 100% { transform: scale(1, 1); }
+      21%           { transform: scale(.97, 1.04); }
+      26%           { transform: scale(1.03, .97); }
+      36%           { transform: scale(.97, 1.04); }
+      41%           { transform: scale(1.03, .97); }
+      50%           { transform: scale(1, 1); }
+    }
+
+    .cabeza { transform-origin: 200px 170px; animation: cabeza 4s ease-in-out infinite; }
+    @keyframes cabeza {
+      0%, 10%, 100% { transform: rotate(0deg); }
+      20%, 42%      { transform: rotate(-6deg) translateY(-2px); }
+      56%           { transform: rotate(3deg); }
+      70%           { transform: rotate(0deg); }
+    }
+
+    .copete { transform-origin: 186px 92px; animation: copete 4s ease-in-out infinite; }
+    @keyframes copete {
+      0%, 20%, 100% { transform: rotate(0deg) translateY(0); }
+      24%           { transform: rotate(-10deg) translateY(-9px); }
+      30%           { transform: rotate(3deg) translateY(1px); }
+      35%           { transform: rotate(0deg) translateY(0); }
+      39%           { transform: rotate(-10deg) translateY(-9px); }
+      46%           { transform: rotate(4deg) translateY(1px); }
+      52%           { transform: rotate(0deg) translateY(0); }
+    }
+
+    /* El ojo se cierra (contento) en cada toque. */
+    .ojo-abierto { animation: ojo-abierto 4s steps(1, end) infinite; }
+    .ojo-cerrado { opacity: 0; animation: ojo-cerrado 4s steps(1, end) infinite; }
+    @keyframes ojo-abierto {
+      0%   { opacity: 1; }
+      21%  { opacity: 0; }
+      27%  { opacity: 1; }
+      36%  { opacity: 0; }
+      43%  { opacity: 1; }
+    }
+    @keyframes ojo-cerrado {
+      0%   { opacity: 0; }
+      21%  { opacity: 1; }
+      27%  { opacity: 0; }
+      36%  { opacity: 1; }
+      43%  { opacity: 0; }
+    }
+
+    .pupila { animation: pupila 4s ease-in-out infinite; }
+    @keyframes pupila {
+      0%, 8%, 100% { transform: translate(0, 0); }
+      16%, 60%     { transform: translate(4px, 1px); }
+      72%          { transform: translate(0, 0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; }
+      .ala-toca { transform: rotate(62deg); }
+    }
+  </style>
+
+  <defs>
+    <!-- Temblor de pulso, fijo, con la caja de todo el lienzo (así no recorta
+         el grosor del trazo). -->
+    <filter id="pulso" filterUnits="userSpaceOnUse" x="-10" y="-10" width="420" height="420">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="ruido"/>
+      <feDisplacementMap in="SourceGraphic" in2="ruido" scale="5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+
+    <path id="cuerpo" d="M175 85 C215 68 246 94 249 134 C252 166 286 186 304 226 C324 278 286 328 200 330 C114 334 78 282 98 226 C116 180 150 162 152 126 C152 106 160 92 175 85 Z"/>
+    <path id="ala" d="M134 204 C166 182 218 198 236 240 C220 284 160 290 128 256 C118 238 120 218 134 204 Z"/>
+    <!-- el ala que se estira hacia la campana (sale de detrás del cuerpo) -->
+    <path id="ala-larga" d="M266 238 C284 214 312 190 340 174 C352 167 364 171 359 183 C350 202 324 224 294 252 Z"/>
+    <clipPath id="dentroCuerpo"><use href="#cuerpo"/></clipPath>
+
+    <!-- la campana clásica de aviso, en coordenadas de su viga (0,0) -->
+    <path id="campana-cuerpo" d="M0 100 C30 100 44 126 44 158 C44 178 50 188 60 196 L-60 196 C-50 188 -44 178 -44 158 C-44 126 -30 100 0 100 Z"/>
+    <path id="campana-borde" d="M-64 194 L64 194 C70 194 70 208 64 208 L-64 208 C-70 208 -70 194 -64 194 Z"/>
+  </defs>
+
+  <!-- suelo, a garabato -->
+  <g filter="url(#pulso)" stroke-linecap="round" fill="none">
+    <path d="M14 364 C110 370 260 368 390 362" stroke="#0E2E2A" stroke-opacity=".28" stroke-width="5"/>
+    <path d="M40 374 C140 379 250 378 360 372" stroke="#0E2E2A" stroke-opacity=".14" stroke-width="4"/>
+  </g>
+
+  <!-- la viga de la que cuelga la campana, entrando por la derecha -->
+  <g filter="url(#pulso)" stroke-linecap="round" stroke-linejoin="round">
+    <path transform="translate(3 2.5)" d="M244 14 L412 12 L412 34 L246 36 Z" fill="#F2EBDD"/>
+    <path d="M244 14 L412 12 L412 34 L246 36 Z" fill="none" stroke="#0E2E2A" stroke-width="4"/>
+    <path d="M262 24 C290 22 320 23 344 21 M356 27 l22 -1" fill="none" stroke="#0E2E2A" stroke-opacity=".3" stroke-width="2.5"/>
+  </g>
+
+  <!-- ondas de sonido, a garabato -->
+  <g filter="url(#pulso)" stroke="#0E2E2A" stroke-linecap="round" fill="none">
+    <path class="onda onda--der" d="M366 150 C378 166 378 194 366 210" stroke-width="5"/>
+    <path class="onda onda--der onda--2" d="M382 136 C400 160 400 200 382 224" stroke-width="4" stroke-opacity=".6"/>
+    <path class="onda onda--izq" d="M232 112 C222 122 220 138 226 150" stroke-width="4.5"/>
+  </g>
+
+  <!-- la campana: cordel, anilla, cuerpo amarillo, borde y badajo -->
+  <g filter="url(#pulso)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <g class="campana">
+      <g transform="translate(292 26)">
+        <path d="M0 4 C4 30 -4 58 0 84" stroke="#0E2E2A" stroke-width="4"/>
+        <circle cx="0" cy="92" r="8" stroke="#0E2E2A" stroke-width="9"/>
+        <circle cx="0" cy="92" r="8" stroke="#FFD166" stroke-width="3.5"/>
+
+        <!-- el badajo cuelga por debajo y va con retraso -->
+        <g class="badajo">
+          <path d="M0 196 L0 212" stroke="#0E2E2A" stroke-width="5"/>
+          <circle cx="3" cy="222" r="12" fill="#FFD166"/>
+          <circle cx="0" cy="220" r="12" stroke="#0E2E2A" stroke-width="4"/>
+        </g>
+
+        <!-- relleno desfasado del contorno, como pintado a mano -->
+        <g transform="translate(4 3)">
+          <use href="#campana-cuerpo" fill="#FFD166"/>
+          <use href="#campana-borde" fill="#FFD166"/>
+        </g>
+        <!-- brillo a la izquierda y rayitas de sombra a la derecha -->
+        <path d="M-22 122 C-32 136 -34 156 -32 176" stroke="#FFF0C2" stroke-width="7"/>
+        <g stroke="#E0A93A" stroke-width="4">
+          <path d="M26 132 l8 4 M30 150 l9 3 M32 168 l9 2 M36 184 l8 2"/>
+        </g>
+        <path d="M-56 202 C-20 204 20 204 56 202" stroke="#E0A93A" stroke-width="3"/>
+
+        <use href="#campana-cuerpo" stroke="#0E2E2A" stroke-width="5"/>
+        <use href="#campana-borde" stroke="#0E2E2A" stroke-width="5"/>
+        <!-- contorno repasado otra vez, un pelín corrido -->
+        <g stroke="#0E2E2A" stroke-width="2" stroke-opacity=".45" transform="translate(-2 -2) rotate(.8 0 150)">
+          <use href="#campana-cuerpo"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- sombra de Taly, a garabato -->
+  <g filter="url(#pulso)" stroke-linecap="round" fill="none">
+    <path d="M44 360 C80 365 136 365 176 359" stroke="#0E2E2A" stroke-opacity=".25" stroke-width="5"/>
+  </g>
+
+  <!-- Taly, a la izquierda, de cara a la campana -->
+  <g filter="url(#pulso)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <g transform="translate(-40 66) scale(.8)">
+      <g class="cuerpo-taly">
+
+        <!-- el ala que toca: va detrás del cuerpo, así su raíz no se ve -->
+        <g class="ala-toca">
+          <g transform="translate(4 3)">
+            <use href="#ala-larga" fill="#2AA795"/>
+          </g>
+          <g stroke="#4FD8C4" stroke-width="4">
+            <path d="M294 226 C310 210 326 196 344 184"/>
+            <path d="M298 240 C314 226 330 212 348 198"/>
+          </g>
+          <use href="#ala-larga" stroke="#0E2E2A" stroke-width="4.5"/>
+        </g>
+
+        <!-- patas -->
+        <g stroke="#0E2E2A" stroke-width="13">
+          <path d="M180 326 L178 356 M178 356 L160 364 M178 356 L194 365"/>
+          <path d="M226 327 L228 356 M228 356 L210 365 M228 356 L244 364"/>
+        </g>
+        <g stroke="#FFD166" stroke-width="6">
+          <path d="M180 326 L178 356 M178 356 L160 364 M178 356 L194 365"/>
+          <path d="M226 327 L228 356 M228 356 L210 365 M228 356 L244 364"/>
+        </g>
+
+        <!-- relleno del cuerpo, desfasado del contorno como pintado a mano -->
+        <g transform="translate(4 3)">
+          <use href="#cuerpo" fill="#4FD8C4"/>
+          <g clip-path="url(#dentroCuerpo)">
+            <path d="M205 214 C256 210 304 236 296 286 C288 328 236 336 190 326 C232 306 244 256 205 214 Z" fill="#BDF4E8"/>
+            <g stroke="#8FE0D0" stroke-width="4">
+              <path d="M240 250 l9 3 M254 266 l9 2 M232 276 l9 3 M250 289 l9 1 M232 300 l9 2 M262 248 l8 4"/>
+            </g>
+            <g stroke="#2FBDA8" stroke-width="4">
+              <path d="M120 232 l-3 9 M108 255 l-2 9 M118 282 l2 8 M136 304 l4 7"/>
+              <path d="M176 100 l8 3 M194 90 l9 1 M212 94 l8 3 M170 124 l7 -2 M168 148 l4 7 M188 168 l7 3"/>
+              <path d="M268 206 l-4 8 M284 228 l-6 6 M292 252 l-8 4"/>
+            </g>
+          </g>
+        </g>
+
+        <!-- el ala de este lado, quieta -->
+        <g transform="translate(4 3)">
+          <use href="#ala" fill="#2AA795"/>
+          <g stroke="#4FD8C4" stroke-width="4">
+            <path d="M148 218 C172 208 200 214 216 232"/>
+            <path d="M142 236 C168 228 194 234 214 248"/>
+            <path d="M144 254 C166 250 188 256 202 266"/>
+          </g>
+        </g>
+        <use href="#ala" stroke="#0E2E2A" stroke-width="4"/>
+        <path d="M160 246 C176 244 192 250 204 260" stroke="#0E2E2A" stroke-width="2.5" stroke-opacity=".5"/>
+
+        <!-- contorno del cuerpo, repasado dos veces -->
+        <use href="#cuerpo" stroke="#0E2E2A" stroke-width="5"/>
+        <g stroke="#0E2E2A" stroke-width="2" stroke-opacity=".45" transform="translate(-2 -2) rotate(.6 200 200)">
+          <use href="#cuerpo"/>
+        </g>
+
+        <!-- cabeza: copete, pico y ojo -->
+        <g class="cabeza">
+          <g class="copete">
+            <path transform="translate(4 3)" d="M168 92 C156 70 160 52 174 42 C178 58 188 62 192 76 C198 62 206 58 214 56 C214 72 204 84 196 92 Z" fill="#FFD166"/>
+            <path d="M168 92 C156 70 160 52 174 42 C178 58 188 62 192 76 C198 62 206 58 214 56 C214 72 204 84 196 92" stroke="#0E2E2A" stroke-width="4"/>
+          </g>
+
+          <path transform="translate(4 3)" d="M246 112 C268 112 290 122 300 134 C282 146 262 150 247 146 Z" fill="#FFD166"/>
+          <path d="M246 112 C268 112 290 122 300 134 C282 146 262 150 247 146" stroke="#0E2E2A" stroke-width="4"/>
+          <path d="M250 134 C266 134 282 134 298 134" stroke="#0E2E2A" stroke-width="3"/>
+
+          <!-- ojo: abierto mirando la campana; cerrado y contento en cada toque -->
+          <g class="ojo-abierto">
+            <circle cx="224" cy="120" r="12" fill="#F2EBDD" stroke="#0E2E2A" stroke-width="3.5"/>
+            <g class="pupila">
+              <circle cx="226" cy="121" r="5.5" fill="#0E2E2A"/>
+            </g>
+          </g>
+          <path class="ojo-cerrado" d="M212 124 C217 113 231 113 236 124" stroke="#0E2E2A" stroke-width="4"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

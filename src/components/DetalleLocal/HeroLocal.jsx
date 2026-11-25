@@ -7,6 +7,7 @@ import { ArrowLeft, Share2, Star } from 'lucide-react'
 import BotonFavorito from '../Favorito/BotonFavorito.jsx'
 import Foto from '../Foto/Foto.jsx'
 import { NubeBorde } from './Tinta.jsx'
+import BotonAvisoApertura from './BotonAvisoApertura.jsx'
 import './heroLocal.css'
 
 /* Cabecera de la ficha: las fotos del local se pasan deslizando aquí mismo
@@ -157,6 +158,7 @@ function HeroLocal({ local, fotos, estado, nota, cantidad, onCompartir, onAbrirF
             {estado.texto}
             {estado.detalle ? <span className="local-hero-estado-detalle"> · {estado.detalle}</span> : null}
           </span>
+          {!estado.abierto && estado.detalle ? <BotonAvisoApertura local={local} /> : null}
           {local.categoria ? <span className="local-hero-categoria">{local.categoria}</span> : null}
         </div>
         <h1 className="local-hero-nombre">{local.localName}</h1>

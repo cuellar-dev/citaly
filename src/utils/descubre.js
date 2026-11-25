@@ -1,4 +1,4 @@
-import { addDays, isSameDay, startOfToday } from 'date-fns'
+import { addDays, isSameDay, startOfDay } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { format } from 'date-fns'
 import { COMODIDADES, codigoDia, estaAbierto, franjaTurno, horaAmPm, aMinutos, notaDeComentarios, precioPlanTexto } from './fichaLocal.js'
@@ -29,6 +29,24 @@ function proximaApertura(local, desde) {
   return null
 }
 
+/** Fecha y hora exactas de la próxima vez que abre, o null si no se sabe
+    (sin horario o sin días). Si ahora está abierto, la siguiente apertura. */
+export function proximaAperturaFecha(local, ahora = new Date()) {
+  if (!local?.horarioApertura || !local?.horarioCierre) return null
+  const minutos = aMinutos(local.horarioApertura)
+  const aLaHora = (dia) => {
+    const f = new Date(dia)
+    f.setHours(Math.floor(minutos / 60), minutos % 60, 0, 0)
+    return f
+  }
+  const hoy = startOfDay(ahora)
+  if ((local.dias ?? []).includes(codigoDia(ahora)) && minutos > ahora.getHours() * 60 + ahora.getMinutes()) {
+    return aLaHora(hoy)
+  }
+  const proxima = proximaApertura(local, addDays(hoy, 1))
+  return proxima ? aLaHora(proxima) : null
+}
+
 /**
  * Estado de puertas, contado como contexto para ir, no como urgencia de venta:
  * "Abierto · cierra en 2 h", "Cerrado · abre mañana 9:00 AM".
@@ -47,7 +65,7 @@ export function estadoApertura(local, ahora = new Date()) {
     return { abierto: true, texto: 'Abierto', detalle: `cierra en ${cuanto}` }
   }
 
-  const hoy = startOfToday()
+  const hoy = startOfDay(ahora)
   const abreHoyMasTarde =
     (local.dias ?? []).includes(codigoDia(ahora)) &&
     aMinutos(local.horarioApertura) > ahora.getHours() * 60 + ahora.getMinutes()

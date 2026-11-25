@@ -1,5 +1,6 @@
 import { notificacionesDemo } from '../data/notificacionesDemo.js'
 import { notisMisLocales } from './misLocales.js'
+import { notisApertura } from './avisosApertura.js'
 import { hayApi, pedir } from './api.js'
 import { idUsuarioActual } from './sesion.js'
 
@@ -78,11 +79,15 @@ function guardar(clave, set) {
 
 /** Más recientes primero, sin las borradas. */
 export function getNotificaciones() {
+  /* Sin sesión no hay avisos: ni los del servidor ni los guardados en este
+     navegador («Avísame cuando abra»), que si no encendían la campana con un
+     «1» a quien ni ha entrado. Vuelven al iniciar sesión. */
+  if (!idUsuarioActual()) return []
   const leidas = leer(LEIDAS_KEY)
   const borradas = leer(BORRADAS_KEY)
   const base = hayApi
-    ? [...(delServidor.de === idUsuarioActual() ? delServidor.lista : []), ...notisMisLocales()]
-    : [...notificacionesDemo(), ...notisMisLocales()]
+    ? [...(delServidor.de === idUsuarioActual() ? delServidor.lista : []), ...notisMisLocales(), ...notisApertura()]
+    : [...notificacionesDemo(), ...notisMisLocales(), ...notisApertura()]
   return base
     .filter((n) => !borradas.has(n.id))
     .map((n) => ({ ...n, leida: Boolean(n.leida) || leidas.has(n.id) }))

@@ -329,6 +329,7 @@ function DetalleLocal() {
         etiqueta={etiquetaDesde}
         nota={notaBarra}
         tipo={tipo}
+        cerrado={!estado.abierto}
         onReservar={() => reservar()}
       />
 

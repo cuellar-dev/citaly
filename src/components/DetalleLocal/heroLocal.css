@@ -211,6 +211,63 @@
   color: var(--primary-color-strong);
 }
 
+/* «Avísame cuando abra»: va pegado al chip de Cerrado, mismo tamaño, pero
+   con borde para que se lea como botón y no como otra etiqueta. */
+.local-hero-avisame {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 26px;
+  padding: 4px 11px;
+  border: 1px solid color-mix(in srgb, var(--yellow-texto, #ffd166) 55%, transparent);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: var(--yellow-texto, #ffd166);
+  font-family: var(--font-familyPrincipal);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  cursor: pointer;
+  /* El texto del héroe deja pasar los toques a la foto (pointer-events:
+     none en .local-hero-texto); este botón sí tiene que recibirlos. */
+  pointer-events: auto;
+  transition: transform 0.15s var(--ease-out, ease-out), background-color 0.2s ease;
+}
+
+.local-hero-avisame:active {
+  transform: scale(0.96);
+}
+
+.local-hero-avisame:focus-visible {
+  outline: 2px solid var(--yellow-texto, #ffd166);
+  outline-offset: 2px;
+}
+
+.local-hero-avisame--activo {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--primary-color) 26%, rgba(0, 0, 0, 0.5));
+  color: var(--primary-color-strong);
+}
+
+.local-hero-avisame--activo svg {
+  animation: local-avisame-timbre 0.5s var(--ease-out, ease-out);
+  transform-origin: 50% 10%;
+}
+
+@keyframes local-avisame-timbre {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(16deg); }
+  55% { transform: rotate(-12deg); }
+  80% { transform: rotate(6deg); }
+  100% { transform: rotate(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .local-hero-avisame--activo svg {
+    animation: none;
+  }
+}
+
 .local-hero-estado-detalle {
   font-weight: 600;
   opacity: 0.85;

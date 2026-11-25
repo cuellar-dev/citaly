@@ -40,7 +40,8 @@
 .local-barra-taly {
   position: absolute;
   left: 22px;
-  top: -30px;
+  /* 19 píxeles de sprite × 2: las patas pisan la línea de la caja. */
+  top: -37px;
   pointer-events: none;
 }
 
