@@ -20,12 +20,16 @@ Sin conexión, cualquier ruta (también `/local/:id`) abre `index.html` desde la
 
 ## Cómo se actualiza
 
-`registerType: 'prompt'`: tras un deploy, el service worker nuevo se descarga en segundo plano pero **no se activa solo**. `src/components/AvisosApp/AvisosApp.jsx` enseña "Hay una versión nueva de Citaly · Actualizar":
+`registerType: 'prompt'`: tras un deploy, el service worker nuevo se descarga en segundo plano pero **no se activa solo**. `AvisosApp.jsx` lo activa **en silencio, sin aviso ni botón**, pero solo en un buen momento (`src/utils/momentoActualizar.js`):
 
-- **Actualizar**: activa la versión nueva y recarga.
-- **X (luego)**: sigue con la versión actual. La nueva entra la próxima vez que se abra la app con todas las pestañas cerradas.
+- **Cuándo**: al cambiar de pantalla, al pasar la app a segundo plano, o al abrirla si aún no se ha tocado nada.
+- **Cuándo NO**: en `/auth`, `/negocio/*`, reservas (`/local/:id/reservar`, `reservar-cita`, `unirse`), `/perfil`, `/opinion` y `/ayuda`; ni con un campo enfocado ni con un diálogo abierto. Si se crea una pantalla con formularios o pasos, añadirla a `RUTAS_DELICADAS`.
+- **Tope**: como mucho una actualización silenciosa cada 5 minutos por sesión (evita bucles).
+- Si nunca llega un buen momento, la versión nueva entra sola en la próxima visita.
 
-Con la app abierta, se pregunta al servidor una vez por hora. Nunca se recarga sin avisar: alguien puede estar a mitad de una reserva. Las cachés de versiones viejas se borran solas (`cleanupOutdatedCaches`).
+Qué se borra al actualizar: solo la caché de la app de la versión vieja (`cleanupOutdatedCaches`). Las fotos (`citaly-fotos`), los trozos (`citaly-trozos`), `localStorage` y las cookies de sesión se conservan.
+
+Con la app abierta, se pregunta al servidor una vez por hora.
 
 ## Aviso de sin conexión
 
