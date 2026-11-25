@@ -18,7 +18,7 @@
    pesos:    qué pesos de CONFIG_MODO usa (si no, el de su único modo).
    riesgo:   ε de exploración (0 = solo lo seguro). Arriba poco, abajo más.
    afinidad: si recibe la cuota del subtipo preferido del usuario.
-   filtro:   condición especial de la fila ('lugar', 'nuevo', 'tarde', 'barato',
+   filtro:   condición especial de la fila ('valorado', 'lugar', 'nuevo', 'tarde', 'barato',
              'cerca'); ver FILTROS en index.js.
    taly:     una frase corta de Taly bajo el título (opcional). */
 
@@ -70,7 +70,7 @@ const LISTAS = [
 
 /* El orden de las filas es el orden en que van saliendo entre las listas. */
 const FILAS = [
-  { id: 'mejores', titulo: 'Mejor valorados', nota: 'Los que más gustan', formato: 'rail', modos: null, pesos: 'general', huecos: 8, riesgo: 0.05 },
+  { id: 'mejores', titulo: 'Mejor valorados', nota: 'Los que más gustan', formato: 'rail', modos: null, pesos: 'general', huecos: 8, riesgo: 0.05, filtro: 'valorado' },
   {
     id: 'cerca',
     titulo: 'Cerca de ti',

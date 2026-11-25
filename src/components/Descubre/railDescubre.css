@@ -62,3 +62,53 @@
   height: auto;
   flex-shrink: 0;
 }
+
+/* Tarjeta «+» al final de la fila: mismo ancho y foto cuadrada que las
+   tarjetas de local, para que se lea como «una más» y no como un anuncio. */
+.rail-descubre-mas {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 112px;
+  aspect-ratio: 112 / 152;
+  max-height: 152px;
+  align-self: flex-start;
+  border: 1.5px dashed rgb(var(--tinte) / calc(0.22 * var(--tinte-fuerza)));
+  border-radius: 18px;
+  color: var(--primary-color-strong, #4fd8c4);
+  text-decoration: none;
+  transition: transform 0.15s var(--ease-out, ease-out), border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.rail-descubre-mas:hover {
+  border-color: var(--primary-color, #00c2ad);
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 8%, transparent);
+}
+
+.rail-descubre-mas:active {
+  transform: scale(0.97);
+}
+
+.rail-descubre-mas:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 3px;
+}
+
+.rail-descubre-mas-circulo {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 16%, transparent);
+}
+
+.rail-descubre-mas-texto {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--fonts-color-primary, #f0f0f0);
+}

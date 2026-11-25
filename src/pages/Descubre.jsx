@@ -9,6 +9,7 @@ import PanelFiltros from '../components/Filtros/PanelFiltros.jsx'
 import FondoDescubre from '../components/Descubre/FondoDescubre.jsx'
 import CarruselHeroe from '../components/Descubre/CarruselHeroe.jsx'
 import RailDescubre from '../components/Descubre/RailDescubre.jsx'
+import { TOPE_FILA } from '../utils/seccionDescubre.js'
 import TarjetaLocalCompacta from '../components/Descubre/TarjetaLocalCompacta.jsx'
 import {
   ColaFotosContext,
@@ -188,7 +189,14 @@ function Descubre() {
       }),
     [locales, perfil, ahora, semilla, exposicion, favoritos, ubicacion, atajo],
   )
-  const { heroLista, abiertos, bloques, motivos } = resultado
+  const { heroLista, abiertos, abiertosTodos, bloques, motivos } = resultado
+
+  /* Una fila enseña como mucho TOPE_FILA locales; si hay más que cumplen su
+     condición, al final va la tarjeta «+» con todos (en Búsqueda). */
+  const verMasDe = (clave, titulo, nota, enFila, todos) =>
+    todos && todos.length > enFila
+      ? { clave, titulo, nota, ids: todos.map((l) => l.id) }
+      : undefined
 
   /* Solo en desarrollo: deja `descubreDebug()` en la consola para saber por qué
      cada local salió donde salió (utils/ranking/diagnostico.js). */
@@ -376,8 +384,12 @@ function Descubre() {
           <CarruselHeroe locales={heroLista} motivos={motivos} />
 
           {abiertos.length > 0 && (
-            <RailDescubre titulo="Puedes ir ahora mismo" nota={`${abiertos.length} abiertos`}>
-              {abiertos.map((local, i) => (
+            <RailDescubre
+              titulo="Puedes ir ahora mismo"
+              nota={`${abiertosTodos.length} abiertos`}
+              verMas={verMasDe('abiertos', 'Puedes ir ahora mismo', 'Abiertos ahora', Math.min(abiertos.length, TOPE_FILA), abiertosTodos)}
+            >
+              {abiertos.slice(0, TOPE_FILA).map((local, i) => (
                 <TarjetaLocalCompacta key={local.id} local={local} imp={{ bloque: 'abiertos', posicion: i }} />
               ))}
             </RailDescubre>
@@ -406,8 +418,14 @@ function Descubre() {
                 </div>
               </section>
             ) : (
-              <RailDescubre key={bloque.clave} titulo={bloque.titulo} nota={bloque.nota} taly={bloque.taly}>
-                {bloque.items.map((local, i) => (
+              <RailDescubre
+                key={bloque.clave}
+                titulo={bloque.titulo}
+                nota={bloque.nota}
+                taly={bloque.taly}
+                verMas={verMasDe(bloque.clave, bloque.titulo, bloque.nota, Math.min(bloque.items.length, TOPE_FILA), bloque.todos)}
+              >
+                {bloque.items.slice(0, TOPE_FILA).map((local, i) => (
                   <TarjetaLocalCompacta
                     key={local.id}
                     local={local}

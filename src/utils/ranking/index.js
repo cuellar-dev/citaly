@@ -1,4 +1,4 @@
-import { estaAbierto } from '../fichaLocal.js'
+import { estaAbierto, notaDeComentarios } from '../fichaLocal.js'
 import { metrosATi, textoDistancia } from '../distancia.js'
 import { estadisticasGlobales } from './calidad.js'
 import { CONFIG_MODO, FUERA_DEL_FEED, MODO_DE_CATEGORIA } from './modos.js'
@@ -41,7 +41,15 @@ export const ATAJOS = [
 ]
 
 /* Las condiciones especiales de algunas filas (campo `filtro` en reparto.js). */
+/* «Mejor valorados» solo con opiniones de verdad: antes un local sin
+   ninguna entraba con la nota media de todos (la bayesiana parte de ahí) y
+   salía por delante de locales con 3,8★ reales. */
+const NOTA_MIN_VALORADO = 4
 const FILTROS = {
+  valorado: (l) => {
+    const { nota, cantidad } = notaDeComentarios(l)
+    return cantidad > 0 && Number(nota) >= NOTA_MIN_VALORADO
+  },
   lugar: (l) => l.lugar === true,
   tarde: (l) => cierraTarde(l),
   barato: (l) => {
@@ -216,6 +224,11 @@ export function construirDescubre({
   /* Abiertos ahora: sin el héroe ni la primera lista, que van pegados. Con el
      atajo "Abierto ahora" sobra (todo el feed ya es eso). */
   const primeraLista = new Set(listas[0]?.items.map((l) => l.id) ?? [])
+  /* Todos los que cumplen la condición, sin quitar lo ya enseñado: es lo que
+     sale al tocar el «+» de la fila (la fila enseña solo los primeros). */
+  const puntuarTodos = (lista, riesgo = 0) =>
+    ordenar(lista.map((l) => puntuar(l, { modo: 'general', riesgo, contexto }))).map((c) => c.local)
+  const abiertosTodos = filtroAtajo?.abierto ? [] : puntuarTodos(candidatos.filter((l) => estaAbierto(l, ahora)))
   const abiertos =
     filtroAtajo?.abierto
       ? []
@@ -238,12 +251,11 @@ export function construirDescubre({
         filas.push({ tipo: 'cerca-cta', clave: 'cerca', titulo: bloque.titulo, taly: '¿Te digo qué te queda cerca?' })
         continue
       }
-      const cerca = candidatos
-        .filter((l) => !enHeroe.has(l.id))
+      const cercaTodos = candidatos
         .map((l) => ({ local: l, metros: metrosATi(l, ubicacion) }))
         .filter((c) => c.metros != null && c.metros <= CERCA_KM * 1000)
         .sort((a, b) => a.metros - b.metros)
-        .slice(0, bloque.huecos)
+      const cerca = cercaTodos.filter((c) => !enHeroe.has(c.local.id)).slice(0, bloque.huecos)
       if (cerca.length < MINIMO_BLOQUE) continue
       const items = cerca.map((c) => ({ ...puntuar(c.local, { modo: 'general', riesgo: 0, contexto }), metros: c.metros }))
       anotar('cerca', items)
@@ -253,20 +265,19 @@ export function construirDescubre({
         titulo: bloque.titulo,
         nota: bloque.nota,
         items: items.map((c) => c.local),
+        todos: cercaTodos.map((c) => c.local),
         puntuados: items,
         etiquetas: Object.fromEntries(items.map((c) => [c.local.id, `A ${textoDistancia(c.metros)}`])),
       })
       continue
     }
 
-    const libres = candidatos.filter(
-      (l) =>
-        !enFilas.has(l.id) &&
-        l.id !== bloque.excluir &&
-        (!bloque.modos || bloque.modos.includes(MODO_DE_CATEGORIA[l.categoria])) &&
-        (!bloque.soloCategoria || l.categoria === bloque.soloCategoria) &&
-        (bloque.filtro === 'nuevo' ? esNuevo(l, ahora) : !bloque.filtro || FILTROS[bloque.filtro](l)),
-    )
+    const cumple = (l) =>
+      l.id !== bloque.excluir &&
+      (!bloque.modos || bloque.modos.includes(MODO_DE_CATEGORIA[l.categoria])) &&
+      (!bloque.soloCategoria || l.categoria === bloque.soloCategoria) &&
+      (bloque.filtro === 'nuevo' ? esNuevo(l, ahora) : !bloque.filtro || FILTROS[bloque.filtro](l))
+    const libres = candidatos.filter((l) => !enFilas.has(l.id) && cumple(l))
     if (libres.length < MINIMO_BLOQUE) continue
     const items = llenarBloque(bloque, libres, { contexto, perfil })
     if (items.length < MINIMO_BLOQUE) continue
@@ -286,6 +297,7 @@ export function construirDescubre({
       nota: bloque.nota,
       taly: bloque.taly,
       items: items.map((c) => c.local),
+      todos: puntuarTodos(candidatos.filter(cumple)),
       puntuados: items,
       etiquetas: etiquetaDe ? Object.fromEntries(items.map((c) => [c.local.id, etiquetaDe(c.local)])) : undefined,
     })
@@ -322,6 +334,7 @@ export function construirDescubre({
   return {
     heroLista: heroe.map((c) => c.local),
     abiertos: abiertos.map((c) => c.local),
+    abiertosTodos,
     bloques: intercalar(listas, filas),
     motivos,
     explicacion,
