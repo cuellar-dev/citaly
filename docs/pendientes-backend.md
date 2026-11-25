@@ -177,3 +177,48 @@ Hoy el plano se guarda en el navegador (ficha del local). Para el backend:
 - Reservas: guardar `mesaIds` (una o varias mesas).
 - `GET /api/local/:id/mesas-ocupadas?fecha&hora`: ids ocupados, para pintar el mapa y marcar horas completas.
 - No borrar una mesa con reservas futuras (el front ya lo bloquea; el servidor también debería).
+
+## «Avísame cuando abra» (ficha del local)
+
+**Hoy (24-11-2026).** En la ficha de un local cerrado hay un botón «Avísame cuando abra» junto al chip de Cerrado (`src/components/DetalleLocal/BotonAvisoApertura.jsx`). Solo funciona en el front: `src/services/avisosApertura.js` guarda en `localStorage` (`citaly_avisos_apertura`) el local y la próxima hora de apertura (`proximaAperturaFecha()` en `src/utils/descubre.js`). Cuando llega esa hora, `notisApertura()` mete un aviso de tipo `abre` en `getNotificaciones()` (Notificaciones y campana). Solo en ese navegador, y no llega como push.
+
+**Con backend:**
+
+- Tabla `avisos_apertura`: `usuario_id`, `local_id`, `abre_en` (timestamptz, la próxima apertura calculada en el servidor con el horario del local), `creado_en`, `enviado_en` (nullable). Único por (`usuario_id`, `local_id`) mientras no se haya enviado. Requiere sesión.
+- `POST /api/locales/:id/aviso-apertura` (apuntarse), `DELETE` (quitarse) y `GET` (¿estoy apuntado?), o devolver `avisoApertura: true` dentro de la ficha.
+- Una tarea cada minuto (o la misma que manda los recordatorios) que coja las filas con `abre_en <= now()` y `enviado_en IS NULL`, cree una notificación normal (`tipo = 'abre_local'`, enlace al local) y marque `enviado_en`. Si el dueño cambia el horario antes, recalcular `abre_en`.
+- En el front: `adaptarNoti()` de `src/services/notificaciones.js` traduce `abre_local` → `abre`, y el cuerpo de `avisosApertura.js` pasa a llamar a la API (la pantalla no cambia). Quitar `notisApertura()` de `getNotificaciones()` cuando venga del servidor.
+
+## Protección contra bots (captcha y límites de ritmo)
+
+**Hoy (24-11-2026).** El registro ya tiene honeypot en el front (ver «Honeypot ya puesto en el registro» más abajo). No hay captcha. El servidor tiene el límite de intentos de Better Auth, que solo cubre las rutas de auth y está activo solo en producción (o con `AUTH_RATE_LIMIT=true`). Se guarda en memoria, así que vale con un solo servidor. El resto de endpoints no tiene límite propio (ver `docs/revision-backend.md` y `docs/backend-descubre-cambios.md`). Reservar cita ya exige sesión, lo que filtra a la mayoría de bots.
+
+**Qué se quiere evitar:** registros falsos que llenan la base de datos, abuso de los emails (recuperar contraseña y verificación hacia correos ajenos, que dañan la reputación del dominio), fuerza bruta con contraseñas filtradas y spam en opiniones.
+
+**Con backend, por orden de prioridad:**
+
+1. **Límite de ritmo en todos los endpoints de escritura** (`express-rate-limit`, que no está instalado): por IP y, cuando haya sesión, por usuario. Incluye `POST /eventos` de Descubre, opiniones, avisos de apertura y crear cita. Con más de un servidor, o si el hosting reinicia a menudo, mover el contador de Better Auth a `rateLimit.storage: 'database'` o a Redis.
+2. **Cloudflare Turnstile** en tres sitios: registro, recuperar contraseña y, si aparece spam, opiniones. No ponerlo en login (lo cubre el límite de intentos) ni en reservar cita (ya exige sesión y estorbaría a gente real).
+   - **Servidor:** Better Auth trae el plugin `captcha` con proveedor `cloudflare-turnstile`. Se configura con la clave secreta (`TURNSTILE_SECRET_KEY`) y la lista de rutas protegidas (`/sign-up/email`, `/request-password-reset`, y el reenvío de verificación si se expone). El plugin lee el token de la cabecera `x-captcha-response` y lo comprueba contra Cloudflare. Para las rutas que no son de Better Auth (opiniones), verificar el token a mano con `POST https://challenges.cloudflare.com/turnstile/v0/siteverify`.
+   - **Claves:** la clave del sitio (pública) va en el front como `VITE_TURNSTILE_SITE_KEY`; la secreta, solo en el servidor. Cloudflare da claves de prueba que siempre aprueban o siempre fallan, para usarlas en local.
+   - **Modo del widget:** elegir «Managed». Todos los usuarios cargan el script y pasan una comprobación silenciosa en segundo plano. La casilla solo se muestra a quien parece sospechoso. La mayoría no ve nada.
+3. **Honeypot** en los formularios (campo oculto que un humano no rellena; si llega con valor, el servidor responde con éxito falso y no hace nada). Es invisible y no cuesta nada.
+
+**Pendiente en el front (esta parte sí es de este repo):** montar el widget en `Registro` y `Recuperar contraseña`, guardar el token y mandarlo en la cabecera `x-captcha-response` desde `src/services/auth.js`. Un token solo vale una vez: renovarlo si el servidor rechaza el envío. Si el script de Cloudflare no carga (sin red, bloqueador), enseñar un mensaje claro en vez de dejar el botón muerto.
+
+**A medir antes de lanzar (público en Cuba):** el script de Turnstile se pide a `challenges.cloudflare.com`. Hay que comprobar que carga bien con las conexiones y las VPN que usa la gente allí, y que quien entra por una IP compartida o un VPN no se queda atascado en el reto. Si da problemas, dejar solo el límite de ritmo y el honeypot, y retirar el captcha.
+
+**Honeypot ya puesto en el registro (24-11-2026) — para el backend: vigilarlo.**
+
+*Qué hay.* En `src/pages/Auth.jsx` (modo `registro`) hay un campo invisible `sitio_web`, con estilos en `.auth-miel` de `src/pages/auth.css`. Si llega con algo escrito, el front **no llama al servidor**: espera 0,9 s, enseña la pantalla «Revisa tu correo» como si todo hubiera ido bien y no ofrece «Mandar el enlace otra vez» (para que un bot no pueda disparar correos desde ahí).
+
+*Cuidados que lleva:* fuera de pantalla con `position:absolute; left:-9999px` (no `display:none`), `tabindex="-1"`, `aria-hidden="true"`, `autocomplete="off"`, y éxito falso para que el bot no sepa que lo pillamos.
+
+*Qué NO cubre (importante):* solo frena a bots que rellenan el formulario de la web. Un bot que llame directo a `POST /api/auth/sign-up/email` ni ve el formulario. Para eso siguen haciendo falta el límite de ritmo y el captcha de arriba. **El servidor no se entera de nada**: cuando la trampa salta, la petición no llega.
+
+*Qué vigilar:*
+
+1. **Falsos positivos.** Si un gestor de contraseñas o el autorrelleno del navegador rellena el campo, una persona real se queda con un «Revisa tu correo» que nunca llega y sin cuenta. Señales: quejas de «me registré y no me llegó el correo», o que los registros caigan de golpe tras un cambio. Probar a mano el registro con el autorrelleno de Chrome, Safari y Firefox y con un gestor (Bitwarden, 1Password) antes de lanzar. Si algún navegador lo rellena, cambiar el `name` de `sitio_web` por otro que no suene a dato personal.
+2. **No hay rastro.** Cuando salta, no queda ni un log. Si se quiere medir cuántos bots caen, el front tendría que avisar al servidor (un contador anónimo en un endpoint, con límite de ritmo). Hoy no está hecho.
+3. **Los bots aprenden.** Si un día los registros falsos vuelven a subir con la trampa puesta, es que ya saben saltársela: pasar al captcha (Turnstile).
+4. **No se ha puesto** en recuperar contraseña, opiniones ni login. Si se amplía, copiar el mismo patrón y repetir los puntos de arriba.

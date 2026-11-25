@@ -111,6 +111,8 @@ export default defineConfig({
     }),
   ],
   base,
+  /* Solo las pruebas del front: backend-citaly-main tiene las suyas. */
+  test: { include: ['src/**/*.test.{js,jsx}'] },
   build: {
     /* dist/.vite/manifest.json: dice qué archivos lleva cada página. Lo usa
        scripts/rutas-estaticas.mjs en el deploy y luego lo borra. */
