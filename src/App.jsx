@@ -11,12 +11,14 @@ import {
   Auth,
   Ayuda,
   Busqueda,
+  SeccionDescubre,
   CompartirNegocio,
   CompletarLocal,
   Descubre,
   DetalleLocal,
   EditorPlano,
   Favoritos,
+  Legal,
   MiNegocio,
   MisCitas,
   Nosotros,
@@ -33,6 +35,7 @@ import AvisosApp from './components/AvisosApp/AvisosApp.jsx'
 import RequiereSesion from './components/RequiereSesion/RequiereSesion.jsx'
 import NegocioSinSesion from './components/SinSesion/NegocioSinSesion.jsx'
 import CitasSinSesion from './components/SinSesion/CitasSinSesion.jsx'
+import NotisSinSesion from './components/SinSesion/NotisSinSesion.jsx'
 import { PaginaEsqueleto } from './components/Esqueletos/Esqueletos.jsx'
 
 function CompletarLocalPage() {
@@ -116,6 +119,7 @@ function App() {
         <Route path="/" element={<Layout fallback={<PaginaEsqueleto />} />}>
           <Route index element={<Descubre />} />
           <Route path="buscar" element={<Busqueda />} />
+          <Route path="buscar/seccion/:clave" element={<SeccionDescubre />} />
           <Route path="local/:id" element={<DetalleLocal />} />
           {/* Con cuenta: reservar, Mis citas, Mi negocio y avisos. Sin ella, a /auth. */}
           <Route path="local/:id/reservar" element={<RequiereSesion><ReservarConLugarPage /></RequiereSesion>} />
@@ -125,10 +129,12 @@ function App() {
           <Route path="negocio" element={<RequiereSesion sinSesion={<NegocioSinSesion />}><MiNegocio /></RequiereSesion>} />
           <Route path="negocio/compartir" element={<RequiereSesion><CompartirNegocio /></RequiereSesion>} />
           <Route path="perfil" element={<Perfil />} />
-          <Route path="notificaciones" element={<RequiereSesion><Notificaciones /></RequiereSesion>} />
+          <Route path="notificaciones" element={<RequiereSesion sinSesion={<NotisSinSesion />}><Notificaciones /></RequiereSesion>} />
           <Route path="favoritos" element={<Favoritos />} />
           <Route path="ayuda" element={<Ayuda />} />
           <Route path="opinion" element={<Opinion />} />
+          <Route path="terminos" element={<Legal />} />
+          <Route path="privacidad" element={<Legal />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

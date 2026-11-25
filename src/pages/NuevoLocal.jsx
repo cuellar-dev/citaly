@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { BadgeCheck, Check, Clock3, Info, Mail, MapPinned, ShieldCheck, Store } from 'lucide-react'
 import Asistente from '../components/NuevoLocal/Asistente.jsx'
 import TalyPixel from '../components/Ayuda/TalyPixel.jsx'
+import ModalLegal from '../components/Legal/ModalLegal.jsx'
 import { FORMAS_LEGALES, TIPOS, getTipo } from '../data/tiposLocal.js'
 import { PROVINCIAS, getMunicipio, getProvincia } from '../data/cuba.js'
 import { getAllLocales } from '../services/locales.js'
@@ -137,6 +138,7 @@ function NuevoLocal() {
   const [inicial] = useState(leerBorrador)
   const [fase, setFase] = useState(inicial ? 'form' : 'intro')
   const [paso, setPaso] = useState(inicial?.paso ?? 0)
+  const [verNormas, setVerNormas] = useState(false)
   const [datos, setDatos] = useState(() => ({
     ...(inicial?.datos ?? VACIO),
     correoContacto: inicial?.datos?.correoContacto || correoDeLaCuenta(),
@@ -755,9 +757,15 @@ function NuevoLocal() {
               />
               <span>
                 Acepto las normas de Citaly.
-                <small>Precios reales, nada de engaños y respetar las reservas que aceptes.</small>
+                <small>
+                  Precios reales, nada de engaños y respetar las reservas que aceptes.{' '}
+                  <button type="button" className="check-enlace" onClick={() => setVerNormas(true)}>
+                    Leer las normas
+                  </button>
+                </small>
               </span>
             </label>
+            <ModalLegal abierto={verNormas} onCerrar={() => setVerNormas(false)} doc="terminos" seccion="t-negocios" />
           </>
         )}
 

@@ -18,6 +18,7 @@ import talyPapel from '../components/Taly/taly-papel.svg'
 import talyCrayon from '../components/Taly/taly-crayon.svg'
 import talyCrayon2 from '../components/Taly/taly-crayon-dormido.svg'
 import Logotipo from '../components/Logotipo/Logotipo.jsx'
+import ModalLegal from '../components/Legal/ModalLegal.jsx'
 import './auth.css'
 
 /* Entrar, registrarse y recuperar la contraseña. Un solo sitio, cambiando
@@ -92,11 +93,18 @@ function Auth() {
   const [correo, setCorreo] = useState('')
   const [contrasena, setContrasena] = useState('')
   const [repetir, setRepetir] = useState('')
+  /* Qué documento legal está abierto encima del registro (null = ninguno). */
+  const [legal, setLegal] = useState(null)
   const [verClave, setVerClave] = useState(false)
   const [enviando, setEnviando] = useState(false)
   const [error, setError] = useState('')
   const [aviso, setAviso] = useState('')
   const [hecho, setHecho] = useState(false)
+  /* Trampa para bots: campo invisible del registro. Una persona nunca lo
+     rellena; si trae algo, es un bot. `trampa` marca que el «éxito» que se
+     enseñó fue falso (no se creó nada ni se mandó ningún correo). */
+  const [miel, setMiel] = useState('')
+  const [trampa, setTrampa] = useState(false)
 
   /* El error que trae la URL (Google, enlace caducado) se enseña una vez. */
   const errorDeUrl =
@@ -134,6 +142,16 @@ function Auth() {
 
   const enviar = (e) => {
     e.preventDefault()
+    if (modo === 'registro' && miel.trim()) {
+      /* Es un bot: se hace como si todo hubiera ido bien (con su pausa de
+         siempre) pero no se pide nada al servidor. Así no sabe que lo vimos. */
+      conEnvio(async () => {
+        await new Promise((r) => setTimeout(r, 900))
+        setTrampa(true)
+        irA('revisa')
+      })
+      return
+    }
     if (modo === 'registro' && contrasena !== repetir) {
       setError('Las contraseñas no coinciden.')
       return
@@ -216,7 +234,7 @@ function Auth() {
           Te mandamos un enlace{correo ? ` a ${correo}` : ''}. Ábrelo para confirmar el correo y entrar. Si no llega en unos
           minutos, mira en «Spam».
         </p>
-        {correo && (
+        {correo && !trampa && (
           <button type="button" className="auth-secundario" onClick={reenviar} disabled={enviando}>
             Mandar el enlace otra vez
           </button>
@@ -312,6 +330,20 @@ function Auth() {
 
             <form className={`auth-form${conGoogleVisible ? ' auth-form--tras-google' : ''}`} onSubmit={enviar} noValidate>
               {modo === 'registro' && (
+                <div className="auth-miel" aria-hidden="true">
+                  <input
+                    type="text"
+                    name="sitio_web"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={miel}
+                    maxLength={200}
+                    onChange={(e) => setMiel(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {modo === 'registro' && (
                 <label className="auth-campo">
                   <span>Nombre</span>
                   <input
@@ -397,8 +429,15 @@ function Auth() {
 
               {modo === 'registro' && (
                 <p className="auth-legal">
-                  Al crear la cuenta aceptas las <Link to="/ayuda">normas de Citaly</Link>. Tu contraseña se guarda cifrada: ni
-                  nosotros podemos verla.
+                  Al crear la cuenta, con tu correo o con Google, aceptas los{' '}
+                  <button type="button" className="auth-legal-enlace" onClick={() => setLegal('terminos')}>
+                    Términos y condiciones
+                  </button>{' '}
+                  y la{' '}
+                  <button type="button" className="auth-legal-enlace" onClick={() => setLegal('privacidad')}>
+                    Política de privacidad
+                  </button>{' '}
+                  de Citaly. Tu contraseña se guarda cifrada: ni nosotros podemos verla.
                 </p>
               )}
             </form>
@@ -425,6 +464,7 @@ function Auth() {
           </>
         )}
       </div>
+      <ModalLegal abierto={legal !== null} doc={legal ?? 'terminos'} onCerrar={() => setLegal(null)} />
     </section>
   )
 }

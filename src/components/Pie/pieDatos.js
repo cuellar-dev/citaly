@@ -7,8 +7,8 @@
    - Correo: citaly.example es un dominio reservado para ejemplos; no
      llega a nadie.
    - Instagram y Facebook: apuntan a la portada de cada red.
-   - /privacidad y /terminos todavía no existen: hoy llevan a la página
-     de "Esta página se perdió". */
+   - El correo de aquí es el que sale en /terminos y /privacidad
+     (components/Legal/textoLegal.jsx). */
 
 export const CONTACTO = {
   whatsapp: 'https://wa.me/',

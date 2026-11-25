@@ -135,6 +135,21 @@
   margin-top: 38px;
 }
 
+/* Trampa para bots (honeypot) del registro. Fuera de pantalla, NO con
+   display:none (los bots listos se saltan esos campos). Una persona no la ve,
+   no llega con el teclado (tabindex -1) y el lector de pantalla la ignora
+   (aria-hidden). Ver docs/pendientes-backend.md, «Protección contra bots». */
+.auth-miel {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .auth-campo {
   display: flex;
   flex-direction: column;
@@ -342,4 +357,26 @@
   font: inherit;
   font-weight: 700;
   cursor: pointer;
+}
+
+/* «Términos y condiciones» y «Política de privacidad» del registro: botones
+   con pinta de enlace, porque abren el modal en vez de salir de la página. */
+.auth-legal-enlace {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primary-texto, #00c2ad);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.auth-legal-enlace:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+  border-radius: 3px;
 }

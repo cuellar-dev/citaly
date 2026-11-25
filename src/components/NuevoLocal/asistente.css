@@ -1107,3 +1107,23 @@ select.campo-input:disabled {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
+
+/* «Leer las normas»: abre el modal legal sin marcar la casilla. */
+.check-enlace {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--primary-texto, #00c2ad);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.check-enlace:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+  border-radius: 3px;
+}

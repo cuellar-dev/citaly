@@ -14,6 +14,7 @@ import { lazy } from 'react'
 const cargadores = {
   descubre: () => import('./pages/Descubre.jsx'),
   buscar: () => import('./pages/Busqueda.jsx'),
+  seccion: () => import('./pages/SeccionDescubre.jsx'),
   detalle: () => import('./pages/DetalleLocal.jsx'),
   reservarConLugar: () => import('./pages/ReservarConLugar.jsx'),
   reservarSinLugar: () => import('./pages/ReservarSinLugar.jsx'),
@@ -31,10 +32,12 @@ const cargadores = {
   completarLocal: () => import('./pages/CompletarLocal.jsx'),
   editorPlano: () => import('./plano/editor/EditorPlano.jsx'),
   nosotros: () => import('./pages/Nosotros.jsx'),
+  legal: () => import('./pages/Legal.jsx'),
 }
 
 export const Descubre = lazy(cargadores.descubre)
 export const Busqueda = lazy(cargadores.buscar)
+export const SeccionDescubre = lazy(cargadores.seccion)
 export const DetalleLocal = lazy(cargadores.detalle)
 export const ReservarConLugar = lazy(cargadores.reservarConLugar)
 export const ReservarSinLugar = lazy(cargadores.reservarSinLugar)
@@ -52,6 +55,7 @@ export const NuevoLocal = lazy(cargadores.nuevoLocal)
 export const CompletarLocal = lazy(cargadores.completarLocal)
 export const EditorPlano = lazy(cargadores.editorPlano)
 export const Nosotros = lazy(cargadores.nosotros)
+export const Legal = lazy(cargadores.legal)
 
 /* Ruta de la app → página. Solo las que tiene sentido adelantar. */
 const PORRUTA = {
