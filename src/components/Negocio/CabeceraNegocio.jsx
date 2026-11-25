@@ -10,6 +10,7 @@ import './cabeceraNegocio.css'
 
 /* Bloque de arriba: el local y el timeline del turno de hoy. */
 function CabeceraNegocio({
+  idLocal,
   nombre,
   url,
   categoria,
@@ -66,7 +67,7 @@ function CabeceraNegocio({
             {/* Navegación de verdad, no un botón con onClick: así se puede
                 abrir en otra pestaña y la URL es compartible. */}
             <Link
-              to="/negocio/compartir"
+              to={idLocal ? `/negocio/compartir?local=${encodeURIComponent(idLocal)}` : '/negocio/compartir'}
               className="cabecera-negocio-boton cabecera-negocio-compartir"
               aria-label="Compartir el local con un código QR"
             >

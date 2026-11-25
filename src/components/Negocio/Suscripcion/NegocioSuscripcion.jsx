@@ -313,6 +313,7 @@ function NegocioSuscripcion({ idLocal, ahora, cabeceraExtra }) {
       <div className="negocio-tablero">
         {cabeceraExtra}
         <CabeceraNegocio
+          idLocal={idLocal}
           nombre={local.localName}
           url={local.url}
           categoria={local.categoria}

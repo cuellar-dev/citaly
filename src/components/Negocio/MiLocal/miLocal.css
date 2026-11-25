@@ -2,31 +2,58 @@
    la invitación a crear uno, los estados (revisión, aprobado), la zona de
    ocultar/eliminar y la pantalla sin local. */
 
-/* ---------- Selector «Tus locales» ---------- */
+/* ---------- «Tus locales» ----------
+   Tarjetas con portada, en una fila que se desliza. El estado va sobre la
+   foto como una etiqueta; el elegido lleva el aro teal y «Viendo». */
 
 .mis-locales {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin: 10px 14px 0;
+  gap: 10px;
+  margin: 26px 14px 14px;
   font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
 }
 
+.mis-locales-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-inline: 2px;
+}
+
 .mis-locales-titulo {
-  margin: 0 0 0 4px;
-  font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 0 2px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.mis-locales-cuenta {
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 16%, transparent);
   color: var(--primary-texto, #00c2ad);
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .mis-locales-fila {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   margin: 0 -14px;
-  padding: 2px 14px 4px;
+  padding: 4px 14px 8px;
   overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 14px;
   scrollbar-width: none;
 }
 
@@ -34,68 +61,97 @@
   display: none;
 }
 
-.mis-locales-opcion {
+.mis-locales-tarjeta {
   display: flex;
-  flex-shrink: 0;
+  flex: 0 0 auto;
   flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 3px;
-  max-width: 190px;
-  min-height: 54px;
-  padding: 8px 14px;
-  border: 1.5px solid rgb(var(--tinte) / calc(0.12 * var(--tinte-fuerza)));
-  border-radius: 16px;
+  width: min(224px, 68vw);
+  padding: 0;
+  overflow: hidden;
+  border: 1.5px solid rgb(var(--tinte) / calc(0.1 * var(--tinte-fuerza)));
+  border-radius: 20px;
   background: var(--background-color-secondary, #1e2221);
   color: var(--fonts-color-primary, #f0f0f0);
   font: inherit;
   text-align: left;
   text-decoration: none;
   cursor: pointer;
+  scroll-snap-align: start;
   -webkit-tap-highlight-color: transparent;
-  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.14s ease;
+  transition:
+    border-color 0.2s var(--ease-out, ease-out),
+    box-shadow 0.2s var(--ease-out, ease-out),
+    transform 0.14s var(--ease-out, ease-out);
 }
 
-.mis-locales-opcion:active {
+.mis-locales-tarjeta:active {
   transform: scale(0.97);
 }
 
-.mis-locales-opcion[aria-checked='true'] {
+.mis-locales-tarjeta[aria-checked='true'] {
   border-color: var(--primary-color, #00c2ad);
-  background: color-mix(in srgb, var(--primary-color, #00c2ad) 10%, var(--background-color-secondary, #1e2221));
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color, #00c2ad) 22%, transparent);
+  cursor: default;
 }
 
-.mis-locales-opcion:focus-visible,
+.mis-locales-tarjeta[aria-checked='true']:active {
+  transform: none;
+}
+
+.mis-locales-tarjeta:focus-visible,
 .mis-locales-invita:focus-visible,
 .zona-local-fila:focus-visible {
   outline: 2px solid var(--primary-color, #00c2ad);
   outline-offset: 2px;
 }
 
-.mis-locales-opcion--nuevo {
-  flex-direction: row;
-  align-items: center;
-  gap: 6px;
-  border-style: dashed;
+.mis-locales-portada {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 14%, var(--background-color-secondary, #1e2221));
+}
+
+.mis-locales-portada img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mis-locales-inicial {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 46px;
+  font-weight: 700;
   color: var(--primary-texto, #00c2ad);
 }
 
-.mis-locales-nombre {
-  overflow: hidden;
-  max-width: 100%;
-  font-size: 14px;
-  font-weight: 800;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.mis-locales-estado {
+/* Etiquetas sobre la foto: fondo oscuro fijo para leerse sobre cualquier
+   portada, en los dos temas. */
+.mis-locales-estado,
+.mis-locales-viendo {
+  position: absolute;
+  top: 9px;
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11.5px;
-  font-weight: 700;
-  color: var(--fonts-color-primary-weak, #bdbaba);
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.mis-locales-estado {
+  left: 9px;
+  background: rgb(14 18 17 / 0.78);
+  color: #e8efed;
+  backdrop-filter: blur(6px);
 }
 
 .mis-locales-estado::before {
@@ -103,15 +159,110 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: currentColor;
+  background: #9aa5a2;
 }
 
-.mis-locales-estado--verde {
+.mis-locales-estado--verde::before {
+  background: #00c2ad;
+}
+
+.mis-locales-estado--amarillo::before {
+  background: #ffd166;
+}
+
+.mis-locales-viendo {
+  right: 9px;
+  background: var(--primary-color, #00c2ad);
+  color: #062a26;
+}
+
+.mis-locales-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 11px 14px 13px;
+  min-width: 0;
+}
+
+.mis-locales-nombre {
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 800;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.mis-locales-categoria {
+  font-size: 12px;
+  font-weight: 700;
   color: var(--primary-texto, #00c2ad);
 }
 
-.mis-locales-estado--amarillo {
-  color: var(--yellow-texto, #ffd166);
+.mis-locales-zona {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.mis-locales-zona svg {
+  flex: none;
+}
+
+/* La tarjeta de crear otro: mismo tamaño, borde discontinuo. */
+.mis-locales-tarjeta--nuevo {
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 100%;
+  padding: 18px 16px;
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--primary-color, #00c2ad) 45%, transparent);
+  background: color-mix(in srgb, var(--primary-color, #00c2ad) 5%, transparent);
+  text-align: center;
+}
+
+.mis-locales-mas {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: var(--primary-color, #00c2ad);
+  color: #062a26;
+}
+
+.mis-locales-nuevo-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mis-locales-nuevo-textos strong {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.mis-locales-nuevo-textos span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mis-locales-tarjeta {
+    transition-duration: 0.01ms;
+  }
+
+  .mis-locales-tarjeta:active {
+    transform: none;
+  }
 }
 
 /* Invitación cuando aún no tiene ningún local. */
@@ -119,7 +270,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 10px 14px 0;
+  margin: 26px 14px 14px;
   padding: 12px 12px 12px 14px;
   border: 1.5px solid color-mix(in srgb, var(--primary-color, #00c2ad) 40%, transparent);
   border-radius: 18px;
@@ -619,7 +770,7 @@
     background: rgb(var(--tinte) / calc(0.07 * var(--tinte-fuerza)));
   }
 
-  .mis-locales-opcion:not([aria-checked='true']):hover {
+  .mis-locales-tarjeta:not([aria-checked='true']):hover {
     border-color: rgb(var(--tinte) / calc(0.28 * var(--tinte-fuerza)));
   }
 }

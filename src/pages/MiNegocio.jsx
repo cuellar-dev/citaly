@@ -504,6 +504,7 @@ function NegocioAgenda({ idLocal, cabeceraExtra }) {
         </p>
       )}
       <CabeceraNegocio
+        idLocal={idLocal}
         nombre={local.localName}
         url={local.url}
         categoria={local.categoria}
@@ -873,7 +874,6 @@ function MiNegocio() {
           </button>
         </p>
       )}
-      <SelectorMisLocales locales={misLocales} activo={propio?.id} onElegir={elegirPropio} />
       {!hayApi && <SwitchEjemplo activo={propio ? null : actual.id} onCambiar={elegirEjemplo} />}
       {local?.oculto && (!propio || propio.completado) && (
         <p className="mi-local-oculto" role="status">
@@ -887,11 +887,16 @@ function MiNegocio() {
     </>
   )
 
+  /* Va al final, antes de «Tu local en Citaly»: arriba manda la portada del
+     local que se está viendo. */
+  const selectorLocales = <SelectorMisLocales locales={misLocales} activo={propio?.id} onElegir={elegirPropio} />
+
   if (propio && propio.estado === 'revision') {
     return (
       <section className="negocio" aria-label="Mi Negocio">
         {cabeceraExtra}
         <EstadoRevision key={propio.id} local={propio} onCambio={cambioDeEstado} />
+        {selectorLocales}
       </section>
     )
   }
@@ -901,6 +906,7 @@ function MiNegocio() {
       <section className="negocio" aria-label="Mi Negocio">
         {cabeceraExtra}
         <EstadoAprobado key={propio.id} local={propio} />
+        {selectorLocales}
       </section>
     )
   }
@@ -913,6 +919,7 @@ function MiNegocio() {
       ) : (
         <NegocioAgenda key={clavePanel} idLocal={idLocal} cabeceraExtra={cabeceraExtra} />
       )}
+      {selectorLocales}
       {local && (
         <ZonaLocal
           key={`zona-${idLocal}`}

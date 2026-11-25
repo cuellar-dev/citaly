@@ -1,6 +1,7 @@
-/* Compartir el local: el cartel con el QR, para imprimir o mandar por
-   WhatsApp. La tarjeta va sobre papel claro dentro de la app oscura, como una
-   hoja encima de la mesa. */
+/* Compartir el local: el cartel con el QR, para colgar en el local o mandar
+   por WhatsApp. La hoja va sobre papel claro dentro de la app oscura, como un
+   cartel encima de la mesa: toldo de tienda arriba, el nombre en grande, el QR
+   en un marco de pegatina, Taly invitando a escanear y la firma de Citaly. */
 
 .compartir {
   box-sizing: border-box;
@@ -52,8 +53,18 @@
   outline-offset: 2px;
 }
 
+.compartir-titulo {
+  margin: 0 2px 6px;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
 .compartir-lead {
-  margin: 0 2px 16px;
+  margin: 0 2px 18px;
   font-size: 13.5px;
   font-weight: 600;
   line-height: 1.45;
@@ -61,129 +72,235 @@
   color: var(--fonts-color-primary-weak, #bdbaba);
 }
 
-/* ---------- La tarjeta ---------- */
+/* ---------- La hoja ----------
+   Proporción de un A4 con márgenes (190 × 277 mm). Todo lo de dentro se mide
+   en cqi (1cqi = 1 % del ancho de la hoja), así que en el móvil, en el
+   escritorio y en el papel es el mismo cartel a distinta escala. */
+
+.compartir-hoja {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 460px;
+  margin-inline: auto;
+}
 
 .compartir-tarjeta {
+  --tinta: #0e2e2a;
+  --papel: #f7f5ef;
+  --teal: #00c2ad;
+  --teal-oscuro: #00897a;
+  --mostaza: #ffd166;
+
   position: relative;
-  isolation: isolate;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 22px;
-  padding: 30px 24px 26px;
-  border-radius: 22px;
-  background: #f7f5ef;
-  color: var(--fonts-color-secondary);
+  /* Alto mínimo de A4 y no aspect-ratio: con overflow hidden, un
+     aspect-ratio fijo recortaba el pie cuando el contenido no cabía. Así,
+     si algo no cabe, la hoja crece. */
+  min-height: calc(100cqi * 277 / 190);
+  box-sizing: border-box;
+  border-radius: 4cqi;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
   box-shadow: 0 22px 44px -20px rgb(var(--sombra) / calc(0.85 * var(--sombra-alfa)));
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
-/* Las chispas de Taly, en mostaza, como en el póster que se descarga. */
-.compartir-chispa {
-  position: absolute;
-  z-index: 0;
-  width: 26px;
-  height: 26px;
-  background: var(--yellow-color, #ffd166);
-  pointer-events: none;
-  clip-path: polygon(
-    50% 0%, 57% 43%, 100% 50%, 57% 57%,
-    50% 100%, 43% 57%, 0% 50%, 43% 43%
-  );
-}
-
-.compartir-chispa--1 {
-  top: 18px;
-  left: 20px;
-}
-
-.compartir-chispa--2 {
-  right: 22px;
-  bottom: 20px;
-  width: 18px;
-  height: 18px;
-}
-
-.compartir-tarjeta > *:not(.compartir-chispa) {
-  position: relative;
-  z-index: 1;
+.compartir-toldo {
+  display: block;
+  flex: none;
+  width: 100%;
+  height: auto;
 }
 
 .compartir-tarjeta-cabecera {
   width: 100%;
+  padding: 3.5cqi 8cqi 0;
+  box-sizing: border-box;
   text-align: center;
 }
 
-.compartir-nombre {
+.compartir-categoria {
   margin: 0;
-  font-family: var(--font-familyDrink, 'drink', sans-serif);
-  font-size: clamp(2.2rem, 11vw, 3rem);
+  font-size: 3.1cqi;
   font-weight: 700;
-  line-height: 1.02;
-  letter-spacing: -0.025em;
-  text-wrap: balance;
-  overflow-wrap: anywhere;
-  color: var(--fonts-color-secondary);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--teal-oscuro);
 }
 
-.compartir-meta {
-  margin: 10px 0 0;
-  font-size: 13px;
+.compartir-nombre {
+  margin: 1.2cqi 0 0;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 11.5cqi;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+  color: var(--tinta);
+}
+
+.compartir-nombre--m {
+  font-size: 9cqi;
+}
+
+.compartir-nombre--s {
+  font-size: 7cqi;
+}
+
+.compartir-direccion {
+  margin: 2cqi 0 0;
+  font-size: 3.4cqi;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.35;
   text-wrap: pretty;
-  color: #6b706d;
+  color: #4d5a57;
 }
 
 .compartir-horario {
-  margin: 6px 0 0;
-  font-size: 12.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 1.4cqi;
+  margin: 2.4cqi 0 0;
+  padding: 1cqi 3cqi;
+  border: 0.45cqi solid var(--tinta);
+  border-radius: 999px;
+  background: var(--mostaza);
+  font-size: 3.2cqi;
   font-weight: 700;
-  color: #6b706d;
+  line-height: 1.2;
+  color: var(--tinta);
 }
 
+.compartir-horario svg {
+  width: 3.4cqi;
+  height: 3.4cqi;
+}
+
+/* El QR en un marco de pegatina: blanco, borde de tinta y la sombra teal
+   desplazada. La zona de silencio va DENTRO del blanco (la pone el propio
+   QR), y nada se le monta encima. */
 .compartir-qr {
-  display: grid;
-  place-items: center;
-  padding: 10px;
+  flex: none;
+  margin-top: 3.5cqi;
+  padding: 1.6cqi;
+  border: 0.7cqi solid var(--tinta);
+  border-radius: 4.5cqi;
   background: #ffffff;
-  border-radius: 14px;
-  box-shadow: inset 0 0 0 1px rgba(18, 20, 19, 0.14);
+  box-shadow: 1.8cqi 1.8cqi 0 var(--teal);
 }
 
 .compartir-qr svg {
   display: block;
+  width: 48cqi;
+  height: 48cqi;
 }
 
-.compartir-tarjeta-pie {
+/* Taly invita a escanear desde un bocadillo. */
+.compartir-invita {
+  display: flex;
+  align-items: center;
+  gap: 1cqi;
   width: 100%;
-  text-align: center;
+  margin-top: 3.5cqi;
+  padding: 0 8cqi;
+  box-sizing: border-box;
+}
+
+.compartir-taly {
+  flex: none;
+  width: 18cqi;
+  height: 18cqi;
+  margin-left: -2cqi;
+}
+
+.compartir-bocadillo {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  padding: 2.4cqi 3.4cqi;
+  border: 0.5cqi solid var(--tinta);
+  border-radius: 4cqi;
+  background: #ffffff;
+}
+
+/* El piquito, hacia Taly: dos triángulos (borde y relleno). */
+.compartir-bocadillo::before,
+.compartir-bocadillo::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  transform: translateY(-50%);
+}
+
+.compartir-bocadillo::before {
+  left: -3cqi;
+  border-width: 2.2cqi 3cqi 2.2cqi 0;
+  border-color: transparent var(--tinta) transparent transparent;
+}
+
+.compartir-bocadillo::after {
+  left: -2.1cqi;
+  border-width: 1.6cqi 2.2cqi 1.6cqi 0;
+  border-color: transparent #ffffff transparent transparent;
 }
 
 .compartir-cta {
   margin: 0;
-  font-size: 14.5px;
+  font-size: 3.8cqi;
   font-weight: 700;
-  color: var(--fonts-color-secondary);
+  line-height: 1.25;
+  text-wrap: balance;
+  color: var(--tinta);
 }
 
 .compartir-enlace {
-  margin: 8px 0 0;
-  font-size: 16px;
+  width: 100%;
+  margin: 2cqi 0 2.6cqi;
+  padding: 0 8cqi;
+  box-sizing: border-box;
+  font-size: 2.9cqi;
   font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
   overflow-wrap: anywhere;
-  color: #00a894;
+  color: var(--teal-oscuro);
+}
+
+.compartir-tarjeta-pie {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.6cqi 2.6cqi;
+  width: 100%;
+  margin-top: auto;
+  padding: 2.8cqi 6cqi;
+  box-sizing: border-box;
+  background: var(--tinta);
+  color: var(--papel);
 }
 
 .compartir-marca {
-  margin: 18px auto 0;
-  padding-top: 14px;
-  max-width: 190px;
-  border-top: 1px solid rgba(18, 20, 19, 0.12);
   font-family: var(--font-familyDrink, 'drink', sans-serif);
-  font-size: 15px;
+  font-size: 5.4cqi;
   font-weight: 700;
-  color: #00a894;
+  line-height: 1;
+  color: var(--teal);
+}
+
+.compartir-lema {
+  font-size: 3.1cqi;
+  font-weight: 600;
+  color: #cfe9e4;
 }
 
 /* ---------- Acciones ---------- */
@@ -191,7 +308,8 @@
 .compartir-acciones {
   display: flex;
   gap: 10px;
-  margin-top: 20px;
+  max-width: 460px;
+  margin: 22px auto 0;
 }
 
 .compartir-accion {
@@ -247,7 +365,9 @@
 }
 
 .compartir-nota {
-  margin: 12px 2px 0;
+  max-width: 460px;
+  margin: 12px auto 0;
+  padding-inline: 2px;
   font-size: 12px;
   font-weight: 600;
   line-height: 1.4;
@@ -282,56 +402,57 @@
   .compartir {
     padding-inline: 14px;
   }
-
-  .compartir-tarjeta {
-    padding: 24px 18px 22px;
-  }
 }
 
 /* ---------- Impresión ----------
-   Solo sale la tarjeta. El resto de la app (navbar, cabecera, botones) se
-   esconde, y la tarjeta pasa a ocupar la hoja sin sombra ni esquinas. */
+   Solo sale la hoja, a A4 entero. Se quita del flujo todo lo que no la
+   contiene (navbar, cabecera, botones) y a sus antepasados se les borra
+   cualquier relleno o fondo, así no salen páginas en blanco de sobra. */
 
+/* Margen 0 en la página: así el navegador no imprime su cabecera y pie
+   (título, URL, fecha). El margen lo pone la propia hoja, con holgura: 12 +
+   270 mm deja 15 mm de aire en un A4 de 297 y nunca salta a otra página. */
 @page {
-  margin: 14mm;
+  size: A4 portrait;
+  margin: 0;
 }
 
 @media print {
-  body * {
-    visibility: hidden;
+  html,
+  body {
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background: #ffffff !important;
   }
 
-  .compartir-tarjeta,
-  .compartir-tarjeta * {
-    visibility: visible;
+  body *:not(:has(.compartir-hoja)):not(.compartir-hoja):not(.compartir-hoja *) {
+    display: none !important;
+  }
+
+  body *:has(.compartir-hoja) {
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    border: 0 !important;
+    background: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .compartir-hoja {
+    width: 185mm;
+    max-width: none;
+    margin: 12mm auto 0 !important;
   }
 
   .compartir-tarjeta {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    border-radius: 0;
-    background: #ffffff;
+    min-height: 270mm;
     box-shadow: none;
     break-inside: avoid;
-  }
-
-  .compartir-chispa {
-    display: none;
-  }
-
-  .compartir-qr {
-    box-shadow: none;
-  }
-
-  .compartir-nombre {
-    font-size: 42pt;
-  }
-
-  .compartir-enlace {
-    font-size: 15pt;
   }
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { centrarEnTira } from '../../utils/centrarEnTira.js'
 import './tiraDias.css'
 
 /* La semana del dueño en una tira: un día a la vez, nunca todas las citas
@@ -17,18 +18,19 @@ function etiquetaDe(desplazamiento, fecha) {
 }
 
 function TiraDias({ dias, seleccionada, onElegir }) {
+  const tiraRef = useRef(null)
   const elegidaRef = useRef(null)
 
   /* El día elegido siempre a la vista, centrado. Al entrar, sin animación. */
   const primeraVez = useRef(true)
   useEffect(() => {
     const suave = !primeraVez.current && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    elegidaRef.current?.scrollIntoView({ behavior: suave ? 'smooth' : 'auto', inline: 'center', block: 'nearest' })
+    centrarEnTira(tiraRef.current, elegidaRef.current, suave)
     primeraVez.current = false
   }, [seleccionada])
 
   return (
-    <div className="tira-dias" role="group" aria-label="Día de la agenda">
+    <div className="tira-dias" ref={tiraRef} role="group" aria-label="Día de la agenda">
       {dias.map(({ clave, fecha, desplazamiento, cantidad, abre }) => {
         const elegida = clave === seleccionada
         const clases = [

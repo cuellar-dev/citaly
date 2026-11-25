@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { format, isSameDay, isToday, isTomorrow } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { centrarEnTira } from '../../utils/centrarEnTira.js'
 import './selectorFecha.css'
 
 /* Tira de días del local. Recibe los días ya evaluados ({ fecha, reservable })
@@ -19,7 +20,7 @@ function SelectorFecha({ dias, fechaSeleccionada, onSeleccionar }) {
 
   /* Al entrar, el día elegido queda a la vista aunque esté al final de la tira. */
   useEffect(() => {
-    activaRef.current?.scrollIntoView({ block: 'nearest', inline: 'center' })
+    centrarEnTira(pistaRef.current, activaRef.current)
   }, [])
 
   return (
@@ -41,11 +42,7 @@ function SelectorFecha({ dias, fechaSeleccionada, onSeleccionar }) {
             }`}
             onClick={(e) => {
               onSeleccionar(fecha)
-              e.currentTarget.scrollIntoView({
-                behavior: 'smooth',
-                inline: 'center',
-                block: 'nearest',
-              })
+              centrarEnTira(pistaRef.current, e.currentTarget, true)
             }}
           >
             <span className="selector-fecha-semana">{etiquetaDe(fecha)}</span>
