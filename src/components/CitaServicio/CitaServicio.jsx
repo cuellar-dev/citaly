@@ -16,6 +16,10 @@ function CitaServicio({
   mapsHref,
   onVoyPaAlla,
   onCancelar,
+  propuesta,
+  horaAnteriorTexto,
+  onAceptarHora,
+  onOtraHora,
   pasada = false,
   proxima = false,
 }) {
@@ -35,6 +39,10 @@ function CitaServicio({
       textoCancelar="Cancelar cita"
       onVoyPaAlla={onVoyPaAlla}
       onCancelar={onCancelar}
+      propuesta={propuesta}
+      horaAnteriorTexto={horaAnteriorTexto}
+      onAceptarHora={onAceptarHora}
+      onOtraHora={onOtraHora}
       pasada={pasada}
       proxima={proxima}
       etiquetaAria={`Cita en ${lugar}`}

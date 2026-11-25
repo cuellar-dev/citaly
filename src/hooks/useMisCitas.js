@@ -2,11 +2,13 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { hayApi } from '../services/api.js'
 import { saveCitas } from '../services/storage.js'
 import {
+  cambiosAceptarHora,
   cambiosAsistencia,
   cambiosCancelar,
   cambiosOpinion,
   cambiosVoyPaAlla,
   cargarMisCitas,
+  guardarAceptarHora,
   guardarAsistencia,
   guardarCancelar,
   guardarOpinion,
@@ -83,7 +85,8 @@ export function useMisCitas() {
     }
   }, [recargar])
 
-  /* El plazo de 15 min del dueño: la cita pendiente se ve cancelada al llegar. */
+  /* El plazo de 15 min del dueño (y el del cliente para contestar a una hora
+     nueva): la cita se ve cancelada al llegar. */
   useEffect(() => {
     const id = window.setInterval(
       () =>
@@ -134,6 +137,15 @@ export function useMisCitas() {
   const cancelar = (cita) =>
     critica(cita, cambiosCancelar(), guardarCancelar, 'No pudimos cancelar tu cita. Prueba otra vez en un momento.')
 
+  /* «Me vale» la hora nueva del local: crítica, como «voy pa allá». */
+  const aceptarHora = (cita) =>
+    critica(
+      cita,
+      cambiosAceptarHora(cita),
+      guardarAceptarHora,
+      'No pudimos aceptar la hora nueva. Prueba otra vez en un momento.',
+    )
+
   /** `asistencia`: 'si' | 'no' | null. */
   const marcarAsistencia = (cita, asistencia) =>
     secundaria(cita, cambiosAsistencia(asistencia), () => guardarAsistencia(cita, asistencia))
@@ -153,6 +165,7 @@ export function useMisCitas() {
     recargar,
     voyPaAlla,
     cancelar,
+    aceptarHora,
     marcarAsistencia,
     publicarOpinion,
     omitirOpinion,

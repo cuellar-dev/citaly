@@ -138,6 +138,15 @@ export function notificacionesDemo() {
       accion: 'Ver y aceptar',
     },
     {
+      id: 'n-acepto-hora-dayana',
+      ambito: 'negocio',
+      tipo: 'aceptoHora',
+      titulo: 'Dayana Ruiz aceptó la hora nueva',
+      texto: 'Tinte completo pasa de las 3:00 PM a las 4:30 PM. Ya está confirmada.',
+      creadaEn: hace(22),
+      enlace: '/negocio',
+    },
+    {
       id: 'n-caduca-gretel',
       ambito: 'negocio',
       tipo: 'porCaducar',

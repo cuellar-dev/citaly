@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { startOfToday } from 'date-fns'
+import { parseISO, startOfToday } from 'date-fns'
+import { useSearchParams } from 'react-router-dom'
 import { agendaDelLocal, diaEnUso, horasYaReservadas } from '../utils/reservaHorarios.js'
 
 /* Cuánto hay que bajar (en px) para que la guía de pasos se pegue arriba. */
@@ -18,7 +19,16 @@ const AGENDA_VACIA = { dias: [], fechas: [], primeraReservable: null, sinHuecos:
 export function useReserva(local, citas = [], { completasDe } = {}) {
   const [hoy, setHoy] = useState(() => startOfToday())
   const [ahora, setAhora] = useState(() => new Date())
-  const [fechaSeleccionada, setFechaSeleccionada] = useState(null)
+  /* ?fecha=yyyy-MM-dd llega desde «Busco otra hora» en Mis citas: arranca en
+     ese día. Si el local no abre o ya no tiene hueco, diaEnUso pasa al primero
+     que sí. */
+  const [searchParams] = useSearchParams()
+  const [fechaSeleccionada, setFechaSeleccionada] = useState(() => {
+    const pedida = searchParams.get('fecha')
+    if (!pedida || !/^\d{4}-\d{2}-\d{2}$/.test(pedida)) return null
+    const fecha = parseISO(pedida)
+    return Number.isNaN(fecha.getTime()) ? null : fecha
+  })
   const [horario, setHorario] = useState(null)
   const [guiaPegada, setGuiaPegada] = useState(false)
 

@@ -19,6 +19,7 @@ Contexto: noviembre 2026, tras la ronda de mejoras de Lighthouse (rutas cargadas
 7. [Esqueletos y estados de carga con datos reales](#7-esqueletos-y-estados-de-carga-con-datos-reales)
 8. [Precarga de páginas y ahorro de datos](#8-precarga-de-páginas-y-ahorro-de-datos)
 9. [Cosas que se quedaron fuera a propósito](#9-cosas-que-se-quedaron-fuera-a-propósito)
+10. [Mover la hora de una cita (el local propone otra hora)](#mover-la-hora-de-una-cita-el-local-propone-otra-hora)
 
 ---
 
@@ -222,3 +223,50 @@ Hoy el plano se guarda en el navegador (ficha del local). Para el backend:
 2. **No hay rastro.** Cuando salta, no queda ni un log. Si se quiere medir cuántos bots caen, el front tendría que avisar al servidor (un contador anónimo en un endpoint, con límite de ritmo). Hoy no está hecho.
 3. **Los bots aprenden.** Si un día los registros falsos vuelven a subir con la trampa puesta, es que ya saben saltársela: pasar al captcha (Turnstile).
 4. **No se ha puesto** en recuperar contraseña, opiniones ni login. Si se amplía, copiar el mismo patrón y repetir los puntos de arriba.
+
+## Mover la hora de una cita (el local propone otra hora)
+
+**Hoy (25-11-2026).** En Mi Negocio, cada cita **pendiente** tiene tres botones: ✕ rechazar, ✓ aceptar y uno de reloj, «Proponer otra hora». El reloj abre dentro de la fila las horas libres de ese día (y «Otro día» para los próximos 7 días abiertos). El dueño elige una hora y pulsa «Proponer». La cita pasa a un estado nuevo, **4 = hora propuesta**, y espera la respuesta del cliente. Mientras espera, el dueño puede avisarle por WhatsApp con un mensaje ya escrito o **retirar la propuesta**: la cita vuelve a pendiente y el dueño tiene de nuevo sus 15 minutos para contestar.
+
+El cliente ve en Mis citas la hora vieja tachada, la nueva y tres botones:
+
+- **Me vale**: la cita pasa directamente a **confirmada (2)** a la hora nueva. No hace falta el paso de «Voy pa allá», porque los dos ya han dicho que sí. Se guarda la hora anterior y la tarjeta dice «Confirmaste la hora nueva (antes 3:00 PM)».
+- **Busco otra hora**: se cancela esta cita (`cancelada_por = 'cliente'`) y se abre la reserva del mismo local en el día propuesto, con los mismos servicios marcados (`?fecha=yyyy-MM-dd&servicio=…`). Al dueño le llega como una reserva pendiente nueva. **Se decidió no dejar que el cliente contraproponga una hora**, para evitar idas y vueltas con dos horas bloqueadas a la vez.
+- **Cancelar**: como siempre.
+
+**Plazo del cliente:** hasta **1 hora antes de la hora nueva**. Si la hora nueva está muy cerca, al menos 30 minutos desde que se propuso, sin pasarse nunca de la propia hora nueva. Si no contesta, la cita se cancela sola con `cancelada_por = 'sinRespuesta'` («No contestaste a la hora nueva»). La regla está en `venceLaPropuesta()` de `src/utils/estadosCita.js`, con pruebas en `estadosCita.test.js`.
+
+**Notificación nueva** (`tipo: 'nuevaHora'`, mostaza): «Sara cambió la hora de tu cita. De las 3:00 PM a las 4:30 PM. ¿Te sirve?», con la cuenta atrás hasta que vence y el botón «Ver la nueva hora». Al dueño le llega `aceptoHora` (verde) cuando el cliente acepta.
+
+**Solo en la demo (sin backend):** la agenda del dueño y las citas del cliente son datos distintos. `src/services/propuestasDemo.js` copia la cita propuesta a las citas de este navegador (`citaly_citas`, con id `neg-<local>-<cita>`) para poder probar el camino entero, y `notisPropuestas()` saca de ahí el aviso. **Con backend no se usa:** la cita es la misma fila para los dos y el aviso lo crea el servidor. El estado de la agenda del dueño en la demo vive solo en memoria y se pierde al recargar, igual que aceptar y rechazar.
+
+### Lo que tiene que hacer el backend
+
+1. **Tabla `citas`**, columnas nuevas (todas nullable):
+   - `propuesta_fecha` (date), `propuesta_horario` (time), `propuesta_en` (timestamptz), `propuesta_vence` (timestamptz, calculada en el servidor con la regla de arriba).
+   - `hora_anterior_fecha`, `hora_anterior_horario`: se rellenan al aceptar, para el historial y para explicarlo en la tarjeta.
+   - `pendiente_desde` (timestamptz): cuándo vuelve a correr el reloj de 15 minutos del dueño después de retirar una propuesta. Sin esta columna, la cita caducaría nada más retirarla si se creó hace más de 15 minutos.
+   - `estado_reserva` admite **4**. Si hay un `CHECK (estado_reserva BETWEEN 0 AND 3)`, ampliarlo a 4.
+   - `cancelada_por` admite `'sinRespuesta'`.
+2. **Rutas** (el front ya las llama: `src/services/citasNegocio.js` y `src/services/misCitasApi.js`):
+   - `PATCH /api/citas/:id/local/:localId/proponer-hora` con `{ fecha, horario }`. Solo el dueño del local y solo si la cita está en **0 (pendiente)**. Comprobar que el local abre ese día, que la hora está dentro del turno y en el intervalo del local, que es futura y que **está libre** (ver punto 4). Pone `estado_reserva = 4`, `propuesta_*`, y crea la notificación `hora_propuesta` para el cliente.
+   - `DELETE /api/citas/:id/local/:localId/proponer-hora`. Retirar: solo si sigue en 4. Vuelve a 0, borra `propuesta_*` y pone `pendiente_desde = now()`.
+   - `PATCH /api/citas/:id/usuario/aceptar-hora`. Solo el cliente de la cita, solo en 4 y antes de `propuesta_vence`. En una transacción: comprobar otra vez que la hora sigue libre, mover `fecha/horario` a la propuesta, guardar `hora_anterior_*`, `estado_reserva = 2`, `confirmada_en = now()`, limpiar `propuesta_*` y crear la notificación `propuesta_aceptada` para el dueño.
+   - Cancelar (`/usuario/cancelar`) tiene que aceptar también el estado 4 y avisar al dueño (`propuesta_cancelada`, o la `cancelada` de siempre).
+3. **Caducidad:** la misma tarea que cancela las pendientes a los 15 minutos tiene que cancelar las de estado 4 con `propuesta_vence <= now()` (`cancelada_por = 'sinRespuesta'`) y avisar a los dos. El front ya lo pinta así aunque el servidor tarde, pero no lo guarda.
+4. **Hueco reservado:** mientras la cita está en 4, la **hora propuesta cuenta como ocupada**. Hay que tenerlo en cuenta en `horas-ocupadas` (la reserva de otros clientes) y en la validación al crear una cita. Si no, otro cliente puede quedarse esa hora y el «Me vale» fallaría. La hora original también sigue ocupada hasta que el cliente conteste. Se libera al aceptar (queda solo la nueva), al cancelar o al caducar. En locales de mesas, «ocupada» significa que no queda mesa para ese grupo, igual que hoy.
+5. **Carrera entre dos clientes:** proteger con una restricción única parcial o con `SELECT … FOR UPDATE` sobre (local, fecha, horario). Si al aceptar la hora ya no está libre, devolver **409** con un mensaje claro. El front deshace el cambio y muestra el error.
+6. **Notificaciones**, tipos nuevos en la tabla, que `adaptarNoti()` ya traduce:
+   - `hora_propuesta` (cliente): incluir `cita_estado` y `propuesta_vence` en la fila para pintar la cuenta atrás. Título sugerido: «‹Local› cambió la hora de tu cita»; cuerpo: «De las 3:00 PM a las 4:30 PM. ¿Te sirve?».
+   - `propuesta_aceptada` (dueño, ámbito negocio): «‹Cliente› aceptó la hora nueva».
+   - `propuesta_cancelada` (dueño): cuando el cliente cancela o pulsa «Busco otra hora» sobre una propuesta.
+   - Si hay push, `hora_propuesta` es la que más lo merece: tiene plazo.
+7. **Lista de citas:** `GET /api/citas/local/:localId` y `GET /api/citas/usuario/me` tienen que devolver `propuesta_fecha`, `propuesta_horario`, `propuesta_en`, `propuesta_vence`, `hora_anterior_fecha` y `hora_anterior_horario`. `camposDeHoraMovida()` (`src/services/citasNegocio.js`) ya los lee.
+
+### Lo que sugiero añadir después
+
+- **Un motivo corto** al proponer («se me fue la luz», «estoy con otro cliente»), que viaje en la notificación. Ayuda a que el cliente no lo vea como un capricho.
+- **Límite de propuestas por cita.** Si el dueño retira y vuelve a proponer varias veces, el cliente recibe varios avisos. Se podría limitar a 2 por cita o guardar las propuestas en una tabla `citas_propuestas` para tener historial.
+- **Mover también citas ya aceptadas** (estado 1 o 2), por ejemplo cuando el local cierra de golpe. El aviso `cierre` de la demo ya habla de una cita «movida al viernes». Usaría el mismo estado 4, pero si el cliente no contesta habría que decidir si se cancela o se queda en la hora vieja. Hoy solo se mueven las pendientes.
+- **Métrica para el dueño:** cuántas propuestas se aceptan y cuántas no. Si casi nunca se aceptan, que el local revise su horario publicado.
+- **La hora propuesta visible en la agenda del dueño**, como una fila fantasma en la hora nueva. Hoy solo aparece en la fila original («Propuesta: 4:30 PM») y como hora ocupada en el selector.

@@ -1,4 +1,4 @@
-import { CANCELADA, CONFIRMADA, PENDIENTE, POR_TI } from './estadosCita.js'
+import { CANCELADA, CONFIRMADA, HORA_PROPUESTA, PENDIENTE, POR_TI } from './estadosCita.js'
 
 /*
   Cómo se calculará con citas reales (getCitas() del cliente):
@@ -50,7 +50,7 @@ export function estadisticasCitasCliente(citas, ahora = new Date()) {
   })
   const canceladas = citas.filter((c) => c.estadoReserva === CANCELADA)
   const enCurso = citas.filter((c) => {
-    if (c.estadoReserva === PENDIENTE || c.estadoReserva === POR_TI) return true
+    if (c.estadoReserva === PENDIENTE || c.estadoReserva === POR_TI || c.estadoReserva === HORA_PROPUESTA) return true
     if (c.estadoReserva !== CONFIRMADA) return false
     const t = instanteTurno(c)
     return t && t.getTime() >= ahora.getTime()

@@ -3,13 +3,14 @@ import { idUsuarioActual } from './sesion.js'
 import { ESTADOS_V_KEY, getCitas, saveCitas } from './storage.js'
 import { publicarOpinion as publicarEnFicha } from './opiniones.js'
 import {
+  aceptarHoraApi,
   asistenciaCitaApi,
   cancelarCitaApi,
   cargarCitasApi,
   confirmarCitaApi,
   publicarOpinionApi,
 } from './misCitasApi.js'
-import { CANCELADA, CONFIRMADA, caducarPendientes } from '../utils/estadosCita.js'
+import { CANCELADA, CONFIRMADA, caducarPendientes, cambiosAceptarPropuesta } from '../utils/estadosCita.js'
 
 /* Frontera de «Mis citas» (las del cliente). La pantalla y useMisCitas solo
    conocen estas funciones; de dónde salen los datos se decide aquí:
@@ -142,6 +143,16 @@ const enServidor = (cita) => hayApi && !cita.soloEnEsteDispositivo
 
 export async function guardarVoyPaAlla(cita, cambios) {
   if (enServidor(cita)) await confirmarCitaApi(cita.id)
+  else actualizarLocal(cita.id, cambios)
+}
+
+/** «Me vale» la hora que propuso el local: confirmada a esa hora. */
+export function cambiosAceptarHora(cita) {
+  return cambiosAceptarPropuesta(cita)
+}
+
+export async function guardarAceptarHora(cita, cambios) {
+  if (enServidor(cita)) await aceptarHoraApi(cita.id)
   else actualizarLocal(cita.id, cambios)
 }
 

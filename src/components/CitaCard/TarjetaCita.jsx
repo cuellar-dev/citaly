@@ -1,10 +1,11 @@
-import { MapPin, Phone } from 'lucide-react'
+import { ArrowRight, MapPin, Phone } from 'lucide-react'
 import IconoWhatsApp from '../IconoWhatsApp/IconoWhatsApp.jsx'
 import Taly from '../Taly/Taly.jsx'
 import SelloCita from './SelloCita.jsx'
 import {
   CANCELADA,
   CONFIRMADA,
+  HORA_PROPUESTA,
   POR_TI,
   claveEstadoReserva,
   textoEstadoReserva,
@@ -45,7 +46,46 @@ function AccionesCita({
   textoCancelar,
   onVoyPaAlla,
   onCancelar,
+  propuesta,
+  horaTexto,
+  horaAnteriorTexto,
+  onAceptarHora,
+  onOtraHora,
 }) {
+  /* El local propuso otra hora. Va antes que «pasada»: la hora vieja puede
+     haber pasado mientras el cliente decide, y la nueva sigue viva. */
+  if (estadoReserva === HORA_PROPUESTA && propuesta) {
+    return (
+      <div className="tarjeta-cita-propuesta">
+        <p className="tarjeta-cita-propuesta-texto">
+          <span className="tarjeta-cita-propuesta-eyebrow">El local te propone otra hora</span>
+          <span className="tarjeta-cita-propuesta-horas">
+            <s>{horaTexto}</s>
+            <ArrowRight size={16} strokeWidth={2.4} aria-hidden="true" />
+            <b>{propuesta.horaTexto}</b>
+            {propuesta.otroDia && <small>{propuesta.diaTexto}</small>}
+          </span>
+          {propuesta.venceTexto && (
+            <span className="tarjeta-cita-propuesta-plazo">
+              Si no contestas antes de las {propuesta.venceTexto}, se cancela sola.
+            </span>
+          )}
+        </p>
+        <div className="tarjeta-cita-botones">
+          <button type="button" className="tarjeta-cita-boton tarjeta-cita-boton--primario" onClick={onAceptarHora}>
+            Me vale
+          </button>
+          <button type="button" className="tarjeta-cita-boton tarjeta-cita-boton--suave" onClick={onOtraHora}>
+            Busco otra hora
+          </button>
+          <button type="button" className="tarjeta-cita-boton tarjeta-cita-boton--cancelar" onClick={onCancelar}>
+            {textoCancelar}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   if (pasada) {
     if (estadoReserva === CANCELADA) {
       return <Cartel tono="cancelar">{`Cancelaste ${sujetoReserva(textoCancelar)}`}</Cartel>
@@ -58,7 +98,13 @@ function AccionesCita({
   }
 
   if (estadoReserva === CONFIRMADA) {
-    return <Cartel tono="primario">{`Confirmaste ${sujetoReserva(textoCancelar)}`}</Cartel>
+    return (
+      <Cartel tono="primario">
+        {horaAnteriorTexto
+          ? `Confirmaste la hora nueva (antes ${horaAnteriorTexto})`
+          : `Confirmaste ${sujetoReserva(textoCancelar)}`}
+      </Cartel>
+    )
   }
 
   if (estadoReserva === POR_TI) {
@@ -111,6 +157,10 @@ function TarjetaCita({
   textoCancelar = 'Cancelar',
   onVoyPaAlla,
   onCancelar,
+  propuesta,
+  horaAnteriorTexto,
+  onAceptarHora,
+  onOtraHora,
   pasada = false,
   proxima = false,
   etiquetaAria,
@@ -124,6 +174,11 @@ function TarjetaCita({
       textoCancelar={textoCancelar}
       onVoyPaAlla={onVoyPaAlla}
       onCancelar={onCancelar}
+      propuesta={propuesta}
+      horaTexto={horaTexto}
+      horaAnteriorTexto={horaAnteriorTexto}
+      onAceptarHora={onAceptarHora}
+      onOtraHora={onOtraHora}
     />
   )
 

@@ -26,6 +26,10 @@ function CitaLugar({
   minimoPersonas,
   onVoyPaAlla,
   onCancelar,
+  propuesta,
+  horaAnteriorTexto,
+  onAceptarHora,
+  onOtraHora,
   pasada = false,
   proxima = false,
 }) {
@@ -48,6 +52,10 @@ function CitaLugar({
       textoCancelar="Cancelar mesa"
       onVoyPaAlla={onVoyPaAlla}
       onCancelar={onCancelar}
+      propuesta={propuesta}
+      horaAnteriorTexto={horaAnteriorTexto}
+      onAceptarHora={onAceptarHora}
+      onOtraHora={onOtraHora}
       pasada={pasada}
       proxima={proxima}
       etiquetaAria={grupoGrande ? `Reserva de grupo en ${lugar}` : `Reserva en ${lugar}`}

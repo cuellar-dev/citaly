@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import CitaServicio from '../components/CitaServicio/CitaServicio.jsx'
 import CitaLugar from '../components/CitaLugar/CitaLugar.jsx'
 import ModalAccionCita from '../components/ModalAccionCita/ModalAccionCita.jsx'
-import { elegirTexto, TEXTOS_CANCELAR, TEXTOS_VOY } from '../components/ModalAccionCita/textosAccionCita.js'
+import { ACCIONES_CITA, elegirTexto } from '../components/ModalAccionCita/textosAccionCita.js'
 import ListaCitas from '../components/ListaCitas/ListaCitas.jsx'
 import SuscripcionesCliente from '../components/MisCitas/SuscripcionesCliente.jsx'
 import ResumenCliente from '../components/MisCitas/ResumenCliente.jsx'
@@ -24,6 +24,16 @@ import { useMisCitas } from '../hooks/useMisCitas.js'
 import { esCitaDeLugar, esCitaPasada, propsDesdeCita } from '../utils/citasVista.js'
 import './misCitas.css'
 
+/* «Busco otra hora»: la reserva del mismo local, en el día que propuso el
+   local y con los mismos servicios marcados. */
+function rutaOtraHora(cita) {
+  const params = new URLSearchParams({ fecha: cita.propuesta?.fecha ?? cita.fecha })
+  const servicios = (cita.servicios ?? []).map((s) => s.id).filter(Boolean)
+  if (!cita.esLugar && servicios.length) params.set('servicio', servicios.join(','))
+  const base = `/local/${encodeURIComponent(cita.localId)}/${cita.esLugar ? 'reservar' : 'reservar-cita'}`
+  return `${base}?${params}`
+}
+
 /* Pasadas puede crecer sin fin: se enseñan las últimas y el resto a petición. */
 const PASADAS_VISIBLES = 4
 
@@ -32,14 +42,14 @@ function MisCitas() {
   const [accion, setAccion] = useState(null)
   const [todasPasadas, setTodasPasadas] = useState(false)
   const [suscripciones, setSuscripciones] = useState(misSuscripciones)
-  const { citas, estado, aviso, recargar, voyPaAlla, cancelar, marcarAsistencia, publicarOpinion, omitirOpinion } =
+  const { citas, estado, aviso, recargar, voyPaAlla, cancelar, aceptarHora, marcarAsistencia, publicarOpinion, omitirOpinion } =
     useMisCitas()
   const navigate = useNavigate()
   const esProximas = vista === 'proximas'
   const ahora = new Date()
 
   const abrirAccion = (tipo, cita) => {
-    const pack = tipo === 'cancelar' ? TEXTOS_CANCELAR : TEXTOS_VOY
+    const { pack } = ACCIONES_CITA[tipo]
     setAccion({
       tipo,
       citaId: cita.id,
@@ -60,6 +70,12 @@ function MisCitas() {
     if (tipo === 'cancelar') {
       /* Solo salta a Pasadas si el servidor la aceptó; si no, se queda donde está. */
       if (await cancelar(cita)) setVista('pasadas')
+    } else if (tipo === 'otraHora') {
+      /* Se suelta esta y se abre la reserva del local en el día que propuso,
+         con lo mismo ya marcado. Al dueño le llega como una pendiente nueva. */
+      if (await cancelar(cita)) navigate(rutaOtraHora(cita))
+    } else if (tipo === 'aceptarHora') {
+      await aceptarHora(cita)
     } else {
       await voyPaAlla(cita)
     }
@@ -91,6 +107,8 @@ function MisCitas() {
       proxima: esProximas && i === 0,
       onVoyPaAlla: () => abrirAccion('voy', cita),
       onCancelar: () => abrirAccion('cancelar', cita),
+      onAceptarHora: () => abrirAccion('aceptarHora', cita),
+      onOtraHora: () => abrirAccion('otraHora', cita),
     }
     return props.esLugar ? (
       <CitaLugar {...props} {...handlers} />

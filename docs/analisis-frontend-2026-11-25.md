@@ -10,18 +10,18 @@ Segunda versión. La primera mezclaba cosas medidas con puntos copiados de `docs
 
 | Aspecto | Hoy |
 |---|---|
-| Pantallas y flujos | **93 %** |
+| Pantallas y flujos | **94 %** (era 93) |
 | Diseño y marca | **92 %** |
 | Estados de carga y error | **85 %** |
 | Accesibilidad | **88 %** |
 | Rendimiento | **~80 %** (sin medir bien todavía) |
-| Código y pruebas | **68 %** (era 60) |
+| Código y pruebas | **70 %** (era 60) |
 | SEO y enlaces compartidos | **95 %** (era 55) |
 | Seguridad del front | **75 %** |
 | Legal y licencias | **80 %** |
 | Listo para producción | **60 %** (era 55) |
 
-**Total sin backend: ~84 %** (era 79).
+**Total sin backend: ~84,5 %** (era 79).
 
 ### Avance
 
@@ -30,6 +30,7 @@ Segunda versión. La primera mezclaba cosas medidas con puntos copiados de `docs
 | 25-11 | 1.1–1.4: fechas de apertura, lint, Vitest solo en `src/`, fuera `anime`. Lint limpio, 38/38 tests. | 79 → 80 % |
 | 25-11 | 1.7: lo pendiente, en 5 commits por tema. | 80 % |
 | 25-11 | 3.1 + 3.2: metadatos completos (Open Graph, X, canónica, robots, JSON-LD), imagen para compartir, título por ruta, ficha con sus datos de negocio, sitemap y robots.txt en el deploy. `package-lock.json` al día (el deploy con `npm ci` iba a fallar). | 80 → 84 % |
+| 25-11 | Flujo nuevo: el local propone otra hora a una cita pendiente (estado 4); el cliente la acepta (queda confirmada), cancela o busca otra hora. Aviso `nuevaHora` con cuenta atrás. Parte de 1.5: pruebas de estados de cita y vencimientos (`estadosCita.test.js`, 66/66). | 84 → 84,5 % |
 
 **Siguiente:** 4.2 + 4.1 (enlace estirado en tarjetas y textos de 10 px).
 

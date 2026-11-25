@@ -2,6 +2,7 @@ import { differenceInMinutes, format, isBefore, parse } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { getLocalById } from '../services/locales.js'
 import { planoDeLocal } from '../plano/local.js'
+import { HORA_PROPUESTA, venceLaPropuesta } from './estadosCita.js'
 
 function fechaHoraCita(cita) {
   return parse(`${cita.fecha} ${cita.horario}`, 'yyyy-MM-dd HH:mm', new Date())
@@ -10,6 +11,8 @@ function fechaHoraCita(cita) {
 export function esCitaPasada(cita, ahora = new Date()) {
   /* Cancelada sale de Próximas aunque la fecha aún no haya llegado. */
   if (cita.estadoReserva === 3) return true
+  /* Con hora propuesta manda la nueva: la vieja puede pasar mientras decide. */
+  if (cita.estadoReserva === HORA_PROPUESTA && cita.propuesta) return isBefore(fechaHoraCita(cita.propuesta), ahora)
   return isBefore(fechaHoraCita(cita), ahora)
 }
 
@@ -65,8 +68,11 @@ export function textoEstadoCita(cita, ahora = new Date()) {
     if (cita.canceladaPor === 'cliente') return 'La soltaste tú'
     if (cita.canceladaPor === 'tiempo') return 'Se venció el plazo'
     if (cita.canceladaPor === 'local') return 'La soltó el local'
+    if (cita.canceladaPor === 'sinRespuesta') return 'No contestaste a la hora nueva'
     return 'Ya no cuenta'
   }
+  const propuesta = vistaPropuesta(cita)
+  if (propuesta?.venceTexto) return `Contesta antes de las ${propuesta.venceTexto}`
   const minutos = minutosHastaCita(cita, ahora)
   if (minutos < 0) return 'Ya pasó'
   if (minutos < 60) return `Quedan ${minutos} min`
@@ -90,6 +96,21 @@ export function esCitaDeLugar(cita) {
   return cita?.esLugar === true
 }
 
+/* La hora que propuso el local, lista para la tarjeta: la nueva, si cambia
+   de día, y hasta cuándo hay para contestar. */
+export function vistaPropuesta(cita) {
+  if (cita.estadoReserva !== HORA_PROPUESTA || !cita.propuesta) return null
+  const nueva = partesFechaCita(cita.propuesta)
+  const vence = venceLaPropuesta(cita)
+  return {
+    horaTexto: nueva.horaTexto,
+    diaTexto: nueva.diaTexto,
+    otroDia: cita.propuesta.fecha !== cita.fecha,
+    fecha: cita.propuesta.fecha,
+    venceTexto: vence ? format(vence, 'h:mm a', { locale: es }) : null,
+  }
+}
+
 export function propsDesdeCita(cita) {
   const local = getLocalById(cita.localId)
   const esLugar = esCitaDeLugar(cita)
@@ -102,6 +123,10 @@ export function propsDesdeCita(cita) {
     ...partesFechaCita(cita),
     estadoTexto: textoEstadoCita(cita),
     estadoReserva: cita.estadoReserva ?? 0,
+    propuesta: vistaPropuesta(cita),
+    horaAnteriorTexto: cita.horaAnterior
+      ? partesFechaCita({ fecha: cita.horaAnterior.fecha, horario: cita.horaAnterior.horario }).horaTexto
+      : null,
     mapsHref: local?.direccion
       ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(local.direccion)}`
       : undefined,

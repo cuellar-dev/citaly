@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom'
-import { TEXTOS_CANCELAR, TEXTOS_VOY } from './textosAccionCita.js'
+import { ACCIONES_CITA } from './textosAccionCita.js'
 import './modalAccionCita.css'
 
 /* Capa aparte (portal a body): no se monta dentro de la lista de citas. */
@@ -7,12 +7,11 @@ import './modalAccionCita.css'
 export default function ModalAccionCita({ accion, onConfirmar, onCerrar }) {
   if (!accion) return null
 
-  const esCancelar = accion.tipo === 'cancelar'
-  const pack = esCancelar ? TEXTOS_CANCELAR : TEXTOS_VOY
+  const { pack, eyebrow, titulo, peligro } = ACCIONES_CITA[accion.tipo] ?? ACCIONES_CITA.voy
 
   return createPortal(
     <div
-      className={`modal-accion-pantalla${esCancelar ? ' modal-accion-pantalla--cancelar' : ''}`}
+      className={`modal-accion-pantalla${peligro ? ' modal-accion-pantalla--cancelar' : ''}`}
       role="presentation"
       onClick={onCerrar}
     >
@@ -23,11 +22,9 @@ export default function ModalAccionCita({ accion, onConfirmar, onCerrar }) {
         aria-labelledby="modal-accion-titulo"
         onClick={(e) => e.stopPropagation()}
       >
-        <span className="modal-accion-eyebrow">
-          {esCancelar ? 'Antes de soltarla' : 'Confirmas que vas'}
-        </span>
+        <span className="modal-accion-eyebrow">{eyebrow}</span>
         <h2 id="modal-accion-titulo" className="modal-accion-titulo">
-          {esCancelar ? (accion.esMesa ? 'Cancelar la mesa' : 'Cancelar la cita') : 'Voy pa alla'}
+          {titulo(accion.esMesa)}
         </h2>
         <p className="modal-accion-aviso">{pack.aviso}</p>
         <div className="modal-accion-botones">

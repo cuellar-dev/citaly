@@ -19,7 +19,10 @@ const TONOS = {
   reserva: 'mostaza',
   porCaducar: 'mostaza',
   pausa: 'mostaza',
+  /* El local movió la hora: te toca decir si te sirve. */
+  nuevaHora: 'mostaza',
   aceptada: 'verde',
+  aceptoHora: 'verde',
   abre: 'verde',
   confirmo: 'verde',
   lleno: 'verde',
@@ -27,6 +30,14 @@ const TONOS = {
   rechazada: 'rojo',
   cancelo: 'rojo',
   caducada: 'rojo',
+}
+
+/* «9 min», «1 h 20 min», «5 h»: la hora nueva puede dar horas de plazo. */
+function textoQuedan(min) {
+  if (min < 60) return `${min} min`
+  const h = Math.floor(min / 60)
+  const m = min % 60
+  return m ? `${h} h ${m} min` : `${h} h`
 }
 
 /* Deslizar para borrar: pasado este trozo del ancho se borra al soltar. Un
@@ -220,12 +231,12 @@ function FilaNoti({ noti, ahora, grupo, nueva, fijada = false, onAbrir, onBorrar
         >
           <span className="fila-noti-cabeza">
             <span className="fila-noti-titulo">{noti.titulo}</span>
-            <time dateTime={noti.creadaEn}>{fijada ? `Quedan ${quedan} min` : cuando(noti.creadaEn, ahora, grupo)}</time>
+            <time dateTime={noti.creadaEn}>{fijada ? `Quedan ${textoQuedan(quedan)}` :cuando(noti.creadaEn, ahora, grupo)}</time>
           </span>
           <span className="fila-noti-texto">{noti.texto}</span>
           {(quedan != null && !fijada) || caducada || noti.accion ? (
             <span className="fila-noti-pie">
-              {quedan != null && !fijada && <span className="fila-noti-plazo">Quedan {quedan} min</span>}
+              {quedan != null && !fijada && <span className="fila-noti-plazo">Quedan {textoQuedan(quedan)}</span>}
               {caducada && <span className="fila-noti-vencio">Se acabó el plazo</span>}
               {noti.accion && !caducada && (
                 <span className="fila-noti-accion">

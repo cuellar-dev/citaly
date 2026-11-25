@@ -1,8 +1,10 @@
 import { useId, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { useGSAP } from '@gsap/react'
-import { Check, ChevronDown, Clock, MessageCircle, Phone, Scissors, UtensilsCrossed, X } from 'lucide-react'
-import { PENDIENTE, claveEstadoReserva, textoEstadoReserva } from '../../utils/estadosCita.js'
+import { Check, ChevronDown, Clock, Hourglass, MessageCircle, Phone, Scissors, UtensilsCrossed, X } from 'lucide-react'
+import { HORA_PROPUESTA, PENDIENTE, claveEstadoReserva, textoEstadoReserva } from '../../utils/estadosCita.js'
+import { diaEnFrase, horaCorta } from '../../utils/proponerHora.js'
+import ProponerHora from './ProponerHora.jsx'
 import './citaDueno.css'
 
 gsap.registerPlugin(useGSAP)
@@ -15,7 +17,13 @@ function textoDuracion(min) {
   return m ? `${h} h ${m}` : `${h} h`
 }
 
-/* Una fila de la agenda del dueño. Cerrada dice lo justo; al tocarla enseña el resto. */
+function primerNombre(nombre) {
+  return String(nombre || '').trim().split(/\s+/)[0] || 'el cliente'
+}
+
+/* Una fila de la agenda del dueño. Cerrada dice lo justo; al tocarla enseña el resto.
+   Pendiente: aceptar, rechazar o proponer otra hora (el reloj). Con la hora
+   propuesta, la fila espera la respuesta del cliente y se puede retirar. */
 function CitaDueno({
   hora,
   relativo,
@@ -31,8 +39,17 @@ function CitaDueno({
   destacada = false,
   onConfirmar,
   onRechazar,
+  fecha,
+  horario,
+  propuesta,
+  propuestaVence,
+  localNombre,
+  diasProponer,
+  onProponer,
+  onRetirarPropuesta,
 }) {
   const [abierta, setAbierta] = useState(false)
+  const [proponiendo, setProponiendo] = useState(false)
   const raizRef = useRef(null)
   const detalleRef = useRef(null)
   const primeraVezRef = useRef(true)
@@ -44,6 +61,24 @@ function CitaDueno({
   const pendiente = estadoReserva === PENDIENTE && (onConfirmar || onRechazar)
   const clave = claveEstadoReserva(estadoReserva)
   const idDetalle = useId()
+  const nombre = primerNombre(cliente)
+  const puedeProponer = Boolean(pendiente && onProponer && diasProponer)
+  const conPropuesta = estadoReserva === HORA_PROPUESTA && Boolean(propuesta)
+  const textoPropuesta = conPropuesta
+    ? `${horaCorta(propuesta.horario)}${propuesta.fecha !== fecha ? ` (${diaEnFrase(propuesta.fecha)})` : ''}`
+    : null
+  const mensajeWa = conPropuesta
+    ? `Hola ${nombre}, te escribo de ${localNombre || 'el local'}. A las ${horaCorta(horario ?? '00:00')} no puedo atenderte y te propuse las ${horaCorta(propuesta.horario)} ${diaEnFrase(propuesta.fecha)} en Citaly. ¿Te sirve?`
+    : ''
+
+  const abrirProponer = () => {
+    setProponiendo(true)
+    setAbierta(true)
+  }
+  const proponer = (nueva) => {
+    setProponiendo(false)
+    onProponer(nueva)
+  }
 
   useGSAP(
     () => {
@@ -63,7 +98,7 @@ function CitaDueno({
         gsap.from(panel.children, { y: 8, opacity: 0, duration: 0.35, stagger: 0.05, delay: 0.08, ease: 'power2.out' })
       }
     },
-    { scope: raizRef, dependencies: [abierta] }
+    { scope: raizRef, dependencies: [abierta, proponiendo, conPropuesta] }
   )
 
   return (
@@ -87,8 +122,17 @@ function CitaDueno({
           <span className="cita-dueno-textos">
             <span className="cita-dueno-cliente">{cliente}</span>
             <span className="cita-dueno-linea">
-              {linea}
-              {duracionTexto && <span className="cita-dueno-linea-extra"> · {duracionTexto}</span>}
+              {conPropuesta ? (
+                <span className="cita-dueno-linea-propuesta">
+                  <Hourglass size={12} strokeWidth={2.4} aria-hidden="true" />
+                  <span className="sr-only">Propuesta:</span> → {textoPropuesta}
+                </span>
+              ) : (
+                <>
+                  {linea}
+                  {duracionTexto && <span className="cita-dueno-linea-extra"> · {duracionTexto}</span>}
+                </>
+              )}
             </span>
           </span>
           {!pendiente && (
@@ -100,7 +144,19 @@ function CitaDueno({
         </button>
 
         {pendiente && (
-          <div className="cita-dueno-rapidas">
+          <div className={`cita-dueno-rapidas${puedeProponer ? ' cita-dueno-rapidas--tres' : ''}`}>
+            {puedeProponer && (
+              <button
+                type="button"
+                className="cita-dueno-rapida cita-dueno-rapida--hora"
+                onClick={() => (proponiendo ? setProponiendo(false) : abrirProponer())}
+                aria-pressed={proponiendo}
+                aria-label={`Proponer otra hora a ${cliente}`}
+                title="Proponer otra hora"
+              >
+                <Clock size={17} strokeWidth={2.4} />
+              </button>
+            )}
             {onRechazar && (
               <button
                 type="button"
@@ -126,6 +182,49 @@ function CitaDueno({
       </div>
 
       <div ref={detalleRef} id={idDetalle} className="cita-dueno-detalle">
+        {proponiendo && puedeProponer && (
+          <ProponerHora
+            dias={diasProponer()}
+            diaCita={fecha}
+            nombre={nombre}
+            onProponer={proponer}
+            onCerrar={() => setProponiendo(false)}
+          />
+        )}
+
+        {conPropuesta && (
+          <div className="cita-dueno-propuesta" role="status">
+            <p>
+              Le propusiste las <b>{textoPropuesta}</b>. Esperando a que {nombre} diga si le vale.
+              {propuestaVence && (
+                <small>
+                  {' '}
+                  Si no contesta antes de las {horaCorta(`${propuestaVence.getHours()}:${propuestaVence.getMinutes()}`)}, se
+                  cancela sola.
+                </small>
+              )}
+            </p>
+            <div className="cita-dueno-contacto">
+              {tel && (
+                <a
+                  className="cita-dueno-enlace"
+                  href={`https://wa.me/${tel}?text=${encodeURIComponent(mensajeWa)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <MessageCircle size={14} strokeWidth={2.25} aria-hidden="true" />
+                  Avisarle
+                </a>
+              )}
+              {onRetirarPropuesta && (
+                <button type="button" className="cita-dueno-enlace cita-dueno-enlace--boton" onClick={onRetirarPropuesta}>
+                  Retirar propuesta
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         <dl className="cita-dueno-datos">
           <div>
             <dt>Reserva</dt>

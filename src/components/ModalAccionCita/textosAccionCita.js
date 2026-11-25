@@ -22,6 +22,33 @@ export const TEXTOS_CANCELAR = {
   no: ['Me quedo', 'La dejo', 'No, espera', 'Sigue viva'],
 }
 
+export const TEXTOS_ACEPTAR_HORA = {
+  aviso:
+    'Al aceptar, tu cita queda confirmada a la hora nueva y el local te espera. Toca solo si de verdad iras a esa hora.',
+  si: ['Me vale, ire', 'Esa me sirve', 'Trato hecho', 'Ahi estare'],
+  no: ['Lo pienso', 'Aun no', 'Despues'],
+}
+
+export const TEXTOS_OTRA_HORA = {
+  aviso:
+    'Soltamos esta cita y te llevamos a elegir otra hora en este local. El local vera tu nueva reserva como pendiente.',
+  si: ['Busco otra', 'Vamos a ver', 'A elegir'],
+  no: ['Me quedo', 'Espera', 'Mejor no'],
+}
+
+/* Cada acción con su paquete de textos y sus títulos. */
+export const ACCIONES_CITA = {
+  voy: { pack: TEXTOS_VOY, eyebrow: 'Confirmas que vas', titulo: () => 'Voy pa alla', peligro: false },
+  cancelar: {
+    pack: TEXTOS_CANCELAR,
+    eyebrow: 'Antes de soltarla',
+    titulo: (esMesa) => (esMesa ? 'Cancelar la mesa' : 'Cancelar la cita'),
+    peligro: true,
+  },
+  aceptarHora: { pack: TEXTOS_ACEPTAR_HORA, eyebrow: 'La hora nueva', titulo: () => 'Me vale', peligro: false },
+  otraHora: { pack: TEXTOS_OTRA_HORA, eyebrow: 'Antes de soltarla', titulo: () => 'Busco otra hora', peligro: true },
+}
+
 export function elegirTexto(lista) {
   return lista[Math.floor(Math.random() * lista.length)]
 }

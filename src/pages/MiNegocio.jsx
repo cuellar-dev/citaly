@@ -32,10 +32,29 @@ import TiraDias from '../components/Negocio/TiraDias.jsx'
 import { DIAS_ADELANTE, DIAS_ATRAS, citasNegocioDemo } from '../data/citasNegocioDemo.js'
 import { hayApi } from '../services/api.js'
 import { getLocalById } from '../services/locales.js'
-import { aceptarCitaApi, cargarCitasDelLocal, rechazarCitaApi } from '../services/citasNegocio.js'
+import {
+  aceptarCitaApi,
+  cargarCitasDelLocal,
+  proponerHoraApi,
+  rechazarCitaApi,
+  retirarPropuestaApi,
+} from '../services/citasNegocio.js'
+import { quitarPropuestaDemo, reflejarPropuestaDemo } from '../services/propuestasDemo.js'
+import { diasParaProponer } from '../utils/proponerHora.js'
 import { saveFicha } from '../services/storage.js'
 import { minutosHastaCita, textoEnCita } from '../utils/citasVista.js'
-import { CANCELADA, CONFIRMADA, PENDIENTE, POR_TI, caducarPendientes, textoEstadoReserva } from '../utils/estadosCita.js'
+import {
+  CANCELADA,
+  CONFIRMADA,
+  HORA_PROPUESTA,
+  PENDIENTE,
+  POR_TI,
+  caducarPendientes,
+  cambiosProponerHora,
+  cambiosRetirarPropuesta,
+  textoEstadoReserva,
+  venceLaPropuesta,
+} from '../utils/estadosCita.js'
 import { pausaActiva, textoHasta } from '../utils/pausaAgenda.js'
 import { notaDeComentarios, tipoDeLocal } from '../utils/fichaLocal.js'
 import { descargarPdfCitas } from '../utils/pdfCitasNegocio.js'
@@ -149,7 +168,9 @@ function valorMinutosHasta(minutos) {
 /* Cada cita cae en un solo grupo del filtro. Empezada y confirmada cuenta como atendida. */
 function grupoCita(cita, ahora) {
   if (cita.estadoReserva === CANCELADA) return 'canceladas'
-  if (cita.estadoReserva === PENDIENTE || cita.estadoReserva === POR_TI) return 'pendientes'
+  if (cita.estadoReserva === PENDIENTE || cita.estadoReserva === POR_TI || cita.estadoReserva === HORA_PROPUESTA) {
+    return 'pendientes'
+  }
   return minutosHastaCita(cita, ahora) <= 0 ? 'atendidas' : 'confirmadas'
 }
 
@@ -408,6 +429,32 @@ function NegocioAgenda({ idLocal, cabeceraExtra }) {
     })
   }
 
+  /* Mover la hora: igual que cambiarEstado, se pinta al momento y se deshace
+     si el servidor no deja. Sin backend, la propuesta se copia a Mis citas de
+     este navegador para poder probar el camino del cliente. */
+  const enParalelo = esMesa ? Math.max(1, mesasDeLocal(local).filter((m) => m.online).length) : 1
+  const moverCita = (id, cambios, llamarApi, enDemo) => {
+    const antes = citas.find((c) => c.id === id)
+    if (!antes) return
+    setCitas((prev) => prev.map((c) => (c.id === id ? { ...c, ...cambios } : c)))
+    if (!conServidor) {
+      enDemo(antes)
+      return
+    }
+    llamarApi().catch((error) => {
+      setCitas((prev) => prev.map((c) => (c.id === id ? antes : c)))
+      setErrorCitas(error?.message || 'No se pudo mover la cita.')
+    })
+  }
+  const proponerHora = (id, nueva) => {
+    const cambios = cambiosProponerHora(nueva)
+    moverCita(id, cambios, () => proponerHoraApi(idLocal, id, nueva), (antes) =>
+      reflejarPropuestaDemo(local, antes, cambios.propuesta),
+    )
+  }
+  const retirarPropuesta = (id) =>
+    moverCita(id, cambiosRetirarPropuesta(), () => retirarPropuestaApi(idLocal, id), (antes) => quitarPropuestaDemo(local, antes))
+
   /* Devuelve false si el navegador no tiene sitio (pasa con muchas fotos).
      Con backend, el local propio se guarda en el servidor (misLocales). */
   const guardarFicha = (cambios) => {
@@ -616,6 +663,11 @@ function NegocioAgenda({ idLocal, cabeceraExtra }) {
                         onRechazar={
                           cita.estadoReserva === PENDIENTE && !esPasado ? () => cambiarEstado(cita.id, CANCELADA) : undefined
                         }
+                        localNombre={local.localName}
+                        propuestaVence={cita.estadoReserva === HORA_PROPUESTA ? venceLaPropuesta(cita) : null}
+                        diasProponer={() => diasParaProponer(local, citas, cita, { ahora: new Date(), enParalelo })}
+                        onProponer={(nueva) => proponerHora(cita.id, nueva)}
+                        onRetirarPropuesta={!esPasado ? () => retirarPropuesta(cita.id) : undefined}
                       />
                     </div>
                   )

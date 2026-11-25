@@ -9,6 +9,19 @@
         "dev"
       ],
       "port": 5173
+    },
+    {
+      "name": "demo",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": [
+        "exec",
+        "vite",
+        "--mode",
+        "demo",
+        "--port",
+        "5180"
+      ],
+      "port": 5180
     }
   ]
 }

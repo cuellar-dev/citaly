@@ -3,6 +3,9 @@ import { notisMisLocales } from './misLocales.js'
 import { notisApertura } from './avisosApertura.js'
 import { hayApi, pedir } from './api.js'
 import { idUsuarioActual } from './sesion.js'
+import { getCitas } from './storage.js'
+import { HORA_PROPUESTA, venceLaPropuesta } from '../utils/estadosCita.js'
+import { diaEnFrase, horaCorta } from '../utils/proponerHora.js'
 
 /* Con backend (GET /api/notificaciones, PATCH /:id/leida, DELETE /:id) los
    avisos son los de la cuenta, sin los de la demo. Se guardan en memoria
@@ -20,6 +23,10 @@ function adaptarNoti(n) {
     confirmada: negocio ? 'confirmo' : 'aceptada',
     cancelada: negocio ? 'cancelo' : 'rechazada',
     recordatorio: 'recordatorio',
+    /* El local movió la hora (al cliente) y la respuesta del cliente (al dueño). */
+    hora_propuesta: 'nuevaHora',
+    propuesta_aceptada: 'aceptoHora',
+    propuesta_cancelada: 'cancelo',
   }[n.tipo] ?? 'resumen'
   return {
     id: n.id,
@@ -33,7 +40,41 @@ function adaptarNoti(n) {
     enlace: negocio ? '/negocio' : '/citas',
     /* La cuenta atrás solo mientras la cita siga pendiente de verdad. */
     ...(tipo === 'reserva' && Number(n.cita_estado) === 0 ? { plazo: 15, accion: 'Ver y aceptar' } : null),
+    /* Hora nueva: la cuenta atrás va hasta que vence la propuesta. */
+    ...(tipo === 'nuevaHora' && Number(n.cita_estado) === HORA_PROPUESTA
+      ? { plazo: plazoHasta(n.programada_para ?? n.creado_en, n.propuesta_vence), accion: 'Ver la nueva hora' }
+      : null),
   }
+}
+
+/* Minutos entre que se avisó y que vence; null si no hay fecha de fin. */
+function plazoHasta(desde, hasta) {
+  if (!hasta) return null
+  const min = Math.round((new Date(hasta) - new Date(desde)) / 60000)
+  return min > 0 ? min : null
+}
+
+/* Sin backend: la hora que propuso un local sale de las citas de este
+   navegador (ver services/propuestasDemo.js). Con backend la manda el servidor. */
+export function notisPropuestas() {
+  return getCitas()
+    .filter((c) => c.estadoReserva === HORA_PROPUESTA && c.propuesta)
+    .map((c) => {
+      const en = c.propuesta.en ?? c.creadaEn
+      const vence = venceLaPropuesta(c)
+      const dia = c.propuesta.fecha !== c.fecha ? ` ${diaEnFrase(c.propuesta.fecha)}` : ''
+      return {
+        id: `hora-${c.id}-${en}`,
+        ambito: 'personal',
+        tipo: 'nuevaHora',
+        titulo: `${c.localNombre || 'El local'} cambió la hora de tu cita`,
+        texto: `De las ${horaCorta(c.horario)} a las ${horaCorta(c.propuesta.horario)}${dia}. ¿Te sirve? Acéptala o cancélala desde Mis citas.`,
+        creadaEn: en,
+        plazo: vence ? plazoHasta(en, vence) : null,
+        enlace: '/citas',
+        accion: 'Ver la nueva hora',
+      }
+    })
 }
 
 export async function sincronizarNotis() {
@@ -87,7 +128,7 @@ export function getNotificaciones() {
   const borradas = leer(BORRADAS_KEY)
   const base = hayApi
     ? [...(delServidor.de === idUsuarioActual() ? delServidor.lista : []), ...notisMisLocales(), ...notisApertura()]
-    : [...notificacionesDemo(), ...notisMisLocales(), ...notisApertura()]
+    : [...notificacionesDemo(), ...notisPropuestas(), ...notisMisLocales(), ...notisApertura()]
   return base
     .filter((n) => !borradas.has(n.id))
     .map((n) => ({ ...n, leida: Boolean(n.leida) || leidas.has(n.id) }))

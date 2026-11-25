@@ -513,3 +513,96 @@
     transform: none;
   }
 }
+
+/* ---------- El local propuso otra hora ---------- */
+
+.tarjeta-cita-propuesta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tarjeta-cita-propuesta-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px dashed color-mix(in srgb, var(--yellow-color, #ffd166) 55%, transparent);
+  background: color-mix(in srgb, var(--yellow-color, #ffd166) 8%, transparent);
+}
+
+.tarjeta-cita-propuesta-eyebrow {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--yellow-texto, #ffd166);
+}
+
+.tarjeta-cita-propuesta-horas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--font-familyDrink, 'drink', sans-serif);
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.tarjeta-cita-propuesta-horas s {
+  font-size: 15px;
+  color: color-mix(in srgb, var(--fonts-color-primary, #f0f0f0) 55%, transparent);
+  text-decoration-color: color-mix(in srgb, var(--close-color, #c53f3f) 70%, transparent);
+}
+
+.tarjeta-cita-propuesta-horas svg {
+  color: var(--yellow-texto, #ffd166);
+}
+
+.tarjeta-cita-propuesta-horas b {
+  font-weight: inherit;
+  color: var(--yellow-texto, #ffd166);
+}
+
+.tarjeta-cita-propuesta-horas small {
+  font-family: var(--font-familyPrincipal, 'Quicksand', sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+.tarjeta-cita-propuesta-plazo {
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--fonts-color-primary-weak, #bdbaba);
+}
+
+/* «Me vale» arriba a todo lo ancho; las otras dos se reparten el renglón de abajo. */
+.tarjeta-cita-propuesta .tarjeta-cita-botones {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tarjeta-cita-propuesta .tarjeta-cita-boton--primario {
+  flex: 1 1 100%;
+}
+
+.tarjeta-cita-propuesta .tarjeta-cita-boton--suave,
+.tarjeta-cita-propuesta .tarjeta-cita-boton--cancelar {
+  flex: 1 1 0;
+  padding: 0 10px;
+}
+
+.tarjeta-cita-boton--suave {
+  border: 1px solid rgb(var(--tinte) / calc(0.16 * var(--tinte-fuerza)));
+  background: transparent;
+  color: var(--fonts-color-primary, #f0f0f0);
+}
+
+.tarjeta-cita-boton:focus-visible {
+  outline: 2px solid var(--primary-color, #00c2ad);
+  outline-offset: 2px;
+}

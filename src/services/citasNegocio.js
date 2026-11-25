@@ -6,10 +6,35 @@ import { pedir } from './api.js'
      PATCH /api/citas/:id/local/:localId/confirmar  { nuevoEstado: 1 }  aceptar → «Por ti»
      PATCH /api/citas/:id/local/:localId/cancelar   rechazar
 
+   FALTAN en el backend (ver docs/pendientes-backend.md, «Mover la hora»):
+     PATCH  /api/citas/:id/local/:localId/proponer-hora  { fecha, horario }  → estado 4
+     DELETE /api/citas/:id/local/:localId/proponer-hora  retirar → vuelve a 0
+
    La forma de salida es la de data/citasNegocioDemo.js, la que pintan
    CitaDueno y el resumen del día. */
 
 const PAGINAS_MAX = 30
+
+/* La hora propuesta por el local (estado 4) y, tras aceptarla, la que había
+   antes. Igual para la vista del dueño y la del cliente. */
+export function camposDeHoraMovida(r) {
+  const campos = {}
+  if (r.propuesta_fecha) {
+    campos.propuesta = {
+      fecha: String(r.propuesta_fecha).slice(0, 10),
+      horario: String(r.propuesta_horario ?? '').slice(0, 5),
+      en: r.propuesta_en ?? null,
+      vence: r.propuesta_vence ?? null,
+    }
+  }
+  if (r.hora_anterior_fecha) {
+    campos.horaAnterior = {
+      fecha: String(r.hora_anterior_fecha).slice(0, 10),
+      horario: String(r.hora_anterior_horario ?? '').slice(0, 5),
+    }
+  }
+  return campos
+}
 
 export function adaptarCitaNegocio(r) {
   const servicios = Array.isArray(r.servicios) ? r.servicios : []
@@ -27,6 +52,7 @@ export function adaptarCitaNegocio(r) {
     personas: r.personas ?? undefined,
     estadoReserva: Number(r.estado_reserva ?? 0),
     canceladaPor: r.cancelada_por ?? undefined,
+    ...camposDeHoraMovida(r),
     asistio: r.asistio ?? undefined,
     deApi: true,
   }
@@ -53,3 +79,11 @@ export const rechazarCitaApi = (localId, citaId) =>
   pedir(`/api/citas/${encodeURIComponent(citaId)}/local/${encodeURIComponent(localId)}/cancelar`, {
     metodo: 'PATCH',
   })
+
+const rutaPropuesta = (localId, citaId) =>
+  `/api/citas/${encodeURIComponent(citaId)}/local/${encodeURIComponent(localId)}/proponer-hora`
+
+export const proponerHoraApi = (localId, citaId, { fecha, horario }) =>
+  pedir(rutaPropuesta(localId, citaId), { metodo: 'PATCH', cuerpo: { fecha, horario } })
+
+export const retirarPropuestaApi = (localId, citaId) => pedir(rutaPropuesta(localId, citaId), { metodo: 'DELETE' })

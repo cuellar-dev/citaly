@@ -1,4 +1,5 @@
 import { pedir } from './api.js'
+import { camposDeHoraMovida } from './citasNegocio.js'
 
 /* Mis citas contra el backend (cliente: sus propias citas).
 
@@ -12,6 +13,9 @@ import { pedir } from './api.js'
      POST  /api/opiniones/local/:localId            ya existe, falta aceptar `citaId`
                                                     para ligar la opinión a la cita
      DELETE/PUT de la opinión propia                editar una opinión ya publicada
+     PATCH /api/citas/:id/usuario/aceptar-hora      «Me vale» la hora que propuso el
+                                                    local → confirmada a esa hora
+                                                    (ver docs/pendientes-backend.md)
 
    Mientras no existan, `misCitas.js` captura el error y el cambio se queda
    solo en este navegador (se avisa al usuario). */
@@ -44,6 +48,7 @@ export function adaptarCita(r) {
     creadaEn: r.creada_en ?? null,
     deApi: true,
   }
+  Object.assign(cita, camposDeHoraMovida(r))
   if (r.cancelada_en) cita.canceladaEn = r.cancelada_en
   if (r.cancelada_por) cita.canceladaPor = r.cancelada_por
   /* «Voy pa allá» = el cliente confirmó (estado 2). */
@@ -97,6 +102,9 @@ export async function cargarCitasApi() {
 
 export const confirmarCitaApi = (citaId) =>
   pedir(`/api/citas/${encodeURIComponent(citaId)}/usuario/confirmar`, { metodo: 'PATCH', cuerpo: { nuevoEstado: 2 } })
+
+export const aceptarHoraApi = (citaId) =>
+  pedir(`/api/citas/${encodeURIComponent(citaId)}/usuario/aceptar-hora`, { metodo: 'PATCH' })
 
 export const cancelarCitaApi = (citaId) =>
   pedir(`/api/citas/${encodeURIComponent(citaId)}/usuario/cancelar`, { metodo: 'PATCH' })
