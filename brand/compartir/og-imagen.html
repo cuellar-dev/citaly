@@ -1,0 +1,46 @@
+<!doctype html>
+<!-- Imagen para compartir (og:image) de Citaly: 1200×630.
+     Se exporta a public/og-citaly.png con:
+     node brand/mascota/render-png.mjs --input brand/compartir/og-imagen.html \
+       --out public/og-citaly.png --selector .lienzo --width 1200 --height 630 --scale 1 -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: 'Outfit'; src: url('../../public/fonts/outfit-v1.woff2') format('woff2'); font-weight: 100 900; }
+  @font-face { font-family: 'Quicksand'; src: url('../../public/fonts/quicksand-v1.woff2') format('woff2'); font-weight: 300 700; }
+  html, body { margin: 0; background: #121413; }
+  .lienzo {
+    width: 1200px; height: 630px; box-sizing: border-box;
+    padding: 84px 96px;
+    background: #121413;
+    display: flex; flex-direction: column; justify-content: space-between;
+    color: #f2efe8; font-family: 'Quicksand', sans-serif;
+    position: relative; overflow: hidden;
+  }
+  /* Franja de tinta abajo: el color de la marca, sin adornos. */
+  .lienzo::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 14px;
+    background: #00C2AD;
+  }
+  .logo { width: 360px; height: auto; display: block; }
+  .frase {
+    font-family: 'Outfit', sans-serif; font-weight: 700;
+    font-size: 68px; line-height: 1.08; letter-spacing: -0.01em; margin: 0;
+    max-width: 700px;
+  }
+  .frase em { font-style: normal; color: #00C2AD; }
+  .pie { font-size: 28px; font-weight: 600; color: #b9b5ac; margin: 0; max-width: 640px; }
+  /* El sello de redes (brand/logo/final): lo más reconocible de la marca. */
+  .sello { position: absolute; right: 80px; top: 50%; width: 340px; height: 340px; transform: translateY(-50%); }
+</style>
+</head>
+<body>
+  <div class="lienzo">
+    <img class="logo" src="../logo/final/citaly-logotipo-blanco.svg" alt="Citaly">
+    <img class="sello" src="../logo/final/citaly-icono-redes.svg" alt="">
+    <p class="frase">Reserva en los lugares<br><em>de tu barrio</em></p>
+    <p class="pie">Barberías, restaurantes, gimnasios y más. Tu turno o tu mesa en un par de toques.</p>
+  </div>
+</body>
+</html>

@@ -26,6 +26,8 @@ import BarraReservaLocal from '../components/DetalleLocal/BarraReservaLocal.jsx'
 import AvisoBreve from '../components/DetalleLocal/AvisoBreve.jsx'
 import { TrazoCosido } from '../components/DetalleLocal/Tinta.jsx'
 import { useCompartir } from '../components/DetalleLocal/useCompartir.js'
+import { aplicarDatosEstructurados, urlPublica, useMetaPagina } from '../hooks/useMetaPagina.js'
+import { datosEstructuradosLocal, metaDeLocal } from '../utils/metaLocal.js'
 import VisorImagen from '../components/VisorImagen/VisorImagen.jsx'
 import TalyMomento from '../components/Taly/TalyMomento.jsx'
 import taly404 from '../components/Taly/taly-404-animado.svg'
@@ -85,16 +87,15 @@ function DetalleLocal() {
     return () => cancelAnimationFrame(frame)
   }, [opinionPedida])
 
-  /* Cada local con su título en la pestaña (y en el historial). */
-  const nombre = local?.localName
+  /* Cada local con su título, descripción y foto (pestaña, Google y vista
+     previa al compartir) y sus datos estructurados para Google. */
+  useMetaPagina(metaDeLocal(local))
+  const urlFicha = local?.id ? urlPublica(`/local/${local.id}`) : null
+  const datosLd = useMemo(() => datosEstructuradosLocal(local, urlFicha), [local, urlFicha])
   useEffect(() => {
-    if (!nombre) return undefined
-    const previo = document.title
-    document.title = `${nombre} · Citaly`
-    return () => {
-      document.title = previo
-    }
-  }, [nombre])
+    aplicarDatosEstructurados('ld-pagina', datosLd)
+    return () => aplicarDatosEstructurados('ld-pagina', null)
+  }, [datosLd])
 
   const tipo = tipoDeLocal(local)
   const esSuscripcion = tipo === TIPOS_LOCAL.suscripcion

@@ -15,21 +15,23 @@ Segunda versión. La primera mezclaba cosas medidas con puntos copiados de `docs
 | Estados de carga y error | **85 %** |
 | Accesibilidad | **88 %** |
 | Rendimiento | **~80 %** (sin medir bien todavía) |
-| Código y pruebas | **66 %** (era 60) |
-| SEO y enlaces compartidos | **55 %** |
+| Código y pruebas | **68 %** (era 60) |
+| SEO y enlaces compartidos | **95 %** (era 55) |
 | Seguridad del front | **75 %** |
 | Legal y licencias | **80 %** |
-| Listo para producción | **55 %** |
+| Listo para producción | **60 %** (era 55) |
 
-**Total sin backend: ~80 %** (era 79).
+**Total sin backend: ~84 %** (era 79).
 
 ### Avance
 
 | Fecha | Hecho | Total |
 |---|---|---|
 | 25-11 | 1.1–1.4: fechas de apertura, lint, Vitest solo en `src/`, fuera `anime`. Lint limpio, 38/38 tests. | 79 → 80 % |
+| 25-11 | 1.7: lo pendiente, en 5 commits por tema. | 80 % |
+| 25-11 | 3.1 + 3.2: metadatos completos (Open Graph, X, canónica, robots, JSON-LD), imagen para compartir, título por ruta, ficha con sus datos de negocio, sitemap y robots.txt en el deploy. `package-lock.json` al día (el deploy con `npm ci` iba a fallar). | 80 → 84 % |
 
-**Siguiente:** 1.7 (commits de lo pendiente), luego 3.1 + 3.2 (OG y títulos).
+**Siguiente:** 4.2 + 4.1 (enlace estirado en tarjetas y textos de 10 px).
 
  Las pantallas y el diseño están prácticamente terminados. Lo que queda son arreglos puntuales y la parte de «producto serio»: pruebas, enlaces que se ven bien en WhatsApp y saber cuándo algo falla.
 
@@ -60,7 +62,7 @@ Segunda versión. La primera mezclaba cosas medidas con puntos copiados de `docs
 | 1.4 | El paquete `anime` (0.1.2) está instalado y no se importa en ningún sitio. | `pnpm remove anime`. |
 | 1.5 | Solo 4 archivos de prueba. Las reglas que más duelen si fallan no tienen test: estados de cita y vencimiento de 15 min, ocupación por hora de inicio, mesas por capacidad, juntas, `validarPlano`. | Un archivo de test por regla; son funciones puras, se prueban rápido. |
 | 1.6 | Archivos de +800 líneas: `CompletarLocal.jsx` 989, `ContenidoSocios.jsx` 957, `MiNegocio.jsx` 937, `ContenidoModalNegocio.jsx` 914, `EditorPlano.jsx` 890, `NuevoLocal.jsx` 822. | Partir por pasos o secciones cuando toque tocarlos, no de golpe. |
-| 1.7 | 35 archivos cambiados y 15 nuevos sin commit en `main`. | Commits pequeños por tema antes de seguir. |
+| 1.7 | ✅ Hecho: 5 commits por tema. | Commits pequeños por tema antes de seguir. |
 | 1.8 | Sin integración continua. | Una GitHub Action con `lint` + `test` + `build` en cada push (ya existe `pages.yml`, se puede añadir el paso). |
 
 1.1–1.4 son media hora y dejan todo en verde.
@@ -77,7 +79,9 @@ Aun así hay una mejora real que sirve también con backend:
 | 2.2 | 10 s es mucho para la portada. | Espera más corta solo para el feed (unos 4 s) antes de usar la copia guardada o la demo. |
 | 2.3 | No hay medida fiable. | Volver a pasar Lighthouse con un build **sin** `VITE_API_URL` (demo pura) para tener la cifra del front solo, y otra con backend real cuando esté desplegado. |
 
-### 3. SEO y enlaces compartidos — 55 %
+### 3. SEO y enlaces compartidos — 95 %
+
+✅ 3.1 y 3.2 hechos el 25-11. Lo que queda (5 %) no es del front: que el servidor devuelva `/local/:id` con su título y su foto ya en el HTML (WhatsApp no ejecuta JS, así que hoy una ficha compartida sale con la imagen de Citaly), y un dominio propio para que `robots.txt` y el sitemap estén en la raíz.
 
 | # | Problema (comprobado) | Arreglo |
 |---|---|---|
@@ -106,7 +110,9 @@ Aun así hay una mejora real que sirve también con backend:
 |---|---|---|
 | 6.1 | La fuente Merchant Copy se sigue cargando como TTF (`src/index.css:28-29`) y se usa en Nosotros. Su licencia es solo para uso personal. Si ya tenéis permiso del autor, tachad este punto. | Pedir la licencia, o cambiarla por Courier Prime / Space Mono / IBM Plex Mono (libres, y de paso en WOFF2). |
 
-### 7. Listo para producción — 55 %
+### 7. Listo para producción — 60 %
+
+✅ `package-lock.json` sincronizado: tenía `anime` y le faltaba `vitest`, y el workflow usa `npm ci`, que falla si el lock no coincide. Ojo: hay dos locks (`pnpm-lock.yaml` y `package-lock.json`). Elegir uno y que el workflow use el mismo gestor.
 
 | # | Problema (comprobado) | Arreglo |
 |---|---|---|
@@ -131,7 +137,7 @@ Sin problemas comprobados más allá de 4.1 (tamaños) y 4.3 (contraste del clar
 
 1. ~~**Hoy, media hora:** 1.1, 1.2, 1.3, 1.4. Todo en verde.~~ Hecho.
 2. **Commits** de lo pendiente (1.7).
-3. **Rápidos y visibles:** 3.1 (OG básico), 3.2 (títulos), 4.2 (enlace estirado), 4.1 (las 26 de 10 px).
+3. **Rápidos y visibles:** ~~3.1, 3.2~~ hechos; 4.2 (enlace estirado), 4.1 (las 26 de 10 px).
 4. **Portada instantánea:** 2.1 y 2.2, y medir de nuevo (2.3).
 5. **Antes de lanzar:** 6.1, 7.1, 5.1, 4.3, 4.4, 1.5, 1.8.
 6. **Producto:** 8.1 (carta) y los apartados de abajo.

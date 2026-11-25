@@ -6,6 +6,12 @@ import { VitePWA } from 'vite-plugin-pwa'
 /* En GitHub Pages la web vive en /citaly/ (lo pone el workflow). En local, en la raíz. */
 const base = process.env.BASE_PATH || '/'
 
+/* Dirección pública de la web, sin barra final: la usan index.html
+   (%VITE_SITE_URL%: canónica, og:image…) y hooks/useMetaPagina.js. Las
+   vistas previas al compartir necesitan URLs absolutas. Con dominio propio,
+   cambiarla aquí o con la variable VITE_SITE_URL al hacer el build. */
+process.env.VITE_SITE_URL ??= 'https://cuellar-dev.github.io/citaly'
+
 /* Archivos que NO se guardan al instalar (el service worker los guarda la
    primera vez que se usan): pesan cientos de KB y casi nadie los necesita.
    Three.js (Sobre nosotros), jsPDF + html2canvas + canvg (PDF de Mi Negocio),

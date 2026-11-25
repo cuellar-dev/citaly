@@ -14,7 +14,6 @@ function Legal() {
   const doc = pathname.includes('privacidad') ? 'privacidad' : 'terminos'
 
   useEffect(() => {
-    document.title = `${DOCS[doc].titulo} · Citaly`
     if (hash) requestAnimationFrame(() => irASeccion(hash.slice(1)))
     else window.scrollTo({ top: 0 })
   }, [doc, hash])

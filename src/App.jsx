@@ -32,6 +32,7 @@ import {
 } from './paginas.js'
 import ErrorPagina from './components/ErrorPagina/ErrorPagina.jsx'
 import AvisosApp from './components/AvisosApp/AvisosApp.jsx'
+import MetaRuta from './components/MetaRuta/MetaRuta.jsx'
 import RequiereSesion from './components/RequiereSesion/RequiereSesion.jsx'
 import NegocioSinSesion from './components/SinSesion/NegocioSinSesion.jsx'
 import CitasSinSesion from './components/SinSesion/CitasSinSesion.jsx'
@@ -85,6 +86,8 @@ function App() {
     <BrowserRouter basename={BASE_RUTAS}>
       {/* Versión nueva disponible y sin conexión: en todas las pantallas. */}
       <AvisosApp />
+      {/* Título, descripción y vista previa al compartir de cada ruta. Antes de <Routes>. */}
+      <MetaRuta />
       <Routes>
         {/* Auth fuera del Layout: sin navbar ni header, pantalla a foco. */}
         <Route path="/auth" element={<PantallaCompleta><Auth /></PantallaCompleta>} />
