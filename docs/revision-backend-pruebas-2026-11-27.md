@@ -254,7 +254,7 @@ Es una **estimación**, no una medida. Cada área pesa según lo que el front ya
 
 ## 4. Resumen de hallazgos
 
-### 4.1 Pendientes, por prioridad (actualizado 27-11 noche)
+### 4.1 Pendientes, por prioridad (actualizado 27-11, segunda tanda): ninguno
 
 **Ninguno pendiente desde el 27-11 (segunda tanda).** Los que estaban aquí se corrigieron en `8593e94` (ver 0.1 y la tabla de abajo). Lo que queda para llegar al 100 % ya no son hallazgos de las pruebas, sino trabajo nuevo: sección 8.
 
@@ -290,6 +290,15 @@ Es una **estimación**, no una medida. Cada área pesa según lo que el front ya
 | F-21 | Media | Pendientes sin límite | 2 por local y 5 en total. | `afb4d77` |
 | F-22 | Media | Aceptar/cancelar y `localId` | **Ya estaba bien** (`LOCAL_ID_MISMATCH`); ahora con prueba. | `3379e9c` |
 | F-26 | Baja | Paginación sin topes | Página ≤ 500. | `c999186` |
+| F-12 | Media | Caducidad sin aviso | Avisos a cliente y local en la tarea de cada minuto; recordatorios borrados. | `8593e94` |
+| F-13 | Media | `horas-ocupadas` de locales no públicos | 404 salvo para su dueño o encargados. | `8593e94` |
+| F-14 | Media | Favoritos de locales no públicos | 404 al añadir; la lista los oculta. | `8593e94` |
+| F-19 | Baja | 400 o 404 (resto) | Convención: 400 formato, 404 no existe. | `8593e94` |
+| F-20 | Baja | El dueño no abre una cita por id | Dueño y encargados pueden. | `8593e94` |
+| F-23 | Baja | Recordatorios tras cancelar | Se borran al cancelar, caducar o mover la hora. | `8593e94` |
+| F-24 | Baja | Eventos de Descubre sin límite | 60/min por cuenta o IP. | `8593e94` |
+| F-25 | Media | Sin límite de ritmo | `express-rate-limit` + Better Auth siempre encendido. | `8593e94` |
+| F-30 | Media | Cortes de Neon → 500 o caída | Tiempos, reintentos, `pool.on('error')`, 503, `/health` con la base. | `8593e94` |
 | F-27 | Baja | `PUT` con cuerpo vacío | Antes de hoy. | `2993ed8` |
 | F-28 | Baja | Mensaje del índice en opinión duplicada | Antes de hoy. | `2993ed8` |
 | F-29 | Baja | Opinión antes de la hora | Antes de hoy. | `2993ed8` |
@@ -412,7 +421,10 @@ Formato: **Qué pasa** · **Cómo reproducir** · **Causa** (archivo:línea) · 
 - **Solución:** validar duplicados antes de insertar (400 «Hay un día repetido en el horario»). Además, en `manejarError` (`Utils/validaciones.js:75-100`) **no devolver nunca `error.message` de Postgres al cliente**: usar un mensaje genérico por código (`23505` → «Ese dato ya existe»). Esto cierra también F-28 de forma general.
 - **Prueba:** día repetido → 400 con mensaje claro.
 
-### F-12 · Caducidad de citas: sin aviso y con recordatorio vivo (Media) — CONFIRMADO
+### F-12 · Caducidad de citas: sin aviso y con recordatorio vivo (Media) — CONFIRMADO · ✅ **CORREGIDO** (ver 4.2)
+
+> **✅ CORREGIDO (`8593e94`).** Usado: `CitasService.caducarVencidas()` + `CitasModel.caducarVencidas()` en una transacción con `FOR UPDATE SKIP LOCKED` y `RETURNING`; avisos nuevos «Tu reserva caducó» (cliente) y «Reserva caducada» (local), con el tipo `cancelada` que ya existía (sin migración); `NotificacionesModel.borrarRecordatoriosFuturos()`. El plazo cuenta desde `pendiente_desde` (014) o `creada_en`. Prueba: `Tests/avisos.test.js`.
+
 
 - **Qué pasa:** la pendiente de más de 15 min se cancela sola (bien: `estado_reserva=3`, `cancelada_por='tiempo'`; aceptar después da 409 `CITA_CADUCADA`), pero **nadie recibe aviso**. Las notificaciones de esa cita eran `reserva_nueva` y `recordatorio`; el recordatorio programado sigue ahí aunque la cita esté cancelada.
 - **Causa:** `Jobs/index.js:28-41` hace solo un `UPDATE` sin `RETURNING` ni notificaciones.
@@ -420,14 +432,20 @@ Formato: **Qué pasa** · **Cómo reproducir** · **Causa** (archivo:línea) · 
 - **Solución:** en una transacción, `UPDATE … RETURNING id, usuario_id, local_id, fecha, horario`, crear notificación al cliente («El local no contestó a tiempo») y al local si procede, y borrar recordatorios futuros (`DELETE FROM notificaciones WHERE cita_id = ANY($1) AND tipo = 'recordatorio' AND programada_para > now()`). Añadir `tipo` nuevo al `adaptarNoti()` del front.
 - **Prueba:** forzar `creada_en` 20 min atrás → tras ≤ 60 s hay aviso al cliente y no quedan recordatorios.
 
-### F-13 · `horas-ocupadas` no mira el local (Media) — CONFIRMADO
+### F-13 · `horas-ocupadas` no mira el local (Media) — CONFIRMADO · ✅ **CORREGIDO** (ver 4.2)
+
+> **✅ CORREGIDO (`8593e94`).** Usado: `getLocalById` + la regla de local público (`esLocalPublico`), y `optionalAuth` en la ruta para que el dueño y los encargados sí la vean. Sin local o sin ser público → 404. Ahora incluye también las horas propuestas (estado 4). Prueba: `Tests/fugas.test.js`.
+
 
 - **Qué pasa:** `GET /api/local/:id/horas-ocupadas?desde&hasta` responde 200 (`[]`) para un id inexistente y también para un local en revisión.
 - **Causa:** `Services/DisponibilidadService.js:213-229` no consulta el local.
 - **Solución:** `getLocalById` y aplicar la regla pública (404 si no existe o no es público salvo para miembros).
 - **Prueba:** inexistente/no publicado → 404.
 
-### F-14 · Favoritos de un local no publicado (Media) — CONFIRMADO
+### F-14 · Favoritos de un local no publicado (Media) — CONFIRMADO · ✅ **CORREGIDO** (ver 4.2)
+
+> **✅ CORREGIDO (`8593e94`).** Usado: `esLocalPublico` + `LocalMiembrosModel.validarMembresia` al añadir (404 si no es público y no es tuyo); la lista hace `JOIN locales` y oculta los que dejaron de ser públicos (vuelven solos). Prueba: `Tests/fugas.test.js`.
+
 
 - **Qué pasa:** `POST /api/favoritos/me/locales/:id` con un local en revisión de otro dueño → 201.
 - **Causa:** `Services/favoritoService.js:22` usa `LocalesModel.getLocalById` (cualquier estado).
@@ -465,13 +483,19 @@ Formato: **Qué pasa** · **Cómo reproducir** · **Causa** (archivo:línea) · 
 
 - `PUT /api/local/:id` con `{ localData: { nombre: '   ' } }` → 200; el local queda con nombre `''` (visible en la prueba: la limpieza por nombre dejó de encontrarlo). Es consecuencia de F-09 (`updateLocal` sin validar). Mismo arreglo; añadir `nombre` ≠ vacío en el validador parcial.
 
-### F-19 · Códigos de error imprecisos (Baja) — CONFIRMADO · parte desaparece con la tanda 0
+### F-19 · Códigos de error imprecisos (Baja) — CONFIRMADO · parte desaparece con la tanda 0 · ✅ **CORREGIDO** (ver 4.2)
+
+> **✅ CERRADO como convención (`8593e94`).** Decisión: un id con formato inválido es **400** (formato) y uno bien formado que no existe es **404**. No se cambia código; queda escrito en `Doc/CONTRATO_API_FRONTEND.md`. Lo de profesionales desapareció con la tanda 0.
+
 
 - UUID mal formado en la ruta devuelve **400** (`El cita_id debe ser un UUID válido`) en vez de **404**: `GET /api/citas/xx`, `GET /api/profesionales/xx`, `DELETE /api/opiniones/xx`.
 - Asignar dos veces un servicio a un profesional → 400 (en vez de 200 idempotente o 409); quitar de nuevo → 400 (en vez de 404). Igual con amenidades al quitar de nuevo (`La amenidad no está asignada al local`, 400).
 - Es una decisión de convenciones: o se mantiene (400 = formato inválido) o se pasa a 404. No urgente. Lo de profesionales desaparece con la tanda 0.
 
-### F-20 · El dueño no puede abrir una cita por id (Baja) — CONFIRMADO
+### F-20 · El dueño no puede abrir una cita por id (Baja) — CONFIRMADO · ✅ **CORREGIDO** (ver 4.2)
+
+> **✅ CORREGIDO (`8593e94`).** Usado: `CitasService.getCitaById` consulta `LocalMiembrosModel.validarMembresia`: el dueño y los encargados del local de la cita la abren; un extraño sigue con 403. Prueba: `Tests/fugas.test.js`.
+
 
 - `GET /api/citas/:citaId` como dueño/encargado del local de la cita → 403; solo la ve el cliente. El dueño solo la ve en la lista `GET /api/citas/local/:localId`. Si el front necesita detalle de una cita en el panel, falta permitirlo a miembros del local (`validarPermisoCita` en `Services/CitasService.js`).
 
@@ -484,15 +508,24 @@ Formato: **Qué pasa** · **Cómo reproducir** · **Causa** (archivo:línea) · 
 
 - Las rutas `PATCH /api/citas/:citaId/local/:localId/confirmar|cancelar` usan `verifyRole` con el `localId` de la URL (membresía en **ese** local) pero el servicio tiene que comprobar además que `cita.local_id === localId`. Se probó el camino feliz y los permisos del rol, **no** el cruce «miembro del local A actúa sobre una cita del local B pasando `localId=A`». Hay que verificarlo en `Services/CitasService.js` (`confirmarCita`, `cancelarCita`) y escribir la prueba.
 
-### F-23 · Recordatorios que sobreviven a la cancelación (Baja) — SOSPECHA
+### F-23 · Recordatorios que sobreviven a la cancelación (Baja) — SOSPECHA · ✅ **CORREGIDO** (ver 4.2)
+
+> **✅ CONFIRMADO Y CORREGIDO (`8593e94`).** Se comprobó en el código que cancelar no los borraba. Usado: `NotificacionesModel.borrarRecordatoriosFuturos()` al cancelar (cliente o local), al caducar y, al aceptar otra hora, `rehacerRecordatorios()` (borra y crea los de la hora nueva). Prueba: `Tests/avisos.test.js`.
+
 
 - Los recordatorios (`NotificacionesService.crearNotificacionRecordatorioByUsuario/ByLocal`, creados al reservar en `Services/CitasService.js:201-203`) tienen `programada_para`. Se confirmó que sobreviven a la caducidad (F-12); no se midió si la cancelación manual los elimina (`cancelarCita`, `Services/CitasService.js:282+`). Verificar y cubrir con una prueba.
 
-### F-24 · Eventos de Descubre (Baja) — POR MEDIR
+### F-24 · Eventos de Descubre (Baja) — POR MEDIR · ✅ **CORREGIDO** (ver 4.2)
+
+> **✅ CORREGIDO (`8593e94`).** Usado: límite `eventosDescubre` de `express-rate-limit`: 60 envíos por minuto por cuenta o IP en `POST /api/descubre/eventos` y `/uso-filtros`.
+
 
 - `POST /api/descubre/eventos` acepta anónimos (`optionalAuth`). Las pruebas de payload basura (no lista, 5000 eventos) no devolvieron 5xx, pero **no se midió** el coste ni si se puede inflar `impresiones`/ranking sin límite desde una IP. Va unido a F-25.
 
-### F-25 · Límite de ritmo (Media) — CONFIRMADO como ausencia
+### F-25 · Límite de ritmo (Media) — CONFIRMADO como ausencia · ✅ **CORREGIDO** (ver 4.2)
+
+> **✅ CORREGIDO (`8593e94`).** Usado: `express-rate-limit` 8.7.4 en `Middlewares/limiteRitmo.middleware.js`: general 300/min por IP en `/api` y topes por cuenta en cada escritura (reservar 10/10 min, opinar 10/h, crear local 5/h…), respuesta 429 `RATE_LIMITED`. Better Auth con `rateLimit.enabled` siempre (salvo `AUTH_RATE_LIMIT=false`). Probado en Neon: el intento 11 de reservar → 429; el 6.º inicio de sesión fallido → 429. **Queda fuera:** Turnstile (claves de Cloudflare) y almacén compartido (solo si hay más de un servidor). Prueba: `Tests/fugas.test.js`.
+
 
 - `Config/auth.js:205-218`: `rateLimit.enabled` solo en producción (o `AUTH_RATE_LIMIT=true`), en memoria, solo rutas de Better Auth. El resto de endpoints no tiene límite (no hay `express-rate-limit`). Por eso **no se pudo probar** el límite de intentos de login/registro (apartado 7).
 - **Solución:** `express-rate-limit` global y por usuario en escrituras (`POST /api/citas/servicios`, opiniones, locales, eventos), contador de Better Auth en `database` si hay más de un servidor, y Cloudflare Turnstile en registro y recuperar contraseña (`docs/pendientes-backend.md`, sección «Protección contra bots»).
@@ -513,7 +546,10 @@ Formato: **Qué pasa** · **Cómo reproducir** · **Causa** (archivo:línea) · 
 
 - Ahora `409 CITA_FUTURA` hasta que llega la hora (`instanteDeHoraLocal`, `Utils/horaLocal.js`).
 
-### F-30 · Servidor colgado si Neon corta la conexión (Baja) — CONFIRMADO en el entorno de pruebas
+### F-30 · Servidor colgado si Neon corta la conexión (Baja) — CONFIRMADO en el entorno de pruebas · ✅ **CORREGIDO** (ver 4.2)
+
+> **✅ CORREGIDO (`8593e94`).** Usado: `connectionTimeoutMillis` 15 s, `query_timeout` 20 s (el pooler de Neon ignora `statement_timeout`), `pool.on('error')` en los dos pools, `conReintentos()` para lecturas y para abrir transacciones, `leerSesion()` que reintenta una vez, `Utils/erroresConexion.js` → 503 `DATABASE_UNAVAILABLE`, `/health` con `SELECT 1`, `despertarBase()` al arrancar y `unhandledRejection` apuntado. Visto en Neon: un corte real dio 503 en vez de 500.
+
 
 - Con la red mal configurada, `Config/auth.js` (pool `pg` propio, `connectionTimeoutMillis: 10000`, sin reintentos) y `Config/db.js` (5000 ms) devuelven 500 o se quedan sin responder; se recuperó al reiniciar. En producción conviene: `pool.on('error')` para no tumbar el proceso, `statement_timeout`, reintento con retroceso en el primer arranque, y `/health` que compruebe la base (`health.routes.js`).
 
@@ -563,17 +599,25 @@ Pruebas que cumplieron lo esperado y que **deben seguir pasando** al tocar el c�
 ### Hecho el 27-11 (segunda tanda), commit `8593e94`
 - ~~Límite de ritmo~~ (F-25, F-24) · ~~Robustez con Neon~~ (F-30) · ~~«Proponer otra hora»~~ (014 en Neon) · ~~Avisos de citas~~ (F-12, F-23) · ~~Fugas pequeñas~~ (F-13, F-14) · ~~Runner de migraciones y CI~~ · ~~Detalles~~ (F-20, F-19).
 
-### Pendiente, en este orden
+### Pendiente, en orden de prioridad (reordenado tras la segunda tanda)
 
-| # | Qué | Incluye | Por qué ahora |
-|---|---|---|---|
-| 1 | **Correo real** | Resend con dominio, `AUTH_REQUIRE_EMAIL_VERIFICATION=true` y recuperar contraseña probada de punta a punta. | Sin correo no hay recuperación de cuenta. **Necesita la cuenta de Resend y el dominio (lo hace el dueño).** |
-| 2 | **Antibots** | Cloudflare Turnstile en el registro y en recuperar contraseña (el límite de ritmo ya está). | **Necesita las claves de Cloudflare.** |
-| 3 | **Panel del agente** | Locales en revisión, aprobar o rechazar con motivo, moderar opiniones y categorías (textos de `ficha.categoria` por revisar). | Hoy solo existe la ruta de aprobar. Primero hay que diseñar su parte del front. |
-| 4 | **Producción** | Variables (`NODE_ENV=production`, `trust proxy`, cookies, CORS con el dominio real), hosting en la misma región que Neon y decidir si se encienden los jobs de ranking y exposición. Con más de un servidor, el límite de ritmo en un almacén compartido. | Cuando se elija el hosting. |
-| 5 | ~~**Comprobar la CI**~~ | Hecho: en verde desde `339281a` (ver 0.1). A partir de ahora, cada PR o push a `main` la pasa sola. | — |
+Los 30 hallazgos de las pruebas están cerrados. Lo que queda es trabajo nuevo, ordenado por **qué bloquea abrir al público** primero y por **cuánto sube el avance** (tabla «Avance estimado», sección 0.1).
 
-### Backlog de producto (después de lo anterior)
+| # | Qué | Incluye | Por qué en este puesto | Depende de |
+|---|---|---|---|---|
+| 1 | **Decidir si las mesas van en la V1** | Sí o no, como se hizo con los profesionales. | Es lo que más pesa (+14 puntos): cambia el plan entero. | Decisión del dueño |
+| 2 | **Correo real** | Resend con dominio, `AUTH_REQUIRE_EMAIL_VERIFICATION=true`, recuperar contraseña probada de punta a punta. | Sin correo nadie recupera su cuenta: bloquea abrir. | Cuenta de Resend y dominio |
+| 3 | **Producción** | Hosting en la misma región que Neon (us-east-2), `NODE_ENV=production`, `trust proxy`, cookies, CORS con el dominio real, registros y alertas de 500/503. | Sin esto no hay app pública. | Elegir hosting |
+| 4 | **Antibots** | Cloudflare Turnstile en registro y recuperar contraseña. | El límite de ritmo ya frena lo grueso; esto frena las cuentas falsas. | Claves de Cloudflare |
+| 5 | **Mesas y plano de sala** (si van en la V1) | `PUT/GET /api/local/:id/plano`, `GET /api/local/:id/mesas-ocupadas`, reservas `con-lugar`, no borrar una mesa con reservas futuras. El front ya llama a esas rutas. | La parte más grande que queda. | Punto 1 |
+| 6 | **Descubre: feed paginado y jobs** | `GET /descubre?cursor=&limite=`, quitar `locales.json` del JS del front, encender ranking y exposición. | +3,5 puntos y menos datos para el móvil. | — |
+| 7 | **«Avísame cuando abra»** | Tabla `avisos_apertura`, rutas, tarea por minuto y aviso `abre_local` (hoy en `localStorage`). | +2,4 puntos; el front ya lo tiene. | — |
+| 8 | **Panel del agente** | Rechazar con motivo, moderar opiniones y los textos de `ficha.categoria`. | Hoy solo existe aprobar. | Diseño del front |
+| 9 | **Detalles** | Editar la opinión propia, fotos con Cloudinary de punta a punta, suscripciones en el backend. | Bajo impacto cada uno. | — |
+
+### Backlog (ya repartido arriba)
+
+Los puntos del backlog antiguo (mesas, feed paginado, «Avísame cuando abra», fotos, suscripciones y observabilidad) ya están en la tabla de arriba. Se deja la lista original como referencia:
 
 | # | Punto | Qué incluye |
 |---|---|---|
