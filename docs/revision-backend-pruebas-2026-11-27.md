@@ -12,6 +12,8 @@
 
 **Hecho y en producción de datos:** la rama `nosotros/arreglos-revision` se revisó en la PR [erdwin123/backend-citaly#2](https://github.com/erdwin123/backend-citaly/pull/2), Erdwin la aprobó y **está fusionada en `main`** (commit de fusión `4b81fa6`). La migración **013 está aplicada en Neon** (27-11, ver abajo). De los 30 hallazgos quedan **corregidos 22** (19 de hoy + F-27 a F-29 de antes); los pendientes están **reordenados por prioridad en la sección 8**.
 
+> **Actualización 27-11 (segunda tanda) — segunda tanda, commit `8593e94` directo en `main`:** corregidos **F-12, F-13, F-14, F-20, F-23, F-24, F-25 y F-30**, F-19 cerrado como convención, y hecho en el backend **«Proponer otra hora»** (migración **014, aplicada en Neon**), el **runner de migraciones** y la **CI en GitHub**. Con esto quedan corregidos o cerrados los **30 de 30 hallazgos**. Detalle completo en **0.1**, justo debajo.
+
 | Commit | Qué trae | Hallazgos |
 | --- | --- | --- |
 | `dfdd196` | Fuera los profesionales: rutas, fotos, `/disponibilidad`, `citas.profesional_id`, tablas, `agrupar_por`. Migración `013QuitarProfesionales.sql`. Primeras pruebas de API (`Tests/`). | Tanda 0, F-08, F-19 (en parte) |
@@ -80,9 +82,73 @@ Backend de `main` en local (puerto 1236) apuntando a Neon, con un script que cre
 
 **Ojo con la red (F-30 sube de prioridad):** en estas pruebas, Neon tardaba de 1 a 4 s por consulta y cortaba conexiones de vez en cuando (en el equipo había Windscribe, Turbo VPN y simplewall activos). Dos pasadas enteras fallaron por eso, no por el código. Es justo el F-30: el backend no reintenta ni aguanta bien los cortes. Hay que repetir la prueba sin VPN y, sobre todo, arreglar F-30 antes de abrir.
 
+## 0.1 SEGUNDA TANDA (27-11-2026, segunda tanda): commit `8593e94` en `main` y migración 014 en Neon
+
+Decisión del dueño del proyecto: esta tanda va **directa a `main`** del repo `erdwin123/backend-citaly` (sin rama ni PR), con la condición de comprobar antes que todo arranca. Se comprobó: **74 pruebas en verde** contra PGlite y **19 de 19** de punta a punta contra **Neon real**.
+
+### Los 7 puntos
+
+| # | Hallazgo | Qué se hizo (en simple) | Dónde |
+| --- | --- | --- | --- |
+| 1 | **F-25, F-24** límite de ritmo | Un «portero» (`express-rate-limit` 8.7.4) que cuenta peticiones y responde **429 `RATE_LIMITED`** al pasarse. General: 300/min por IP en todo `/api`. Por cuenta (después de iniciar sesión): reservar 10 cada 10 min (cuentan también los intentos fallidos), cambiar citas 60/10 min, opinar 10/h, crear local 5/h, editar 120/10 min, firmas de fotos 30/10 min, eventos y uso de filtros de Descubre 60/min. El límite de **Better Auth** (inicio de sesión, registro, recuperar contraseña…) va ahora **encendido siempre**, no solo en producción. Todo en memoria (vale con un servidor). | `Middlewares/limiteRitmo.middleware.js` (nuevo), `App.js`, todos los `Routes/*` de escritura, `Config/auth.js` |
+| 2 | **F-30** cortes de Neon | 15 s para conectar (antes 5 y 10), 20 s como mucho por consulta (`query_timeout`: el pooler de Neon **ignora** `statement_timeout`, comprobado), `pool.on('error')` en los dos pools (ya no tumba Node), **reintentos** de las lecturas (2, a los 0,25 s y a 1 s), transacciones que reintentan al abrir y descartan la conexión si muere a mitad, y la sesión se relee una vez si se corta. Lo que no se arregla llega como **503 `DATABASE_UNAVAILABLE`** «Inténtalo de nuevo en unos segundos», no como 500. `/health` pregunta a la base (`/health/vivo`, solo al proceso). Al arrancar se «despierta» a Neon con reintentos. Un `unhandledRejection` se apunta y el servidor sigue. | `Config/db.js`, `Config/auth.js`, `Utils/erroresConexion.js` (nuevo), `Utils/respuestas.js`, `Utils/validaciones.js` (`manejarError`), `Middlewares/authMiddleware.js`, `Middlewares/error.middleware.js`, `Routes/health.routes.js`, `Server.js` |
+| 3 | **«Proponer otra hora»** | Migración **014**. Rutas: `PATCH` y `DELETE /api/citas/:id/local/:localId/proponer-hora`, y `PATCH /api/citas/:id/usuario/aceptar-hora`. Solo se propone sobre una pendiente (0), dentro de los 15 min del dueño, a un turno que exista, futuro, a 90 días como mucho y libre. Estado 4 con `propuesta_*` y el plazo `propuesta_vence` (misma regla que `venceLaPropuesta()` del front). Mientras tanto, la hora propuesta **cuenta como ocupada** (al reservar y en `horas-ocupadas`). Retirar → 0 con `pendiente_desde` (los 15 min vuelven a empezar). «Me vale» → 2 a la hora nueva, con `hora_anterior_*` y los recordatorios rehechos. Cancelar acepta el 4. La tarea de cada minuto cancela las vencidas con `cancelada_por = 'sinRespuesta'`. Avisos `hora_propuesta`, `propuesta_aceptada` y `propuesta_cancelada`. | `Database/Migrations/014ProponerOtraHora.sql` (nuevo), `Services/CitasService.js`, `Services/DisponibilidadService.js` (turno y hora libre en funciones comunes), `Models/CitasModel.js`, `Controller/CitasController.js`, `Routes/CitasRouter.js`, `Services/NotificacionesServices.js`, `Models/NotificacionesModel.js`, `Utils/propuestas.js` (nuevo) |
+| 4 | **F-12, F-23** avisos | La caducidad ya no es un `UPDATE` mudo: cancela en una transacción, **avisa al cliente** («Tu reserva caducó») **y al local** («Reserva caducada») y **borra los recordatorios** futuros. Cancelar a mano también los borra. Se saltan las filas que otra petición está cambiando (`FOR UPDATE SKIP LOCKED`), y al cambiar de estado la cita se lee bloqueada (`FOR UPDATE`). | `Jobs/index.js`, `Services/CitasService.js` (`caducarVencidas`), `Models/CitasModel.js`, `Models/NotificacionesModel.js` |
+| 5 | **F-13, F-14** fugas | `horas-ocupadas`: 404 si el local no existe o no es público, salvo para su dueño o sus encargados (ahora con sesión opcional). Favoritos: 404 al añadir un local no público ajeno; la lista oculta los que dejaron de ser públicos, que vuelven solos si se publican. | `Services/DisponibilidadService.js`, `Routes/DisponibilidadRouter.js`, `Controller/DisponibilidadController.js`, `Services/favoritoService.js`, `Models/favoritosModel.js` |
+| 6 | **Operación** | `pnpm migrate` (`Database/Scripts/migrar.js`): tabla `schema_migrations`, aplica en orden las que falten, `--estado`, `--marcar-hasta=NNN`, y en Neon no hace nada sin `--confirmar`. **GitHub Actions** (`.github/workflows/pruebas.yml`): en cada PR y en cada push a `main`, Postgres 16 vacío, migraciones, semilla de Descubre, backend y `pnpm test`. | `Database/Scripts/migrar.js` (nuevo), `package.json`, `.github/workflows/pruebas.yml` (nuevo) |
+| 7 | **F-20, F-19** | El dueño y los encargados abren por id una cita de su local. F-19: **se queda** 400 para un id mal formado y 404 para uno bien formado que no existe (convención escrita en `Doc/CONTRATO_API_FRONTEND.md`). | `Services/CitasService.js` (`getCitaById`) |
+
+### Migración 014 en Neon — APLICADA (27-11-2026, segunda tanda)
+
+- **Antes:** 34 locales, 1 usuario, 1 cita (cancelada), 0 opiniones, 15 categorías y 7 avisos. Antes de aplicarla se comprobaron en Neon los nombres de los CHECK que cambia la 014 (`notificaciones_tipo_check`, `citas_cancelada_por_check` y `citas_estado_reserva_check`).
+- **Cómo:** con el script nuevo. `pnpm migrate -- --marcar-hasta=013 --confirmar` apuntó las 001 a 013 como `marcada` (ya se habían aplicado a mano) en la tabla nueva `schema_migrations`. `pnpm migrate` sin `--confirmar` se negó (es Neon). `pnpm migrate -- --confirmar` aplicó la 014 en 1,6 s. En PGlite se aplicó dos veces seguidas sin error (es idempotente).
+- **Qué añade (solo añade, no borra):** en `citas`, las columnas `propuesta_fecha`, `propuesta_horario`, `propuesta_en`, `propuesta_vence`, `hora_anterior_fecha`, `hora_anterior_horario` y `pendiente_desde`; `cancelada_por` admite `'sinRespuesta'`; el CHECK `citas_propuesta_check` (hay propuesta si y solo si la cita está en 4); los índices `citas_local_propuesta_activa_idx` (único) y `citas_propuesta_vence_idx`; y en `notificaciones.tipo`, los tipos `hora_propuesta`, `propuesta_aceptada` y `propuesta_cancelada`.
+- **Después:** datos intactos (34 / 1 / 1 / 0 / 15 / 7).
+
+### Prueba contra Neon de verdad (27-11, segunda tanda)
+
+Backend local en el puerto 1236 apuntando a Neon, **con los límites normales**, y un guion que crea cuentas `qa.neon.*@citaly.test` y locales `[PRUEBA] Neon QA…` y **al final lo borra todo**. Resultado: **19/19 OK**:
+
+- `/health` con la base y F-13 (404 anónimo / 200 dueño).
+- Reservar, y proponer → 4 con el aviso «‹Local› cambió la hora de tu cita · De las 10:00 AM a las 11:00 AM. ¿Te sirve?».
+- La hora propuesta, ocupada (409 para otro cliente).
+- «Me vale» → 2 con aviso al local, y la hora vieja queda libre.
+- Retirar → 0, F-23, F-14 y F-20.
+- **F-25:** el intento 11 de reservar dio 429.
+- **Better Auth:** 5 inicios de sesión fallidos y el 6.º → 429.
+
+En el primer intento, el registro dio **503** por un corte de Neon (con VPN activa en el equipo): justo el comportamiento nuevo de F-30, en vez del 500 de antes. Neon quedó como estaba (34 locales, 1 usuario, 1 cita, 15 categorías, 7 avisos, 1 cuenta).
+
+### Pruebas automáticas nuevas (backend)
+
+`Tests/propuestas.test.js` (8), `Tests/avisos.test.js` (2; la de la caducidad espera hasta 75 s), `Tests/fugas.test.js` (5) y `Utils/propuestas.test.js` (5 unitarias). Total de la suite: **74, todas en verde** contra PGlite (con `AUTH_RATE_LIMIT=false` y `LIMITE_RITMO_FACTOR=10`, ver `Tests/LEEME.md`).
+
+### La CI en GitHub (27-11)
+
+- **Primera ejecución** (`8593e94`): en rojo, aunque las migraciones, el arranque y **todas las pruebas de API pasaron**. Falló una unitaria antigua, `validarUrlCloudinary`: usaba la nube `demo` y en la CI `CLOUDINARY_CLOUD_NAME` vale `ci`. En local pasaba porque las unitarias no leen el `.env`.
+- **Arreglo** (`339281a`, `Utils/validaciones.test.js`): la prueba usa la nube de `CLOUDINARY_CLOUD_NAME`. **Segunda ejecución: en verde** (2 min 22 s, Postgres 16).
+
+### Otros cambios del backend
+
+- `package.json`: dependencia `express-rate-limit` 8.7.4 y script `migrate`. **`pnpm-lock.yaml`**, ojo: pnpm 12 toma como raíz el `pnpm-workspace.yaml` del front y escribe las dependencias del backend en el lock del front. Para regenerar el del backend hay que apartar ese archivo un momento (explicado en `Tests/LEEME.md`).
+- `.env.example`: `AUTH_RATE_LIMIT=false`, `LIMITE_RITMO=false` y `LIMITE_RITMO_FACTOR`, solo para pruebas.
+- `Doc/CONTRATO_API_FRONTEND.md`: bloque «Novedades (27-11-2026, tarde)» con las rutas nuevas, los 429, los 503, `/health` y la convención 400/404. `api.http`: sección 4b con las rutas de la propuesta.
+- `Tests/LEEME.md`: variables de los límites, CI, `pnpm migrate` y la trampa de pnpm.
+
+### Cambios en el front (por el backend)
+
+| Archivo | Qué |
+| --- | --- |
+| `src/services/api.js` | `ESPERA_MS`, de 10 s a **20 s**: el backend ahora espera hasta 15 s a que Neon conteste antes de rendirse, y con 10 s el front cortaba antes que él. |
+| `src/services/citasNegocio.js`, `src/services/misCitasApi.js` | Comentarios: las rutas de la propuesta, la asistencia y las opiniones con `citaId` ya existen. |
+| `docs/pendientes-backend.md` | «Mover la hora», marcado como hecho. |
+| este documento | Esta sección 0.1, la tabla 4.1 y la sección 8. |
+
+El front no necesitó más: ya llamaba a esas rutas, `adaptarNoti()` ya traducía los tres avisos nuevos y los de la caducidad llegan como `cancelada`. Las pruebas del front siguen igual: 66 en verde y las **3 de `descubreReal.test.js` que ya fallaban antes** de estos cambios (orden de Descubre, nada del backend).
+
 ### Qué falta de este documento
 
-Todo lo pendiente, **ordenado por prioridad nueva**, está en la **sección 8**. Resumen: límite de ritmo y antibots (F-25/F-24), robustez con Neon (F-30), avisos al caducar y recordatorios al cancelar (F-12/F-23), «Proponer otra hora» en el backend, correo real, locales no públicos en `horas-ocupadas` y favoritos (F-13/F-14), el dueño abre una cita por id (F-20) y la convención 400/404 (resto de F-19).
+Todo lo pendiente está en la **sección 8**, reordenado. Lo que queda **no depende solo del código**: el correo real (cuenta de Resend y dominio), Turnstile (claves de Cloudflare), el panel del agente (hay que diseñar su parte del front), las variables de producción (cuando se elija el hosting) y el backlog de producto (mesas, feed paginado, «Avísame cuando abra»…).
 
 ---
 
@@ -166,17 +232,16 @@ Todo lo pendiente, **ordenado por prioridad nueva**, está en la **sección 8**.
 
 ### 4.1 Pendientes, por prioridad (actualizado 27-11 noche)
 
-| Prioridad | ID | Sev. | Hallazgo | Por qué en este puesto |
-|---|---|---|---|---|
-| 1 | F-25 | Media | Límite de ritmo apagado fuera de producción y solo en memoria | Sin él, cualquiera puede llenar la agenda, crear cuentas o tirar el servidor. **Bloquea abrir al público.** |
-| 1 | F-24 | Baja | Descubre: `eventos` sin límite claro por IP | Va con F-25 (el mismo límite lo cubre). |
-| 2 | F-30 | Media (sube) | Servidor que se cuelga o da 500 si Neon corta la conexión | **Visto hoy con Neon real**: cortes y 500 en sesión y registro. Reintentos y manejo de errores del pool antes de abrir. |
-| 3 | F-12 | Media | Caducidad: no avisa a nadie y deja el recordatorio vivo | El cliente no se entera de que su reserva caducó. Se nota en el uso diario. |
-| 3 | F-23 | Baja | Recordatorio que sobrevive a la cancelación | Mismo arreglo que F-12 (borrar recordatorios futuros). |
-| 4 | F-13 | Media | `horas-ocupadas` no mira si el local existe ni si es público | Fuga pequeña de datos de locales en revisión. Arreglo de pocas líneas. |
-| 4 | F-14 | Media | Favoritos de un local no publicado | Igual que F-13. |
-| 5 | F-20 | Baja | El dueño no puede abrir una cita por id (solo la lista) | Solo hace falta si el panel lo pide. |
-| 6 | F-19 | Baja | UUID mal formado da 400 en vez de 404 (resto) | Es una convención, no un fallo. Decidir y ya. |
+**Ninguno pendiente desde el 27-11 (segunda tanda).** Los que estaban aquí se corrigieron en `8593e94` (ver 0.1 y la tabla de abajo). Lo que queda para llegar al 100 % ya no son hallazgos de las pruebas, sino trabajo nuevo: sección 8.
+
+| Era prioridad | ID | Hallazgo | Cómo quedó (27-11, segunda tanda) |
+|---|---|---|---|
+| 1 | F-25, F-24 | Sin límite de ritmo | `express-rate-limit` general y por acción, y Better Auth siempre encendido. Falta Turnstile (claves de Cloudflare) y un almacén compartido si hay más de un servidor. |
+| 2 | F-30 | 500 o caída si Neon corta | Tiempos, reintentos de lecturas, `pool.on('error')`, 503 y `/health` con la base. |
+| 3 | F-12, F-23 | Caducidad sin aviso y recordatorios vivos | Avisos a cliente y local; recordatorios borrados al cancelar o caducar. |
+| 4 | F-13, F-14 | Locales no públicos en `horas-ocupadas` y favoritos | 404 salvo para su dueño; lista filtrada. |
+| 5 | F-20 | El dueño no abre una cita por id | Ya puede (dueño y encargados). |
+| 6 | F-19 | 400 o 404 con un id mal formado | Convención: se queda 400 (formato) y 404 (no existe). |
 
 ### 4.2 Corregidos (y cómo)
 
@@ -471,19 +536,18 @@ Pruebas que cumplieron lo esperado y que **deben seguir pasando** al tocar el c�
 - ~~F-01 y F-05~~ (`966df2b`), ~~F-22~~ comprobado (`3379e9c`)
 - ~~Tanda 7, primera parte~~: hay suite (`Tests/`, 54 pruebas). Falta llevarla a CI.
 
+### Hecho el 27-11 (segunda tanda), commit `8593e94`
+- ~~Límite de ritmo~~ (F-25, F-24) · ~~Robustez con Neon~~ (F-30) · ~~«Proponer otra hora»~~ (014 en Neon) · ~~Avisos de citas~~ (F-12, F-23) · ~~Fugas pequeñas~~ (F-13, F-14) · ~~Runner de migraciones y CI~~ · ~~Detalles~~ (F-20, F-19).
+
 ### Pendiente, en este orden
 
 | # | Qué | Incluye | Por qué ahora |
 |---|---|---|---|
-| 1 | **Límite de ritmo y antibots** | F-25, F-24: `express-rate-limit` global y por usuario en escrituras (citas, opiniones, locales, eventos); contador de Better Auth en base de datos; Cloudflare Turnstile en registro y recuperar contraseña. | Sin esto no se puede abrir al público. |
-| 2 | **Robustez con Neon** | F-30: `pool.on('error')`, reintento con espera en las consultas que fallan por corte, `statement_timeout`, `/health` que mire la base, revisar los tiempos de conexión (5 s se queda corto con una red lenta). | Visto hoy: cortes y 500 con Neon real. |
-| 3 | **«Proponer otra hora» en el backend** | Estado 4, rutas `proponer-hora` y `aceptar-hora`, caducidad y avisos (detalle en `docs/pendientes-backend.md`). | El front ya lo usa y el servidor no lo tiene. |
-| 4 | **Avisos de citas** | F-12 (aviso al caducar y borrar recordatorios), F-23 (recordatorios al cancelar). | El cliente no se entera de que su reserva cayó. |
-| 5 | **Correo real** | Resend con dominio, `AUTH_REQUIRE_EMAIL_VERIFICATION=true`, recuperar contraseña probada. | Sin correo no hay recuperación de cuenta. |
-| 6 | **Fugas pequeñas** | F-13 (`horas-ocupadas` solo de locales públicos o para miembros), F-14 (favoritos). | Rápido, pocas líneas. |
-| 7 | **Panel del agente** | Locales en revisión, aprobar o rechazar con motivo, moderar opiniones y categorías (hoy hay textos de categoría en `ficha.categoria` por revisar). | Hoy solo existe la ruta de aprobar. |
-| 8 | **Operación** | Runner de migraciones (`schema_migrations`), suite en GitHub Actions, variables de producción (`NODE_ENV`, `trust proxy`, cookies, CORS), decidir si se encienden los jobs de ranking y exposición. | Necesario para desplegar sin sustos. |
-| 9 | **Detalles** | F-20 (el dueño abre una cita por id, si el panel lo necesita), resto de F-19 (decidir 400 o 404). | Bajo impacto. |
+| 1 | **Correo real** | Resend con dominio, `AUTH_REQUIRE_EMAIL_VERIFICATION=true` y recuperar contraseña probada de punta a punta. | Sin correo no hay recuperación de cuenta. **Necesita la cuenta de Resend y el dominio (lo hace el dueño).** |
+| 2 | **Antibots** | Cloudflare Turnstile en el registro y en recuperar contraseña (el límite de ritmo ya está). | **Necesita las claves de Cloudflare.** |
+| 3 | **Panel del agente** | Locales en revisión, aprobar o rechazar con motivo, moderar opiniones y categorías (textos de `ficha.categoria` por revisar). | Hoy solo existe la ruta de aprobar. Primero hay que diseñar su parte del front. |
+| 4 | **Producción** | Variables (`NODE_ENV=production`, `trust proxy`, cookies, CORS con el dominio real), hosting en la misma región que Neon y decidir si se encienden los jobs de ranking y exposición. Con más de un servidor, el límite de ritmo en un almacén compartido. | Cuando se elija el hosting. |
+| 5 | ~~**Comprobar la CI**~~ | Hecho: en verde desde `339281a` (ver 0.1). A partir de ahora, cada PR o push a `main` la pasa sola. | — |
 
 ### Backlog de producto (después de lo anterior)
 

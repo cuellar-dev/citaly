@@ -15,7 +15,11 @@ export const hayApi = BASE.length > 0
 
 export const urlApi = (ruta) => `${BASE}${ruta}`
 
-const ESPERA_MS = 10000
+/* Cuánto espera el front antes de rendirse. 20 s: desde el 27-11-2026 el
+   backend aguanta hasta 15 s a que Neon despierte o se reconecte y reintenta
+   las lecturas cortadas (F-30); con 10 s el front cortaba antes que él. Si el
+   backend se rinde, contesta 503 «Inténtalo de nuevo en unos segundos». */
+const ESPERA_MS = 20000
 
 export async function pedir(ruta, { metodo = 'GET', cuerpo, keepalive = false, espera = ESPERA_MS } = {}) {
   if (!hayApi) throw Object.assign(new Error('No hay backend configurado (VITE_API_URL).'), { code: 'SIN_API' })

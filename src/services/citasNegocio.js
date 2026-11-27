@@ -6,9 +6,9 @@ import { pedir } from './api.js'
      PATCH /api/citas/:id/local/:localId/confirmar  { nuevoEstado: 1 }  aceptar → «Por ti»
      PATCH /api/citas/:id/local/:localId/cancelar   rechazar
 
-   FALTAN en el backend (ver docs/pendientes-backend.md, «Mover la hora»):
+   «Mover la hora» (en el backend desde el 27-11-2026, migración 014):
      PATCH  /api/citas/:id/local/:localId/proponer-hora  { fecha, horario }  → estado 4
-     DELETE /api/citas/:id/local/:localId/proponer-hora  retirar → vuelve a 0
+     DELETE /api/citas/:id/local/:localId/proponer-hora  retirar → vuelve a 0 (15 min de nuevo)
 
    La forma de salida es la de data/citasNegocioDemo.js, la que pintan
    CitaDueno y el resumen del día. */

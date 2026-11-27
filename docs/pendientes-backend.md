@@ -247,6 +247,13 @@ Hoy el plano se guarda en el navegador (ficha del local). Para el backend:
 
 ## Mover la hora de una cita (el local propone otra hora)
 
+> **✅ HECHO EN EL BACKEND (27-11-2026, commit `8593e94` de `erdwin123/backend-citaly`, migración `014ProponerOtraHora.sql` aplicada en Neon).** Las rutas `PATCH`/`DELETE /api/citas/:id/local/:localId/proponer-hora` y `PATCH /api/citas/:id/usuario/aceptar-hora` existen y siguen lo de abajo punto por punto: el estado 4, el plazo de `venceLaPropuesta()`, `pendiente_desde`, la hora propuesta ocupada (al reservar y en `horas-ocupadas`), la caducidad con `'sinRespuesta'` y aviso a los dos, y los avisos `hora_propuesta`, `propuesta_aceptada` y `propuesta_cancelada`. Cosas a saber:
+> - La pueden usar el **dueño y los encargados**, no solo el dueño.
+> - Solo citas de servicios (`sin-lugar`); las mesas aún no tienen reservas en el backend.
+> - Proponer exige que la cita siga dentro de los 15 min del dueño; si no, 409 `CITA_CADUCADA`.
+>
+> Pruebas: `Tests/propuestas.test.js` del backend. Detalle: `docs/revision-backend-pruebas-2026-11-27.md`, sección 0.1. Lo de «Lo que sugiero añadir después» sigue sin hacer.
+
 **Hoy (25-11-2026).** En Mi Negocio, cada cita **pendiente** tiene tres botones: ✕ rechazar, ✓ aceptar y uno de reloj, «Proponer otra hora». El reloj abre dentro de la fila las horas libres de ese día (y «Otro día» para los próximos 7 días abiertos). El dueño elige una hora y pulsa «Proponer». La cita pasa a un estado nuevo, **4 = hora propuesta**, y espera la respuesta del cliente. Mientras espera, el dueño puede avisarle por WhatsApp con un mensaje ya escrito o **retirar la propuesta**: la cita vuelve a pendiente y el dueño tiene de nuevo sus 15 minutos para contestar.
 
 El cliente ve en Mis citas la hora vieja tachada, la nueva y tres botones:

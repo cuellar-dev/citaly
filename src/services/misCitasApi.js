@@ -8,16 +8,15 @@ import { camposDeHoraMovida } from './citasNegocio.js'
      PATCH /api/citas/:id/usuario/confirmar         «Voy pa allá»  { nuevoEstado: 2 }
      PATCH /api/citas/:id/usuario/cancelar          cancelar
 
-   Rutas que FALTAN (el front ya las llama; ver docs/backend-mis-citas.md):
+   Y también (ya en el backend):
      PATCH /api/citas/:id/usuario/asistencia        { asistio: true | false | null }
-     POST  /api/opiniones/local/:localId            ya existe, falta aceptar `citaId`
-                                                    para ligar la opinión a la cita
-     DELETE/PUT de la opinión propia                editar una opinión ya publicada
+     POST  /api/opiniones/local/:localId            { citaId, calificacion, comentario }
      PATCH /api/citas/:id/usuario/aceptar-hora      «Me vale» la hora que propuso el
                                                     local → confirmada a esa hora
-                                                    (ver docs/pendientes-backend.md)
+                                                    (desde el 27-11-2026, migración 014)
 
-   Mientras no existan, `misCitas.js` captura el error y el cambio se queda
+   Falta todavía: editar una opinión ya publicada (DELETE/PUT de la propia).
+   Si una ruta falla, `misCitas.js` captura el error y el cambio se queda
    solo en este navegador (se avisa al usuario). */
 
 const PAGINAS_MAX = 20
