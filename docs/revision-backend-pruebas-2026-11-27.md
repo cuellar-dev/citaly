@@ -150,6 +150,30 @@ El front no necesitó más: ya llamaba a esas rutas, `adaptarNoti()` ya traducí
 
 Todo lo pendiente está en la **sección 8**, reordenado. Lo que queda **no depende solo del código**: el correo real (cuenta de Resend y dominio), Turnstile (claves de Cloudflare), el panel del agente (hay que diseñar su parte del front), las variables de producción (cuando se elija el hosting) y el backlog de producto (mesas, feed paginado, «Avísame cuando abra»…).
 
+Detalle que falta en la tabla de arriba: `GET /api/notificaciones` devuelve además `propuesta_vence` (de la cita), para que el front pinte la cuenta atrás del aviso `hora_propuesta` (`Models/NotificacionesModel.js`).
+
+### Avance estimado del backend (27-11-2026, tras la segunda tanda)
+
+Es una **estimación**, no una medida. Cada área pesa según lo que el front ya enseña al usuario en la V1 y lo que hace falta para abrir al público. El «hecho» sale de cruzar lo que el front llama (`src/services/*`, `src/plano/*`) con las rutas que monta el backend.
+
+| Área | Peso | Hecho | Qué falta |
+| --- | ---: | ---: | --- |
+| Cuentas y sesión | 12 | 85 % | Correo real: verificación, y recuperar contraseña probada de punta a punta. Google sin probar. |
+| Locales y panel del dueño | 15 | 90 % | Fotos con Cloudinary de principio a fin (hoy la demo usa Unsplash; las firmas ya existen). |
+| Reservas de servicios | 15 | 100 % | — (reglas, «Proponer otra hora», caducidad y avisos). |
+| **Mesas, plano de sala y suscripciones** | 15 | 5 % | Todo. El front ya llama a `PUT/GET /api/local/:id/plano` y `GET /api/local/:id/mesas-ocupadas` y no existen; las reservas `con-lugar` no tienen ruta. Las suscripciones viven solo en el navegador. |
+| Opiniones | 5 | 90 % | Editar la propia. |
+| Descubre | 10 | 65 % | Feed paginado (`GET /descubre?cursor=`), quitar `locales.json` del front y encender los jobs de ranking y exposición. |
+| Avisos | 8 | 70 % | «Avísame cuando abra» (hoy en `localStorage`, `src/services/avisosApertura.js`); avisos por correo o push. |
+| Panel del agente (moderación) | 5 | 20 % | Solo existe aprobar: falta rechazar con motivo, moderar opiniones y categorías. |
+| Seguridad | 8 | 85 % | Turnstile; límite de ritmo en un almacén compartido si hay más de un servidor. |
+| Operación y producción | 7 | 50 % | Ya hay migraciones con un comando y CI. Faltan hosting, variables de producción y registros y alertas de errores. |
+| **Total** | **100** | **≈ 67 %** | Antes de esta tanda, con los mismos pesos, ≈ 57 %. |
+
+- **Si las mesas salen de la V1** (como los profesionales), el total sobre lo que queda dentro sube a **≈ 78 %**.
+- **Lo que más mueve el número:** mesas y plano (+14 puntos), Descubre paginado con sus jobs (+3,5), «Avísame cuando abra» (+2,4) y correo real (+1,8).
+- El chat de Taly (`/api/chat`, `src/components/ChatTaly`) es un prototipo sin servidor y no entra en la cuenta.
+
 ---
 
 ## 1. Contexto del proyecto
