@@ -1,16 +1,19 @@
-import { addMinutes, format, isAfter, isBefore, isSameDay, parse } from 'date-fns'
+import { addMinutes, format, isAfter, isSameDay, parse } from 'date-fns'
 import { fechasDisponiblesLocal } from './fechasLocal.js'
 
 /* Horas de un turno y en qué estado está cada una. Lo comparten las dos
    pantallas de reserva (mesa y servicio). */
 
+/* Un turno dura el intervalo del local y tiene que acabar como muy tarde al
+   cierre (la misma regla que el backend y que turnosDelDia del panel). */
 export function generarHorarios(apertura, cierre, intervaloMinutos) {
   const slots = []
+  const paso = intervaloMinutos || 60
   let actual = parse(apertura, 'HH:mm', new Date())
   const fin = parse(cierre, 'HH:mm', new Date())
-  while (isBefore(actual, fin)) {
+  while (!isAfter(addMinutes(actual, paso), fin)) {
     slots.push(format(actual, 'HH:mm'))
-    actual = addMinutes(actual, intervaloMinutos || 60)
+    actual = addMinutes(actual, paso)
   }
   return slots
 }

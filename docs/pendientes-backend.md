@@ -8,6 +8,27 @@ Contexto: noviembre 2026, tras la ronda de mejoras de Lighthouse (rutas cargadas
 
 ---
 
+# ⚠️ DECISIÓN (27-11-2026): UNA CITA OCUPA SU TURNO, NO LA DURACIÓN DE SUS SERVICIOS
+
+> **Citaly digitaliza la libreta del negocio, y el negocio no calcula cuánto dura cada servicio.** Sabe que entre turno y turno deja su intervalo (el que eligió el dueño: 30 min, 60 min…) y ya. Nosotros tampoco calculamos más.
+
+**Cómo funciona hoy en el backend** (rama `nosotros/arreglos-revision`, `Services/DisponibilidadService.js`, bloque «REGLAS DE RESERVA»):
+
+- **Fin de una cita = hora de inicio + `intervalo_minutos` del local.** Siempre un turno, se pidan los servicios que se pidan.
+- **La duración de los servicios no decide nada.** Se suma y se guarda en `citas.demora_minutos` solo para orientar al cliente («unos 90 min»).
+- Los turnos empiezan a la hora de abrir y van de intervalo en intervalo (09:00, 09:30, 10:00…). Una hora fuera de turno da 400 (`HORA_FUERA_DE_TURNO`). El último turno tiene que acabar como muy tarde a la hora de cierre.
+- Dos citas chocan si sus turnos se pisan. Con turnos alineados eso solo pasa a la misma hora. Si el dueño cambia el intervalo, también pasa con las citas que quedaron a medio turno.
+- `GET /api/local/:id/horas-ocupadas` devuelve `{ fecha, horario, hasta }`, donde `hasta` = inicio + intervalo.
+
+**Si más adelante cambiamos de idea** y queremos que un servicio largo (un tinte de 90 min) ocupe varios turnos:
+1. En `validarDisponibilidadByServicios`, calcular `fin = inicio + suma de duracion_minutos` (y no `inicio + intervalo`) y comprobar `fin <= cierre`.
+2. En el solape, usar el fin real de cada cita guardada: `horario + demora_minutos` en vez de `horario + intervalo`.
+3. En `getHorasOcupadas`, devolver `hasta = horario + demora_minutos`.
+4. En el front, `useReserva`/`ReservarSinLugar` tienen que dejar de ofrecer los turnos que pisa una cita larga (hoy solo miran la hora de inicio).
+5. Ajustar `Tests/reservas.test.js` (la prueba «último turno… aunque el servicio dure 90 min» pasaría a dar 409).
+
+---
+
 ## Índice
 
 1. [Fotos: pasar de Unsplash a nuestro CDN](#1-fotos-pasar-de-unsplash-a-nuestro-cdn)
