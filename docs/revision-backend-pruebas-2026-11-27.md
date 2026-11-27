@@ -170,7 +170,7 @@ Es una **estimación**, no una medida. Cada área pesa según lo que el front ya
 | Operación y producción | 7 | 50 % | Ya hay migraciones con un comando y CI. Faltan hosting, variables de producción y registros y alertas de errores. |
 | **Total** | **100** | **≈ 67 %** | Antes de esta tanda, con los mismos pesos, ≈ 57 %. |
 
-- **Si las mesas salen de la V1** (como los profesionales), el total sobre lo que queda dentro sube a **≈ 78 %**.
+- **Las mesas VAN en la V1** (decisión del dueño, 27-11-2026, ver sección 2 bis): no se quitan del cálculo. El ≈ 67 % es sobre la V1 completa, con mesas.
 - **Lo que más mueve el número:** mesas y plano (+14 puntos), Descubre paginado con sus jobs (+3,5), «Avísame cuando abra» (+2,4) y correo real (+1,8).
 - El chat de Taly (`/api/chat`, `src/components/ChatTaly`) es un prototipo sin servidor y no entra en la cuenta.
 
@@ -212,6 +212,19 @@ Es una **estimación**, no una medida. Cada área pesa según lo que el front ya
 - Tipos de cita: `sin-lugar` (servicios) y `con-lugar` (mesas). El front ya **no** envía profesional.
 
 ---
+
+## 2 bis. DECISIÓN DE PRODUCTO (27-11-2026): las MESAS y todo su sistema VAN en la V1
+
+**El dueño del proyecto lo decidió claramente: las mesas, el plano de sala y las reservas con lugar TIENEN que ir en la V1.** No es opcional, no se aplaza y no se quita como los profesionales. Ninguna IA ni persona debe proponer sacarlas de la V1 ni rebajarlas a «después».
+
+Qué entra (todo lo que el front ya enseña y el backend aún no tiene):
+- Locales de tipo `mesa` con sus mesas: crear, editar, quitar (sin borrar una mesa con reservas futuras).
+- **Plano de sala**: `PUT/GET /api/local/:id/plano` (el front lo llama desde `src/plano/local.js`), con pisos.
+- **Reservas `con-lugar`**: ruta de reserva de mesa, personas, consumo mínimo y precio de reserva; las mismas reglas que las de servicios (turno, caducidad de 15 min, «Proponer otra hora», avisos, límite de ritmo).
+- **`GET /api/local/:id/mesas-ocupadas`** (el front lo llama desde `src/plano/reserva.js`): «ocupada» = no queda mesa para ese grupo.
+- La tabla `mesas` y el índice `citas_mesa_horario_activa_idx` ya existen en Neon; faltan las rutas, los servicios y las pruebas.
+
+Por eso es la **prioridad 1** de la sección 8.
 
 ## 2. DECISIÓN DE PRODUCTO (27-11-2026): fuera todo lo de «profesionales» en la V1
 
@@ -605,15 +618,14 @@ Los 30 hallazgos de las pruebas están cerrados. Lo que queda es trabajo nuevo, 
 
 | # | Qué | Incluye | Por qué en este puesto | Depende de |
 |---|---|---|---|---|
-| 1 | **Decidir si las mesas van en la V1** | Sí o no, como se hizo con los profesionales. | Es lo que más pesa (+14 puntos): cambia el plan entero. | Decisión del dueño |
+| 1 | **Mesas, plano de sala y reservas con lugar — VAN EN LA V1 (obligatorio)** | `PUT/GET /api/local/:id/plano`, `GET /api/local/:id/mesas-ocupadas`, CRUD de mesas, reservas `con-lugar` con las mismas reglas que las de servicios, no borrar una mesa con reservas futuras, pruebas. El front ya llama a esas rutas. Ver sección 2 bis. | Decidido por el dueño: tiene que estar en la V1. Es lo que más pesa (+14 puntos) y la parte más grande que queda. Se puede hacer ya, sin esperar a nadie. | — |
 | 2 | **Correo real** | Resend con dominio, `AUTH_REQUIRE_EMAIL_VERIFICATION=true`, recuperar contraseña probada de punta a punta. | Sin correo nadie recupera su cuenta: bloquea abrir. | Cuenta de Resend y dominio |
 | 3 | **Producción** | Hosting en la misma región que Neon (us-east-2), `NODE_ENV=production`, `trust proxy`, cookies, CORS con el dominio real, registros y alertas de 500/503. | Sin esto no hay app pública. | Elegir hosting |
 | 4 | **Antibots** | Cloudflare Turnstile en registro y recuperar contraseña. | El límite de ritmo ya frena lo grueso; esto frena las cuentas falsas. | Claves de Cloudflare |
-| 5 | **Mesas y plano de sala** (si van en la V1) | `PUT/GET /api/local/:id/plano`, `GET /api/local/:id/mesas-ocupadas`, reservas `con-lugar`, no borrar una mesa con reservas futuras. El front ya llama a esas rutas. | La parte más grande que queda. | Punto 1 |
-| 6 | **Descubre: feed paginado y jobs** | `GET /descubre?cursor=&limite=`, quitar `locales.json` del JS del front, encender ranking y exposición. | +3,5 puntos y menos datos para el móvil. | — |
-| 7 | **«Avísame cuando abra»** | Tabla `avisos_apertura`, rutas, tarea por minuto y aviso `abre_local` (hoy en `localStorage`). | +2,4 puntos; el front ya lo tiene. | — |
-| 8 | **Panel del agente** | Rechazar con motivo, moderar opiniones y los textos de `ficha.categoria`. | Hoy solo existe aprobar. | Diseño del front |
-| 9 | **Detalles** | Editar la opinión propia, fotos con Cloudinary de punta a punta, suscripciones en el backend. | Bajo impacto cada uno. | — |
+| 5 | **Descubre: feed paginado y jobs** | `GET /descubre?cursor=&limite=`, quitar `locales.json` del JS del front, encender ranking y exposición. | +3,5 puntos y menos datos para el móvil. | — |
+| 6 | **«Avísame cuando abra»** | Tabla `avisos_apertura`, rutas, tarea por minuto y aviso `abre_local` (hoy en `localStorage`). | +2,4 puntos; el front ya lo tiene. | — |
+| 7 | **Panel del agente** | Rechazar con motivo, moderar opiniones y los textos de `ficha.categoria`. | Hoy solo existe aprobar. | Diseño del front |
+| 8 | **Detalles** | Editar la opinión propia, fotos con Cloudinary de punta a punta, suscripciones en el backend. | Bajo impacto cada uno. | — |
 
 ### Backlog (ya repartido arriba)
 
